@@ -9,7 +9,7 @@ import re
 from django.views.decorators.http import require_GET, require_POST
 
 tag_classes=['tag1','tag2','tag3','tag4','tag5','tag6','tag7']
-def ureport(request):
+def tag_view(request):
     return render_to_response("ureport/index.html", context_instance=RequestContext(request))
 
 def generate_tag_cloud(words,counts_dict,tag_classes,max_count):
