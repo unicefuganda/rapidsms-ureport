@@ -6,6 +6,8 @@ from poll.models import *
 
 import re
 
+from django.views.decorators.http import require_GET, require_POST
+
 tag_classes=['tag1','tag2','tag3','tag4','tag5','tag6','tag7']
 def ureport(request):
     return render_to_response("ureport/index.html", context_instance=RequestContext(request))
@@ -66,3 +68,13 @@ def tag_cloud(request):
 def freeform_polls(request):
     free_form_polls = Poll.objects.filter(type=u't')
     return render_to_response("ureport/polls.html", {'polls':free_form_polls}, context_instance=RequestContext(request))
+
+
+
+@require_GET
+def messaging(request):
+    return render_to_response("ureport/messaging.html", {}, context_instance=RequestContext(request))
+
+@require_POST
+def send_message(request):
+    return redirect("/ureport/messaging/")
