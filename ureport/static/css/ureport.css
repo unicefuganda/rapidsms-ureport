@@ -1,0 +1,42 @@
+.tag1 {
+    font-size: 1.0em;
+}
+
+.tag2 {
+    font-size: 1.2em;
+}
+
+.tag3 {
+    font-size: 1.4em;
+}
+
+.tag4 {
+    font-size: 1.6em;
+}
+
+.tag5 {
+    font-size: 1.6em;
+}
+
+.tag6 {
+    font-size: 1.8em;
+}
+
+.tag7 {
+    font-size: 2.0em;
+}
+
+#tag_cloud {
+
+    width: 400px;
+    padding: 1em;
+  }
+
+  #tag_cloud tt {
+    display: block;
+    text-align: center;
+    margin: .25em;
+    padding-top: 0em;
+    float: left;
+  }
+

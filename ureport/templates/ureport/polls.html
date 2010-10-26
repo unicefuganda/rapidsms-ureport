@@ -1,0 +1,20 @@
+ <div id="poll_list">
+{%  if polls %}
+    <table width="100%">
+        <thead><tr><td>Poll</td><td>Number Of Responses</td><td></td></tr></thead>
+    {%  for poll in polls %}
+
+            <tr><td>{{poll.name}}</td><td>{{ poll.responses.count }}</td><td><input  type="checkbox"  onClick="load_tag_cloud()"    id="{{ poll.pk }}" name="""/> </td></tr>
+
+
+
+    {%  endfor %}
+     </table>
+
+{%  endif %}
+ </div>
+<script language="javascript">
+
+
+
+</script>
