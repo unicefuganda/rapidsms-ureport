@@ -1,21 +1,36 @@
 {% extends "layout-split-2.html" %}
 {% block header %}
-<form action="/ureport/send_message/" method="POST">
+<form method="POST">
 {% csrf_token %}
 {{ block.super }}
 {% endblock %}
 
 
 {% block left %}
-<h2 class="module">Recipients</h2>
 
+<div class="module">
+<h2>Recipients</h2>
+<label for="id_contacts">Contacts:{{ form.contacts.errors }}</label><br clear="left"/>
+{{ form.contacts }}
+<br clear="left"/>
+<label for="id_groups">Groups:{{ form.groups.errors }}</label><br clear="left"/>
+{{ form.groups }}
+</div>
 {% endblock %}
 
 
 
 {% block right %}
+<div class="module">
 <h2 class="module">Message</h2>
+<label for="id_text">Text:{{ form.text.errors }}</label><br clear="left"/>
+{{ form.text }}
 <input type="submit" value="Send"/>
+{% if recipients %}
+<br clear="left"/>
+<span style="color:green">Message successfully sent to {{ recipients }} recipient{{ recipients|pluralize }}</span>
+{% endif %}
+</div>
 {% endblock %}
 
 

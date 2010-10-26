@@ -1,12 +1,15 @@
-from django.shortcuts import  render_to_response
+from django.shortcuts import  render_to_response, redirect
 from django.template import RequestContext
+from django.db.models import Q
+from django import forms
+from django.contrib.auth.models import Group
 
 from ureport.settings import drop_words,Tag_Cloud_Words
 from poll.models import *
 
+from rapidsms.models import Contact
+from rapidsms_httprouter.router import get_router
 import re
-
-from django.views.decorators.http import require_GET, require_POST
 
 tag_classes=['tag1','tag2','tag3','tag4','tag5','tag6','tag7']
 def tag_view(request):
@@ -74,11 +77,32 @@ def freeform_polls(request):
     return render_to_response("ureport/polls.html", {'polls':free_form_polls}, context_instance=RequestContext(request))
 
 
+class MessageForm(forms.Form): # pragma: no cover    
+    contacts = forms.ModelMultipleChoiceField(required=False,queryset=Contact.objects.all())
+    groups = forms.ModelMultipleChoiceField(required=False,queryset=Group.objects.all())
+    text = forms.CharField(max_length=160, required=True, widget=forms.Textarea(attrs={'cols': 30, 'rows': 5}))
 
-@require_GET
 def messaging(request):
-    return render_to_response("ureport/messaging.html", {}, context_instance=RequestContext(request))
-
-@require_POST
-def send_message(request):
-    return redirect("/ureport/messaging/")
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            router = get_router()
+            
+            contacts = form.cleaned_data['contacts']
+            groups = form.cleaned_data['groups']
+            if hasattr(Contact, 'groups'):
+                contacts = Contact.objects.filter(Q(groups__in=groups) | Q(pk=contacts)).distinct()
+            else:
+                contacts = Contact.objects.filter(pk__in=contacts)
+            recipients = 0
+            for c in contacts:
+                for conn in c.connection_set.all():
+                    outgoing = OutgoingMessage(conn, form.cleaned_data['text'])
+                    router.handle_outgoing(outgoing)
+                    recipients = recipients + 1
+            return render_to_response("ureport/messaging.html", {'recipients':recipients, 'form':MessageForm()}, context_instance=RequestContext(request))
+        else:
+            return render_to_response("ureport/messaging.html", {'form':form}, context_instance=RequestContext(request))
+    else:
+        form = MessageForm()
+        return render_to_response("ureport/messaging.html", {'form':MessageForm()}, context_instance=RequestContext(request))
