@@ -1,0 +1,25 @@
+{% extends "layout-split-2.html" %}
+{% block header %}
+<form action="/ureport/send_message/" method="POST">
+{% csrf_token %}
+{{ block.super }}
+{% endblock %}
+
+
+{% block left %}
+<h2 class="module">Recipients</h2>
+
+{% endblock %}
+
+
+
+{% block right %}
+<h2 class="module">Message</h2>
+<input type="submit" value="Send"/>
+{% endblock %}
+
+
+{% block footer %}
+{{ block.super }}
+</form>
+{% endblock %}
