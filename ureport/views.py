@@ -43,18 +43,21 @@ def tag_cloud(request):
     max_count=0
     reg_words= re.compile(r'\W+')
     for response in responses:
-        for word in reg_words.split(response.message.text):
-            if word not in drop_words and len(word) >2:
-                word_count.setdefault(word,0)
-                word_count[word]+=1
-                if  counts_dict.get(word_count[word],None):
-                    counts_dict[word_count[word]].append(word)
-                else:
-                    counts_dict[word_count[word]]=[]
-                    counts_dict[word_count[word]].append(word)
+        if response.eav.poll_text_value:
+            for word in reg_words.split(response.eav.poll_text_value):
+                if word not in drop_words and len(word) >2:
+                    word_count.setdefault(word,0)
+                    word_count[word]+=1
+                    if  counts_dict.get(word_count[word],None):
+                        counts_dict[word_count[word]].append(word)
+                    else:
+                        counts_dict[word_count[word]]=[]
+                        counts_dict[word_count[word]].append(word)
 
-                if word_count[word]>max_count:
-                    max_count=word_count[word]
+                    if word_count[word]>max_count:
+                        max_count=word_count[word]
+        else:
+            continue
 
 
 
