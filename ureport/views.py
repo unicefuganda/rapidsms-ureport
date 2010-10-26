@@ -31,7 +31,8 @@ def generate_tag_cloud(words,counts_dict,tag_classes,max_count):
 
 
 def tag_cloud(request):
-    pks=list(set(request.GET.get('pks', '').split('+')))
+    pks=request.GET.get('pks', '').split('+')
+    pks=[eval(x) for x in list(str(pks[0]).rsplit())]
     responses=Response.objects.filter(poll__pk__in=pks)
     words=''
     word_count={}

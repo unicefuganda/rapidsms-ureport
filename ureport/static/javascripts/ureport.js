@@ -18,7 +18,7 @@ function load_tag_cloud()
 
         });
 
-    var url="/ureport/tag_cloud/"+"/?pks=" +id_list;
+    var url="/ureport/tag_cloud/"+"?pks=" +id_list;
 
     $('#tag_cloud').load(url);
 }
