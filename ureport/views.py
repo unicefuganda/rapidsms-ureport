@@ -9,6 +9,7 @@ from poll.models import *
 
 from rapidsms.models import Contact
 from rapidsms_httprouter.router import get_router
+from authsites.models import ContactSite,GroupSite
 import re
 
 tag_classes=['tag1','tag2','tag3','tag4','tag5','tag6','tag7']
@@ -78,8 +79,8 @@ def freeform_polls(request):
 
 
 class MessageForm(forms.Form): # pragma: no cover    
-    contacts = forms.ModelMultipleChoiceField(required=False,queryset=Contact.objects.all())
-    groups = forms.ModelMultipleChoiceField(required=False,queryset=Group.objects.all())
+    contacts = forms.ModelMultipleChoiceField(required=False,queryset=Contact.objects.filter(pk__in=ContactSite.objects.filter(site=Site.objects.get_current()).values_list('contact', flat=True)))
+    groups = forms.ModelMultipleChoiceField(required=False,queryset=Group.objects.filter(pk__in=GroupSite.objects.filter(site=Site.objects.get_current()).values_list('group', flat=True)))
     text = forms.CharField(max_length=160, required=True, widget=forms.Textarea(attrs={'cols': 30, 'rows': 5}))
 
 def messaging(request):
