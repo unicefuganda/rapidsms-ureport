@@ -91,15 +91,14 @@ def messaging(request):
             contacts = form.cleaned_data['contacts']
             groups = form.cleaned_data['groups']
             if hasattr(Contact, 'groups'):
-                contacts = Contact.objects.filter(Q(groups__in=groups) | Q(pk=contacts)).distinct()
+                connections = Connection.objects.filter(Q(contact__in=contacts) | Q(contact__groups__in=groups)).distinct()
             else:
-                contacts = Contact.objects.filter(pk__in=contacts)
+                connections = Connection.objects.filter(contact__in=contact).distinct()
             recipients = 0
-            for c in contacts:
-                for conn in c.connection_set.all():
-                    outgoing = OutgoingMessage(conn, form.cleaned_data['text'])
-                    router.handle_outgoing(outgoing)
-                    recipients = recipients + 1
+            for conn in connections:
+                outgoing = OutgoingMessage(conn, form.cleaned_data['text'])
+                router.handle_outgoing(outgoing)
+                recipients = recipients + 1
             return render_to_response("ureport/messaging.html", {'recipients':recipients, 'form':MessageForm()}, context_instance=RequestContext(request))
         else:
             return render_to_response("ureport/messaging.html", {'form':form}, context_instance=RequestContext(request))
