@@ -99,7 +99,7 @@ def messaging(request):
             recipients = 0
             for conn in connections:
                 text = form.cleaned_data['text'].replace('%', '%%')
-                outgoing = OutgoingMessage(conn, form.cleaned_data['text'])
+                outgoing = OutgoingMessage(conn, text)
                 router.handle_outgoing(outgoing)
                 recipients = recipients + 1
             return render_to_response("ureport/messaging.html", {'recipients':recipients, 'form':MessageForm()}, context_instance=RequestContext(request))
