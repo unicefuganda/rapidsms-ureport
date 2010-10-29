@@ -9,6 +9,7 @@ from poll.models import *
 
 from rapidsms.models import Contact
 from rapidsms_httprouter.router import get_router
+from rapidsms.messages.outgoing import OutgoingMessage
 from authsites.models import ContactSite,GroupSite
 import re
 
@@ -97,6 +98,7 @@ def messaging(request):
                 connections = Connection.objects.filter(contact__in=contact).distinct()
             recipients = 0
             for conn in connections:
+                text = form.cleaned_data['text'].replace('%', '%%')
                 outgoing = OutgoingMessage(conn, form.cleaned_data['text'])
                 router.handle_outgoing(outgoing)
                 recipients = recipients + 1
