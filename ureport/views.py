@@ -100,7 +100,7 @@ def freeform_polls(request):
     return render_to_response("ureport/partials/freeform_polls.html", {'polls':free_form_polls}, context_instance=RequestContext(request))
 
 
-class MessageForm(forms.Form): # pragma: no cover    
+class MessageForm(forms.Form): # pragma: no cover
     contacts = forms.ModelMultipleChoiceField(required=False,queryset=Contact.objects.filter(pk__in=ContactSite.objects.filter(site=Site.objects.get_current()).values_list('contact', flat=True)))
     groups = forms.ModelMultipleChoiceField(required=False,queryset=Group.objects.filter(pk__in=GroupSite.objects.filter(site=Site.objects.get_current()).values_list('group', flat=True)))
     text = forms.CharField(max_length=160, required=True, widget=forms.Textarea(attrs={'cols': 30, 'rows': 5}))
@@ -169,7 +169,7 @@ def pie_graph(request):
 
         return HttpResponse(mark_safe(simplejson.dumps(plottable_data)) )
 
-    return render_to_response("ureport/pie_graph.html", {'all_polls':all_polls}, context_instance=RequestContext(request))
+    return render_to_response("ureport/pie_graph.html", {'polls':all_polls}, context_instance=RequestContext(request))
 
 def histogram(request):
     """
@@ -215,13 +215,15 @@ def histogram(request):
             if key  not in ['categories','title']:
                 d={}
                 d['name']=key
-                d['data'] =[(x*100)/total_responses for x in poll_results[key]['data'].values()]
+                d['data'] =poll_results[key]['data'].values()
                 data.append(d)
         plottable_data={}
         plottable_data['data']=data
         plottable_data['title']  =poll_qns
         plottable_data['categories'] =ranges_list
+        plottable_data['mean'] =sum(vals_list)/len(vals_list)
+        plottable_data['median']=vals_list[len(vals_list)/2]
         return HttpResponse(mark_safe(simplejson.dumps(plottable_data)) )
 
 
-    return render_to_response("ureport/histogram.html", {'all_polls':all_polls}, context_instance=RequestContext(request))
+    return render_to_response("ureport/histogram.html", {'polls':all_polls}, context_instance=RequestContext(request))

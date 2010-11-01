@@ -18,9 +18,8 @@
         },
         yAxis: {
             min: 0,
-            max:100,
             title: {
-                text: 'Percentage'
+                text: 'Number'
             }
         },
         legend: {
@@ -34,7 +33,7 @@
         tooltip: {
             formatter: function() {
                 return '' +
-                        this.x + ': ' + this.y + ' %';
+                        this.x + ': ' + this.y ;
             }
         },
         plotOptions: {
@@ -52,6 +51,7 @@
         var chart;
         opts.series = data['data'];
         opts.xAxis.categories = data['categories'];
+        opts.subtitle.text = data['title'] +"</br>"+"mean:"+parseInt(data["mean"])+" median:"+data["median"];
         console.log(opts);
 
         chart = new Highcharts.Chart(opts);
