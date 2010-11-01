@@ -10,7 +10,6 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         try:
-            import pdb;pdb.set_trace()
             connection = Connection.objects.get(identity=settings.PING_NUMBER)
             text = datetime.datetime.now().strftime('Worked at %H:%M %Y-%m-%d')
             get_router().handle_outgoing(OutgoingMessage(connection, text))
