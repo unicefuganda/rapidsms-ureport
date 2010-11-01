@@ -1,6 +1,6 @@
 {% extends "layout-split-2.html" %}
 {% block title %}
-    Ureport Tag Cloud - {{ block.super }}
+    Ureport Histogram - {{ block.super }}
 {% endblock %}
 {% block stylesheets %}
     {{ block.super }}
@@ -9,7 +9,9 @@
 {% endblock %}
 {% block javascripts %}
     {{ block.super }}
+    <script src="{{MEDIA_URL}}ureport/javascripts/highcharts.js" type="text/javascript"></script>
     <script src="{{MEDIA_URL}}ureport/javascripts/ureport.js" type="text/javascript"></script>
+
 {% endblock %}
 
 
@@ -18,8 +20,8 @@
     <div class="module">
         <h2>Polls</h2>
 
-        <div id="polls">
-
+        <div id="chart_polls">
+            {% include 'ureport/partials/numeric_polls.html' %}
         </div>
 
     </div>
@@ -29,9 +31,10 @@
 
 {% block right %}
     <div class="module">
-        <h2>Tag Cloud</h2>
+        <h2>Chart</h2>
 
-        <div id="tag_cloud">
+        <div id="histogram">
+            {% include 'ureport/partials/barchart.html' %}
         </div>
     </div>
 {% endblock %}

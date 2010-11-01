@@ -39,4 +39,13 @@
     padding-top: 0em;
     float: left;
   }
+#chart_polls {
+
+    height:300px;
+
+}
+#pie_chart{
+    min-height:300px;
+
+}
 
