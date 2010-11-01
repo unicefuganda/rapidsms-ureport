@@ -12,6 +12,8 @@ from poll.models import *
 
 from rapidsms.models import Contact
 from rapidsms_httprouter.router import get_router
+from rapidsms.messages.outgoing import OutgoingMessage
+from authsites.models import ContactSite,GroupSite
 import re
 import bisect
 
@@ -99,8 +101,8 @@ def freeform_polls(request):
 
 
 class MessageForm(forms.Form): # pragma: no cover    
-    contacts = forms.ModelMultipleChoiceField(required=False,queryset=Contact.objects.all())
-    groups = forms.ModelMultipleChoiceField(required=False,queryset=Group.objects.all())
+    contacts = forms.ModelMultipleChoiceField(required=False,queryset=Contact.objects.filter(pk__in=ContactSite.objects.filter(site=Site.objects.get_current()).values_list('contact', flat=True)))
+    groups = forms.ModelMultipleChoiceField(required=False,queryset=Group.objects.filter(pk__in=GroupSite.objects.filter(site=Site.objects.get_current()).values_list('group', flat=True)))
     text = forms.CharField(max_length=160, required=True, widget=forms.Textarea(attrs={'cols': 30, 'rows': 5}))
 
 def messaging(request):
@@ -117,7 +119,8 @@ def messaging(request):
                 connections = Connection.objects.filter(contact__in=contact).distinct()
             recipients = 0
             for conn in connections:
-                outgoing = OutgoingMessage(conn, form.cleaned_data['text'])
+                text = form.cleaned_data['text'].replace('%', '%%')
+                outgoing = OutgoingMessage(conn, text)
                 router.handle_outgoing(outgoing)
                 recipients = recipients + 1
             return render_to_response("ureport/messaging.html", {'recipients':recipients, 'form':MessageForm()}, context_instance=RequestContext(request))
