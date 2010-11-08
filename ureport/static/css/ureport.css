@@ -48,4 +48,23 @@
     min-height:300px;
 
 }
+#map{
 
+    height:400px;
+    width:100%;
+}
+
+#map_legend{
+
+    width:100%;
+    margin-left:50%;
+
+}
+.f{
+
+
+    font-size:14px;
+font-weight: bold;
+font-family:tahoma,arial,sans-serif;
+
+}
