@@ -13,14 +13,96 @@ var description = "";
 
 var hf;
 
+ var pie_opts = {
+        chart: {
+            renderTo: 'pie',
+            margin: [10, 10, 50, 50]
+        },
+        title: {
+            text: 'Poll Results For'
+        },
+        plotArea: {
+            shadow: true,
+            borderWidth: 30,
+            backgroundColor: null
+        },
+        tooltip: {
+            formatter: function() {
+                return '<b>' + this.point.name + '</b>: ' + this.y + ' %';
+            }
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    formatter: function() {
+                        //if (this.y > 5) return this.point.name;
+                    },
+                    color: 'white',
+                    style: {
+                        font: '13px Trebuchet MS, Verdana, sans-serif'
+                    }
+                }
+            }
+        },
+        legend: {
+            layout: 'horizontal',
+            style: {
+                left: 'auto',
+                bottom: 'auto',
+                right: '10px',
+                top: '500px'
+            }
+        },
+        credits:false,
+        subtitle: {
+            text: 'test'
+        },
+        series: [
+            {
+                type: 'pie',
+                name: 'Poll Results',
+                data: []
+            }
+        ]
+    }
+    function plot_pie(data) {
+        var chart;
 
+
+        pie_opts.series[0].data = data['data'];
+        pie_opts.subtitle.text = data['poll_names'];
+        pie_opts.series[0].data[0] = {'name':data['data'][0][0],'y':data['data'][0][1],sliced: true,selected: true};
+        chart = new Highcharts.Chart(pie_opts);
+
+
+    }
 function load_freeform_polls() {
 
     $('#polls').load('/ureport/polls/t/');
 }
 
+function remove_selection()
+{
+    $('.module   ul li img').each(function(){
+
+    $(this).removeClass('selected');
+    });
+     $('#visual').children().each(function(){
+
+    $(this).hide();
+    });
+
+}
 function load_tag_cloud() {
+    remove_selection();
+    $('#tags').show();
     var id_list = "";
+
+    $('img.tags').addClass('selected');
+
     $("#poll_list").find('input').each(function() {
 
         if ($(this).attr("checked")) {
@@ -32,9 +114,12 @@ function load_tag_cloud() {
 
     var url = "/ureport/tag_cloud/" + "?pks=" + id_list;
 
-    $('#tag_cloud').load(url);
+    $('#tags').load(url);
 }
 function plot_piechart() {
+      remove_selection();
+    $('#pie').show();
+    $('img.pie').addClass('selected');
     var id_list = "";
     $("#poll_list").find('input').each(function() {
 
@@ -148,6 +233,10 @@ function addGraph(data, x, y, color, desc) {
 
 
 function load_layers() {
+     remove_selection();
+    $('img.map').addClass('selected');
+    $('#map').show();
+
     var id_list = "";
     $("#poll_list").find('input').each(function() {
 
@@ -228,4 +317,5 @@ $(document).ready(function() {
 
     load_freeform_polls();
     init_map();
+
 });

@@ -9,4 +9,5 @@ urlpatterns = patterns('',
    url(r'^ureport/pie_graph/$', pie_graph,name="pie_chart"),
    url(r'^ureport/histogram/$',  histogram,name="histogram"),
     url(r'^ureport/map/$',  map,name="map"),
+     url(r'^ureport/dashboard/$',  poll_dashboard,name="poll_dashboard"),
 )

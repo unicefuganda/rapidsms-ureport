@@ -41,7 +41,7 @@
   }
 #chart_polls {
 
-    height:300px;
+    min-height:300px;
 
 }
 #pie_chart{
@@ -67,4 +67,44 @@
 font-weight: bold;
 font-family:tahoma,arial,sans-serif;
 
+}
+.module   ul{
+
+    list-style:none;
+    display:block;
+
+
+}
+
+.module   ul li{
+
+    float:left;
+
+}
+.module   ul li img{
+
+    border:none;
+    padding-left:15px;
+    padding-right:15px;
+    width:30px;
+}
+.qns{
+
+margin: 0 auto;
+
+}
+#pie{
+    width:100%;
+}
+div#visual{
+    clear:both;
+    width:100%;
+    min-height:300px;
+    margin-top:10px;
+}
+
+.module   ul li img.selected{
+
+    background-color: #aad0d4;
+    border:1px solid #8fbcc9;
 }

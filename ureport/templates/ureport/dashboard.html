@@ -1,0 +1,104 @@
+{% extends "layout-split-2.html" %}
+{% block title %}
+    Ureport Poll Dashboard - {{ block.super }}
+{% endblock %}
+{% block stylesheets %}
+    {{ block.super }}
+    <link type="text/css" rel="stylesheet"
+          href="{{MEDIA_URL}}ureport/css/ureport.css"/>
+{% endblock %}
+{% block javascripts %}
+    {{ block.super }}
+    <script src="{{MEDIA_URL}}ureport/javascripts/highcharts.js" type="text/javascript"></script>
+    <script src="{{MEDIA_URL}}ureport/javascripts/ureport.js" type="text/javascript"></script>
+    <script src="http://maps.google.com/maps?file=api&v=2&sensor=false&key={{map_key}}" type="text/javascript">
+</script>
+     <script language="javascript">
+    //get the map bounding box
+        var map;
+        var minLat={{minLat}};
+        var maxLat={{maxLat}};
+        var minLon={{minLon}};
+        var maxLon={{maxLon}};
+        var zoom=9;
+
+
+    </script>
+{% endblock %}
+
+
+
+{% block left %}
+    <div class="module">
+        <h2>Polls</h2>
+
+        <div id="poll_list">
+        <table width="100%">
+            <thead>
+            <tr>
+                <td></td>
+
+                <td>Poll Question</td>
+            </tr>
+            </thead>
+            {% for poll in polls %}
+
+                <tr>
+                    <td >
+
+                        <input type="checkbox"  id="{{ poll.pk }}" name="""/>
+
+                    </td>
+                    <td class="qns">{{ poll.question }}</td>
+
+                 </tr>
+
+
+
+            {% endfor %}
+        </table>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+
+{% block right %}
+    <div class="module">
+        <h2>Visual</h2>
+        <div style="width:100%;height">
+        <ul>
+
+                           <li>
+                               <a href="javascript:void(0)"><img class="map " onClick="load_layers()" src="{{MEDIA_URL}}ureport/images/map.png"/> </a>
+                           </li>
+                           <li>
+                               <a href="javascript:void(0)"><img class="pie" onClick="plot_piechart()" src="{{MEDIA_URL}}ureport/images/pie.png"/> </a>
+                           </li>
+                           <li>
+                               <a href="javascript:void(0)"><img  class="tags" onClick="load_tag_cloud()"  src="{{MEDIA_URL}}ureport/images/tags.png"/> </a>
+                           </li>
+                           <li>
+                               <a href="javascript:void(0)"><img class="bar" onClick="plot_histogram()" src="{{MEDIA_URL}}ureport/images/bar.png"/> </a>
+                           </li>
+                       </ul>
+                          </div>
+        <div id="visual">
+            <div id="map" style="display:none;" >
+
+            </div>
+
+            <div style="width:100%;height:600px;display:none;" id="pie">
+
+            </div>
+            <div id="tags" style="display:none;">
+
+            </div>
+            <div id="histogram" style="display:none;">
+
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

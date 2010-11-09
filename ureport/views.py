@@ -289,3 +289,13 @@ def map(request):
 
 
     return render_to_response("ureport/map.html", locals(), context_instance=RequestContext(request))
+def poll_dashboard(request):
+    polls=Poll.objects.all()
+    colors=['#4572A7', '#AA4643', '#89A54E', '#80699B', '#3D96AE', '#DB843D', '#92A8CD', '#A47D7C', '#B5CA92']
+    polls=Poll.objects.all()
+    map_key = MAP_KEY
+    Map_urls = mark_safe(simplejson.dumps(MAP_URLS))
+    map_types = mark_safe(simplejson.dumps(MAP_TYPES))
+    (minLon, maxLon, minLat, maxLat) = (mark_safe(min_lat),
+            mark_safe(max_lat), mark_safe(min_lon), mark_safe(max_lon))
+    return render_to_response("ureport/dashboard.html", locals(), context_instance=RequestContext(request))
