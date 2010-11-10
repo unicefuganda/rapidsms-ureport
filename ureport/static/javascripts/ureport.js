@@ -1,98 +1,142 @@
-var points = {}; // hash to store layers with their description for each marker
-var markers = {};
-var infopanel;
-var start_value;
-var end_value;
-var bbox;
-var current_zoom;
-var layers = {};
-var urls = {};
-var colors = [];
-//make description global
-var description = "";
+var bar_opts = {
+    chart: {
+        renderTo: 'bar',
+        defaultSeriesType: 'column'
+    },
+    title: {
+        text: 'Poll Results For'
+    },
+    subtitle: {
+        text: 'polls'
+    },
+    xAxis: {
+        categories: [
 
-var hf;
 
- var pie_opts = {
-        chart: {
-            renderTo: 'pie',
-            margin: [10, 10, 50, 50]
-        },
+        ]
+    },
+    yAxis: {
+        min: 0,
         title: {
-            text: 'Poll Results For'
-        },
-        plotArea: {
-            shadow: true,
-            borderWidth: 30,
-            backgroundColor: null
-        },
-        tooltip: {
-            formatter: function() {
-                return '<b>' + this.point.name + '</b>: ' + this.y + ' %';
-            }
-        },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: true,
-                    formatter: function() {
-                        //if (this.y > 5) return this.point.name;
-                    },
-                    color: 'white',
-                    style: {
-                        font: '13px Trebuchet MS, Verdana, sans-serif'
-                    }
+            text: 'Number'
+        }
+    },
+    legend: {
+        layout: 'vertical',
+        backgroundColor: '#FFFFFF',
+        align: 'left',
+        verticalAlign: 'top',
+        x: 100,
+        y: 70
+    },
+    tooltip: {
+        formatter: function() {
+            return '' +
+                    this.x + ': ' + this.y;
+        }
+    },
+    plotOptions: {
+        column: {
+            pointPadding: 0.2,
+            borderWidth: 0
+        }
+    },
+    series: []
+};
+
+function plot_barchart(data) {
+
+
+    var chart;
+    bar_opts.series = data['data'];
+    bar_opts.xAxis.categories = data['categories'];
+    bar_opts.subtitle.text = data['title'] + "</br>" + "mean:" + parseInt(data["mean"]) + " median:" + data["median"];
+    console.log(bar_opts);
+
+    chart = new Highcharts.Chart(opts);
+
+
+}
+var pie_opts = {
+    chart: {
+        renderTo: 'pie',
+        margin: [10, 10, 50, 50]
+    },
+    title: {
+        text: 'Poll Results For'
+    },
+    plotArea: {
+        shadow: true,
+        borderWidth: 30,
+        backgroundColor: null
+    },
+    tooltip: {
+        formatter: function() {
+            return '<b>' + this.point.name + '</b>: ' + this.y + ' %';
+        }
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true,
+                formatter: function() {
+                    //if (this.y > 5) return this.point.name;
+                },
+                color: 'white',
+                style: {
+                    font: '13px Trebuchet MS, Verdana, sans-serif'
                 }
             }
-        },
-        legend: {
-            layout: 'horizontal',
-            style: {
-                left: 'auto',
-                bottom: 'auto',
-                right: '10px',
-                top: '500px'
-            }
-        },
-        credits:false,
-        subtitle: {
-            text: 'test'
-        },
-        series: [
-            {
-                type: 'pie',
-                name: 'Poll Results',
-                data: []
-            }
-        ]
-    }
-    function plot_pie(data) {
-        var chart;
+        }
+    },
+    legend: {
+        layout: 'horizontal',
+        style: {
+            left: 'auto',
+            bottom: 'auto',
+            right: '10px',
+            top: '500px'
+        }
+    },
+    credits:false,
+    subtitle: {
+        text: 'test'
+    },
+    series: [
+        {
+            type: 'pie',
+            name: 'Poll Results',
+            data: []
+        }
+    ]
+}
+function plot_pie(data) {
+    var chart;
 
 
-        pie_opts.series[0].data = data['data'];
-        pie_opts.subtitle.text = data['poll_names'];
-        pie_opts.series[0].data[0] = {'name':data['data'][0][0],'y':data['data'][0][1],sliced: true,selected: true};
-        chart = new Highcharts.Chart(pie_opts);
+    pie_opts.series[0].data = data['data'];
+    pie_opts.subtitle.text = data['poll_names'];
+    pie_opts.series[0].data[0] = {'name':data['data'][0][0],'y':data['data'][0][1],sliced: true,selected: true};
+    chart = new Highcharts.Chart(pie_opts);
 
 
-    }
+}
 function load_freeform_polls() {
 
     $('#polls').load('/ureport/polls/t/');
 }
 
-function remove_selection()
-{
-    $('.module   ul li img').each(function(){
+function remove_selection() {
+    $('#map_legend').hide();
+    $('.module   ul li img').each(function() {
 
-    $(this).removeClass('selected');
+        $(this).removeClass('selected');
     });
-     $('#visual').children().each(function(){
+    $('#visual').children().each(function() {
 
-    $(this).hide();
+        $(this).hide();
     });
 
 }
@@ -117,7 +161,7 @@ function load_tag_cloud() {
     $('#tags').load(url);
 }
 function plot_piechart() {
-      remove_selection();
+    remove_selection();
     $('#pie').show();
     $('img.pie').addClass('selected');
     var id_list = "";
@@ -143,6 +187,9 @@ function plot_piechart() {
 }
 
 function plot_histogram() {
+    remove_selection();
+    $('#bar').show();
+    $('img.bar').addClass('selected');
     var id_list = "";
     $("#poll_list").find('input').each(function() {
 
@@ -233,9 +280,12 @@ function addGraph(data, x, y, color, desc) {
 
 
 function load_layers() {
-     remove_selection();
+    remove_selection();
+
     $('img.map').addClass('selected');
     $('#map').show();
+    $('#map_legend').show();
+    init_map();
 
     var id_list = "";
     $("#poll_list").find('input').each(function() {
@@ -281,7 +331,7 @@ function load_layers() {
 
                     });
                     d = max / total;
-                    console.log(d);
+
                     addGraph(d, parseFloat(value['lon']), parseFloat(value['lat']), data['colors'][category]);
                 }
             }
@@ -306,7 +356,8 @@ function init_map() {
     var bounds = new GLatLngBounds;
     bounds.extend(new GLatLng(parseFloat(minLat), parseFloat(minLon)));
     bounds.extend(new GLatLng(parseFloat(maxLat), parseFloat(maxLon)));
-    map.setCenter(bounds.getCenter(), 9);
+    console.log(minLat);
+    map.setCenter(bounds.getCenter(), map.getBoundsZoomLevel(bounds));
 
 
 }

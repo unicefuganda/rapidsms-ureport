@@ -187,48 +187,49 @@ def histogram(request):
         items=6
         pks=request.GET.get('pks', '').split('+')
         pks=[eval(x) for x in list(str(pks[0]).rsplit())]
-        responses=Response.objects.filter(poll__pk__in=pks)
-        poll_results={}
-        poll_qns=['Qn:'+poll.question+'<br>' for poll in Poll.objects.filter(pk__in=pks)]
-
-        total_responses=responses.count()
-        vals_list=Value.objects.filter(entity_id__in=responses).values_list('value_float',flat=True)
-        vals_list=sorted(vals_list)
-        max=int(vals_list[-1])
-        min=int(vals_list[0])
-        num_list=range(min,max)
-        increment=int(max/items)
-        bounds=num_list[::increment]
-        ranges_list=[str(a)+'-'+str(a+increment) for a in bounds if a<max]
-        poll_results['categories']=ranges_list
-        poll_results['title']=poll_qns
-
-        for response in responses:
-            name=response.poll.name
-            poll_results.setdefault(name,{})
-            poll_results[name].setdefault('data',{})
-            if len(response.eav_values.all())>0:
-                value=int(response.eav_values.all()[0].value_float)
-            pos=bisect.bisect_right(bounds,value)-1
-            r=ranges_list[pos]
-            poll_results[name]['data'].setdefault(r,0)
-            poll_results[name]['data'][r]+=1
-
-
-
-        data=[]
-        for key in poll_results.keys():
-            if key  not in ['categories','title']:
-                d={}
-                d['name']=key
-                d['data'] =poll_results[key]['data'].values()
-                data.append(d)
+        responses=Response.objects.filter(poll__pk__in=pks,poll__type=u'n')
         plottable_data={}
-        plottable_data['data']=data
-        plottable_data['title']  =poll_qns
-        plottable_data['categories'] =ranges_list
-        plottable_data['mean'] =sum(vals_list)/len(vals_list)
-        plottable_data['median']=vals_list[len(vals_list)/2]
+        if responses:
+            poll_results={}
+            poll_qns=['Qn:'+poll.question+'<br>' for poll in Poll.objects.filter(pk__in=pks)]
+
+            total_responses=responses.count()
+            vals_list=Value.objects.filter(entity_id__in=responses).values_list('value_float',flat=True)
+            vals_list=sorted(vals_list)
+            max=int(vals_list[-1])
+            min=int(vals_list[0])
+            num_list=range(min,max)
+            increment=int(max/items)
+            bounds=num_list[::increment]
+            ranges_list=[str(a)+'-'+str(a+increment) for a in bounds if a<max]
+            poll_results['categories']=ranges_list
+            poll_results['title']=poll_qns
+
+            for response in responses:
+                name=response.poll.name
+                poll_results.setdefault(name,{})
+                poll_results[name].setdefault('data',{})
+                if len(response.eav_values.all())>0:
+                    value=int(response.eav_values.all()[0].value_float)
+                pos=bisect.bisect_right(bounds,value)-1
+                r=ranges_list[pos]
+                poll_results[name]['data'].setdefault(r,0)
+                poll_results[name]['data'][r]+=1
+
+
+
+            data=[]
+            for key in poll_results.keys():
+                if key  not in ['categories','title']:
+                    d={}
+                    d['name']=key
+                    d['data'] =poll_results[key]['data'].values()
+                    data.append(d)
+            plottable_data['data']=data
+            plottable_data['title']  =poll_qns
+            plottable_data['categories'] =ranges_list
+            plottable_data['mean'] =sum(vals_list)/len(vals_list)
+            plottable_data['median']=vals_list[len(vals_list)/2]
         return HttpResponse(mark_safe(simplejson.dumps(plottable_data)) )
 
 
