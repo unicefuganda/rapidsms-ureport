@@ -297,7 +297,7 @@ def poll_dashboard(request):
     polls=Poll.objects.all()
     colors=['#4572A7', '#AA4643', '#89A54E', '#80699B', '#3D96AE', '#DB843D', '#92A8CD', '#A47D7C', '#B5CA92']
     polls=Poll.objects.all()
-    map_key = MAP_KEY
+    map_key = settings.MAP_KEY
     Map_urls = mark_safe(simplejson.dumps(MAP_URLS))
     map_types = mark_safe(simplejson.dumps(MAP_TYPES))
     (minLon, maxLon, minLat, maxLat) = (mark_safe(min_lat),
