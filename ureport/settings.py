@@ -32,4 +32,4 @@ max_lon = '3.88875'
 
 ##google maps api key
 MAP_KEY = \
-    'ABQIAAAAYimH_excdTjwGjM6LcP-DhTX43PO8-sEH-jeG6rM560fvsomnhQ4fvBin-y4dRWztAXXs1ap0AwfdQ'
+    'ABQIAAAAYimH_excdTjwGjM6LcP-DhRaLfBBEB0nsUEuMGz01RTfbwPCxRRUSCN6nz739wEN1rNcAJTRg8vTHg'
