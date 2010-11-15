@@ -11,7 +11,7 @@ from ureport.settings import *
 from poll.models import *
 
 from rapidsms.models import Contact
-from rapidsms_httprouter.router import get_router
+from rapidsms_httprouter.router import get_router, start_sending_mass_messages, stop_sending_mass_messages
 from rapidsms.messages.outgoing import OutgoingMessage
 
 from authsites.models import ContactSite,GroupSite
@@ -124,11 +124,13 @@ def messaging(request):
             else:
                 connections = Connection.objects.filter(contact__in=contact).distinct()
             recipients = 0
+            start_sending_mass_messages()
             for conn in connections:
                 text = form.cleaned_data['text'].replace('%', '%%')
                 outgoing = OutgoingMessage(conn, text)
                 router.handle_outgoing(outgoing)
                 recipients = recipients + 1
+            stop_sending_mass_messages()
             return render_to_response("ureport/messaging.html", {'recipients':recipients, 'form':MessageForm()}, context_instance=RequestContext(request))
         else:
             return render_to_response("ureport/messaging.html", {'form':form}, context_instance=RequestContext(request))
