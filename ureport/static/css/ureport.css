@@ -108,3 +108,10 @@ div#visual{
     background-color: #aad0d4;
     border:1px solid #8fbcc9;
 }
+
+.ajax_loading{
+    background-image:url("../images/ajax-loader.gif");
+    background-repeat:no-repeat;
+    background-position: center center;
+
+}

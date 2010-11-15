@@ -1,3 +1,23 @@
+function ajax_loading(element)
+{
+    var t=$(element) ;
+    var offset = t.offset();
+                var dim = {
+                    left:	offset.left,
+                    top:	offset.top,
+                    width:	t.outerWidth(),
+                    height:	t.outerHeight()
+                };
+    $('<div class="ajax_loading"></div>').css({
+                    position:	'absolute',
+                    left:		dim.left + 'px',
+                    top:		dim.top + 'px',
+                    width:		dim.width + 'px',
+                    height:		dim.height + 'px'
+                }).appendTo(document.body).show();
+
+
+}
 var bar_opts = {
     chart: {
         renderTo: 'bar',
@@ -51,9 +71,9 @@ function plot_barchart(data) {
     bar_opts.series = data['data'];
     bar_opts.xAxis.categories = data['categories'];
     bar_opts.subtitle.text = data['title'] + "</br>" + "mean:" + parseInt(data["mean"]) + " median:" + data["median"];
-    console.log(bar_opts);
 
-    chart = new Highcharts.Chart(opts);
+
+    chart = new Highcharts.Chart(bar_opts);
 
 
 }
@@ -141,6 +161,7 @@ function remove_selection() {
 
 }
 function load_tag_cloud() {
+     ajax_loading('#visual');
     remove_selection();
     $('#tags').show();
     var id_list = "";
@@ -158,9 +179,13 @@ function load_tag_cloud() {
 
     var url = "/ureport/tag_cloud/" + "?pks=" + id_list;
 
-    $('#tags').load(url);
+    $('#tags').load(url,function(){
+       $('.ajax_loading').remove();
+    });
+
 }
 function plot_piechart() {
+    ajax_loading('#visual');
     remove_selection();
     $('#pie').show();
     $('img.pie').addClass('selected');
@@ -180,6 +205,7 @@ function plot_piechart() {
         url:url,
         dataType: "json",
         success: function(data) {
+            $('.ajax_loading').remove();
             plot_pie(data);
 
         }
@@ -280,6 +306,7 @@ function addGraph(data, x, y, color, desc) {
 
 
 function load_layers() {
+    ajax_loading('#visual');
     remove_selection();
 
     $('img.map').addClass('selected');
@@ -306,7 +333,7 @@ function load_layers() {
             //add legend
             $('#map_legend table').text(' ');
             map.clearOverlays();
-
+              $('.ajax_loading').remove();
             $.each(data['colors'], function(ky, vl) {
 
                 var elem = '<tr><td><span style="width:15px;height:15px;background-color:' + vl + ';float:left;display:block;margin-top:10px;"></span><td><td >' + ky + '</td></tr>';
@@ -356,7 +383,6 @@ function init_map() {
     var bounds = new GLatLngBounds;
     bounds.extend(new GLatLng(parseFloat(minLat), parseFloat(minLon)));
     bounds.extend(new GLatLng(parseFloat(maxLat), parseFloat(maxLon)));
-    console.log(minLat);
     map.setCenter(bounds.getCenter(), map.getBoundsZoomLevel(bounds));
 
 
