@@ -145,7 +145,7 @@ function plot_pie(data) {
 }
 function load_freeform_polls() {
 
-    $('#polls').load('/ureport/polls/t/');
+    $('#poll_list').load('/ureport/polls/freeform/');
 }
 
 function remove_selection() {
@@ -183,6 +183,7 @@ function load_tag_cloud() {
        $('.ajax_loading').remove();
     });
 
+
 }
 function plot_piechart() {
     ajax_loading('#visual');
@@ -210,6 +211,7 @@ function plot_piechart() {
 
         }
     });
+
 }
 
 function plot_histogram() {
@@ -236,6 +238,7 @@ function plot_histogram() {
 
         }
     });
+
 }
 //function to create label
 function Label(point, html, classname, pixelOffset) {
@@ -368,6 +371,7 @@ function load_layers() {
         }
     });
 
+
 }
 
 //	function to draw simple map
@@ -392,7 +396,17 @@ function init_map() {
 $(document).ready(function() {
 
 
-    load_freeform_polls();
-    init_map();
+          //check if a map dive is defined
+          if($('#map').length > 0 )
+          {
+                init_map();
+          }
+
+        if($('.freeform').length > 0 )
+        {
+              load_freeform_polls();
+        }
+
+
 
 });
