@@ -75,7 +75,12 @@ font-family:tahoma,arial,sans-serif;
 
 
 }
-
+#tags a{
+    color:#000000;
+}
+#tags p>a{
+    color: #aad0d4;
+}
 .module   ul li{
 
     float:left;
@@ -114,4 +119,30 @@ div#visual{
     background-repeat:no-repeat;
     background-position: center center;
 
+}
+.delete-tag,.delete-tag-hover{
+
+background-image:url(../images/delete_tag.png);
+background-repeat:no-repeat;
+overflow:hidden;
+width:14px;
+height:14px;
+display:inline-block;
+vertical-align:top;
+margin-top:3px;
+
+
+}
+.delete-tag{
+    background-position:0 -30px;
+}
+
+.default{
+    background-position:0 -90px;
+}
+
+.delete-tag-hover {
+
+cursor:pointer;
+background-position:0 -6px;
 }
