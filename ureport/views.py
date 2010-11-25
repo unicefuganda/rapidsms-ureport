@@ -21,12 +21,17 @@ import re
 import bisect
 import textwrap
 
-tag_classes=['tag1','tag2','tag3','tag4','tag5','tag6','tag7']
+TAG_CLASSES=['tag1','tag2','tag3','tag4','tag5','tag6','tag7']
+
+def index(request):
+    return render_to_response("ureport/index.html", {}, RequestContext(request)) 
+
+
 def tag_view(request):
     return render_to_response("ureport/tag_cloud.html", context_instance=RequestContext(request))
 
-def generate_tag_cloud(words,counts_dict,tag_classes,max_count):
 
+def generate_tag_cloud(words,counts_dict,tag_classes,max_count):
     """
         returns tag words with assosiated tag classes depending on their frequency
     @params:
@@ -53,12 +58,11 @@ def generate_tag_cloud(words,counts_dict,tag_classes,max_count):
     return tags
 
 
-
 def tag_cloud(request):
-
     """
         generates a tag cloud
     """
+    
     pks=request.GET.get('pks', '').split('+')
     pks=[eval(x) for x in list(str(pks[0]).rsplit())]
     responses=Response.objects.filter(poll__pk__in=pks)
@@ -85,21 +89,17 @@ def tag_cloud(request):
         else:
             continue
 
-
-
-
-    tags=generate_tag_cloud(word_count,counts_dict,tag_classes,max_count)
-
+    tags=generate_tag_cloud(word_count,counts_dict,TAG_CLASSES,max_count)
 
     return render_to_response("ureport/partials/tag_cloud.html", {'tags':tags},
                               context_instance=RequestContext(request))
 
 
 def polls(request,template,type=None):
-
     """
         view for freeform polls
     """
+    
     if type:
         polls = Poll.objects.filter(type=type)
     else:
@@ -111,6 +111,7 @@ class MessageForm(forms.Form): # pragma: no cover
     contacts = forms.ModelMultipleChoiceField(required=False,queryset=Contact.objects.filter(pk__in=ContactSite.objects.filter(site=Site.objects.get_current()).values_list('contact', flat=True)))
     groups = forms.ModelMultipleChoiceField(required=False,queryset=Group.objects.filter(pk__in=GroupSite.objects.filter(site=Site.objects.get_current()).values_list('group', flat=True)))
     text = forms.CharField(max_length=160, required=True, widget=forms.Textarea(attrs={'cols': 30, 'rows': 5}))
+
 
 def messaging(request):
     if request.method == 'POST':
@@ -138,6 +139,8 @@ def messaging(request):
     else:
         form = MessageForm()
         return render_to_response("ureport/messaging.html", {'form':MessageForm()}, context_instance=RequestContext(request))
+
+
 def pie_graph(request):
     """
         view for pie-chart
@@ -166,9 +169,6 @@ def pie_graph(request):
                     key=  str(categories[0])
                 category_count.setdefault(key,0)
                 category_count[key]+=1
-
-
-
             else:
                 uncategorized+=1
         category_count['uncategorized']=uncategorized
@@ -179,6 +179,7 @@ def pie_graph(request):
         return HttpResponse(mark_safe(simplejson.dumps(plottable_data)) )
 
     return render_to_response("ureport/pie_graph.html", {'polls':all_polls}, context_instance=RequestContext(request))
+
 
 def histogram(request):
     """
@@ -219,8 +220,6 @@ def histogram(request):
                 poll_results[name]['data'].setdefault(r,0)
                 poll_results[name]['data'][r]+=1
 
-
-
             data=[]
             for key in poll_results.keys():
                 if key  not in ['categories','title']:
@@ -234,7 +233,6 @@ def histogram(request):
             plottable_data['mean'] =sum(vals_list)/len(vals_list)
             plottable_data['median']=vals_list[len(vals_list)/2]
         return HttpResponse(mark_safe(simplejson.dumps(plottable_data)) )
-
 
     return render_to_response("ureport/histogram.html", {'polls':all_polls}, context_instance=RequestContext(request))
 
@@ -267,10 +265,7 @@ def map(request):
                             key=  str(categories[0])
                         layer_values[loc.name].setdefault('data',{})
                         layer_values[loc.name]['data'].setdefault(key,0)
-
-
                         layer_values[loc.name]['data'][key]+=1
-
                     else:
                         layer_values[loc.name].setdefault('data',{})
                         layer_values[loc.name]['data'].setdefault('uncategorized',0)
@@ -287,12 +282,11 @@ def map(request):
             except IndexError:
                 layer_values['colors'][cat.name]='#000000'
 
-
-
         return HttpResponse(mark_safe(simplejson.dumps(layer_values)) )
-
-
+    # FIXME don't use locals
     return render_to_response("ureport/map.html", locals(), context_instance=RequestContext(request))
+
+
 def poll_dashboard(request):
     polls=Poll.objects.all()
     colors=['#4572A7', '#AA4643', '#89A54E', '#80699B', '#3D96AE', '#DB843D', '#92A8CD', '#A47D7C', '#B5CA92']
@@ -302,4 +296,7 @@ def poll_dashboard(request):
     map_types = mark_safe(simplejson.dumps(MAP_TYPES))
     (minLon, maxLon, minLat, maxLat) = (mark_safe(min_lat),
             mark_safe(max_lat), mark_safe(min_lon), mark_safe(max_lon))
+    
+    # FIXME don't use locals
     return render_to_response("ureport/dashboard.html", locals(), context_instance=RequestContext(request))
+
