@@ -11,4 +11,7 @@ urlpatterns = patterns('',
    url(r'^ureport/histogram/$',  histogram,name="histogram"),
     url(r'^ureport/map/$',  map,name="map"),
      url(r'^ureport/dashboard/$',  poll_dashboard,name="poll_dashboard"),
+     url(r'^ureport/add_tag/$',  add_drop_word),
+     url(r'^ureport/delete_tag/$',  delete_drop_word),
+     url(r'^ureport/show_excluded/$',  show_ignored_tags),
 )

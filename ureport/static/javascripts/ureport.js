@@ -185,6 +185,43 @@ function load_tag_cloud() {
 
 
 }
+function add_tag(tag){
+    var url="/ureport/add_tag/?tag="+tag +"&poll="+$("input:checked")[0].id
+
+    $.ajax({
+        type: "GET",
+        url:url,
+        dataType: "json",
+        success: function() {
+
+           load_tag_cloud();
+        }
+    });
+}
+
+function remove_tag(tag){
+     var url="/ureport/delete_tag/?tag="+tag
+
+    $.ajax({
+        type: "GET",
+        url:url,
+        dataType: "json",
+        success: function() {
+
+           load_excluded_tags();
+        }
+    });
+
+}
+function load_excluded_tags()
+{
+
+    $('#tags').hide();
+    $('#visual').append("<div id='excluded'></div>") ;
+
+   $('#excluded').load("/ureport/show_excluded/");
+    $('#excluded').show();
+}
 function plot_piechart() {
     ajax_loading('#visual');
     remove_selection();

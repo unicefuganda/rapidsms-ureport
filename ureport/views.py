@@ -9,6 +9,7 @@ from django.http import HttpResponse
 from django.conf import settings
 
 from ureport.settings import *
+from ureport.models import IgnoredTags
 from poll.models import *
 
 from rapidsms.models import Contact
@@ -58,6 +59,25 @@ def generate_tag_cloud(words,counts_dict,tag_classes,max_count):
     return tags
 
 
+def add_drop_word(request):
+    tag_name=request.GET.get('tag',None)
+    poll_pk=int(request.GET.get('poll',1))
+    IgnoredTags.objects.create(name=tag_name,poll=Poll.objects.get(pk=poll_pk))
+    return HttpResponse(simplejson.dumps("success"))
+
+def delete_drop_word(request):
+    tag_name=request.GET.get('tag',None)
+    tags=IgnoredTags.objects.filter(name=tag_name)
+    print tags
+    for tag in tags:
+        tag.delete()
+    return HttpResponse(simplejson.dumps("success"))
+
+def show_ignored_tags(request):
+    tags=IgnoredTags.objects.all()
+    return render_to_response("ureport/partials/ignored_tags.html", {'tags':tags},context_instance=RequestContext(request))
+
+
 def tag_cloud(request):
     """
         generates a tag cloud
@@ -72,10 +92,11 @@ def tag_cloud(request):
     used_words_list=[]
     max_count=0
     reg_words= re.compile(r'\W+')
+    dropwords=IgnoredTags.objects.filter(poll__id__in=pks).values_list('name',flat=True)
     for response in responses:
         if  response.eav.poll_text_value:
             for word in reg_words.split(response.eav.poll_text_value):
-                if word not in drop_words and len(word) >2:
+                if word not in dropwords and len(word) >2:
                     word_count.setdefault(word,0)
                     word_count[word]+=1
                     if  counts_dict.get(word_count[word],None):
