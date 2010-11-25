@@ -25,11 +25,8 @@ BASE_LAYER = ''
 
 
 #map bounding box
-min_lat = '31.19800'
-max_lat = '33.80176'
-min_lon = '2.1444'
-max_lon = '3.88875'
+min_lat = '29.55322265625'
+max_lat = '33.92578125'
+min_lon = '-1.0326589311777759'
+max_lon = '4.280680030820496'
 
-##google maps api key
-MAP_KEY = \
-    'ABQIAAAAYimH_excdTjwGjM6LcP-DhRaLfBBEB0nsUEuMGz01RTfbwPCxRRUSCN6nz739wEN1rNcAJTRg8vTHg'

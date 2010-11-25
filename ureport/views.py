@@ -91,7 +91,7 @@ def tag_cloud(request):
     dropwords=IgnoredTags.objects.filter(poll__id__in=pks).values_list('name',flat=True)
     for response in responses:
         if  response.eav.poll_text_value:
-            for word in reg_words.split(response.eav.poll_text_value):
+            for word in [w.lower() for w in reg_words.split(response.eav.poll_text_value)]:
                 if word not in dropwords and len(word) >2:
                     word_count.setdefault(word,0)
                     word_count[word]+=1
@@ -278,30 +278,33 @@ def map(request):
             if response.message:
                 loc=response.message.connection.contact.reporting_location
                 if loc:
-                    layer_values.setdefault(loc.name,{'lat':float(loc.location.latitude),'lon':float(loc.location.longitude)})
-                    if response.categories.count()>0:
+                    try:
+                        layer_values.setdefault(loc.name,{'lat':float(loc.location.latitude),'lon':float(loc.location.longitude)})
+                        if response.categories.count()>0:
 
-                        categories=  [r.category.name for r in response.categories.all()]
-                        if len(categories) > 1:
-                            key=' and '.join(categories)
+                            categories=  [r.category.name for r in response.categories.all()]
+                            if len(categories) > 1:
+                                key=' and '.join(categories)
+                            else:
+                                key=  str(categories[0])
+                            layer_values[loc.name].setdefault('data',{})
+                            layer_values[loc.name]['data'].setdefault(key,0)
+
+
+                            layer_values[loc.name]['data'][key]+=1
+
                         else:
-                            key=  str(categories[0])
-                        layer_values[loc.name].setdefault('data',{})
-                        layer_values[loc.name]['data'].setdefault(key,0)
-
-
-                        layer_values[loc.name]['data'][key]+=1
-
-                    else:
-                        layer_values[loc.name].setdefault('data',{})
-                        layer_values[loc.name]['data'].setdefault('uncategorized',0)
-                        layer_values[loc.name]['data']['uncategorized']+=1
+                            layer_values[loc.name].setdefault('data',{})
+                            layer_values[loc.name]['data'].setdefault('uncategorized',0)
+                            layer_values[loc.name]['data']['uncategorized']+=1
+                    except:
+                        continue
 
         layer_values['colors']={}
         #set colors for category types
         i=0
         layer_values['colors']["uncategorized"]="#ff0000"
-        for cat in Category.objects.all():
+        for cat in Category.objects.filter(poll__pk__in=pks):
             try:
                 layer_values['colors'][cat.name]=colors[i]
                 i+=1

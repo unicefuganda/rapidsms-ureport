@@ -1,3 +1,4 @@
+
 function ajax_loading(element)
 {
     var t=$(element) ;
@@ -295,7 +296,7 @@ function Label(point, html, classname, pixelOffset) {
         var div = document.createElement("div");
         div.style.position = "absolute";
         div.innerHTML = '<div class="' + this.classname + '">' + this.html + '</div>';
-        map.getPane(G_MAP_FLOAT_SHADOW_PANE).appendChild(div);
+        map.getPane(G_MAP_MAP_PANE).parentNode.appendChild(div);
         this.map_ = map;
         this.div_ = div;
     }
@@ -309,6 +310,7 @@ function Label(point, html, classname, pixelOffset) {
     }
 // Redraw based on the current projection and zoom level
     this.redraw = function(force) {
+        if (!force) return;
         var p = this.map_.fromLatLngToDivPixel(this.point);
         var h = parseInt(this.div_.clientHeight);
         this.div_.style.left = (p.x + this.pixelOffset.width) + "px";
@@ -335,12 +337,16 @@ function addGraph(data, x, y, color, desc) {
     //draw the graph as an overlay
     pointpair.push(new GPoint(parseFloat(x + increment), parseFloat(y + increment)));
     var line = new GPolyline(pointpair, color, volume);
-    map.addOverlay(line);
-    var label = new Label(new GLatLng(parseFloat(y), parseFloat(x)), parseInt(data * 100) + "%", "f", new GSize(0, 0));
 
+
+
+    var label = new Label(new GLatLng(parseFloat(y), parseFloat(x)), parseInt(data * 100) + "%", "f", new GSize(-15, 0));
 
     map.addOverlay(label);
-
+    map.addOverlay(line);
+    GEvent.addListener(line,'click',function(para)
+		{map.openInfoWindowHtml(para,desc )});
+    
 
 }
 
@@ -352,8 +358,11 @@ function load_layers() {
     $('img.map').addClass('selected');
     $('#map').show();
     $('#map_legend').show();
+    if($('.init').length > 0 )
+    {
     init_map();
-
+    }
+$('#map').removeClass('init');
     var id_list = "";
     $("#poll_list").find('input').each(function() {
 
@@ -398,8 +407,8 @@ function load_layers() {
 
                     });
                     d = max / total;
-
-                    addGraph(d, parseFloat(value['lon']), parseFloat(value['lat']), data['colors'][category]);
+                    var desc="<b>"+key+"</b><p>Total number of responses:"+total+"</p>";
+                    addGraph(d, parseFloat(value['lon']), parseFloat(value['lat']), data['colors'][category],desc);
                 }
             }
 
@@ -425,7 +434,9 @@ function init_map() {
     bounds.extend(new GLatLng(parseFloat(minLat), parseFloat(minLon)));
     bounds.extend(new GLatLng(parseFloat(maxLat), parseFloat(maxLon)));
     map.setCenter(bounds.getCenter(), map.getBoundsZoomLevel(bounds));
-
+    
+    GEvent.addListener(map,'zoomend',function()
+    		{load_layers()});
 
 }
 
@@ -433,7 +444,7 @@ function init_map() {
 $(document).ready(function() {
 
 
-          //check if a map dive is defined
+          //check if a map div is defined
           if($('#map').length > 0 )
           {
                 init_map();
