@@ -1,4 +1,4 @@
-{% extends "layout-split-2.html" %}
+{% extends "layout.html" %}
 {% block title %}
     Ureport Poll Dashboard - {{ block.super }}
 {% endblock %}
@@ -6,6 +6,7 @@
     {{ block.super }}
     <link type="text/css" rel="stylesheet"
           href="{{MEDIA_URL}}ureport/css/ureport.css"/>
+<link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}poll/stylesheets/style.css" />
 {% endblock %}
 {% block javascripts %}
     {{ block.super }}
@@ -28,71 +29,107 @@
 
 
 
-{% block left %}
-    <div class="module">
+{% block content %}
+    <div class="module" id="dash_polls">
         <h2>Polls</h2>
 
         <div id="poll_list">
-        <table width="100%">
+        <table width="100%" class="poll_table" >
             <thead>
             <tr>
-                <td></td>
-
-                <td>Poll Question</td>
+                <th >Name</th>
+                <th >Question</th>
+				<th style="width:50px;">Start Date</th>
+				<th>#Participants</th>
+				<th style="width:100px;">Responses</th>
+				<th style="width:100px;">Report</th>
+				<th style="width:200px;">Visual</th>
             </tr>
             </thead>
+			 <tbody>
             {% for poll in polls %}
 
-                <tr>
+                <tr class="poll_table_row">
                     <td >
-
-                        <input type="checkbox"  id="{{ poll.pk }}" name="""/>
-
+                        {{poll.name}}
                     </td>
-                    <td class="qns">{{ poll.question }}</td>
+                    <td >
+                    	{{ poll.question }}
+					</td>
+					<td>
+						{{poll.start_date|date:"d-M-Y"}}
+					</td>
+					<td>
+						
+						{{poll.contacts.count}}
+						
+      
+					</td>
+					<td>
+						<a href="/polls/{{poll.pk}}/responses/">Responses
+						({{poll.responses.count}})</a>
+					</td>
+					<td>
+						<a href="/polls/{{ poll.pk }}/report/">
+            <img src="{{ MEDIA_URL }}poll/icons/silk/database_table.png" border="0"/> Report
+      </a>
+					</td>
+					<td>
+						<ul>
+						{% if poll.type == 't'  %}
+                            
+
+                           <li>
+                               <a href="javascript:void(0)"><img class="map{{poll.pk}}" onClick="load_layers({{poll.pk}})" src="{{MEDIA_URL}}ureport/images/map.png"/> </a>
+                           </li>
+                           <li>
+                               <a href="javascript:void(0)"><img class="pie{{poll.pk}}" onClick="plot_piechart({{poll.pk}})" src="{{MEDIA_URL}}ureport/images/pie.png"/> </a>
+                           </li>
+                            <li>
+                               <a href="javascript:void(0)"><img class="tags{{poll.pk}}" onClick="load_tag_cloud({{poll.pk}})" src="{{MEDIA_URL}}ureport/images/tags.png"/> </a>
+                           </li>
+                          
+                       
+                        {% endif %}
+							{% if poll.type == 'l' or poll.type == 'r'  %}
+								<li>
+                               <a href="javascript:void(0)"><img class="tags{{poll.pk}}" onClick="load_tag_cloud({{poll.pk}})" src="{{MEDIA_URL}}ureport/images/tags.png"/> </a>
+                           </li>
+							{% endif %}
+
+                        {% if poll.type == 'n' %}
+                             <li>
+                               <a href="javascript:void(0)"><img class="bar{{poll.pk}}" onClick="plot_histogram({{poll.pk}})" src="{{MEDIA_URL}}ureport/images/bar.png"/> </a>
+                           </li>
+                        {% endif %}
+
+                        
+                        
+						</ul>
+					</td>
 
                  </tr>
 
 
 
             {% endfor %}
+			 </tbody>
         </table>
         </div>
 
     </div>
 
-    <div id="map_legend" style="display:none;">
-    <h3>Key</h3>
+   
     <table>
 
 
     </table>
     </div>
 
-{% endblock %}
-
-
-{% block right %}
     <div class="module">
-        <h2>Visual</h2>
-        <div style="width:100%;height">
-        <ul>
-
-                           <li>
-                               <a href="javascript:void(0)"><img class="map " onClick="load_layers()" src="{{MEDIA_URL}}ureport/images/map.png"/> </a>
-                           </li>
-                           <li>
-                               <a href="javascript:void(0)"><img class="pie" onClick="plot_piechart()" src="{{MEDIA_URL}}ureport/images/pie.png"/> </a>
-                           </li>
-                           <li>
-                               <a href="javascript:void(0)"><img  class="tags" onClick="load_tag_cloud()"  src="{{MEDIA_URL}}ureport/images/tags.png"/> </a>
-                           </li>
-                           <li>
-                               <a href="javascript:void(0)"><img class="bar" onClick="plot_histogram()" src="{{MEDIA_URL}}ureport/images/bar.png"/> </a>
-                           </li>
-                       </ul>
-                          </div>
-        <div id="visual">
+        <h2>Report</h2>
+        <div style="width:100%;">
+		 <div id="visual">
             <div id="map" class="init" style="display:none;" >
 
             </div>
@@ -108,5 +145,12 @@
             </div>
 
         </div>
+    </div>
+		 <div id="map_legend" style="display:none;">
+    <h3>Key</h3>
+       
+                         
+						  </div>
+        
     </div>
 {% endblock %}
