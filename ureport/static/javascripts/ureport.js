@@ -4,19 +4,18 @@ function ajax_loading(element)
     var t=$(element) ;
     var offset = t.offset();
                 var dim = {
-                    left:	offset.left,
-                    top:	offset.top,
-                    width:	t.outerWidth(),
-                    height:	t.outerHeight()
+                    left:    offset.left,
+                    top:    offset.top,
+                    width:    t.outerWidth(),
+                    height:    t.outerHeight()
                 };
     $('<div class="ajax_loading"></div>').css({
-                    position:	'absolute',
-                    left:		dim.left + 'px',
-                    top:		dim.top + 'px',
-                    width:		dim.width + 'px',
-                    height:		dim.height + 'px'
+                    position:    'absolute',
+                    left:        dim.left + 'px',
+                    top:        dim.top + 'px',
+                    width:        dim.width + 'px',
+                    height:        dim.height + 'px'
                 }).appendTo(document.body).show();
-
 
 }
 var bar_opts = {
@@ -319,7 +318,7 @@ function addGraph(data, x, y, color, desc) {
     map.addOverlay(label);
     map.addOverlay(line);
     GEvent.addListener(line,'click',function(para)
-		{map.openInfoWindowHtml(para,desc )});
+        {map.openInfoWindowHtml(para,desc )});
 
 }
 
@@ -376,7 +375,7 @@ function load_layers(pk) {
     });
 }
 
-//	function to draw simple map
+//    function to draw simple map
 function init_map() {
 
     //initialise the map object
@@ -392,18 +391,18 @@ function init_map() {
     map.setCenter(bounds.getCenter(), map.getBoundsZoomLevel(bounds));
     
     GEvent.addListener(map,'zoomend',function()
-    		{load_layers()});
+            {load_layers()});
 
 }
 
 function toggle_show_hide(elem)
 {
-	if($(elem).is(':visible')) {
-		$(elem).hide();
-	}
-	else {
-		$(elem).show();
-	}
+    if($(elem).is(':visible')) {
+        $(elem).hide();
+    }
+    else {
+        $(elem).show();
+    }
 }
 
 function collapse() {
