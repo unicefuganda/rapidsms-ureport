@@ -220,16 +220,7 @@ function plot_piechart(pk) {
     $('#pie').show();
     $('img.pie'+pk).addClass('selected');
     var id_list = "";
-    $("#poll_list").find('input').each(function() {
-
-        if ($(this).attr("checked")) {
-
-            id_list = id_list + '+' + String(this.id);
-        }
-
-    });
-
-    var url = "/ureport/pie_graph/" + "?pks=" + id_list;
+    var url = "/ureport/pie_graph/" + "?pks=+" + pk;
     $.ajax({
         type: "GET",
         url:url,
@@ -248,16 +239,9 @@ function plot_histogram(pk) {
     $('#bar').show();
     $('img.bar'+pk).addClass('selected');
     var id_list = "";
-    $("#poll_list").find('input').each(function() {
+    
 
-        if ($(this).attr("checked")) {
-
-            id_list = id_list + '+' + String(this.id);
-        }
-
-    });
-
-    var url = "/ureport/histogram/" + "?pks=" + id_list;
+    var url = "/ureport/histogram/" + "?pks=+" + pk;
     $.ajax({
         type: "GET",
         url:url,
@@ -355,16 +339,9 @@ function load_layers(pk) {
     }
 $('#map').removeClass('init');
     var id_list = "";
-    $("#poll_list").find('input').each(function() {
+    
 
-        if ($(this).attr("checked")) {
-
-            id_list = id_list + '+' + String(this.id);
-        }
-
-    });
-
-    var url = "/ureport/map/" + "?pks=" + id_list;
+    var url = "/ureport/map/" + "?pks=+" + pk;
     $.ajax({
         type: "GET",
         url:url,
