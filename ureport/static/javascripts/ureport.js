@@ -80,7 +80,7 @@ function plot_barchart(data) {
 var pie_opts = {
     chart: {
         renderTo: 'pie',
-        margin: [35, 75, 50, 50]
+        margin: [55, 75, 50, 50]
     },
     title: {
         text: 'Poll Results For'
