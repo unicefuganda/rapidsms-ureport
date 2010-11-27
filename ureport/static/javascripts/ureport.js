@@ -149,18 +149,20 @@ function load_freeform_polls() {
     $('#poll_list').load('/ureport/polls/freeform/');
 }
 
+/**
+ * Clear the visualization area of previous visuals
+ */
 function remove_selection() {
     $('#map_legend').hide();
     $('.module   ul li img').each(function() {
-
         $(this).removeClass('selected');
     });
     $('#visual').children().each(function() {
-
         $(this).hide();
     });
-
 }
+
+
 function load_tag_cloud(pk) {
      ajax_loading('#visual');
     remove_selection();
@@ -174,9 +176,18 @@ function load_tag_cloud(pk) {
     $('#tags').load(url,function(){
        $('.ajax_loading').remove();
     });
-
-
 }
+
+function load_report(pk) {
+    ajax_loading('#visual');
+    remove_selection();
+    $('#poll_report').show();
+    var url = '/polls/' + pk + '/report/module/';
+    $('#poll_report').load(url,function(){
+       $('.ajax_loading').remove();
+    });
+}
+
 function add_tag(tag){
     var url="/ureport/add_tag/?tag="+tag +"&poll="+$("input:checked")[0].id
 
@@ -203,17 +214,15 @@ function remove_tag(tag){
            load_excluded_tags();
         }
     });
-
 }
-function load_excluded_tags()
-{
 
+function load_excluded_tags() {
     $('#tags').hide();
     $('#visual').append("<div id='excluded'></div>") ;
-
-   $('#excluded').load("/ureport/show_excluded/");
+    $('#excluded').load("/ureport/show_excluded/");
     $('#excluded').show();
 }
+
 function plot_piechart(pk) {
     ajax_loading('#visual');
     remove_selection();
@@ -231,7 +240,6 @@ function plot_piechart(pk) {
 
         }
     });
-
 }
 
 function plot_histogram(pk) {
@@ -239,8 +247,6 @@ function plot_histogram(pk) {
     $('#bar').show();
     $('img.bar'+pk).addClass('selected');
     var id_list = "";
-    
-
     var url = "/ureport/histogram/" + "?pks=+" + pk;
     $.ajax({
         type: "GET",
@@ -248,11 +254,10 @@ function plot_histogram(pk) {
         dataType: "json",
         success: function(data) {
             plot_barchart(data);
-
         }
     });
-
 }
+
 //function to create label
 function Label(point, html, classname, pixelOffset) {
     // Mandatory parameters
@@ -262,8 +267,6 @@ function Label(point, html, classname, pixelOffset) {
     // Optional parameters
     this.classname = classname || "";
     this.pixelOffset = pixelOffset || new GSize(0, 0);
-
-
     this.prototype = new GOverlay();
 
     this.initialize = function(map) {
@@ -291,8 +294,6 @@ function Label(point, html, classname, pixelOffset) {
         this.div_.style.left = (p.x + this.pixelOffset.width) + "px";
         this.div_.style.top = (p.y + this.pixelOffset.height - h) + "px";
     }
-
-
 }
 
 
@@ -313,18 +314,14 @@ function addGraph(data, x, y, color, desc) {
     pointpair.push(new GPoint(parseFloat(x + increment), parseFloat(y + increment)));
     var line = new GPolyline(pointpair, color, volume);
 
-
-
     var label = new Label(new GLatLng(parseFloat(y), parseFloat(x)), parseInt(data * 100) + "%", "f", new GSize(-15, 0));
 
     map.addOverlay(label);
     map.addOverlay(line);
     GEvent.addListener(line,'click',function(para)
 		{map.openInfoWindowHtml(para,desc )});
-    
 
 }
-
 
 function load_layers(pk) {
     ajax_loading('#visual');
@@ -333,14 +330,12 @@ function load_layers(pk) {
     $('img.map'+pk).addClass('selected');
     $('#map').show();
     $('#map_legend').show();
-    if($('.init').length > 0 )
+    if($('.init').length > 0)
     {
-    init_map();
+        init_map();
     }
-$('#map').removeClass('init');
+    $('#map').removeClass('init');
     var id_list = "";
-    
-
     var url = "/ureport/map/" + "?pks=+" + pk;
     $.ajax({
         type: "GET",
@@ -358,7 +353,6 @@ $('#map').removeClass('init');
 
             });
 
-
             $.each(data, function(key, value) {
                 if (!key.match('color')) {
                     var max = 0;
@@ -372,20 +366,14 @@ $('#map').removeClass('init');
                             max = v;
                             category = k;
                         }
-
                     });
                     d = max / total;
                     var desc="<b>"+key+"</b><p>Total number of responses:"+total+"</p>";
                     addGraph(d, parseFloat(value['lon']), parseFloat(value['lat']), data['colors'][category],desc);
                 }
-            }
-
-
-                    );
+            });
         }
     });
-
-
 }
 
 //	function to draw simple map
@@ -410,29 +398,32 @@ function init_map() {
 
 function toggle_show_hide(elem)
 {
-	if($(elem).is(':visible'))
-	{
+	if($(elem).is(':visible')) {
 		$(elem).hide();
 	}
-	else
-	{
+	else {
 		$(elem).show();
 	}
 }
+
+function collapse() {
+    $('#collapse_img').hide();
+    $('#expand_img').show();
+    $('#poll_list').hide();
+}
+
+function expand() {
+    $('#collapse_img').show();
+    $('#expand_img').hide();
+    $('#poll_list').show();
+}
+
 $(document).ready(function() {
-
-
-          //check if a map div is defined
-          if($('#map').length > 0 )
-          {
-                init_map();
-          }
-
-        if($('.freeform').length > 0 )
-        {
-              load_freeform_polls();
-        }
-
-
-
+      //check if a map div is defined
+      if($('#map').length > 0 ) {
+            init_map();
+      }
+      if($('.freeform').length > 0 ) {
+          load_freeform_polls();
+      }
 });

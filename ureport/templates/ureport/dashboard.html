@@ -4,17 +4,16 @@
 {% endblock %}
 {% block stylesheets %}
     {{ block.super }}
-    <link type="text/css" rel="stylesheet"
-          href="{{MEDIA_URL}}ureport/css/ureport.css"/>
-<link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}poll/stylesheets/style.css" />
+    <link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}ureport/css/ureport.css"/>
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}poll/stylesheets/style.css" />
 {% endblock %}
 {% block javascripts %}
     {{ block.super }}
     <script src="{{MEDIA_URL}}ureport/javascripts/highcharts.js" type="text/javascript"></script>
     <script src="{{MEDIA_URL}}ureport/javascripts/ureport.js" type="text/javascript"></script>
-    <script src="http://maps.google.com/maps?file=api&v=2&sensor=false&key={{map_key}}" type="text/javascript">
-</script>
-     <script language="javascript">
+    <script src="{{MEDIA_URL}}poll/javascripts/poll.js" type="text/javascript"></script>
+    <script src="http://maps.google.com/maps?file=api&v=2&sensor=false&key={{map_key}}" type="text/javascript"></script>
+    <script language="javascript">
     //get the map bounding box
         var map;
         var minLat={{minLat}};
@@ -22,8 +21,6 @@
         var minLon={{minLon}};
         var maxLon={{maxLon}};
         var zoom=9;
-
-
     </script>
 {% endblock %}
 
@@ -31,126 +28,102 @@
 
 {% block content %}
     <div class="module" id="dash_polls">
-        <h2>Polls</h2>
+        <h2>
+            Polls
+            <img id="collapse_img" style="float:right" src="{{ MEDIA_URL }}rapidsms/icons/silk/section_expanded--bright.png" onclick="collapse()"/>
+            <img id="expand_img" style="float:right;display:none" src="{{ MEDIA_URL }}rapidsms/icons/silk/section_collapsed--bright.png" onclick="expand()"/>            
+        </h2>
 
         <div id="poll_list">
-        <table width="100%" class="poll_table" >
-            <thead>
-            <tr>
-                <th >Name</th>
-                <th >Question</th>
-				<th style="width:50px;">Start Date</th>
-				<th>#Participants</th>
-				<th style="width:100px;">Responses</th>
-				<th style="width:100px;">Report</th>
-				<th style="width:200px;">Visual</th>
-            </tr>
-            </thead>
-			 <tbody>
-            {% for poll in polls %}
-
-                <tr class="poll_table_row">
-                    <td >
-                        {{poll.name}}
-                    </td>
-                    <td >
-                    	{{ poll.question }}
-					</td>
-					<td>
-						{{poll.start_date|date:"d-M-Y"}}
-					</td>
-					<td>
-						
-						{{poll.contacts.count}}
-						
-      
-					</td>
-					<td>
-						<a href="/polls/{{poll.pk}}/responses/">Responses
-						({{poll.responses.count}})</a>
-					</td>
-					<td>
-						<a href="/polls/{{ poll.pk }}/report/">
-            <img src="{{ MEDIA_URL }}poll/icons/silk/database_table.png" border="0"/> Report
-      </a>
-					</td>
-					<td>
-						<ul>
-						{% if poll.type == 't'  %}
-                            
-
-                           <li>
-                               <a href="javascript:void(0)"><img class="map{{poll.pk}}" onClick="load_layers({{poll.pk}})" src="{{MEDIA_URL}}ureport/images/map.png"/> </a>
-                           </li>
-                           <li>
-                               <a href="javascript:void(0)"><img class="pie{{poll.pk}}" onClick="plot_piechart({{poll.pk}})" src="{{MEDIA_URL}}ureport/images/pie.png"/> </a>
-                           </li>
-                            <li>
-                               <a href="javascript:void(0)"><img class="tags{{poll.pk}}" onClick="load_tag_cloud({{poll.pk}})" src="{{MEDIA_URL}}ureport/images/tags.png"/> </a>
-                           </li>
-                          
-                       
-                        {% endif %}
-							{% if poll.type == 'l' or poll.type == 'r'  %}
-								<li>
-                               <a href="javascript:void(0)"><img class="tags{{poll.pk}}" onClick="load_tag_cloud({{poll.pk}})" src="{{MEDIA_URL}}ureport/images/tags.png"/> </a>
-                           </li>
-							{% endif %}
-
-                        {% if poll.type == 'n' %}
-                             <li>
-                               <a href="javascript:void(0)"><img class="bar{{poll.pk}}" onClick="plot_histogram({{poll.pk}})" src="{{MEDIA_URL}}ureport/images/bar.png"/> </a>
-                           </li>
-                        {% endif %}
-
-                        
-                        
-						</ul>
-					</td>
-
-                 </tr>
-
-
-
-            {% endfor %}
-			 </tbody>
-        </table>
+            <table width="100%" class="poll_table" >
+                <thead>
+                <tr>
+                    <th >Name</th>
+                    <th >Question</th>
+    				<th style="width:110px;">Start Date</th>
+    				<th>#Participants</th>
+    				<th style="width:210px;">Reports</th>
+    				<th style="width:140px;">Visuals</th>
+                </tr>
+                </thead>
+    			 <tbody>
+                {% for poll in polls %}
+                    <tr class="poll_table_row">
+                        <td >
+                            {{poll.name}}
+                        </td>
+                        <td >
+                        	{{ poll.question }}
+    					</td>
+    					<td>
+    						{{poll.start_date|date:"d-M-Y"}}
+    					</td>
+    					<td>
+    						{{poll.contacts.count}}
+    				    </td>
+    				    <td>
+                            <div class="buttons">
+                                {% if poll.type == 't' or poll.type == 'n' %}    				    
+                                    <a href="javascript:void(0)" onclick="collapse();load_report('{{ poll.pk }}')">
+                                        <img src="{{ MEDIA_URL }}poll/icons/silk/database_table.png" border="0"/> Report
+                                    </a>
+                                {% endif %}
+                                <a href="/polls/{{poll.pk}}/responses/" onclick="collapse();">
+                                    <img src="{{ MEDIA_URL }}poll/icons/silk/database_table.png" alt=""/>
+                                    Responses
+                                    ({{poll.responses.count}})
+                                </a>    		
+                            </div>		    
+    				    </td>
+    					<td>
+                            <div class="buttons">
+                                {% if poll.type == 't'  %}
+                                   <a href="javascript:void(0)" onclick="collapse();load_tag_cloud({{poll.pk}})">
+                                       <img class="tags{{poll.pk}}" src="{{MEDIA_URL}}ureport/images/tags.png"/>
+                                   </a>                                
+                                   <a href="javascript:void(0)" onclick="collapse();plot_piechart({{poll.pk}})">
+                                       <img class="pie{{poll.pk}}" src="{{MEDIA_URL}}ureport/images/pie.png"/>
+                                   </a>
+                                   <a href="javascript:void(0)" onclick="collapse();load_layers({{poll.pk}})">
+                                       <img class="map{{poll.pk}}" src="{{MEDIA_URL}}ureport/images/map.png"/>
+                                   </a>
+                                {% endif %}
+                                {% if poll.type == 'l' or poll.type == 'r'  %}
+                                   <a href="javascript:void(0)" onclick="collapse();load_tag_cloud({{poll.pk}})">
+                                       <img class="tags{{poll.pk}}" src="{{MEDIA_URL}}ureport/images/tags.png"/>
+                                   </a>
+                                {% endif %}
+                                {% if poll.type == 'n' %}
+                                   <a href="javascript:void(0)" onclick="collapse();plot_histogram({{poll.pk}})">
+                                       <img class="bar{{poll.pk}}" src="{{MEDIA_URL}}ureport/images/bar.png"/>
+                                   </a>
+                                {% endif %}                                
+                            </div>                                                                
+    					</td>
+                     </tr>
+                {% endfor %}
+    			</tbody>
+            </table>
         </div>
-
     </div>
-
-   
-    <table>
-
-
-    </table>
-    </div>
-
     <div class="module">
         <h2>Report</h2>
         <div style="width:100%;">
-		 <div id="visual">
-            <div id="map" class="init" style="display:none;" >
-
+		    <div id="visual">
+                <div id="map" class="init" style="display:none;" >
+                </div>
+                <div style="width:100%;height:600px;display:none;" id="pie">
+                </div>
+                <div id="tags" style="display:none;">
+                </div>
+                <div id="histogram" style="display:none;">
+                </div>
+                <div id="poll_report" style="display:none;">
+                </div>
             </div>
-
-            <div style="width:100%;height:600px;display:none;" id="pie">
-
-            </div>
-            <div id="tags" style="display:none;">
-
-            </div>
-            <div id="histogram" style="display:none;">
-
-            </div>
-
         </div>
-    </div>
-		 <div id="map_legend" style="display:none;">
-    <h3>Key</h3>
-       
-                         
-						  </div>
-        
+		<div id="map_legend" style="display:none;">
+            <h3>Key</h3>
+	    </div>
     </div>
 {% endblock %}
