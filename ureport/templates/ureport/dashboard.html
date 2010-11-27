@@ -26,7 +26,7 @@
 
 {% block content %}
     <div class="module" id="dash_polls">
-        <h2>
+        <h2 style="white-space:normal">
             Polls
             <img id="collapse_img" style="float:right" src="{{ MEDIA_URL }}rapidsms/icons/silk/section_expanded--bright.png" onclick="collapse()"/>
             <img id="expand_img" style="float:right;display:none" src="{{ MEDIA_URL }}rapidsms/icons/silk/section_collapsed--bright.png" onclick="expand()"/>            
@@ -66,7 +66,7 @@
                                         <img src="{{ MEDIA_URL }}poll/icons/silk/database_table.png" border="0"/> Report
                                     </a>
                                 {% endif %}
-                                <a href="/polls/{{poll.pk}}/responses/" onclick="collapse();">
+                                <a href="javascript:void(0)" onclick="collapse();load_responses('{{ poll.pk }}')">
                                     <img src="{{ MEDIA_URL }}poll/icons/silk/database_table.png" alt=""/>
                                     Responses
                                     ({{poll.responses.count}})
@@ -117,6 +117,8 @@
                 <div id="histogram" style="display:none;">
                 </div>
                 <div id="poll_report" style="display:none;">
+                </div>
+                <div id="poll_responses" style="display:none;">
                 </div>
             </div>
         </div>

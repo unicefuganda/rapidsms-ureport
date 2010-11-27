@@ -80,7 +80,7 @@ function plot_barchart(data) {
 var pie_opts = {
     chart: {
         renderTo: 'pie',
-        margin: [10, 10, 50, 50]
+        margin: [35, 75, 50, 50]
     },
     title: {
         text: 'Poll Results For'
@@ -117,7 +117,7 @@ var pie_opts = {
             left: 'auto',
             bottom: 'auto',
             right: '10px',
-            top: '500px'
+            top: '525px'
         }
     },
     credits:false,
@@ -135,14 +135,13 @@ var pie_opts = {
 function plot_pie(data) {
     var chart;
 
-
     pie_opts.series[0].data = data['data'];
     pie_opts.subtitle.text = data['poll_names'];
     pie_opts.series[0].data[0] = {'name':data['data'][0][0],'y':data['data'][0][1],sliced: true,selected: true};
     chart = new Highcharts.Chart(pie_opts);
 
-
 }
+
 function load_freeform_polls() {
 
     $('#poll_list').load('/ureport/polls/freeform/');
@@ -183,6 +182,16 @@ function load_report(pk) {
     $('#poll_report').show();
     var url = '/polls/' + pk + '/report/module/';
     $('#poll_report').load(url,function(){
+       $('.ajax_loading').remove();
+    });
+}
+
+function load_responses(pk) {
+    ajax_loading('#visual');
+    remove_selection();
+    $('#poll_responses').show();
+    var url = '/polls/' + pk + '/responses/module/';
+    $('#poll_responses').load(url,function(){
        $('.ajax_loading').remove();
     });
 }
