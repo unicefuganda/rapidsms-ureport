@@ -356,6 +356,7 @@ function load_layers(pk) {
             $('#map_legend table').text(' ');
             map.clearOverlays();
               $('.ajax_loading').remove();
+            $('#map_legend table').empty();
             $.each(data['colors'], function(ky, vl) {
 
                 var elem = '<tr><td><span style="width:15px;height:15px;background-color:' + vl + ';float:left;display:block;margin-top:10px;"></span><td><td >' + ky + '</td></tr>';
