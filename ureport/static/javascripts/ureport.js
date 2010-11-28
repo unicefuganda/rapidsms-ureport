@@ -143,7 +143,6 @@ function plot_pie(data) {
 }
 
 function load_freeform_polls() {
-
     $('#poll_list').load('/ureport/polls/freeform/');
 }
 
@@ -331,7 +330,10 @@ function addGraph(data, x, y, color, desc) {
 
 }
 
+var map_poll_pk;
+
 function load_layers(pk) {
+    map_poll_pk = pk;
     ajax_loading('#visual');
     remove_selection();
 
@@ -399,8 +401,9 @@ function init_map() {
     bounds.extend(new GLatLng(parseFloat(maxLat), parseFloat(maxLon)));
     map.setCenter(bounds.getCenter(), map.getBoundsZoomLevel(bounds));
     
-    GEvent.addListener(map,'zoomend',function()
-            {load_layers()});
+    GEvent.addListener(map,'zoomend',function() {
+        load_layers(map_poll_pk)
+    });
 
 }
 
