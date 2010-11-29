@@ -281,6 +281,8 @@ function Label(point, html, classname, pixelOffset) {
         var div = document.createElement("div");
         div.style.position = "absolute";
         div.innerHTML = '<div class="' + this.classname + '">' + this.html + '</div>';
+        div.style.cursor = 'pointer';
+        div.style.zindex = 12345;
         map.getPane(G_MAP_MAP_PANE).parentNode.appendChild(div);
         this.map_ = map;
         this.div_ = div;
@@ -325,6 +327,7 @@ function addGraph(data, x, y, color, desc) {
 
     map.addOverlay(label);
     map.addOverlay(line);
+    //line.setDraggableCursor('pointer');
     GEvent.addListener(line,'click',function(para)
         {map.openInfoWindowHtml(para,desc )});
 

@@ -296,7 +296,8 @@ def map(request):
         layer_values['colors']={}
         #set colors for category types
         i=0
-        layer_values['colors']["uncategorized"]="#ff0000"
+        if response.poll.type !='t':
+            layer_values['colors']["uncategorized"]="#ff0000"
         for cat in Category.objects.filter(poll__pk__in=pks):
             try:
                 layer_values['colors'][cat.name]=colors[i]
