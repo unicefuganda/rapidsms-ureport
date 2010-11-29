@@ -1,6 +1,6 @@
 {%  for tag in tags%}
 
-         <tt class="{{ tag.class }}" ><a onmouseover="$(this).next().attr('class', 'delete-tag')" onmouseout="$(this).next().attr('class', 'default')" rel="tag" class="tag_link" href="javascript:void(0)"> {{ tag.tag }}</a><span class="default" onmouseover="$(this).attr('class', 'delete-tag-hover')" onmouseout="$(this).attr('class', 'default')" title="remove {{ tag.tag }}" onclick="add_tag('{{ tag.tag }}')"></span></tt>
+         <tt class="{{ tag.class }}" ><a onmouseover="$(this).next().attr('class', 'delete-tag')" onmouseout="$(this).next().attr('class', 'default')" rel="tag" class="tag_link" href="javascript:void(0)"> {{ tag.tag }}</a><span class="default" onmouseover="$(this).attr('class', 'delete-tag-hover')" onmouseout="$(this).attr('class', 'default')" title="remove {{ tag.tag }}" onclick="add_tag('{{ tag.tag }}',tag_poll_pk)"></span></tt>
 
 {%  endfor %}
 <p><a onclick="load_excluded_tags()" href="javascript:void(0)">edit excluded tags</a> </p>

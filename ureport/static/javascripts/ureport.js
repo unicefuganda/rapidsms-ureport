@@ -159,9 +159,9 @@ function remove_selection() {
     });
 }
 
-
 function load_tag_cloud(pk) {
      ajax_loading('#visual');
+     tag_poll_pk=pk;
     remove_selection();
     $('#tags').show();
     var id_list = "";
@@ -195,8 +195,8 @@ function load_responses(pk) {
     });
 }
 
-function add_tag(tag){
-    var url="/ureport/add_tag/?tag="+tag +"&poll="+$("input:checked")[0].id
+function add_tag(tag,pk){
+    var url="/ureport/add_tag/?tag="+tag +"&poll="+pk;
 
     $.ajax({
         type: "GET",
@@ -204,7 +204,7 @@ function add_tag(tag){
         dataType: "json",
         success: function() {
 
-           load_tag_cloud();
+           load_tag_cloud(pk);
         }
     });
 }
