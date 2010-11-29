@@ -91,24 +91,27 @@ def tag_cloud(request):
     counts_dict={}
     used_words_list=[]
     max_count=0
-    reg_words= re.compile(r'\W+')
+    reg_words = re.compile('[^a-zA-Z]')
     dropwords=IgnoredTags.objects.filter(poll__id__in=pks).values_list('name',flat=True)
-    for response in responses:
-        if  response.eav.poll_text_value:
-            for word in [w.lower() for w in reg_words.split(response.eav.poll_text_value)]:
-                if word not in dropwords and len(word) >2:
-                    word_count.setdefault(word,0)
-                    word_count[word]+=1
-                    if  counts_dict.get(word_count[word],None):
-                        counts_dict[word_count[word]].append(word)
-                    else:
-                        counts_dict[word_count[word]]=[]
-                        counts_dict[word_count[word]].append(word)
+    all_words = ' '.join(Value.objects.filter(Response__in=responses).values_list('value_text', flat=True)).lower()
+    all_words = reg_words.split(all_words)
+    for d in dropwords:
+        drop_word = d.lower()
+        while True:
+            try:
+                all_words.remove(drop_word)
+            except ValueError:
+                break
 
-                    if word_count[word]>max_count:
-                        max_count=word_count[word]
-        else:
-            continue
+    for word in all_words:
+        if len(word) >2:
+            word_count.setdefault(word,0)
+            word_count[word]+=1
+            counts_dict.setdefault(word_count[word],[])
+            counts_dict[word_count[word]].append(word)
+
+            if word_count[word]>max_count:
+                max_count=word_count[word]
 
     tags=generate_tag_cloud(word_count,counts_dict,TAG_CLASSES,max_count)
 
