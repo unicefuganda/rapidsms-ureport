@@ -379,7 +379,7 @@ function load_layers(pk) {
                         }
                     });
                     d = max / total;
-                    var desc="<b>"+key+"</b><p>Total number of responses:"+total+"</p>";
+                    var desc="<b>"+key+"</b><p>" +category+":"+d*100+"%</p><p>Total number of responses:"+total+"</p>";
                     addGraph(d, parseFloat(value['lon']), parseFloat(value['lat']), data['colors'][category],desc);
                 }
             });
