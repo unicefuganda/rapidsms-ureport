@@ -159,9 +159,9 @@ function remove_selection() {
     });
 }
 
-
 function load_tag_cloud(pk) {
      ajax_loading('#visual');
+     tag_poll_pk=pk;
     remove_selection();
     $('#tags').show();
     var id_list = "";
@@ -195,8 +195,8 @@ function load_responses(pk) {
     });
 }
 
-function add_tag(tag){
-    var url="/ureport/add_tag/?tag="+tag +"&poll="+$("input:checked")[0].id
+function add_tag(tag,pk){
+    var url="/ureport/add_tag/?tag="+tag +"&poll="+pk;
 
     $.ajax({
         type: "GET",
@@ -204,7 +204,7 @@ function add_tag(tag){
         dataType: "json",
         success: function() {
 
-           load_tag_cloud();
+           load_tag_cloud(pk);
         }
     });
 }
@@ -281,6 +281,8 @@ function Label(point, html, classname, pixelOffset) {
         var div = document.createElement("div");
         div.style.position = "absolute";
         div.innerHTML = '<div class="' + this.classname + '">' + this.html + '</div>';
+        div.style.cursor = 'pointer';
+        div.style.zindex = 12345;
         map.getPane(G_MAP_MAP_PANE).parentNode.appendChild(div);
         this.map_ = map;
         this.div_ = div;
@@ -325,6 +327,7 @@ function addGraph(data, x, y, color, desc) {
 
     map.addOverlay(label);
     map.addOverlay(line);
+    //line.setDraggableCursor('pointer');
     GEvent.addListener(line,'click',function(para)
         {map.openInfoWindowHtml(para,desc )});
 
@@ -379,7 +382,7 @@ function load_layers(pk) {
                         }
                     });
                     d = max / total;
-                    var desc="<b>"+key+"</b><p>Total number of responses:"+total+"</p>";
+                    var desc="<b>"+key+"</b><p>" +category+":"+d*100+"%</p><p>Total number of responses:"+total+"</p>";
                     addGraph(d, parseFloat(value['lon']), parseFloat(value['lat']), data['colors'][category],desc);
                 }
             });
