@@ -14,6 +14,7 @@ from poll.models import *
 
 from rapidsms.models import Contact
 from rapidsms_httprouter.router import get_router, start_sending_mass_messages, stop_sending_mass_messages
+from djtables import Column, Table
 from rapidsms.messages.outgoing import OutgoingMessage
 
 from authsites.models import ContactSite,GroupSite
@@ -336,3 +337,19 @@ def poll_dashboard(request):
     # FIXME don't use locals
     return render_to_response("ureport/dashboard.html", locals(), context_instance=RequestContext(request))
 
+class MessageTable(Table):
+    text = Column()
+    direction = Column()
+    connection = Column(link = lambda cell: "javascript:reply('%s')" % cell.row.connection.identity)
+    status = Column()
+    date = DateColumn(format="m/d/Y H:i:s")
+    response = Column(value = lambda cell: ' '.join(["<<< %s\n" % r.text for r in cell.row.responses.all()]))
+
+    class Meta:
+        order_by = '-date'
+
+
+def message_log(request):
+    return render_to_response("ureport/message_log.html", {
+            "messages_table": MessageTable(Message.objects.filter(direction='I'), request=request),
+        }, context_instance=RequestContext(request))

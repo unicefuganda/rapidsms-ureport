@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+
+{% block title %}Message Log - {{ block.super }}{% endblock %}
+
+{% block content %}
+
+<div class="messages module">
+    <h2>Message Log</h2>
+    {{ messages_table.as_html }}
+</div>
+{% endblock %}
