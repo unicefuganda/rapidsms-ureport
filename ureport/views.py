@@ -136,6 +136,16 @@ class MessageForm(forms.Form): # pragma: no cover
     groups = forms.ModelMultipleChoiceField(required=False,queryset=Group.objects.filter(pk__in=GroupSite.objects.filter(site=Site.objects.get_current()).values_list('group', flat=True)))
     text = forms.CharField(max_length=160, required=True, widget=forms.Textarea(attrs={'cols': 30, 'rows': 5}))
 
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        contacts = cleaned_data.get('contacts')
+        groups = cleaned_data.get('groups')
+
+        if not contacts and not groups:
+            raise forms.ValidationError("You must provide a set of recipients (either a group or a contact)")
+
+        # Always return the full collection of cleaned data.
+        return cleaned_data
 
 def messaging(request):
     if request.method == 'POST':
