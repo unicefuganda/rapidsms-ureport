@@ -372,7 +372,7 @@ function load_layers(pk) {
                     var max = 0;
                     var total = 0;
                     var category = "";
-
+                    //get the total
                     $.each(value['data'], function(k, v) {
 
                         total = total + v;
@@ -382,7 +382,11 @@ function load_layers(pk) {
                         }
                     });
                     d = max / total;
-                    var desc="<b>"+key+"</b><p>" +category+":"+d*100+"%</p><p>Total number of responses:"+total+"</p>";
+                    var pop_desc="";
+                    $.each(value['data'], function(k, v) {
+                    	pop_desc=pop_desc+"<p>"+k+":"+parseInt(v*100/total)+"%</p>";	
+                    });
+                    var desc="<b>"+key+"</b>" + pop_desc+"<p>Total number of responses:"+total+"</p>";
                     addGraph(d, parseFloat(value['lon']), parseFloat(value['lat']), data['colors'][category],desc);
                 }
             });
