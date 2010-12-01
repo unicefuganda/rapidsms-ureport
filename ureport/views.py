@@ -15,6 +15,7 @@ from poll.models import *
 from rapidsms.models import Contact
 from rapidsms_httprouter.router import get_router, start_sending_mass_messages, stop_sending_mass_messages
 from djtables import Column, Table
+from djtables.column import DateColumn
 from rapidsms.messages.outgoing import OutgoingMessage
 
 from authsites.models import ContactSite,GroupSite
