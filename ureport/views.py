@@ -20,6 +20,8 @@ from rapidsms.messages.outgoing import OutgoingMessage
 
 from authsites.models import ContactSite,GroupSite
 
+from .models import MassText
+
 import re
 import bisect
 import textwrap
@@ -163,8 +165,10 @@ def messaging(request):
                 connections = Connection.objects.filter(contact__in=contact).distinct()
             recipients = 0
             start_sending_mass_messages()
+            text = form.cleaned_data['text'].replace('%', '%%')
+            mass_text = MassText.objects.create(user=request.user, text=text)
             for conn in connections:
-                text = form.cleaned_data['text'].replace('%', '%%')
+                mass_text.contacts.add(conn.contact)
                 outgoing = OutgoingMessage(conn, text)
                 router.handle_outgoing(outgoing)
                 recipients = recipients + 1
@@ -340,8 +344,7 @@ def poll_dashboard(request):
 
 class MessageTable(Table):
     text = Column()
-    direction = Column()
-    connection = Column(link = lambda cell: "javascript:reply('%s')" % cell.row.connection.identity)
+    connection = Column(link = lambda cell: "javascript:reply('%s', '%s')" % (cell.row.connection.identity, cell.row.pk))
     status = Column()
     date = DateColumn(format="m/d/Y H:i:s")
     response = Column(value = lambda cell: ' '.join(["<<< %s\n" % r.text for r in cell.row.responses.all()]))
@@ -349,8 +352,30 @@ class MessageTable(Table):
     class Meta:
         order_by = '-date'
 
+class ReplyForm(forms.Form):
+    recipient = forms.CharField(max_length=20)
+    message = forms.CharField(max_length=160, widget=forms.TextInput(attrs={'size':'60'}))
+    in_response_to = forms.ModelChoiceField(queryset=Message.objects.filter(direction='I'), widget=forms.HiddenInput())
 
 def message_log(request):
+    reply_form = ReplyForm()
+    mass_messages = [(p.question, p.start_date, p.user, p.contacts, True) for p in Poll.objects.exclude(start_date=None)] + [(m.text, m.date, m.user, m.contacts, False) for m in MassText.objects.all()]
+    mass_messages = sorted(mass_messages, key=lambda tuple: tuple[1], reverse=True)
+
+    if request.method == 'POST':
+        reply_form = ReplyForm(request.POST)
+        if reply_form.is_valid():
+            if Connection.objects.filter(identity=reply_form.cleaned_data['recipient']).count():
+                text = reply_form.cleaned_data['message']
+                conn = Connection.objects.filter(identity=reply_form.cleaned_data['recipient'])[0]
+                in_response_to = reply_form.cleaned_data['in_response_to']
+                outgoing = OutgoingMessage(conn, text)
+                get_router().handle_outgoing(outgoing, in_response_to)
+            else:
+                reply_form.errors.setdefault('short_description', ErrorList())
+                reply_form.errors['recipient'].append("This number isn't in the system")        
     return render_to_response("ureport/message_log.html", {
             "messages_table": MessageTable(Message.objects.filter(direction='I'), request=request),
+            "reply_form": reply_form,
+            "mass_messages": mass_messages,
         }, context_instance=RequestContext(request))
