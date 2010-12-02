@@ -330,7 +330,10 @@ function addGraph(data, x, y, color, desc) {
     //line.setDraggableCursor('pointer');
     GEvent.addListener(line,'click',function(para)
         {map.openInfoWindowHtml(para,desc )});
-
+    GEvent.addListener(line, "mouseover", function() {
+        $('#map').css("cursor" ,"pointer");
+    });
+    
 }
 
 var map_poll_pk;
