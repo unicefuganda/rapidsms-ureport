@@ -10,6 +10,7 @@
 
 <div class="module">
 <h2>Recipients</h2>
+{{ form.non_field_errors }}
 <label for="id_contacts">Contacts:{{ form.contacts.errors }}</label><br clear="left"/>
 {{ form.contacts }}
 <br clear="left"/>
@@ -17,8 +18,6 @@
 {{ form.groups }}
 </div>
 {% endblock %}
-
-
 
 {% block right %}
 <div class="module">
@@ -32,7 +31,6 @@
 {% endif %}
 </div>
 {% endblock %}
-
 
 {% block footer %}
 {{ block.super }}
