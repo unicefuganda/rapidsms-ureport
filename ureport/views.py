@@ -274,6 +274,7 @@ def map(request):
         pks=[eval(x) for x in list(str(pks[0]).rsplit())]
         responses=Response.objects.filter(poll__pk__in=pks)
         layer_values={}
+        layer_values['colors']={}
         all_categories=set()
         for response in responses:
             if response.message:
@@ -294,13 +295,12 @@ def map(request):
                             layer_values[loc.name].setdefault('data',{})
                             layer_values[loc.name]['data'].setdefault('uncategorized',0)
                             layer_values[loc.name]['data']['uncategorized']+=1
+                            if layer_values[loc.name]['data']['uncategorized'] >0:
+                                layer_values['colors']["uncategorized"]="#ff0000"
                     except:
                         continue
-        layer_values['colors']={}
         #set colors for category types
         i=0
-        if response.poll.type !='t':
-            layer_values['colors']["uncategorized"]="#ff0000"
         for cat in Category.objects.filter(poll__pk__in=pks):
             try:
                 layer_values['colors'][cat.name]=colors[i]
