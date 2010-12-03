@@ -1,29 +1,29 @@
 .tag1 {
-    font-size: 1.0em;
-}
-
-.tag2 {
     font-size: 1.2em;
 }
 
-.tag3 {
+.tag2 {
     font-size: 1.4em;
 }
 
-.tag4 {
-    font-size: 1.6em;
-}
-
-.tag5 {
-    font-size: 1.6em;
-}
-
-.tag6 {
+.tag3 {
     font-size: 1.8em;
 }
 
+.tag4 {
+    font-size: 2.2em;
+}
+
+.tag5 {
+    font-size: 2.6em;
+}
+
+.tag6 {
+    font-size: 3.0em;
+}
+
 .tag7 {
-    font-size: 2.0em;
+    font-size: 3.4em;
 }
 
 #tag_cloud {
@@ -66,6 +66,7 @@
 
 #tags a{
     color:#000000;
+    padding:0;
 }
 
 #tags p>a{
@@ -101,7 +102,8 @@ div#visual{
     height:14px;
     display:inline-block;
     vertical-align:top;
-    margin-top:3px;
+    margin-top:1px;
+    padding:0px;
 }
 
 .delete-tag{
@@ -114,5 +116,5 @@ div#visual{
 
 .delete-tag-hover {
     cursor:pointer;
-    background-position:0 -6px;
+    background-position:0 -4px;
 }

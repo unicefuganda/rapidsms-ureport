@@ -25,6 +25,7 @@ from .models import MassText
 import re
 import bisect
 import textwrap
+import random
 
 TAG_CLASSES=['tag1','tag2','tag3','tag4','tag5','tag6','tag7']
 
@@ -118,6 +119,8 @@ def tag_cloud(request):
                 max_count=word_count[word]
 
     tags=generate_tag_cloud(word_count,counts_dict,TAG_CLASSES,max_count)
+    #randomly shuffle tags
+    random.shuffle(tags)
 
     return render_to_response("ureport/partials/tag_cloud.html", {'tags':tags},
                               context_instance=RequestContext(request))
