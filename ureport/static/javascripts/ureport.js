@@ -363,15 +363,18 @@ function load_layers(pk) {
             map.clearOverlays();
               $('.ajax_loading').remove();
             $('#map_legend table').empty();
+            var qn='<tr><td><b>'+data['qn']+'</b></td></tr>';
+            $('#map_legend table.qn').append(qn);
             $.each(data['colors'], function(ky, vl) {
 
                 var elem = '<tr><td><span style="width:15px;height:15px;background-color:' + vl + ';float:left;display:block;margin-top:10px;"></span><td><td >' + ky + '</td></tr>';
-                $('#map_legend table').append(elem);
+                $('#map_legend table.key').append(elem);
+
 
             });
 
             $.each(data, function(key, value) {
-                if (!key.match('color')) {
+                if (!key.match('color') && !key.match('qn') ) {
                     var max = 0;
                     var total = 0;
                     var category = "";

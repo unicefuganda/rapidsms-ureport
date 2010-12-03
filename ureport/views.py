@@ -320,6 +320,8 @@ def map(request):
                         continue
         #set colors for category types
         i=0
+        poll_qn=['Qn:'+'<br>'.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?<br>' for poll in Poll.objects.filter(pk__in=pks)]
+        layer_values['qn']=poll_qn
         for cat in Category.objects.filter(poll__pk__in=pks):
             try:
                 layer_values['colors'][cat.name]=colors[i]
