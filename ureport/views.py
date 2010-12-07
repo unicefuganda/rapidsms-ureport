@@ -25,6 +25,7 @@ from .models import MassText
 import re
 import bisect
 import textwrap
+import random
 
 TAG_CLASSES=['tag1','tag2','tag3','tag4','tag5','tag6','tag7']
 
@@ -118,6 +119,8 @@ def tag_cloud(request):
                 max_count=word_count[word]
 
     tags=generate_tag_cloud(word_count,counts_dict,TAG_CLASSES,max_count)
+    #randomly shuffle tags
+    random.shuffle(tags)
 
     return render_to_response("ureport/partials/tag_cloud.html", {'tags':tags},
                               context_instance=RequestContext(request))
@@ -290,6 +293,7 @@ def map(request):
         pks=[eval(x) for x in list(str(pks[0]).rsplit())]
         responses=Response.objects.filter(poll__pk__in=pks)
         layer_values={}
+        layer_values['colors']={}
         all_categories=set()
         for response in responses:
             if response.message:
@@ -310,13 +314,14 @@ def map(request):
                             layer_values[loc.name].setdefault('data',{})
                             layer_values[loc.name]['data'].setdefault('uncategorized',0)
                             layer_values[loc.name]['data']['uncategorized']+=1
+                            if layer_values[loc.name]['data']['uncategorized'] >0:
+                                layer_values['colors']["uncategorized"]="#ff0000"
                     except:
                         continue
-        layer_values['colors']={}
         #set colors for category types
         i=0
-        if response.poll.type !='t':
-            layer_values['colors']["uncategorized"]="#ff0000"
+        poll_qn=['Qn:'+'<br>'.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?<br>' for poll in Poll.objects.filter(pk__in=pks)]
+        layer_values['qn']=poll_qn
         for cat in Category.objects.filter(poll__pk__in=pks):
             try:
                 layer_values['colors'][cat.name]=colors[i]
