@@ -14,6 +14,6 @@ class MassText(models.Model):
     contacts = models.ManyToManyField(Contact, related_name='masstexts')
     user = models.ForeignKey(User)
     date = models.DateTimeField(auto_now_add=True,null=True)
-    text = models.CharField(max_length=160)
+    text = models.TextField()
 
 
