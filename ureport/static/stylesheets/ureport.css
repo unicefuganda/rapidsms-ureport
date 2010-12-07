@@ -55,7 +55,7 @@ div.clear-hack {
 
 /* the header is based roughly upon unicef.org, with rapidsms colors */
 #header {
-    background: url("../images/header-bg.png") repeat-x;
+    background: url("/static/rapidsms/images/header-bg.png") repeat-x;
     padding-top: 23px;
     padding-bottom: 33px;
     position: relative;
@@ -141,7 +141,7 @@ div.clear-hack {
                 color: #fff;
                 display: block;
                 padding: 0 1em;
-                background: #2fa5d1 url("../images/tab-bg.png") repeat-x;
+                background: #2fa5d1 url("/static/rapidsms/images/tab-bg.png") repeat-x;
                 border-right: 1px solid #11bad0;
                 border-left: 1px solid #11bad0;
 
@@ -156,7 +156,7 @@ div.clear-hack {
             #tabs li.unread a span {
                 display: block;
                 padding-right: 21px;
-                background: url("../icons/silk/email_open.png") no-repeat 100% 50%;
+                background: url("/static/rapidsms/icons/silk/email_open.png") no-repeat 100% 50%;
             }
 
             /* always highlight the active (in the navigation sense, not
@@ -166,7 +166,7 @@ div.clear-hack {
             #tabs li.active a:hover, #page-tabs li.active a:hover,
             #tabs li.active a:focus, #page-tabs li.active a:focus {
 
-                background: #fff url("../images/tab-bg-active.png") repeat-x;
+                background: #fff url("/static/rapidsms/images/tab-bg-active.png") repeat-x;
                 text-decoration: none;
                 text-shadow: none;
                 color: #000;
@@ -184,7 +184,7 @@ div.clear-hack {
              * with the keyboard (we removed the outline, above) */
             #tabs li a:hover, #page-tabs li a:hover,
             #tabs li a:focus, #page-tabs li a:focus {
-                background-image: url("../images/tab-bg-hover.png");
+                background-image: url("/static/rapidsms/images/tab-bg-hover.png");
                 text-shadow: #cef1f5 0 0 2px;
                 text-decoration: none;
             }
