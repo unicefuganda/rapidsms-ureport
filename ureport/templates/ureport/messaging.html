@@ -14,7 +14,9 @@
 <label for="id_contacts">Contacts:{{ form.contacts.errors }}</label><br clear="left"/>
 {{ form.contacts }}
 <br clear="left"/>
-<label for="id_groups">Groups:{{ form.groups.errors }}</label><br clear="left"/>
+{% if form.groups %}
+    <label for="id_groups">Groups:{{ form.groups.errors }}</label><br clear="left"/>
+{% endif %}
 {{ form.groups }}
 </div>
 {% endblock %}

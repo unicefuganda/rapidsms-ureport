@@ -18,8 +18,6 @@ from djtables import Column, Table
 from djtables.column import DateColumn
 from rapidsms.messages.outgoing import OutgoingMessage
 
-from authsites.models import ContactSite,GroupSite
-
 from .models import MassText
 
 import re
@@ -139,18 +137,36 @@ def polls(request,template,type=None):
 
 
 class MessageForm(forms.Form): # pragma: no cover
-    contacts = forms.ModelMultipleChoiceField(required=False,queryset=Contact.objects.filter(pk__in=ContactSite.objects.filter(site=Site.objects.get_current()).values_list('contact', flat=True)))
-    groups = forms.ModelMultipleChoiceField(required=False,queryset=Group.objects.filter(pk__in=GroupSite.objects.filter(site=Site.objects.get_current()).values_list('group', flat=True)))
+#    contacts = forms.ModelMultipleChoiceField(required=False,queryset=Contact.objects.filter(pk__in=ContactSite.objects.filter(site=Site.objects.get_current()).values_list('contact', flat=True)))
+#    groups = forms.ModelMultipleChoiceField(required=False,queryset=Group.objects.filter(pk__in=GroupSite.objects.filter(site=Site.objects.get_current()).values_list('group', flat=True)))
     text = forms.CharField(max_length=480, required=True, widget=forms.Textarea(attrs={'cols': 30, 'rows': 5}))
+
+    # This may seem like a hack, but this allows time for the Contact model's
+    # default manage to be replaced at run-time.  There are many applications
+    # for that, such as filtering contacts by site_id (as is done in the
+    # authsites app, see github.com/daveycrockett/authsites).
+    # This does, however, also make the polling app independent of authsites.
+    def __init__(self, data=None, **kwargs):
+        if data:
+            forms.Form.__init__(self, data, **kwargs)
+        else:
+            forms.Form.__init__(self, **kwargs)
+        self.fields['contacts'] = forms.ModelMultipleChoiceField(queryset=Contact.objects.all(), required=False)
+        if hasattr(Contact, 'groups'):
+            self.fields['groups'] = forms.ModelMultipleChoiceField(queryset=Group.objects.all(), required=False)
 
     def clean(self):
         cleaned_data = self.cleaned_data
+
         contacts = cleaned_data.get('contacts')
-        groups = cleaned_data.get('groups')
+        using_auth = 'groups' in cleaned_data
+        if using_auth:
+            groups = cleaned_data.get('groups')
 
-        if not contacts and not groups:
-            raise forms.ValidationError("You must provide a set of recipients (either a group or a contact)")
-
+            if not contacts and not groups:
+                raise forms.ValidationError("You must provide a set of recipients (either a group or a contact)")
+        elif not contacts:
+            raise forms.ValidationError("You must provide a set of recipients")
         # Always return the full collection of cleaned data.
         return cleaned_data
 
