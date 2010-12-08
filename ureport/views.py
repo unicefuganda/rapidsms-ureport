@@ -137,8 +137,6 @@ def polls(request,template,type=None):
 
 
 class MessageForm(forms.Form): # pragma: no cover
-#    contacts = forms.ModelMultipleChoiceField(required=False,queryset=Contact.objects.filter(pk__in=ContactSite.objects.filter(site=Site.objects.get_current()).values_list('contact', flat=True)))
-#    groups = forms.ModelMultipleChoiceField(required=False,queryset=Group.objects.filter(pk__in=GroupSite.objects.filter(site=Site.objects.get_current()).values_list('group', flat=True)))
     text = forms.CharField(max_length=480, required=True, widget=forms.Textarea(attrs={'cols': 30, 'rows': 5}))
 
     # This may seem like a hack, but this allows time for the Contact model's
