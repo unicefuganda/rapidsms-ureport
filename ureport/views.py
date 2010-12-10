@@ -71,7 +71,6 @@ def add_drop_word(request):
 def delete_drop_word(request):
     tag_name=request.GET.get('tag',None)
     tags=IgnoredTags.objects.filter(name=tag_name)
-    print tags
     for tag in tags:
         tag.delete()
     return HttpResponse(simplejson.dumps("success"))
@@ -98,6 +97,8 @@ def tag_cloud(request):
     dropwords=IgnoredTags.objects.filter(poll__id__in=pks).values_list('name',flat=True)
     all_words = ' '.join(Value.objects.filter(Response__in=responses).values_list('value_text', flat=True)).lower()
     all_words = reg_words.split(all_words)
+    #poll question
+    poll_qn=['Qn:'+' '.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?' for poll in Poll.objects.filter(pk__in=pks)]
     for d in dropwords:
         drop_word = d.lower()
         while True:
@@ -120,7 +121,7 @@ def tag_cloud(request):
     #randomly shuffle tags
     random.shuffle(tags)
 
-    return render_to_response("ureport/partials/tag_cloud.html", {'tags':tags},
+    return render_to_response("ureport/partials/tag_cloud.html", {'tags':tags,'poll_qn':poll_qn[0]},
                               context_instance=RequestContext(request))
 
 
@@ -334,6 +335,7 @@ def map(request):
                         continue
         #set colors for category types
         i=0
+        #poll question
         poll_qn=['Qn:'+'<br>'.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?<br>' for poll in Poll.objects.filter(pk__in=pks)]
         layer_values['qn']=poll_qn
         for cat in Category.objects.filter(poll__pk__in=pks):
