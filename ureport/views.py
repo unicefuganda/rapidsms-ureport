@@ -420,7 +420,7 @@ def view_message_history(request, connection_id):
         total_outgoing  = Message.objects.filter(connection__contact=connection.contact).filter(direction="O").count()
     else:
         messages = Message.objects.filter(connection).order_by('-date')
-        latest_message  = Message.objects.filter(connection).filter(direction="I").latest('date').text
+        latest_message  = Message.objects.filter(connection).filter(direction="I").latest('date')
         total_incoming  = Message.objects.filter(connection).filter(direction="I").count()
         total_outgoing  = Message.objects.filter(connection).filter(direction="O").count()
     
@@ -430,13 +430,6 @@ def view_message_history(request, connection_id):
         reply_form = ReplyForm(request.POST)
         if reply_form.is_valid():
             if Connection.objects.filter(identity=reply_form.cleaned_data['recipient']).count():
-                """text = reply_form.cleaned_data['message']
-                conn = Connection.objects.filter(identity=reply_form.cleaned_data['recipient'])[0]
-                outgoing = OutgoingMessage(conn, text)
-                get_router().handle_outgoing(outgoing, in_response_to)
-            else:
-                reply_form.errors['recipient'] = "This number isn't in the system"
-            """
                 text = reply_form.cleaned_data['message']
                 conn = Connection.objects.filter(identity=reply_form.cleaned_data['recipient'])[0]
                 in_response_to = reply_form.cleaned_data['in_response_to']
