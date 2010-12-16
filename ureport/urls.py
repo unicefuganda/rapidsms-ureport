@@ -16,4 +16,5 @@ urlpatterns = patterns('',
     url(r'^ureport/add_tag/$', login_required(add_drop_word)),
     url(r'^ureport/delete_tag/$', login_required(delete_drop_word)),
     url(r'^ureport/show_excluded/$', login_required(show_ignored_tags)),
+    url(r"^ureport/(\d+)/message_history/$", login_required(view_message_history)),
 )

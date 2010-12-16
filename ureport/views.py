@@ -1,4 +1,4 @@
-from django.shortcuts import  render_to_response, redirect
+from django.shortcuts import  render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
 from django.db.models import Q
 from django import forms
@@ -17,6 +17,7 @@ from rapidsms_httprouter.router import get_router, start_sending_mass_messages, 
 from djtables import Column, Table
 from djtables.column import DateColumn
 from rapidsms.messages.outgoing import OutgoingMessage
+from rapidsms_httprouter.models import Message, DIRECTION_CHOICES, STATUS_CHOICES
 
 from .models import MassText
 
@@ -398,3 +399,60 @@ def message_log(request):
             "reply_form": reply_form,
             "mass_messages": mass_messages,
         }, context_instance=RequestContext(request))
+
+def view_message_history(request, connection_id):
+    """
+        This view lists all (sms message) correspondence between 
+        RapidSMS and a User 
+        
+    """
+    connection          = get_object_or_404(Connection, pk=connection_id)
+    direction_choices   = DIRECTION_CHOICES
+    status_choices      = STATUS_CHOICES
+    
+    if connection.contact:
+        messages        = Message.objects.filter(connection__contact=connection.contact).order_by('-date')
+        latest_message  = Message.objects.filter(connection__contact=connection.contact).filter(direction="I").latest('date').text
+        total_incoming  = Message.objects.filter(connection__contact=connection.contact).filter(direction="I").count()
+        total_outgoing  = Message.objects.filter(connection__contact=connection.contact).filter(direction="O").count()
+    else:
+        messages = Message.objects.filter(connection).order_by('-date')
+        latest_message  = Message.objects.filter(connection).filter(direction="I").latest('date').text
+        total_incoming  = Message.objects.filter(connection).filter(direction="I").count()
+        total_outgoing  = Message.objects.filter(connection).filter(direction="O").count()
+    
+    reply_form = ReplyForm()
+    #reply_form = str(reply_form).replace("\n","")
+    if request.method == 'POST':
+        reply_form = ReplyForm(request.POST)
+        if reply_form.is_valid():
+            if Connection.objects.filter(identity=reply_form.cleaned_data['recipient']).count():
+                """text = reply_form.cleaned_data['message']
+                conn = Connection.objects.filter(identity=reply_form.cleaned_data['recipient'])[0]
+                outgoing = OutgoingMessage(conn, text)
+                get_router().handle_outgoing(outgoing, in_response_to)
+            else:
+                reply_form.errors['recipient'] = "This number isn't in the system"
+            """
+                text = reply_form.cleaned_data['message']
+                conn = Connection.objects.filter(identity=reply_form.cleaned_data['recipient'])[0]
+                in_response_to = reply_form.cleaned_data['in_response_to']
+                outgoing = OutgoingMessage(conn, text)
+                get_router().handle_outgoing(outgoing, in_response_to)
+                return redirect("/ureport/%d/message_history/" % connection.pk)
+            else:
+                reply_form.errors.setdefault('short_description', ErrorList())
+                reply_form.errors['recipient'].append("This number isn't in the system")
+        
+    return render_to_response("ureport/message_history.html", {
+                        "messages": messages,
+                        "stats_latest_message": latest_message,
+                        "stats_total_incoming": total_incoming,
+                        "stats_total_outgoing": total_outgoing, 
+                        "connection": connection, 
+                        "direction_choices": direction_choices, 
+                        "status_choices": status_choices,
+                        "replyForm": reply_form
+                        }
+    , context_instance=RequestContext(request))
+    

@@ -443,12 +443,30 @@ function expand() {
     $('#poll_list').show();
 }
 
+function toggleReplyBox(anchor, phone, msg_id){
+	anchor.innerHTML = (anchor.text == '- send message -')? '- hide message box -' : '- send message -';
+	var _currentDiv = document.getElementById('replyForm_'+msg_id);
+	$(_currentDiv).append($('#formcontent'));
+	$('#formcontent').show();
+    $(_currentDiv).slideToggle(300);
+    $('#id_recipient').val(phone);
+    $('#id_in_response_to').val(msg_id);
+}
+
 $(document).ready(function() {
-      //check if a map div is defined
-      if($('#map').length > 0 ) {
-            init_map();
-      }
-      if($('.freeform').length > 0 ) {
-          load_freeform_polls();
-      }
+	  //check if a map div is defined
+	  if($('#map').length > 0 ) {
+	        init_map();
+	  }
+	  if($('.freeform').length > 0 ) {
+	      load_freeform_polls();
+	  }
+	//Accordion based messaging history list
+	$(function() {
+		$( "#accordion" ).accordion({ autoHeight: false });
+	});
+	
+	$(function() {    		
+        $('.replyForm').hide();
+	});
 });
