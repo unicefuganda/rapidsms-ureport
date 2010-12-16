@@ -414,7 +414,7 @@ def view_message_history(request, connection_id):
     
     if connection.contact:
         messages        = Message.objects.filter(connection__contact=connection.contact).order_by('-date')
-        latest_message  = Message.objects.filter(connection__contact=connection.contact).filter(direction="I").latest('date').text
+        latest_message  = Message.objects.filter(connection__contact=connection.contact).filter(direction="I").latest('date')
         total_incoming  = Message.objects.filter(connection__contact=connection.contact).filter(direction="I").count()
         total_outgoing  = Message.objects.filter(connection__contact=connection.contact).filter(direction="O").count()
     else:

@@ -1,3 +1,16 @@
+span.message_history_contact{
+	font-size:1em;
+	color:red;
+	font-weight:bold;
+}
+
+span.message_history_stats{
+	font-size:12px;
+	color:#666;
+	font-weight:bold;
+	line-height:1.4em;
+}
+
 div.message_history_small{
 	font-size:11px;
 	color:#666;
@@ -14,15 +27,6 @@ div.message_history_small p.message_history_basemessage{
 	padding:0px;
 	margin:0 0 0 22px;
 	background:#ffffff;
-}
-
-span.message_history_contact{
-	color:red;
-}
-
-span.message_history_stats{
-	font-size:12px;
-	color:#666;
 }
 
 span.message_history_outgoing{

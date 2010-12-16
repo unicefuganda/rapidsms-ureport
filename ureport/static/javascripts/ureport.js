@@ -463,7 +463,7 @@ $(document).ready(function() {
 	  }
 	//Accordion based messaging history list
 	$(function() {
-		$( "#accordion" ).accordion({ autoHeight: false });
+		$( "#accordion" ).accordion({ autoHeight: false, collapsible: true });
 	});
 	
 	$(function() {    		
