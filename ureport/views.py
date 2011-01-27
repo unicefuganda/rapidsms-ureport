@@ -366,7 +366,8 @@ def poll_dashboard(request):
 
 class MessageTable(Table):
     text = Column()
-    connection = Column(link = lambda cell: "javascript:reply('%s', '%s')" % (cell.row.connection.identity, cell.row.pk))
+    contact_information = Column(link = lambda cell: "javascript:reply('%s', '%s')" % (cell.row.connection.identity, cell.row.pk),
+                                 value = lambda cell: "%s (%s)" % (cell.row.connection.identity, cell.row.connection.contact.name if cell.row.connection.contact else ''))
     history = Column(link = lambda cell: "/ureport/%d/message_history/" % cell.row.connection.pk, value =  lambda cell: "show history")
     status = Column()
     date = DateColumn(format="m/d/Y H:i:s")
