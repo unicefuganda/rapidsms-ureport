@@ -173,6 +173,8 @@ class MessageForm(forms.Form): # pragma: no cover
 def messaging(request):
     if request.method == 'POST':
         form = MessageForm(request.POST)
+        if not (request.user and request.user.has_perm('ureport.can_message')):
+            return HttpResponse(status=403)
         if form.is_valid():
             router = get_router()
             
@@ -388,6 +390,8 @@ def message_log(request):
 
     if request.method == 'POST':
         reply_form = ReplyForm(request.POST)
+        if not (request.user and request.user.has_perm('ureport.can_message')):
+            return HttpResponse(status=403)
         if reply_form.is_valid():
             if Connection.objects.filter(identity=reply_form.cleaned_data['recipient']).count():
                 text = reply_form.cleaned_data['message']
