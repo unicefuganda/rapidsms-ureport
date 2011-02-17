@@ -414,15 +414,27 @@ def view_message_history(request, connection_id):
     status_choices      = STATUS_CHOICES
     
     if connection.contact:
-        messages        = Message.objects.filter(connection__contact=connection.contact).order_by('-date')
-        latest_message  = Message.objects.filter(connection__contact=connection.contact).filter(direction="I").latest('date')
-        total_incoming  = Message.objects.filter(connection__contact=connection.contact).filter(direction="I").count()
-        total_outgoing  = Message.objects.filter(connection__contact=connection.contact).filter(direction="O").count()
+        try:
+            messages        = Message.objects.filter(connection__contact=connection.contact).order_by('-date')
+            latest_message  = Message.objects.filter(connection__contact=connection.contact).filter(direction="I").latest('date')
+            total_incoming  = Message.objects.filter(connection__contact=connection.contact).filter(direction="I").count()
+            total_outgoing  = Message.objects.filter(connection__contact=connection.contact).filter(direction="O").count()
+        except Message.DoesNotExist:
+            messages = []
+            latest_message = []
+            total_incoming = 0
+            total_outgoing = 0
     else:
-        messages = Message.objects.filter(connection).order_by('-date')
-        latest_message  = Message.objects.filter(connection).filter(direction="I").latest('date')
-        total_incoming  = Message.objects.filter(connection).filter(direction="I").count()
-        total_outgoing  = Message.objects.filter(connection).filter(direction="O").count()
+        try:
+            messages = Message.objects.filter(connection).order_by('-date')
+            latest_message  = Message.objects.filter(connection).filter(direction="I").latest('date')
+            total_incoming  = Message.objects.filter(connection).filter(direction="I").count()
+            total_outgoing  = Message.objects.filter(connection).filter(direction="O").count()
+        except Message.DoesNotExist:
+            messages = []
+            latest_message = []
+            total_incoming = 0
+            total_outgoing = 0
     
     reply_form = ReplyForm()
     #reply_form = str(reply_form).replace("\n","")
