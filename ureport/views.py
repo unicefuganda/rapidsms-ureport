@@ -173,6 +173,8 @@ class MessageForm(forms.Form): # pragma: no cover
 def messaging(request):
     if request.method == 'POST':
         form = MessageForm(request.POST)
+        if not (request.user and request.user.has_perm('ureport.can_message')):
+            return HttpResponse(status=403)
         if form.is_valid():
             router = get_router()
             
@@ -366,7 +368,8 @@ def poll_dashboard(request):
 
 class MessageTable(Table):
     text = Column()
-    connection = Column(link = lambda cell: "javascript:reply('%s', '%s')" % (cell.row.connection.identity, cell.row.pk))
+    contact_information = Column(link = lambda cell: "javascript:reply('%s', '%s')" % (cell.row.connection.identity, cell.row.pk),
+                                 value = lambda cell: "%s (%s)" % (cell.row.connection.identity, cell.row.connection.contact.name if cell.row.connection.contact else ''))
     history = Column(link = lambda cell: "/ureport/%d/message_history/" % cell.row.connection.pk, value =  lambda cell: "show history")
     status = Column()
     date = DateColumn(format="m/d/Y H:i:s")
@@ -387,6 +390,8 @@ def message_log(request):
 
     if request.method == 'POST':
         reply_form = ReplyForm(request.POST)
+        if not (request.user and request.user.has_perm('ureport.can_message')):
+            return HttpResponse(status=403)
         if reply_form.is_valid():
             if Connection.objects.filter(identity=reply_form.cleaned_data['recipient']).count():
                 text = reply_form.cleaned_data['message']

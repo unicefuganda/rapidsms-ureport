@@ -15,5 +15,10 @@ class MassText(models.Model):
     user = models.ForeignKey(User)
     date = models.DateTimeField(auto_now_add=True,null=True)
     text = models.TextField()
+    
+    class Meta:
+        permissions = (
+            ("can_message", "Can send messages, create polls, etc"),
+        )
 
 
