@@ -4,6 +4,7 @@ from rapidsms.models import Contact
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
+from django.conf import settings
 
 class IgnoredTags(models.Model):
     poll = models.ForeignKey(Poll)
