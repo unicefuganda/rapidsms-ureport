@@ -433,7 +433,7 @@ def view_message_history(request, connection_id):
                 total_outgoing = 0
         else:
             try:
-                messages = Message.objects.filter(connection).order_by('-date')
+                messages = Message.objects.filter(connection=connection).order_by('-date')
                 latest_message  = Message.objects.filter(connection=connection).filter(direction="I").latest('date')
                 total_incoming  = Message.objects.filter(connection=connection).filter(direction="I").count()
                 total_outgoing  = Message.objects.filter(connection=connection).filter(direction="O").count()
