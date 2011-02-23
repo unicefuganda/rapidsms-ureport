@@ -19,6 +19,7 @@
             <img id="expand_img" style="float:right;display:none" src="{{ MEDIA_URL }}rapidsms/icons/silk/section_collapsed--bright.png" onclick="expand()"/>            
         </h2>
     </div>
+    {% if connection %}
     <div class="message_history"><br />
     <span class="message_history_stats">
     Latest Message: {{ stats_latest_message.text|truncatewords:15 }} - received on: {{ stats_latest_message.date|date:"D d M Y H:i:s A" }}<br />
@@ -102,6 +103,9 @@
 		{% endifequal %}
 	{% endfor %}
 	</div></div>
+    {% else %}
+        <p>The requested connection does not exist!</p>
+    {% endif %}
 	<div id="formcontent" style="display:none">
 	<form method="POST" class="sender-form"> {{ replyForm }}<input type="hidden" name="action" value="reply" /><input type="submit" value="send" /><input type="hidden" name="csrfmiddlewaretoken" value="{% with csrf_token as csrf_token_clean %}{{ csrf_token_clean }}{% endwith %}" /></form>
 	</div>

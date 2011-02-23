@@ -5,7 +5,7 @@ from django import forms
 from django.contrib.auth.models import Group
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.conf import settings
 
 from ureport.settings import *
@@ -414,37 +414,55 @@ def view_message_history(request, connection_id):
         RapidSMS and a User 
         
     """
-    connection          = get_object_or_404(Connection, pk=connection_id)
     direction_choices   = DIRECTION_CHOICES
     status_choices      = STATUS_CHOICES
-    
-    if connection.contact:
-        messages        = Message.objects.filter(connection__contact=connection.contact).order_by('-date')
-        latest_message  = Message.objects.filter(connection__contact=connection.contact).filter(direction="I").latest('date')
-        total_incoming  = Message.objects.filter(connection__contact=connection.contact).filter(direction="I").count()
-        total_outgoing  = Message.objects.filter(connection__contact=connection.contact).filter(direction="O").count()
-    else:
-        messages = Message.objects.filter(connection).order_by('-date')
-        latest_message  = Message.objects.filter(connection).filter(direction="I").latest('date')
-        total_incoming  = Message.objects.filter(connection).filter(direction="I").count()
-        total_outgoing  = Message.objects.filter(connection).filter(direction="O").count()
-    
     reply_form = ReplyForm()
-    #reply_form = str(reply_form).replace("\n","")
-    if request.method == 'POST':
-        reply_form = ReplyForm(request.POST)
-        if reply_form.is_valid():
-            if Connection.objects.filter(identity=reply_form.cleaned_data['recipient']).count():
-                text = reply_form.cleaned_data['message']
-                conn = Connection.objects.filter(identity=reply_form.cleaned_data['recipient'])[0]
-                in_response_to = reply_form.cleaned_data['in_response_to']
-                outgoing = OutgoingMessage(conn, text)
-                get_router().handle_outgoing(outgoing, in_response_to)
-                return redirect("/ureport/%d/message_history/" % connection.pk)
-            else:
-                reply_form.errors.setdefault('short_description', ErrorList())
-                reply_form.errors['recipient'].append("This number isn't in the system")
-        
+    try:
+        connection          = get_object_or_404(Connection, pk=connection_id)
+
+        if connection.contact:
+            try:
+                messages        = Message.objects.filter(connection__contact=connection.contact).order_by('-date')
+                latest_message  = Message.objects.filter(connection__contact=connection.contact).filter(direction="I").latest('date')
+                total_incoming  = Message.objects.filter(connection__contact=connection.contact).filter(direction="I").count()
+                total_outgoing  = Message.objects.filter(connection__contact=connection.contact).filter(direction="O").count()
+            except Message.DoesNotExist:
+                messages = []
+                latest_message = []
+                total_incoming = 0
+                total_outgoing = 0
+        else:
+            try:
+                messages = Message.objects.filter(connection).order_by('-date')
+                latest_message  = Message.objects.filter(connection).filter(direction="I").latest('date')
+                total_incoming  = Message.objects.filter(connection).filter(direction="I").count()
+                total_outgoing  = Message.objects.filter(connection).filter(direction="O").count()
+            except Message.DoesNotExist:
+                messages = []
+                latest_message = []
+                total_incoming = 0
+                total_outgoing = 0
+
+        #reply_form = str(reply_form).replace("\n","")
+        if request.method == 'POST':
+            reply_form = ReplyForm(request.POST)
+            if reply_form.is_valid():
+                if Connection.objects.filter(identity=reply_form.cleaned_data['recipient']).count():
+                    text = reply_form.cleaned_data['message']
+                    conn = Connection.objects.filter(identity=reply_form.cleaned_data['recipient'])[0]
+                    in_response_to = reply_form.cleaned_data['in_response_to']
+                    outgoing = OutgoingMessage(conn, text)
+                    get_router().handle_outgoing(outgoing, in_response_to)
+                    return redirect("/ureport/%d/message_history/" % connection.pk)
+                else:
+                    reply_form.errors.setdefault('short_description', ErrorList())
+                    reply_form.errors['recipient'].append("This number isn't in the system")
+    except Http404:
+        connection = None
+        messages = []
+        latest_message = []
+        total_incoming = 0
+        total_outgoing = 0
     return render_to_response("ureport/message_history.html", {
                         "messages": messages,
                         "stats_latest_message": latest_message,
