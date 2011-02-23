@@ -434,9 +434,9 @@ def view_message_history(request, connection_id):
         else:
             try:
                 messages = Message.objects.filter(connection).order_by('-date')
-                latest_message  = Message.objects.filter(connection).filter(direction="I").latest('date')
-                total_incoming  = Message.objects.filter(connection).filter(direction="I").count()
-                total_outgoing  = Message.objects.filter(connection).filter(direction="O").count()
+                latest_message  = Message.objects.filter(connection=connection).filter(direction="I").latest('date')
+                total_incoming  = Message.objects.filter(connection=connection).filter(direction="I").count()
+                total_outgoing  = Message.objects.filter(connection=connection).filter(direction="O").count()
             except Message.DoesNotExist:
                 messages = []
                 latest_message = []
