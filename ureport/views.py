@@ -188,6 +188,7 @@ def messaging(request):
             start_sending_mass_messages()
             text = form.cleaned_data['text'].replace('%', '%%')
             mass_text = MassText.objects.create(user=request.user, text=text)
+            mass_text.sites.add(Site.objects.get_current())
             for conn in connections:
                 mass_text.contacts.add(conn.contact)
                 outgoing = OutgoingMessage(conn, text)
