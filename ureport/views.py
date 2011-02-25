@@ -475,3 +475,17 @@ def view_message_history(request, connection_id):
                         }
     , context_instance=RequestContext(request))
     
+def show_timeseries(request,poll):
+    poll_obj= get_object_or_404(Poll, pk=poll)
+    responses=Response.objects.filter(poll=poll_obj)
+    start_date=poll_obj.start_date
+    end_date=poll_obj.end_date
+    interval =datetime.timedelta(minutes=60)
+    current_date=start_date
+    message_count_list=[]
+    while current_date<end_date:
+        count=responses.filter(message__date__range=(start_date,current_date)).count()
+        message_count_list.append(count)
+        current_date+=interval
+
+    return render_to_response("ureport/timeseries.html",{'counts':mark_safe(message_count_list),'start':start_date,'end':end_date,'poll':mark_safe(poll_obj.question)},context_instance=RequestContext(request))
