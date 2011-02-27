@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+{% block title %}
+    Poll Response Timeline - {{ block.super }}
+{% endblock %}
+{% block stylesheets %}
+    {{ block.super }}
+    <link type="text/css" rel="stylesheet"
+          href="{{MEDIA_URL}}ureport/css/ureport.css"/>
+{% endblock %}
+{% block javascripts %}
+    {{ block.super }}
+    <script src="{{MEDIA_URL}}ureport/javascripts/highcharts.js" type="text/javascript"></script>
+
+
+{% endblock %}
+{% block content %}
+    <script type="text/javascript ">
+    var chart;
+    var opts={
+          chart: {
+             renderTo: 'container',
+             zoomType: 'x',
+             spacingRight: 20
+          },
+           title: {
+             text: 'Variation Of Number Of Messages Received Between {{ start|date:"Y-m-d"   }}  and {{ end|date:"Y-m-d" }}'
+          },
+           subtitle: {
+             text: "For Poll: {{poll}}"
+          },
+          xAxis: {
+             type: 'datetime',
+             maxZoom:  3600000, //1 day
+             title: {
+                text: null
+             }
+          },
+          yAxis: {
+             title: {
+                text: 'Number Of Messages'
+             },
+             min: 0,
+             startOnTick: false,
+             showFirstLabel: false
+          },
+          tooltip: {
+             shared: true
+          },
+          legend: {
+             enabled: false
+          },
+          plotOptions: {
+             area: {
+                fillColor: {
+                   linearGradient: [0, 0, 0, 300],
+                   stops: [
+                      [0, 'rgba(2,0,0,0)'],
+                      [1, 'rgba("#7798BF")']
+                   ]
+                },
+                lineWidth: 1,
+                marker: {
+                   enabled: false,
+                   states: {
+                      hover: {
+                         enabled: true,
+                         radius: 5
+                      }
+                   }
+                },
+                shadow: false,
+                states: {
+                   hover: {
+                      lineWidth: 1
+                   }
+                }
+             }
+          },
+        credits:false,
+
+          series: [{
+             type: 'area',
+             name: 'Responses vs Time',
+             pointInterval: 3600 * 1000,
+             pointStart: Date.UTC({{ start|date:"Y,m,d" }}),
+             data:{{ counts }}
+
+          }]
+       };
+    $(document).ready(function() {
+         opts.tooltip.formatter=function (){
+         return '<b>'+ this.series.name +'</b><br/>'+
+                    Highcharts.dateFormat('%A, %b %e, %Y', this.x)+': '+this.y +' Responses';
+    }
+        chart = new Highcharts.Chart(opts);
+
+    });
+
+
+</script>
+    <div id="container">
+
+    </div>
+{% endblock %}
