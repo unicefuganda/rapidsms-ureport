@@ -1,0 +1,25 @@
+{% extends 'generic/partials/partial_row.html' %}
+{% block remaining_row_content %}
+    <td>{{ object.default_connection.identity }}</td>
+    <td id="row_{{ object.pk }}">{{ object.reporting_location.name }}</td>
+    <td>
+        {% if object.groups %}
+            <ul>
+                {% for group in object.groups.all %}
+                <li>{{ group.name }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    <td>0</td>
+    <td class="button_col">
+    <div class="buttons">
+            <a href="javascript:void(0)" onclick="deleteReporter('{{ object.pk }}','{{ object.name }}')">
+                <img src="{{ MEDIA_URL }}rapidsms/icons/silk/delete.png" />
+            </a>
+
+             <a href="javascript:void(0)" onclick="editReporter('{{ object.pk }}')">
+                <img src="{{ MEDIA_URL }}poll/icons/silk/pencil.png" />
+            </a>
+        </div>
+    </td>
+{% endblock %}
