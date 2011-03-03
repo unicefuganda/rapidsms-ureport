@@ -1,4 +1,3 @@
-
 function ajax_loading(element)
 {
     var t=$(element) ;
@@ -451,6 +450,25 @@ function toggleReplyBox(anchor, phone, msg_id){
     $(_currentDiv).slideToggle(300);
     $('#id_recipient').val(phone);
     $('#id_in_response_to').val(msg_id);
+}
+
+function deleteReporter(pk, name) {
+    if (confirm('Are you sure you want to remove ' + name + '?')) {
+        $('#row_' + pk).parent().remove();
+        $.post('../reporter/' + pk + '/delete/', function(data) {
+
+        });
+    }
+}
+
+function editReporter(pk) {
+    $('#row_' + pk).parent().load('../reporter/' + pk + '/edit/');
+}
+
+function submitForm(link, action, resultDiv) {
+    form = $(link).parents("form");
+    form_data = form.serializeArray();
+    resultDiv.load(action, form_data);
 }
 
 $(document).ready(function() {

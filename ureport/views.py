@@ -19,7 +19,10 @@ from djtables.column import DateColumn
 from rapidsms.messages.outgoing import OutgoingMessage
 from rapidsms_httprouter.models import Message, DIRECTION_CHOICES, STATUS_CHOICES
 
+from django.contrib.auth.decorators import login_required
+
 from .models import MassText
+from .forms import EditReporterForm
 
 import re
 import bisect
@@ -490,3 +493,39 @@ def show_timeseries(request,poll):
         current_date+=interval
 
     return render_to_response("ureport/timeseries.html",{'counts':mark_safe(message_count_list),'start':start_date,'end':end_date,'poll':mark_safe(poll_obj.question)},context_instance=RequestContext(request))
+
+
+@login_required
+def deleteReporter(request, reporter_pk):
+    reporter = get_object_or_404(Contact, pk=reporter_pk)
+    if request.method == 'POST':
+        reporter.delete()
+
+@login_required
+def editReporter(request, reporter_pk):
+    reporter = get_object_or_404(Contact, pk=reporter_pk)
+    reporter_form = EditReporterForm(instance=reporter)
+    if request.method == 'POST':
+        reporter_form = EditReporterForm(instance=reporter,
+                data=request.POST)
+        if reporter_form.is_valid():
+            reporter_form.save()
+        else:
+            return render_to_response('ureport/partials/edit_reporter.html'
+                    , {'reporter_form': reporter_form, 'reporter'
+                    : reporter},
+                    context_instance=RequestContext(request))
+        return HttpResponseRedirect('/ureport/reporter/%s/show/'
+                                    % reporter_pk)
+    else:
+        return render_to_response('ureport/partials/edit_reporter.html',
+                                  {'reporter_form': reporter_form,
+                                  'reporter': reporter},
+                                  context_instance=RequestContext(request))
+
+@login_required
+def showReporter(request, reporter_pk):
+    reporter = get_object_or_404(Contact, pk=reporter_pk)
+    return render_to_response('ureport/partials/show_reporter.html',
+                              {'reporter': reporter},
+                              context_instance=RequestContext(request))

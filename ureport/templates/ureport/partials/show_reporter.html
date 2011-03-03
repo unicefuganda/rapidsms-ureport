@@ -1,0 +1,23 @@
+<td> <input {% if selected %}checked="true"{% endif %} type="checkbox" onclick="$('#id_select_all').attr('checked', false)" name="results" value="{{ reporter.pk }}"/>{{ reporter.name }}</td>
+<td>{{ object.default_connection.identity }}</td>
+<td id="row_{{ object.pk }}">{{ object.reporting_location.name }}</td>
+<td>
+    {% if object.groups %}
+        <ul>
+            {% for group in object.groups.all %}
+            <li>{{ group.name }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</td>
+<td>0</td>
+<td class="button_col">
+    <div class="buttons">
+        <a href="javascript:void(0)" onclick="deleteReporter('{{ reporter.pk }}','{{ reporter.name }}')">
+            <img src="{{ MEDIA_URL }}rapidsms/icons/silk/delete.png" />
+        </a>
+        <a href="javascript:void(0)" onclick="editReporter('{{ reporter.pk }}')">
+            <img src="{{ MEDIA_URL }}poll/icons/silk/pencil.png" />
+        </a>
+    </div>
+</td>

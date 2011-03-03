@@ -21,4 +21,7 @@ urlpatterns = patterns('',
     url(r"^ureport/(\d+)/message_history/$", login_required(view_message_history)),
     url(r'^ureport/timeseries/(?P<poll>\d+)/$',show_timeseries),
     url(r'^ureport/reporter/$', generic, { 'model':Contact, 'filter_forms':[FreeSearchForm, DistictFilterForm, FilterGroupsForm], 'action_forms':[MassTextForm, AssignGroupForm],'objects_per_page':25, 'partial_header':'ureport/partials/contacts_header.html', 'partial_row':'ureport/partials/contacts_row.html','base_template':'ureport/contacts_base.html'}),
+    url(r'^ureport/reporter/(?P<reporter_pk>\d+)/edit', editReporter),
+    url(r'^ureport/reporter/(?P<reporter_pk>\d+)/delete', deleteReporter),
+    url(r'^ureport/reporter/(?P<reporter_pk>\d+)/show', showReporter),
 )
