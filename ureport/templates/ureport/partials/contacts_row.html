@@ -1,6 +1,6 @@
 {% extends 'generic/partials/partial_row.html' %}
 {% block remaining_row_content %}
-    <td>{{ object.name }}</td>
+    <td><a href="/ureport/{{ object.default_connection.pk }}/message_history/">{{ object.name }}</a></td>
     <td>{{ object.default_connection.identity }}</td>
     <td id="row_{{ object.pk }}">{{ object.reporting_location.name }}</td>
     <td>
