@@ -1,3 +1,4 @@
+<td>&nbsp;</td>
 <td id="row_{{ reporter.pk }}">{{ reporter_form.name }}
     {% if reporter_form.name.errors %}
         <br clear="left"/>
@@ -21,11 +22,11 @@
 <td class="button_col">
     <div class="buttons">
         <a href="javascript:void(0)"
-           onclick="$('#row_{{ reporter.pk }}').parent().load('../reporter/{{ reporter.pk }}/show/')">
+           onclick="$(this).parents('tr').load('../reporter/{{ reporter.pk }}/show/')">
             <img src="{{ MEDIA_URL }}rapidsms/icons/silk/decline.png"/>
         </a>
         <a href="javascript:void(0)"
-           onclick="submitForm(this, '../reporter/{{ reporter.pk }}/edit/', $('#row_{{ reporter.pk }}').parent())">
+           onclick="submitForm(this, '../reporter/{{ reporter.pk }}/edit/', $(this).parents('tr'))">
             <img src="{{ MEDIA_URL }}rapidsms/icons/silk/accept.png"/>
         </a>
     </div>

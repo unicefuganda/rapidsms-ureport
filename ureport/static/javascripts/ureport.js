@@ -452,17 +452,15 @@ function toggleReplyBox(anchor, phone, msg_id){
     $('#id_in_response_to').val(msg_id);
 }
 
-function deleteReporter(pk, name) {
+function deleteReporter(elem, pk, name) {
     if (confirm('Are you sure you want to remove ' + name + '?')) {
-        $('#row_' + pk).parent().remove();
-        $.post('../reporter/' + pk + '/delete/', function(data) {
-
-        });
+        $(elem).parents('tr').remove();
+        $.post('../reporter/' + pk + '/delete/', function(data) {});
     }
 }
 
-function editReporter(pk) {
-    $('#row_' + pk).parent().load('../reporter/' + pk + '/edit/');
+function editReporter(elem, pk) {
+    $(elem).parents('tr').load('../reporter/' + pk + '/edit/');
 }
 
 function submitForm(link, action, resultDiv) {

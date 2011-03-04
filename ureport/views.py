@@ -515,17 +515,12 @@ def editReporter(request, reporter_pk):
                     , {'reporter_form': reporter_form, 'reporter'
                     : reporter},
                     context_instance=RequestContext(request))
-        return HttpResponseRedirect('/ureport/reporter/%s/show/'
-                                    % reporter_pk)
+        return render_to_response('/ureport/partials/contacts_row.html',
+                                  {'object':Contact.objects.get(pk=reporter_pk)},
+                                  context_instance=RequestContext(request))
     else:
         return render_to_response('ureport/partials/edit_reporter.html',
                                   {'reporter_form': reporter_form,
                                   'reporter': reporter},
                                   context_instance=RequestContext(request))
 
-@login_required
-def showReporter(request, reporter_pk):
-    reporter = get_object_or_404(Contact, pk=reporter_pk)
-    return render_to_response('ureport/partials/show_reporter.html',
-                              {'reporter': reporter},
-                              context_instance=RequestContext(request))
