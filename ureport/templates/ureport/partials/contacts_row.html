@@ -1,7 +1,15 @@
 {% extends 'generic/partials/partial_row.html' %}
 {% block remaining_row_content %}
     <td><a href="/ureport/{{ object.default_connection.pk }}/message_history/">{{ object.name }}</a></td>
-    <td>{{ object.default_connection.identity }}</td>
+    <td>
+        <ul>
+            {% for c in object.connection_set.all %}
+                <li>
+                    {{ c.identity }}
+                </li>
+            {% endfor %}
+        </ul>
+    </td>
     <td id="row_{{ object.pk }}">{{ object.reporting_location.name }}</td>
     <td>
         {% if object.groups %}
@@ -11,7 +19,7 @@
                 {% endfor %}
             </ul>
         {% endif %}
-    <td>0</td>
+    <td>{{ object.responses.count }}</td>
     <td class="button_col">
     <div class="buttons">
             <a href="javascript:void(0)" onclick="deleteReporter(this, {{ object.pk }},'{{ object.name }}')">

@@ -309,6 +309,16 @@ div.trigger.warn {
 
 #div_filter_update {
     float:right;
+    position:absolute;
+    right: 0;
+    bottom: 0;
+}
+
+#div_filter_clear {
+    float:right;
+    position:absolute;
+    right: 0;
+    top: 3em;
 }
 
 #actions {

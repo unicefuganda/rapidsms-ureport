@@ -3,6 +3,8 @@ from ureport.views import *
 from django.contrib.auth.decorators import login_required
 from contact.forms import FreeSearchForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm
 from generic.views import generic, generic_row
+from generic.sorters import SimpleSorter
+from contact.utils import DefaultConnectionSorter
 
 urlpatterns = patterns('',
     url(r'^ureport/$', login_required(tag_view),name="tag_view"),
@@ -27,12 +29,12 @@ urlpatterns = patterns('',
         'objects_per_page':25,
         'partial_row':'ureport/partials/contacts_row.html',
         'base_template':'ureport/contacts_base.html',
-        'columns':[('Name', False, ''),
-                 ('Number', False, ''),
-                 ('Location', False, ''),
-                 ('Group(s)', False, ''),
-                 ('Total Poll Responses',False,''),
-                 ('',False,'')],
+        'columns':[('Name', True, 'name', SimpleSorter()),
+                 ('Number', True, 'number', DefaultConnectionSorter(),),
+                 ('Location',True,'reporting_location__name', SimpleSorter(),),
+                 ('Group(s)', False, '',None),
+                 ('Total Poll Responses',False,'',None),
+                 ('',False,'',None)],
     }, name="ureport-contact"),
     url(r'^ureport/reporter/(?P<reporter_pk>\d+)/edit', editReporter),
     url(r'^ureport/reporter/(?P<reporter_pk>\d+)/delete', deleteReporter),
