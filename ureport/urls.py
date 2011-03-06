@@ -1,10 +1,10 @@
 from django.conf.urls.defaults import *
 from ureport.views import *
+from ureport.utils import get_contacts
 from django.contrib.auth.decorators import login_required
 from contact.forms import FreeSearchForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm
 from generic.views import generic, generic_row
 from generic.sorters import SimpleSorter
-from contact.utils import DefaultConnectionSorter
 
 urlpatterns = patterns('',
     url(r'^ureport/$', login_required(tag_view),name="tag_view"),
@@ -24,6 +24,7 @@ urlpatterns = patterns('',
     url(r'^ureport/timeseries/(?P<poll>\d+)/$',show_timeseries),
     url(r'^ureport/reporter/$', generic, {
         'model':Contact,
+        'queryset':get_contacts,
         'filter_forms':[FreeSearchForm, DistictFilterForm, FilterGroupsForm],
         'action_forms':[MassTextForm, AssignGroupForm],
         'objects_per_page':25,
@@ -32,8 +33,8 @@ urlpatterns = patterns('',
         'columns':[('Name', True, 'name', SimpleSorter()),
                  ('Number', True, 'connection__identity', SimpleSorter(),),
                  ('Location',True,'reporting_location__name', SimpleSorter(),),
-                 ('Group(s)', False, '',None),
-                 ('Total Poll Responses',False,'',None),
+                 ('Group(s)', True, 'groups__name',SimpleSorter()),
+                 ('Total Poll Responses',True,'responses__count',SimpleSorter()),
                  ('',False,'',None)],
     }, name="ureport-contact"),
     url(r'^ureport/reporter/(?P<reporter_pk>\d+)/edit', editReporter),
