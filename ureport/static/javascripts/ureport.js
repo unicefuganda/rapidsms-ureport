@@ -460,7 +460,10 @@ function deleteReporter(elem, pk, name) {
 }
 
 function editReporter(elem, pk) {
-    $(elem).parents('tr').load('../reporter/' + pk + '/edit/');
+    overlay_loading_panel($(elem).parents('tr'));
+    $(elem).parents('tr').load('../reporter/' + pk + '/edit/', '', function() {
+        $('#div_panel_loading').hide();
+    });
 }
 
 function submitForm(link, action, resultDiv) {
