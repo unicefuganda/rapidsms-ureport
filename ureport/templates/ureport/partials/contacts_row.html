@@ -19,7 +19,7 @@
                 {% endfor %}
             </ul>
         {% endif %}
-    <td>{{ object.responses.count }}</td>
+    <td>{{ object.responses__count }}</td>
     <td class="button_col">
     <div class="buttons">
             <a href="javascript:void(0)" onclick="deleteReporter(this, {{ object.pk }},'{{ object.name }}')">
