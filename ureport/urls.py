@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from contact.forms import FreeSearchForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm
 from generic.views import generic, generic_row
 from generic.sorters import SimpleSorter
+from unregister.forms import BlacklistForm
 
 urlpatterns = patterns('',
     url(r'^ureport/$', login_required(tag_view),name="tag_view"),
@@ -26,7 +27,7 @@ urlpatterns = patterns('',
         'model':Contact,
         'queryset':get_contacts,
         'filter_forms':[FreeSearchForm, DistictFilterForm, FilterGroupsForm],
-        'action_forms':[MassTextForm, AssignGroupForm],
+        'action_forms':[MassTextForm, AssignGroupForm, BlacklistForm],
         'objects_per_page':25,
         'partial_row':'ureport/partials/contacts_row.html',
         'base_template':'ureport/contacts_base.html',

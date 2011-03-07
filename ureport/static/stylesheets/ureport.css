@@ -333,8 +333,14 @@ div.trigger.warn {
 
 #div_action_1 {
     position:absolute;
-    left: 50%;
+    left: 33%;
     top: 3em;
+}
+
+#div_action_2 {
+    position:absolute;
+    right: 0;
+    top: 9em;
 }
 
 .results ul {
