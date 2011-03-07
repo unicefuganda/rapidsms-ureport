@@ -22,7 +22,7 @@ urlpatterns = patterns('',
     url(r'^ureport/show_excluded/$', login_required(show_ignored_tags)),
     url(r"^ureport/(\d+)/message_history/$", login_required(view_message_history)),
     url(r'^ureport/timeseries/(?P<poll>\d+)/$',show_timeseries),
-    url(r'^ureport/reporter/$', generic, {
+    url(r'^ureport/reporter/$', login_required(generic), {
         'model':Contact,
         'queryset':get_contacts,
         'filter_forms':[FreeSearchForm, DistictFilterForm, FilterGroupsForm],
