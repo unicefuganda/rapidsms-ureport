@@ -357,3 +357,7 @@ div.trigger.warn {
 #id_reporting_location {
     width: 7em;
 }
+
+.filter_form_help {
+    display:none;
+}
