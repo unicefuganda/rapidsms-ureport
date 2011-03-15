@@ -431,15 +431,13 @@ function toggle_show_hide(elem)
 }
 
 function collapse() {
-    $('#collapse_img').hide();
-    $('#expand_img').show();
-    $('#poll_list').hide();
+    $('#show_results_list').show();
+    $('#object_list').hide();
 }
 
 function expand() {
-    $('#collapse_img').show();
-    $('#expand_img').hide();
-    $('#poll_list').show();
+    $('#show_results_list').hide();
+    $('#object_list').show();
 }
 
 function toggleReplyBox(anchor, phone, msg_id){

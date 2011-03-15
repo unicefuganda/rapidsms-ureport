@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import *
 from ureport.views import *
-from ureport.utils import get_contacts
+from ureport.utils import get_contacts, get_polls
 from django.contrib.auth.decorators import login_required
 from contact.forms import FreeSearchForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm
 from generic.views import generic, generic_row
@@ -17,7 +17,23 @@ urlpatterns = patterns('',
     url(r'^ureport/pie_graph/$', login_required(pie_graph),name="pie_chart"),
     url(r'^ureport/histogram/$', login_required(histogram),name="histogram"),
     url(r'^ureport/map/$', login_required(map),name="map"),
-    url(r'^ureport/dashboard/$', login_required(poll_dashboard),name="poll_dashboard"),
+    url(r'^ureport/dashboard/$', login_required(generic), {
+        'model':Poll,
+        'queryset':get_polls,
+        'filter_forms':[],
+        'action_forms':[],
+        'objects_per_page':10,
+        'partial_row':'ureport/partials/poll_row.html',
+        'partial_header':'ureport/partials/partial_header_dashboard.html',
+        'base_template':'ureport/dashboard.html',
+        'selectable':False,
+        'columns':[('Name', True, 'name', SimpleSorter()),
+                 ('Question', True, 'question', SimpleSorter(),),
+                 ('Start Date',True,'start_date', SimpleSorter(),),
+                 ('# Participants', False, 'participants',None,),
+                 ('Visuals',False,'visuals',None,),
+                 ],
+    }, name="poll_dashboard"),
     url(r'^ureport/add_tag/$', login_required(add_drop_word)),
     url(r'^ureport/delete_tag/$', login_required(delete_drop_word)),
     url(r'^ureport/show_excluded/$', login_required(show_ignored_tags)),

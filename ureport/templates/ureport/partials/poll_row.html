@@ -1,0 +1,49 @@
+<td>
+    {{object.name}}
+</td>
+<td style="width:15em">
+    <span class="poll_question">
+    {{ object.question }}
+    </span>
+</td>
+<td>
+    {{object.start_date|date:"d-M-Y"}}
+</td>
+<td>
+    {{object.contacts.count}}
+</td>
+<td style="width:25em;white-space:nowrap">
+    <div class="buttons">
+        {% if object.type == 't' or object.type == 'n' %}
+            <a href="javascript:void(0)" onclick="collapse();load_report('{{ object.pk }}')">
+                <img src="{{ MEDIA_URL }}poll/icons/silk/database_table.png" border="0"/> Report
+            </a>
+        {% endif %}
+        <a href="javascript:void(0)" onclick="collapse();load_responses('{{ object.pk }}')">
+            <img src="{{ MEDIA_URL }}poll/icons/silk/database_table.png" alt=""/>
+            Responses
+            ({{object.responses__count}})
+        </a>
+        {% if object.type == 't'  %}
+           <a href="javascript:void(0)" onclick="collapse();load_tag_cloud({{object.pk}})">
+               <img class="tags{{object.pk}}" src="{{MEDIA_URL}}ureport/images/tags.png"/>
+           </a>
+           <a href="javascript:void(0)" onclick="collapse();plot_piechart({{object.pk}})">
+               <img class="pie{{object.pk}}" src="{{MEDIA_URL}}ureport/images/pie.png"/>
+           </a>
+           <a href="javascript:void(0)" onclick="collapse();load_layers({{object.pk}})">
+               <img class="map{{object.pk}}" src="{{MEDIA_URL}}ureport/images/map.png"/>
+           </a>
+        {% endif %}
+        {% if object.type == 'l' or object.type == 'r'  %}
+           <a href="javascript:void(0)" onclick="collapse();load_tag_cloud({{object.pk}})">
+               <img class="tags{{object.pk}}" src="{{MEDIA_URL}}ureport/images/tags.png"/>
+           </a>
+        {% endif %}
+        {% if object.type == 'n' %}
+           <a href="javascript:void(0)" onclick="collapse();plot_histogram({{object.pk}})">
+               <img class="bar{{object.pk}}" src="{{MEDIA_URL}}ureport/images/bar.png"/>
+           </a>
+        {% endif %}
+    </div>
+</td>
