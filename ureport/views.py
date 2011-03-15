@@ -20,6 +20,7 @@ from rapidsms.messages.outgoing import OutgoingMessage
 from rapidsms_httprouter.models import Message, DIRECTION_CHOICES, STATUS_CHOICES
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 
 from .models import MassText
 from .forms import EditReporterForm
@@ -99,7 +100,7 @@ def tag_cloud(request):
     max_count=0
     reg_words = re.compile('[^a-zA-Z]')
     dropwords=IgnoredTags.objects.filter(poll__id__in=pks).values_list('name',flat=True)
-    all_words = ' '.join(Value.objects.filter(Response__in=responses).values_list('value_text', flat=True)).lower()
+    all_words = ' '.join(Value.objects.filter(entity_ct=ContentType.objects.get_for_model(Response), entity_id__in=responses).values_list('value_text', flat=True)).lower()
     all_words = reg_words.split(all_words)
     #poll question
     poll_qn=['Qn:'+' '.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?' for poll in Poll.objects.filter(pk__in=pks)]
