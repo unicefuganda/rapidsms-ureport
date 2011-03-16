@@ -8,7 +8,7 @@ from django.utils.safestring import mark_safe
 from django.http import HttpResponse, Http404
 from django.conf import settings
 
-from ureport.settings import *
+from ureport.settings import colors, drop_words, tag_cloud_size
 from ureport.models import IgnoredTags
 from poll.models import *
 
@@ -61,7 +61,7 @@ def generate_tag_cloud(words,counts_dict,tag_classes,max_count):
                 k['class']=klass
                 tags.append(k)
                 used_words_list.append(word)
-                if (len(used_words_list)==Tag_Cloud_Words):
+                if (len(used_words_list)==tag_cloud_size):
                     return tags
 
     return tags
@@ -99,7 +99,7 @@ def tag_cloud(request):
     used_words_list=[]
     max_count=0
     reg_words = re.compile('[^a-zA-Z]')
-    dropwords=IgnoredTags.objects.filter(poll__id__in=pks).values_list('name',flat=True)
+    dropwords=IgnoredTags.objects.filter(poll__id__in=pks).values_list('name',flat=True) + drop_words 
     all_words = ' '.join(Value.objects.filter(entity_ct=ContentType.objects.get_for_model(Response), entity_id__in=responses).values_list('value_text', flat=True)).lower()
     all_words = reg_words.split(all_words)
     #poll question
@@ -304,20 +304,13 @@ def histogram(request):
 
 
 def map(request):
-    colors=['#4572A7', '#AA4643', '#89A54E', '#80699B', '#3D96AE', '#DB843D', '#92A8CD', '#A47D7C', '#B5CA92']
     polls=Poll.objects.all()
-    map_key = settings.MAP_KEY
-    Map_urls = mark_safe(simplejson.dumps(MAP_URLS))
-    map_types = mark_safe(simplejson.dumps(MAP_TYPES))
-    (minLon, maxLon, minLat, maxLat) = (mark_safe(min_lat),
-            mark_safe(max_lat), mark_safe(min_lon), mark_safe(max_lon))
     if request.GET.get('pks', None):
         pks=request.GET.get('pks', '').split('+')
         pks=[eval(x) for x in list(str(pks[0]).rsplit())]
         responses=Response.objects.filter(poll__pk__in=pks)
         layer_values={}
         layer_values['colors']={}
-        all_categories=set()
         for response in responses:
             if response.message:
                 loc=response.message.connection.contact.reporting_location
@@ -353,9 +346,9 @@ def map(request):
             except IndexError:
                 layer_values['colors'][cat.name]='#000000'
 
-        return HttpResponse(mark_safe(simplejson.dumps(layer_values)) )
-    # FIXME don't use locals
-    return render_to_response("ureport/map.html", locals(), context_instance=RequestContext(request))
+        return HttpResponse(mark_safe(simplejson.dumps(layer_values)))
+
+    return render_to_response("ureport/map.html", {'polls':polls}, context_instance=RequestContext(request))
 
 class MessageTable(Table):
     text = Column()

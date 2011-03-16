@@ -6,40 +6,32 @@
                 <td>Poll</td>
                 <td>Type</td>
                 <td>Number Of Responses</td>
-                <td></td>
             </tr>
             </thead>
             {% for poll in polls %}
-
                 <tr>
-                    <td>{{ poll.name }}</td>
                     <td>
-
-
+                        <a href="javascript:void(0)" onclick="load_layers({{ poll.pk }})">
+                            {{ poll.name }}
+                        </a>
+                    </td>
+                    <td>
                         {% if poll.type == 't' %}
                             Freeform
                         {% endif %}
-
                         {% if poll.type == 'n' %}
                             Numeric
                         {% endif %}
-
                         {% if poll.type == 'l' %}
                             Location
                         {% endif %}
                         {% if poll.type == 'r' %}
                             Registration
                         {% endif %}
-
-
                     </td>
                     <td>{{ poll.responses.count }}</td>
-                    <td><input type="checkbox" onClick="load_layers()" id="{{ poll.pk }}" name="""/></td></tr>
-
-
-
+                </tr>
             {% endfor %}
         </table>
-
     {% endif %}
 </div>
