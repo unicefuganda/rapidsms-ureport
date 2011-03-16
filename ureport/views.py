@@ -99,7 +99,7 @@ def tag_cloud(request):
     used_words_list=[]
     max_count=0
     reg_words = re.compile('[^a-zA-Z]')
-    dropwords=IgnoredTags.objects.filter(poll__id__in=pks).values_list('name',flat=True) + drop_words 
+    dropwords = list(IgnoredTags.objects.filter(poll__id__in=pks).values_list('name',flat=True)) + drop_words 
     all_words = ' '.join(Value.objects.filter(entity_ct=ContentType.objects.get_for_model(Response), entity_id__in=responses).values_list('value_text', flat=True)).lower()
     all_words = reg_words.split(all_words)
     #poll question
