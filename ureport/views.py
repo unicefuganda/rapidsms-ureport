@@ -141,72 +141,6 @@ def polls(request,template,type=None):
         polls=Poll.objects.all()
     return render_to_response(template, {'polls':polls}, context_instance=RequestContext(request))
 
-
-class MessageForm(forms.Form): # pragma: no cover
-    text = forms.CharField(max_length=480, required=True, widget=forms.Textarea(attrs={'cols': 30, 'rows': 5}))
-
-    # This may seem like a hack, but this allows time for the Contact model's
-    # default manage to be replaced at run-time.  There are many applications
-    # for that, such as filtering contacts by site_id (as is done in the
-    # authsites app, see github.com/daveycrockett/authsites).
-    # This does, however, also make the polling app independent of authsites.
-    def __init__(self, data=None, **kwargs):
-        if data:
-            forms.Form.__init__(self, data, **kwargs)
-        else:
-            forms.Form.__init__(self, **kwargs)
-        self.fields['contacts'] = forms.ModelMultipleChoiceField(queryset=Contact.objects.all(), required=False)
-        if hasattr(Contact, 'groups'):
-            self.fields['groups'] = forms.ModelMultipleChoiceField(queryset=Group.objects.all(), required=False)
-
-    def clean(self):
-        cleaned_data = self.cleaned_data
-
-        contacts = cleaned_data.get('contacts')
-        using_auth = 'groups' in cleaned_data
-        if using_auth:
-            groups = cleaned_data.get('groups')
-
-            if not contacts and not groups:
-                raise forms.ValidationError("You must provide a set of recipients (either a group or a contact)")
-        elif not contacts:
-            raise forms.ValidationError("You must provide a set of recipients")
-        # Always return the full collection of cleaned data.
-        return cleaned_data
-
-def messaging(request):
-    if request.method == 'POST':
-        form = MessageForm(request.POST)
-        if not (request.user and request.user.has_perm('ureport.can_message')):
-            return HttpResponse(status=403)
-        if form.is_valid():
-            router = get_router()
-            
-            contacts = form.cleaned_data['contacts']
-            groups = form.cleaned_data['groups']
-            if hasattr(Contact, 'groups'):
-                connections = Connection.objects.filter(Q(contact__in=contacts) | Q(contact__groups__in=groups)).distinct()
-            else:
-                connections = Connection.objects.filter(contact__in=contact).distinct()
-            recipients = 0
-            start_sending_mass_messages()
-            text = form.cleaned_data['text'].replace('%', '%%')
-            mass_text = MassText.objects.create(user=request.user, text=text)
-            mass_text.sites.add(Site.objects.get_current())
-            for conn in connections:
-                mass_text.contacts.add(conn.contact)
-                outgoing = OutgoingMessage(conn, text)
-                router.handle_outgoing(outgoing)
-                recipients = recipients + 1
-            stop_sending_mass_messages()
-            return render_to_response("ureport/messaging.html", {'recipients':recipients, 'form':MessageForm()}, context_instance=RequestContext(request))
-        else:
-            return render_to_response("ureport/messaging.html", {'form':form}, context_instance=RequestContext(request))
-    else:
-        form = MessageForm()
-        return render_to_response("ureport/messaging.html", {'form':MessageForm()}, context_instance=RequestContext(request))
-
-
 def pie_graph(request):
     """
         view for pie-chart
@@ -245,7 +179,6 @@ def pie_graph(request):
         return HttpResponse(mark_safe(simplejson.dumps(plottable_data)) )
 
     return render_to_response("ureport/pie_graph.html", {'polls':all_polls}, context_instance=RequestContext(request))
-
 
 def histogram(request):
     """
@@ -350,47 +283,6 @@ def map(request):
 
     return render_to_response("ureport/map.html", {'polls':polls}, context_instance=RequestContext(request))
 
-class MessageTable(Table):
-    text = Column()
-    contact_information = Column(link = lambda cell: "javascript:reply('%s', '%s')" % (cell.row.connection.identity, cell.row.pk),
-                                 value = lambda cell: "%s (%s)" % (cell.row.connection.identity, cell.row.connection.contact.name if cell.row.connection.contact else ''))
-    history = Column(link = lambda cell: "/ureport/%d/message_history/" % cell.row.connection.pk, value =  lambda cell: "show history")
-    status = Column()
-    date = DateColumn(format="m/d/Y H:i:s")
-    response = Column(value = lambda cell: ' '.join(["<<< %s\n" % r.text for r in cell.row.responses.all()]))
-
-    class Meta:
-        order_by = '-date'
-
-class ReplyForm(forms.Form):
-    recipient = forms.CharField(max_length=20)
-    message = forms.CharField(max_length=160, widget=forms.TextInput(attrs={'size':'60'}))
-    in_response_to = forms.ModelChoiceField(queryset=Message.objects.filter(direction='I'), widget=forms.HiddenInput())
-
-def message_log(request):
-    reply_form = ReplyForm()
-    mass_messages = [(p.question, p.start_date, p.user, p.contacts, True) for p in Poll.objects.exclude(start_date=None)] + [(m.text, m.date, m.user, m.contacts, False) for m in MassText.objects.all()]
-    mass_messages = sorted(mass_messages, key=lambda tuple: tuple[1], reverse=True)
-
-    if request.method == 'POST':
-        reply_form = ReplyForm(request.POST)
-        if not (request.user and request.user.has_perm('ureport.can_message')):
-            return HttpResponse(status=403)
-        if reply_form.is_valid():
-            if Connection.objects.filter(identity=reply_form.cleaned_data['recipient']).count():
-                text = reply_form.cleaned_data['message']
-                conn = Connection.objects.filter(identity=reply_form.cleaned_data['recipient'])[0]
-                in_response_to = reply_form.cleaned_data['in_response_to']
-                outgoing = OutgoingMessage(conn, text)
-                get_router().handle_outgoing(outgoing, in_response_to)
-            else:
-                reply_form.errors.setdefault('short_description', ErrorList())
-                reply_form.errors['recipient'].append("This number isn't in the system")        
-    return render_to_response("ureport/message_log.html", {
-            "messages_table": MessageTable(Message.objects.filter(direction='I'), request=request),
-            "reply_form": reply_form,
-            "mass_messages": mass_messages,
-        }, context_instance=RequestContext(request))
 
 def view_message_history(request, connection_id):
     """
