@@ -23,7 +23,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 
 from .models import MassText
-from .forms import EditReporterForm
+from .forms import EditReporterForm, ReplyForm
 
 import re
 import bisect

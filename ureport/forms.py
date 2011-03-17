@@ -14,3 +14,8 @@ class EditReporterForm(forms.ModelForm):
 
     class Meta:
         model=Contact
+
+class ReplyForm(forms.Form):        
+    recipient = forms.CharField(max_length=20)
+    message = forms.CharField(max_length=160, widget=forms.TextInput(attrs={'size':'60'}))
+    in_response_to = forms.ModelChoiceField(queryset=Message.objects.filter(direction='I'), widget=forms.HiddenInput())
