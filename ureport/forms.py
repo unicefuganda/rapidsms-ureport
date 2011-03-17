@@ -6,6 +6,7 @@ from rapidsms.messages.outgoing import OutgoingMessage
 from generic.forms import ActionForm, FilterForm
 from poll.models import Poll, Response
 from mptt.forms import TreeNodeChoiceField
+from rapidsms_httprouter.models import Message
 
 class EditReporterForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
