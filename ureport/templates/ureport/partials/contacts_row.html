@@ -1,6 +1,14 @@
 {% extends 'generic/partials/partial_row.html' %}
 {% block remaining_row_content %}
-    <td><a href="/ureport/{{ object.default_connection.pk }}/message_history/">{{ object.name }}</a></td>
+    <td>
+        {% if object.default_connection %}
+            <a href="/ureport/{{ object.default_connection.pk }}/message_history/">
+        {% endif %}
+        {{ object.name }}
+        {% if object.default_connection %}
+            </a>
+        {% endif %}
+    </td>
     <td>
         <ul>
             {% for c in object.connection_set.all %}
