@@ -264,6 +264,15 @@ function plot_histogram(pk) {
     });
 }
 
+function load_timeseries(pk) {
+    remove_selection();
+    $('#poll_timeseries').show();
+    $('img.series'+pk).addClass('selected');
+    var id_list = "";
+    var url = "/ureport/timeseries/" + pk + "/";
+    $('#poll_timeseries').load(url);
+}
+
 //function to create label
 function Label(point, html, classname, pixelOffset) {
     // Mandatory parameters

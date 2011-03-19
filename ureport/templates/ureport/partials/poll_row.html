@@ -25,25 +25,28 @@
             ({{object.responses__count}})
         </a>
         {% if object.type == 't'  %}
-           <a href="javascript:void(0)" onclick="collapse();load_tag_cloud({{object.pk}})">
-               <img class="tags{{object.pk}}" src="{{MEDIA_URL}}ureport/images/tags.png"/>
-           </a>
-           <a href="javascript:void(0)" onclick="collapse();plot_piechart({{object.pk}})">
-               <img class="pie{{object.pk}}" src="{{MEDIA_URL}}ureport/images/pie.png"/>
-           </a>
-           <a href="javascript:void(0)" onclick="collapse();load_layers({{object.pk}})">
-               <img class="map{{object.pk}}" src="{{MEDIA_URL}}ureport/images/map.png"/>
-           </a>
+            <a href="javascript:void(0)" onclick="collapse();load_tag_cloud({{object.pk}})">
+                <img class="tags{{object.pk}}" src="{{MEDIA_URL}}ureport/images/tags.png"/>
+            </a>
+            <a href="javascript:void(0)" onclick="collapse();plot_piechart({{object.pk}})">
+                <img class="pie{{object.pk}}" src="{{MEDIA_URL}}ureport/images/pie.png"/>
+            </a>
+            <a href="javascript:void(0)" onclick="collapse();load_layers({{object.pk}})">
+                <img class="map{{object.pk}}" src="{{MEDIA_URL}}ureport/images/map.png"/>
+            </a>
         {% endif %}
         {% if object.type == 'l' or object.type == 'r'  %}
-           <a href="javascript:void(0)" onclick="collapse();load_tag_cloud({{object.pk}})">
-               <img class="tags{{object.pk}}" src="{{MEDIA_URL}}ureport/images/tags.png"/>
-           </a>
+            <a href="javascript:void(0)" onclick="collapse();load_tag_cloud({{object.pk}})">
+                <img class="tags{{object.pk}}" src="{{MEDIA_URL}}ureport/images/tags.png"/>
+            </a>
         {% endif %}
         {% if object.type == 'n' %}
-           <a href="javascript:void(0)" onclick="collapse();plot_histogram({{object.pk}})">
-               <img class="bar{{object.pk}}" src="{{MEDIA_URL}}ureport/images/bar.png"/>
-           </a>
+            <a href="javascript:void(0)" onclick="collapse();plot_histogram({{object.pk}})">
+                <img class="bar{{object.pk}}" src="{{MEDIA_URL}}ureport/images/bar.png"/>
+            </a>
         {% endif %}
+        <a href="javascript:void(0)" onclick="collapse();load_timeseries({{object.pk}})">
+           <img class="series{{object.pk}}" src="{{MEDIA_URL}}ureport/images/timeseries.png"/>
+        </a>
     </div>
 </td>
