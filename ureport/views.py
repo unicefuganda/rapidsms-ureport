@@ -356,8 +356,7 @@ def show_timeseries(request,poll):
     responses=Response.objects.filter(poll=poll_obj)
     start_date=poll_obj.start_date
     end_date=poll_obj.end_date or datetime.datetime.now()
-    print "START DATE %s" % str(start_date)
-    print "END DATE %s" % str(end_date)
+    poll = poll_obj.question.replace('"', '\\"')
     interval =datetime.timedelta(minutes=60)
     current_date=start_date
     message_count_list=[]
@@ -366,7 +365,7 @@ def show_timeseries(request,poll):
         message_count_list.append(count)
         current_date+=interval
 
-    return render_to_response("ureport/partials/timeseries.html",{'counts':mark_safe(message_count_list),'start':start_date,'end':end_date,'poll':mark_safe(poll_obj.question)},context_instance=RequestContext(request))
+    return render_to_response("ureport/partials/timeseries.html",{'counts':mark_safe(message_count_list),'start':start_date,'end':end_date,'poll':mark_safe(poll)},context_instance=RequestContext(request))
 
 
 @login_required
