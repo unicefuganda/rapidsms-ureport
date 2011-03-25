@@ -1,0 +1,16 @@
+{% extends "generic/base.html" %}
+{% block title %}
+    Polls - {{ block.super }}
+{% endblock %}
+{% block stylesheets %}
+    {{ block.super }}
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}poll/stylesheets/style.css" />
+{% endblock %}
+{% block content %}
+{{ block.super }}
+<div class="buttons"> 
+    <a href="/polls/new/" style="float:left"> 
+      <img border="0" src="/static/rapidsms/icons/silk/add.png" alt=""/>Add New Poll
+    </a> 
+</div>
+{% endblock %}

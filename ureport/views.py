@@ -22,6 +22,8 @@ from rapidsms_httprouter.models import Message, DIRECTION_CHOICES, STATUS_CHOICE
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 
+from generic.views import generic
+
 from .models import MassText
 from .forms import EditReporterForm, ReplyForm
 
@@ -397,3 +399,23 @@ def editReporter(request, reporter_pk):
                                   'reporter': reporter},
                                   context_instance=RequestContext(request))
 
+@login_required
+def view_responses(req, poll_id):
+    poll = get_object_or_404(Poll,pk=poll_id)
+
+    responses = poll.responses.all().order_by('-date')
+    typedef = Poll.TYPE_CHOICES[poll.type]
+    columns = [('Sender', False, 'sender', None)]
+    for column, style_class in typedef['report_columns']:
+        columns.append((column, False, style_class, None))
+
+    return generic(req,
+        model=Response,
+        queryset=responses,
+        objects_per_page=25,
+        selectable=False,
+        partial_base='ureport/partials/poll_partial_base.html',
+        row_base=typedef['view_template'],
+        columns=columns,
+        partial_row='ureport/partials/response_row.html'
+    )

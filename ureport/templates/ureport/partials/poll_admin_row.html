@@ -1,0 +1,24 @@
+<td>
+    {{ object.name }}
+</td>
+<td>
+    {{ object.question }}
+</td>
+<td>{% if object.start_date %}{{ object.start_date|date:"d/m/Y" }}{% endif %}</td>
+<td>{% if object.end_date %}{{ object.end_date|date:"d/m/Y" }}{% else %}Open{% endif %}</td>
+<td style="white-space:nowrap;width:25em">
+    <a style="padding-top:7px;float:right" href="javascript:void(0);" onclick="deletePoll('{{object.pk}}','{{object.question|addslashes}}');"><img border="0" src="{{ MEDIA_URL }}rapidsms/icons/silk/delete.png"/></a>
+    <div class="buttons">
+        {% if object.responses.all.count %}
+            <a href="/polls/{{ object.pk }}/report/">
+                <img src="{{ MEDIA_URL }}poll/icons/silk/zoom.png" alt=""/> Report
+            </a>
+            <a href="/ureport/{{ object.pk }}/responses/">
+                <img src="{{ MEDIA_URL }}poll/icons/silk/database_table.png" alt=""/> Responses ({{ object.responses.all.count }})
+            </a>
+        {% endif %}
+        <a href="/polls/{{ object.pk }}/view/">
+            <img src="{{ MEDIA_URL }}poll/icons/silk/bullet_wrench.png" alt=""/> Edit
+        </a>
+    </div>
+<td>
