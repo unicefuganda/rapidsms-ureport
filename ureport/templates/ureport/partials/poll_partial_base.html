@@ -1,26 +1,25 @@
 {% extends "generic/partials/partial_base.html" %}
 {% block list_wrapper %}
     <script type="text/javascript">
-        function deleteResponse(link, response_id) {
+        function deleteResponse(link, url) {
             if (confirm("Are you sure you want to remove this response from the poll?")) {
-                $.post('/polls/responses/' + response_id + "/delete/", function(data) {
+                $.post(url, function(data) {
                     $(link).parents("tr").remove();
                 }); 
             }
         }
           
-        function cancelResponse(link, response_id) {
-            $(link).parents("tr").load("/polls/responses/" + response_id + "/view/");
+        function cancelResponse(link, url) {
+            $(link).parents("tr").load(url);
         }
         
-        function saveResponse(link, response_id) {
+        function saveResponse(link, url) {
             form = $(link).parents(".form");
             form_data = form.serializeArray();
-            $(link).parents("tr").load('/polls/responses/' + response_id + '/edit/', form_data);
+            $(link).parents("tr").load(url, form_data);
         }
         
-        function editResponse(link, response_id) {
-            url = "/polls/responses/" +  response_id + "/edit/";
+        function editResponse(link, url) {
             $(link).parents("tr").load(url);
         }
     </script>

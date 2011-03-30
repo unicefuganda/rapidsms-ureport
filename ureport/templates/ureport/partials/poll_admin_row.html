@@ -10,14 +10,14 @@
     <a style="padding-top:7px;float:right" href="javascript:void(0);" onclick="deletePoll('{{object.pk}}','{{object.question|addslashes}}');"><img border="0" src="{{ MEDIA_URL }}rapidsms/icons/silk/delete.png"/></a>
     <div class="buttons">
         {% if object.responses.all.count %}
-            <a href="/polls/{{ object.pk }}/report/">
+            <a href="{% url poll-report object.pk %}">
                 <img src="{{ MEDIA_URL }}poll/icons/silk/zoom.png" alt=""/> Report
             </a>
             <a href="/ureport/{{ object.pk }}/responses/">
                 <img src="{{ MEDIA_URL }}poll/icons/silk/database_table.png" alt=""/> Responses ({{ object.responses.all.count }})
             </a>
         {% endif %}
-        <a href="/polls/{{ object.pk }}/view/">
+        <a href="{% url poll.views.view_poll object.pk %}">
             <img src="{{ MEDIA_URL }}poll/icons/silk/bullet_wrench.png" alt=""/> Edit
         </a>
     </div>
