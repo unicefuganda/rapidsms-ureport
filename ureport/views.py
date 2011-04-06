@@ -7,6 +7,7 @@ from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.http import HttpResponse, Http404
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 
 from ureport.settings import colors, drop_words, tag_cloud_size
 from ureport.models import IgnoredTags
@@ -37,7 +38,7 @@ TAG_CLASSES=['tag1','tag2','tag3','tag4','tag5','tag6','tag7']
 def index(request):
     return render_to_response("ureport/index.html", {}, RequestContext(request)) 
 
-
+@login_required
 def tag_view(request):
     return render_to_response("ureport/tag_cloud.html", context_instance=RequestContext(request))
 
@@ -68,13 +69,14 @@ def generate_tag_cloud(words,counts_dict,tag_classes,max_count):
 
     return tags
 
-
+@login_required
 def add_drop_word(request):
     tag_name=request.GET.get('tag',None)
     poll_pk=int(request.GET.get('poll',1))
     IgnoredTags.objects.create(name=tag_name,poll=Poll.objects.get(pk=poll_pk))
     return HttpResponse(simplejson.dumps("success"))
 
+@login_required
 def delete_drop_word(request):
     tag_name=request.GET.get('tag',None)
     tags=IgnoredTags.objects.filter(name=tag_name)
@@ -82,11 +84,12 @@ def delete_drop_word(request):
         tag.delete()
     return HttpResponse(simplejson.dumps("success"))
 
+@login_required
 def show_ignored_tags(request):
     tags=IgnoredTags.objects.all()
     return render_to_response("ureport/partials/ignored_tags.html", {'tags':tags},context_instance=RequestContext(request))
 
-
+@login_required
 def tag_cloud(request):
     """
         generates a tag cloud
@@ -131,7 +134,7 @@ def tag_cloud(request):
     return render_to_response("ureport/partials/tag_cloud.html", {'tags':tags,'poll_qn':poll_qn[0]},
                               context_instance=RequestContext(request))
 
-
+@login_required
 def polls(request,template,type=None):
     """
         view for freeform polls
@@ -143,6 +146,7 @@ def polls(request,template,type=None):
         polls=Poll.objects.all()
     return render_to_response(template, {'polls':polls}, context_instance=RequestContext(request))
 
+@login_required
 def pie_graph(request):
     """
         view for pie-chart
@@ -182,6 +186,7 @@ def pie_graph(request):
 
     return render_to_response("ureport/pie_graph.html", {'polls':all_polls}, context_instance=RequestContext(request))
 
+@login_required
 def histogram(request):
     """
          view for numeric polls
@@ -237,7 +242,7 @@ def histogram(request):
 
     return render_to_response("ureport/histogram.html", {'polls':all_polls}, context_instance=RequestContext(request))
 
-
+@login_required
 def map(request):
     polls=Poll.objects.all()
     if request.GET.get('pks', None):
@@ -285,7 +290,7 @@ def map(request):
 
     return render_to_response("ureport/map.html", {'polls':polls}, context_instance=RequestContext(request))
 
-
+@login_required
 def view_message_history(request, connection_id):
     """
         This view lists all (sms message) correspondence between 
@@ -353,8 +358,9 @@ def view_message_history(request, connection_id):
                         }
     , context_instance=RequestContext(request))
     
-def show_timeseries(request,poll):
-    poll_obj= get_object_or_404(Poll, pk=poll)
+@login_required
+def show_timeseries(request,poll_id):
+    poll_obj= get_object_or_404(Poll, pk=poll_id)
     responses=Response.objects.filter(poll=poll_obj)
     start_date=poll_obj.start_date
     end_date=poll_obj.end_date or datetime.datetime.now()
