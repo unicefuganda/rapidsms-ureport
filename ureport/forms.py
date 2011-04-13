@@ -28,15 +28,15 @@ class PollModuleForm(ModuleForm):
         ('map','Map'),
         ('histogram','Histogram'),
         ('pie_chart','Pie chart'),
-        ('views.ureport.tag_cloud','Tag cloud'),
+        ('ureport.views.tag_cloud','Tag cloud'),
         ('poll-responses-module','Responses list'),
         ('poll-report-module','Tabular report'),
     ), label="Poll visualization")
     poll = forms.ModelChoiceField(queryset=Poll.objects.all())
 
-    def setModuleParams(self, dashboard, module=None):
+    def setModuleParams(self, dashboard, module=None, title=None):
         viz_type = self.cleaned_data['viz_type']
-        module = module or self.createModule(dashboard, viz_type)
+        module = module or self.createModule(dashboard, viz_type, title=title)
         is_url_param = viz_type in ['ureport.views.show_timeseries','poll-responses-module','poll-report-module']
         if is_url_param:
             param_name = 'poll_id'
