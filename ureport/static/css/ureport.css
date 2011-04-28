@@ -52,8 +52,12 @@
     min-height:300px;
 
 }
-#map{
+.mapmodule {
+    height:400px;
+    width:100%;
+}
 
+#map {
     height:400px;
     width:100%;
 }
@@ -121,4 +125,36 @@ div#visual{
 .delete-tag-hover {
     cursor:pointer;
     background-position:0 -4px;
+}
+
+#columns #column0 {
+    float: left;
+    width: 28%;
+    min-height: 400px;
+    height: auto !important;
+    height: 400px;
+}
+
+#columns #column1 {
+    float: left;
+    width: 68%;
+    min-height: 400px;
+    height: auto !important;
+    height: 400px;
+}
+
+#columns #column0 .widget {
+    margin: 0px 0px 0px 0px;
+    padding: 2px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+
+}
+
+#columns #column1 .widget {
+    margin: 0px 0px 0 0;
+    padding: 2px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+
 }

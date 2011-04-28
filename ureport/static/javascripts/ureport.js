@@ -131,9 +131,9 @@ var pie_opts = {
         }
     ]
 }
-function plot_pie(data) {
+function plot_pie(data, divstr) {
     var chart;
-
+    pie_opts.chart.renderTo = 'pie' + divstr;
     pie_opts.series[0].data = data['data'];
     pie_opts.subtitle.text = data['poll_names'];
     pie_opts.series[0].data[0] = {'name':data['data'][0][0],'y':data['data'][0][1],sliced: true,selected: true};
@@ -230,9 +230,13 @@ function load_excluded_tags() {
 }
 
 function plot_piechart(pk) {
-    ajax_loading('#visual');
+    plot_piechart_module(pk, '');
+}
+
+function plot_piechart(pk, divstr) {
+    ajax_loading('#visual' + divstr);
     remove_selection();
-    $('#pie').show();
+    $('#pie' + divstr).show();
     $('img.pie'+pk).addClass('selected');
     var id_list = "";
     var url = "/ureport/pie_graph/" + "?pks=+" + pk;
@@ -242,7 +246,7 @@ function plot_piechart(pk) {
         dataType: "json",
         success: function(data) {
             $('.ajax_loading').remove();
-            plot_pie(data);
+            plot_pie(data, divstr);
 
         }
     });
@@ -269,7 +273,7 @@ function load_timeseries(pk) {
     $('#poll_timeseries').show();
     $('img.series'+pk).addClass('selected');
     var id_list = "";
-    var url = "/ureport/timeseries/" + pk + "/";
+    var url = "/ureport/timeseries/?pks=+" + pk;
     $('#poll_timeseries').load(url);
 }
 
@@ -347,18 +351,22 @@ function addGraph(data, x, y, color, desc) {
 var map_poll_pk;
 
 function load_layers(pk) {
+    load_layer(pk, '');
+}
+
+function load_layer(pk, divstr) {
     map_poll_pk = pk;
-    ajax_loading('#visual');
+    ajax_loading('#visual' + divstr);
     remove_selection();
 
     $('img.map'+pk).addClass('selected');
-    $('#map').show();
+    $('#map' + divstr).show();
     $('#map_legend').show();
     if($('.init').length > 0)
     {
         init_map();
     }
-    $('#map').removeClass('init');
+    $('#map' + divstr).removeClass('init');
     var id_list = "";
     var url = "/ureport/map/" + "?pks=+" + pk;
     $.ajax({
@@ -374,11 +382,8 @@ function load_layers(pk) {
             var qn='<tr><td><b>'+data['qn']+'</b></td></tr>';
             $('#map_legend table.qn').append(qn);
             $.each(data['colors'], function(ky, vl) {
-
                 var elem = '<tr><td><span style="width:15px;height:15px;background-color:' + vl + ';float:left;display:block;margin-top:10px;"></span><td><td >' + ky + '</td></tr>';
                 $('#map_legend table.key').append(elem);
-
-
             });
 
             $.each(data, function(key, value) {
@@ -408,11 +413,15 @@ function load_layers(pk) {
     });
 }
 
-//    function to draw simple map
 function init_map() {
+    init_map_divstr('');
+}
+
+//    function to draw simple map
+function init_map_divstr(divstr) {
 
     //initialise the map object
-    map = new GMap2(document.getElementById("map"));
+    map = new GMap2(document.getElementById("map" + divstr));
     //add map controls
     map.addControl(new GLargeMapControl());
     map.addControl(new GMapTypeControl());
@@ -424,7 +433,7 @@ function init_map() {
     map.setCenter(bounds.getCenter(), map.getBoundsZoomLevel(bounds));
     
     GEvent.addListener(map,'zoomend',function() {
-        load_layers(map_poll_pk)
+        load_layer(map_poll_pk, divstr)
     });
 
 }

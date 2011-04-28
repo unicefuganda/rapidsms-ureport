@@ -1,11 +1,13 @@
 from django.conf.urls.defaults import *
+from django.views.generic.simple import direct_to_template
 from ureport.views import *
 from ureport.utils import get_contacts, get_polls
 from django.contrib.auth.decorators import login_required
 from contact.forms import FreeSearchForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm
-from generic.views import generic, generic_row
+from generic.views import generic, generic_row, generic_dashboard
 from generic.sorters import SimpleSorter
 from unregister.forms import BlacklistForm
+from ureport.forms import *
 
 urlpatterns = patterns('',
     url(r'^ureport/$', tag_view,name="tag_view"),
@@ -13,8 +15,10 @@ urlpatterns = patterns('',
     url(r'^ureport/polls/freeform/$', polls,{'template':'ureport/partials/freeform_polls.html','type':'t'}),
     url(r'^ureport/tag_cloud/$', tag_cloud),
     url(r'^ureport/pie_graph/$', pie_graph,name="pie_chart"),
+    url(r'^ureport/piegraph_module/$', piegraph_module),
     url(r'^ureport/histogram/$', histogram,name="histogram"),
     url(r'^ureport/map/$', map,name="map"),
+    url(r'^ureport/map/module/$', mapmodule),
     url(r'^ureport/dashboard/$', generic, {
         'model':Poll,
         'queryset':get_polls,
@@ -39,7 +43,7 @@ urlpatterns = patterns('',
     url(r'^ureport/delete_tag/$', delete_drop_word),
     url(r'^ureport/show_excluded/$', show_ignored_tags),
     url(r"^ureport/(\d+)/message_history/$", view_message_history),
-    url(r'^ureport/timeseries/(?P<poll_id>\d+)/$',show_timeseries),
+    url(r'^ureport/timeseries/$',show_timeseries),
     url(r'^ureport/reporter/$', generic, {
         'model':Contact,
         'queryset':get_contacts,
@@ -78,4 +82,13 @@ urlpatterns = patterns('',
                  ('',False,'',None)],
     }, name="ureport-polls"),
     url(r"^ureport/(\d+)/responses/$", view_responses),
+    url(r'^ureport/awesome/$', generic_dashboard,{
+           'slug':'ureport',
+        'module_types':[('ureport', PollModuleForm, 'uReport Visualizations',),],
+        'base_template':'ureport/homepage.html',
+        'title':None,
+   }),
+    url(r'^ureport/bestviz/$', best_visualization, name="best-viz"),
+    url(r'^ureport/messagefeed/$', message_feed),
+    url(r'^ureport/about/$', direct_to_template, {'template': 'ureport/partials/about_ureport.html'}, name="about-ureport"),
 )

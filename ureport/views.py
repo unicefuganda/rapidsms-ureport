@@ -22,11 +22,13 @@ from rapidsms_httprouter.models import Message, DIRECTION_CHOICES, STATUS_CHOICE
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 from generic.views import generic
 
 from .models import MassText
 from .forms import EditReporterForm, ReplyForm
+from .utils import retrieve_poll
 
 import re
 import bisect
@@ -89,26 +91,23 @@ def show_ignored_tags(request):
     tags=IgnoredTags.objects.all()
     return render_to_response("ureport/partials/ignored_tags.html", {'tags':tags},context_instance=RequestContext(request))
 
-@login_required
 def tag_cloud(request):
     """
         generates a tag cloud
     """
-    
-    pks=request.GET.get('pks', '').split('+')
-    pks=[eval(x) for x in list(str(pks[0]).rsplit())]
-    responses=Response.objects.filter(poll__pk__in=pks)
+    polls = retrieve_poll(request)
+    responses=Response.objects.filter(poll__in=polls)
     words=''
     word_count={}
     counts_dict={}
     used_words_list=[]
     max_count=0
     reg_words = re.compile('[^a-zA-Z]')
-    dropwords = list(IgnoredTags.objects.filter(poll__id__in=pks).values_list('name',flat=True)) + drop_words 
+    dropwords = list(IgnoredTags.objects.filter(poll__in=polls).values_list('name',flat=True)) + drop_words 
     all_words = ' '.join(Value.objects.filter(entity_ct=ContentType.objects.get_for_model(Response), entity_id__in=responses).values_list('value_text', flat=True)).lower()
     all_words = reg_words.split(all_words)
     #poll question
-    poll_qn=['Qn:'+' '.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?' for poll in Poll.objects.filter(pk__in=pks)]
+    poll_qn=['Qn:'+' '.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?' for poll in polls]
     for d in dropwords:
         drop_word = d.lower()
         while True:
@@ -146,19 +145,18 @@ def polls(request,template,type=None):
         polls=Poll.objects.all()
     return render_to_response(template, {'polls':polls}, context_instance=RequestContext(request))
 
-@login_required
 def pie_graph(request):
     """
         view for pie-chart
 
     """
+
     all_polls=Poll.objects.all()
     if request.GET.get('pks', None):
-        pks=request.GET.get('pks', '').split('+')
-        pks=[eval(x) for x in list(str(pks[0]).rsplit())]
-        responses=Response.objects.filter(poll__pk__in=pks)
+        polls = retrieve_poll(request)
+        responses=Response.objects.filter(poll__in=polls)
 
-        poll_names=['Qn:'+'<br>'.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?<br>' for poll in Poll.objects.filter(pk__in=pks)]
+        poll_names=['Qn:'+'<br>'.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?<br>' for poll in polls]
 
         total_responses=responses.count()
         category_count={}
@@ -186,7 +184,11 @@ def pie_graph(request):
 
     return render_to_response("ureport/pie_graph.html", {'polls':all_polls}, context_instance=RequestContext(request))
 
-@login_required
+def piegraph_module(request):
+    polls = retrieve_poll(request)
+    poll = polls[0]
+    return render_to_response("ureport/partials/piechart_module.html", {"poll":poll}, context_instance=RequestContext(request))
+
 def histogram(request):
     """
          view for numeric polls
@@ -195,9 +197,10 @@ def histogram(request):
     all_polls=Poll.objects.filter(type=u'n')
     if request.GET.get('pks', None):
         items=6
-        pks=request.GET.get('pks', '').split('+')
-        pks=[eval(x) for x in list(str(pks[0]).rsplit())]
-        responses=Response.objects.filter(poll__pk__in=pks,poll__type=u'n')
+        polls = retrieve_poll(request)
+        responses=Response.objects.filter(poll__in=polls)
+        pks = polls.values_list('pk', flat=True)
+        responses=Response.objects.filter(poll__in=polls,poll__type=u'n')
         plottable_data={}
         if responses:
             poll_results={}
@@ -242,13 +245,11 @@ def histogram(request):
 
     return render_to_response("ureport/histogram.html", {'polls':all_polls}, context_instance=RequestContext(request))
 
-@login_required
 def map(request):
     polls=Poll.objects.all()
     if request.GET.get('pks', None):
-        pks=request.GET.get('pks', '').split('+')
-        pks=[eval(x) for x in list(str(pks[0]).rsplit())]
-        responses=Response.objects.filter(poll__pk__in=pks)
+        polls = retrieve_poll(request)
+        responses=Response.objects.filter(poll__in=polls)
         layer_values={}
         layer_values['colors']={}
         for response in responses:
@@ -277,9 +278,9 @@ def map(request):
         #set colors for category types
         i=0
         #poll question
-        poll_qn=['Qn:'+'<br>'.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?<br>' for poll in Poll.objects.filter(pk__in=pks)]
+        poll_qn=['Qn:'+'<br>'.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?<br>' for poll in polls]
         layer_values['qn']=poll_qn
-        for cat in Category.objects.filter(poll__pk__in=pks):
+        for cat in Category.objects.filter(poll__in=polls):
             try:
                 layer_values['colors'][cat.name]=colors[i]
                 i+=1
@@ -289,6 +290,11 @@ def map(request):
         return HttpResponse(mark_safe(simplejson.dumps(layer_values)))
 
     return render_to_response("ureport/map.html", {'polls':polls}, context_instance=RequestContext(request))
+
+def mapmodule(request):
+    polls = retrieve_poll(request)
+    poll = polls[0]
+    return render_to_response("ureport/partials/map_module.html", {'poll':poll}, context_instance=RequestContext(request)) 
 
 @login_required
 def view_message_history(request, connection_id):
@@ -357,10 +363,10 @@ def view_message_history(request, connection_id):
                         "replyForm": reply_form
                         }
     , context_instance=RequestContext(request))
-    
-@login_required
-def show_timeseries(request,poll_id):
-    poll_obj= get_object_or_404(Poll, pk=poll_id)
+
+def show_timeseries(request):
+    polls = retrieve_poll(request)
+    poll_obj= polls[0]
     responses=Response.objects.filter(poll=poll_obj)
     start_date=poll_obj.start_date
     end_date=poll_obj.end_date or datetime.datetime.now()
@@ -425,3 +431,29 @@ def view_responses(req, poll_id):
         columns=columns,
         partial_row='ureport/partials/response_row.html'
     )
+    
+def best_visualization(req):
+    view_dict = {
+        'c':mapmodule,
+        'n':histogram,
+        't':tag_cloud,
+    }
+    polls = retrieve_poll(req)
+    poll = polls[0]
+    poll_type = 'c' if poll.categories.count() else poll.type
+    poll_type = poll_type if poll_type in view_dict else 't'
+    return view_dict[poll_type](req)
+
+def message_feed(request):
+    polls = retrieve_poll(request)
+    poll = polls[0]
+    bad_words = getattr(settings, 'BAD_WORDS', [])
+    responses = Response.objects.filter(poll=poll)
+    for helldamn in bad_words:
+        responses = responses.exclude(message__text__icontains=(" %s " % helldamn)).exclude(message__text__istartswith=("%s " % helldamn))
+    paginator = Paginator(responses, 8)
+    responses = paginator.page(1).object_list
+    return render_to_response(
+        '/ureport/partials/message_feed.html',
+        {'poll':poll,'responses':responses},
+        context_instance=RequestContext(request))

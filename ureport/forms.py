@@ -25,22 +25,38 @@ class ReplyForm(forms.Form):
 class PollModuleForm(ModuleForm):
     viz_type=forms.ChoiceField(choices=(
         ('ureport.views.show_timeseries','Poll responses vs time'),
-        ('map','Map'),
+        ('ureport.views.mapmodule','Map'),
         ('histogram','Histogram'),
-        ('pie_chart','Pie chart'),
+        ('ureport.views.piegraph_module','Pie chart'),
         ('ureport.views.tag_cloud','Tag cloud'),
         ('poll-responses-module','Responses list'),
         ('poll-report-module','Tabular report'),
+        ('best-viz', 'Results'),
+        ('ureport.views.message_feed', 'Message Feed'),
     ), label="Poll visualization")
-    poll = forms.ModelChoiceField(queryset=Poll.objects.all())
+    poll = forms.ChoiceField(choices = (('l','Latest Poll'),) + tuple([(int(p.pk), str(p)) for p in Poll.objects.all().order_by('-start_date')]), required=True)
 
     def setModuleParams(self, dashboard, module=None, title=None):
+        title_dict = {
+            'ureport.views.show_timeseries':'Poll responses vs time',
+            'ureport.views.mapmodule':'Map',
+            'histogram':'Histogram',
+            'ureport.views.piegraph_module':'Pie chart',
+            'ureport.views.tag_cloud':'Tag cloud',
+            'poll-responses-module':'Responses list',
+            'poll-report-module':'Tabular report',
+            'best-viz':'Results',
+            'ureport.views.message_feed':'Message Feed',
+        }
         viz_type = self.cleaned_data['viz_type']
+        title = title_dict[viz_type]
         module = module or self.createModule(dashboard, viz_type, title=title)
-        is_url_param = viz_type in ['ureport.views.show_timeseries','poll-responses-module','poll-report-module']
+        is_url_param = viz_type in ['poll-responses-module','poll-report-module']
         if is_url_param:
             param_name = 'poll_id'
         else:
             param_name = 'pks'
-        module.params.create(module=module, param_name=param_name, param_value=str(self.cleaned_data['poll'].pk), is_url_param=is_url_param)
+        param_value = str(self.cleaned_data['poll'])
+        print "creating %s => %s" % (param_name, param_value)
+        module.params.create(module=module, param_name=param_name, param_value=param_value, is_url_param=is_url_param)
         return module

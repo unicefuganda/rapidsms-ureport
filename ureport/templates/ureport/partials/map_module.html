@@ -1,0 +1,8 @@
+<div id="visual">
+    <div id="map_{{ poll.pk }}" class="mapmodule">
+    </div>
+</div>
+<script language="javascript">
+    init_map_divstr('_{{ poll.pk }}');
+    load_layer('{{ poll.pk }}', '_{{ poll.pk }}');
+</script>

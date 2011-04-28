@@ -1,0 +1,7 @@
+<div id="visual_{{ poll.pk }}">
+    <div style="width:100%;height:600px;" id="pie_{{ poll.pk }}">
+    </div>
+</div>
+<script language="javscript">
+    plot_piechart('{{ poll.pk }}', '_{{ poll.pk }}');
+</script>
