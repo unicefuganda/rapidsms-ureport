@@ -27,7 +27,7 @@ setup(
     include_package_data=True,
 
     packages=['ureport'],
-    package_data={'ureport':['templates/*/*.html','templates/*/*/*.html']},
+    package_data={'ureport':['templates/*/*.html','templates/*/*/*.html','static/*','static/*/*']},
     zip_safe=False,
     classifiers=[
         'Development Status :: 4 - Beta',
