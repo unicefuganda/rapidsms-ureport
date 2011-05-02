@@ -57,6 +57,5 @@ class PollModuleForm(ModuleForm):
         else:
             param_name = 'pks'
         param_value = str(self.cleaned_data['poll'])
-        print "creating %s => %s" % (param_name, param_value)
         module.params.create(module=module, param_name=param_name, param_value=param_value, is_url_param=is_url_param)
         return module

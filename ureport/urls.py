@@ -5,6 +5,7 @@ from ureport.utils import get_contacts, get_polls
 from django.contrib.auth.decorators import login_required
 from contact.forms import FreeSearchForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm
 from generic.views import generic, generic_row, generic_dashboard
+from generic.forms import StaticModuleForm
 from generic.sorters import SimpleSorter
 from unregister.forms import BlacklistForm
 from ureport.forms import *
@@ -84,11 +85,11 @@ urlpatterns = patterns('',
     url(r"^ureport/(\d+)/responses/$", view_responses),
     url(r'^ureport/awesome/$', generic_dashboard,{
            'slug':'ureport',
-        'module_types':[('ureport', PollModuleForm, 'uReport Visualizations',),],
+        'module_types':[('ureport', PollModuleForm, 'uReport Visualizations',),
+                        ('static', StaticModuleForm, 'Static Content',),],
         'base_template':'ureport/homepage.html',
         'title':None,
    }),
     url(r'^ureport/bestviz/$', best_visualization, name="best-viz"),
     url(r'^ureport/messagefeed/$', message_feed),
-    url(r'^ureport/about/$', direct_to_template, {'template': 'ureport/partials/about_ureport.html'}, name="about-ureport"),
 )
