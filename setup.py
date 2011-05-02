@@ -9,11 +9,15 @@ setup(
         "rapidsms",
         'django-eav',
         'rapidsms-polls',
+        'rapidsms-httprouter',
+        'rapidsms-unregister',
     ],
 
     dependency_links = [
         "http://github.com/mvpdev/django-eav/tarball/master#egg=django-eav",
         "http://github.com/daveycrockett/rapidsms-polls/tarball/master#egg=rapidsms-polls",
+        "http://github.com/daveycrockett/rapidsms-httprouter/tarball/master#egg=rapidsms-httprouter",
+        "http://github.com/daveycrockett/rapidsms-unregister/tarball/master#egg=rapidsms-unregister",
     ],
 
     description='The uReport social advocacy program deployed in Uganda.',
