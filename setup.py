@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='rapidsms-ureport',
@@ -30,7 +30,7 @@ setup(
 
     include_package_data=True,
 
-    packages=['ureport'],
+    packages=find_packages(),
     package_data={'ureport':['templates/*/*.html','templates/*/*/*.html','static/*/*']},
     zip_safe=False,
     classifiers=[
