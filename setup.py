@@ -9,6 +9,7 @@ setup(
         "rapidsms",
         'django-eav',
         'rapidsms-polls',
+        'rapidsms-autoregistration',
         'rapidsms-httprouter',
         'rapidsms-unregister',
         'django-extensions',
@@ -29,6 +30,7 @@ setup(
         "http://github.com/daveycrockett/rapidsms-polls/tarball/master#egg=rapidsms-polls",
         "http://github.com/mossplix/rapidsms-contact/tarball/master#egg=rapidsms-contact",
         "http://github.com/daveycrockett/rapidsms-generic/tarball/master#egg=rapidsms-generic",
+        "http://github.com/daveycrockett/rapidsms-autoregistration/tarball/master#egg=rapidsms-autoregistration",
         "http://github.com/mossplix/uganda_common/tarball/master#egg=uganda-common",
     ],
 
