@@ -11,6 +11,13 @@ setup(
         'rapidsms-polls',
         'rapidsms-httprouter',
         'rapidsms-unregister',
+        'django-extensions',
+        'django-uni-form',
+        'simple-locations',
+        'rapidsms-unregister',
+        'rapidsms-contact',
+        'rapidsms-generic',
+        'uganda-common',
     ],
 
     dependency_links = [
@@ -18,6 +25,11 @@ setup(
         "http://github.com/daveycrockett/rapidsms-polls/tarball/master#egg=rapidsms-polls",
         "http://github.com/daveycrockett/rapidsms-httprouter/tarball/master#egg=rapidsms-httprouter",
         "http://github.com/daveycrockett/rapidsms-unregister/tarball/master#egg=rapidsms-unregister",
+        "http://github.com/mossplix/simple_locations/tarball/master#egg=simple-locations",
+        "http://github.com/daveycrockett/rapidsms-polls/tarball/master#egg=rapidsms-polls",
+        "http://github.com/mossplix/rapidsms-contact/tarball/master#egg=rapidsms-contact",
+        "http://github.com/daveycrockett/rapidsms-generic/tarball/master#egg=rapidsms-generic",
+        "http://github.com/mossplix/uganda_common/tarball/master#egg=uganda-common",
     ],
 
     description='The uReport social advocacy program deployed in Uganda.',
