@@ -89,10 +89,10 @@ def autoreg(**kwargs):
     script = progress.script
     youthgrouppoll = script.steps.get(order=1).poll
     districtpoll = script.steps.get(order=3).poll
-    namepoll = script.steps.get(order=7).poll
-    agepoll = script.steps.get(order=8).poll
-    genderpoll = script.steps.get(order=9).poll
-    villagepoll = script.steps.get(order=10).poll
+    namepoll = script.steps.get(order=5).poll
+    agepoll = script.steps.get(order=6).poll
+    genderpoll = script.steps.get(order=7).poll
+    villagepoll = script.steps.get(order=8).poll
 
     if not connection.contact:
         connection.contact = Contact.objects.create()
