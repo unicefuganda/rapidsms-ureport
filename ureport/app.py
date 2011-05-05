@@ -5,6 +5,7 @@ from rapidsms.apps.base import AppBase
 from .models import Poll
 from django.db.models import Q
 from script.models import Script, ScriptProgress
+from rapidsms.models import Contact
 
 class App (AppBase):
     
