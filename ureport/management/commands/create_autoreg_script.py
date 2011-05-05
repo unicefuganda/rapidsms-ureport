@@ -106,6 +106,17 @@ class Command(BaseCommand):
             retry_offset=3600,
             giveup_offset=3480,
         ))
+        poll3.categories.create(name='male')
+        poll3.categories.get(name='male').rules.create(
+            regex=(STARTSWITH_PATTERN_TEMPLATE % '|'.join(['m','mal','male','ma'])),
+            rule_type=Rule.TYPE_REGEX,
+            rule_string=(STARTSWITH_PATTERN_TEMPLATE % '|'.join(['m','mal','male','ma'])))
+        poll3.categories.create(name='female')
+        poll3.categories.get(name='female').rules.create(
+            regex=(STARTSWITH_PATTERN_TEMPLATE % '|'.join(['f','fem','female','fe'])),
+            rule_type=Rule.TYPE_REGEX,
+            rule_string=(STARTSWITH_PATTERN_TEMPLATE % '|'.join(['f','fem','female','fe'])))
+
         poll9 = Poll.create_location_based("contactvillage", "Which village in the district will you be reporting from? Please respond ONLY with the name of your village.UNICEF", "", [], user)
         script.steps.add(ScriptStep.objects.create(
             script=script,
