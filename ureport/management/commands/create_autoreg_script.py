@@ -118,27 +118,5 @@ class Command(BaseCommand):
             order=9,
             rule=ScriptStep.WAIT_MOVEON,
             start_offset=60,
-            giveup_offset=86400,
-        ))
-        poll6 = Poll.create_yesno("sample1", "Hello Ureporters! The first poll question is: Does your family use bednets? Please respond ONLY with a YES or NO. UNICEF", "Using treated bednets reduces the possibility of contracting malaria. UNICEF", [], user)
-        script.steps.add(ScriptStep.objects.create(
-            script=script,
-            poll=poll6,
-            order=10,
-            rule=ScriptStep.RESEND_MOVEON,
-            num_tries=2,
-            start_offset=0,
-            retry_offset=300,
             giveup_offset=0,
-        ))
-        poll7 = Poll.create_yesno("sample2", "Hello Ureporters! Is there a safe water source within a 10min walk from your home? Reply with YES or NO.UNICEF", "Access to safe water is a basic human need! We must work together to ensure safe water is available to everyone. UNICEF", [], user)
-        script.steps.add(ScriptStep.objects.create(
-            script=script,
-            poll=poll7,
-            order=11,
-            rule=ScriptStep.RESEND_MOVEON,
-            num_tries=2,
-            start_offset=259200,
-            retry_offset=300,
-            giveup_offset=0,        
         ))

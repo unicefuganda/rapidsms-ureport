@@ -123,7 +123,8 @@ def autoreg(**kwargs):
         group = find_closest_match(group, Group.objects)
         if group:
             contact.groups.add(group)
-
+    if not contact.name:
+        contact.name = 'Anonymous User'
     contact.save()
 
 script_progress_was_completed.connect(autoreg, weak=False)
