@@ -25,10 +25,10 @@ class Command(BaseCommand):
             poll=poll,
             order=1,
             rule=ScriptStep.RESEND_MOVEON,
-            num_tries=2,
+            num_tries=1,
             start_offset=0,
-            retry_offset=300,
-            giveup_offset=240,
+            retry_offset=86400,
+            giveup_offset=86400,
         ))
         script.steps.add(ScriptStep.objects.create(
             script=script,
@@ -45,9 +45,9 @@ class Command(BaseCommand):
             order=3,
             rule=ScriptStep.STRICT_MOVEON,
             start_offset=0,
-            retry_offset=300,
-            num_tries=2,
-            giveup_offset=240,
+            retry_offset=86400,
+            num_tries=1,
+            giveup_offset=86400,
         ))
         script.steps.add(ScriptStep.objects.create(
             script=script,
@@ -63,10 +63,10 @@ class Command(BaseCommand):
             poll=poll2,
             order=5,
             rule=ScriptStep.RESEND_MOVEON,
-            num_tries=2,
+            num_tries=1,
             start_offset=60,
-            retry_offset=300,
-            giveup_offset=240,
+            retry_offset=86400,
+            giveup_offset=86400,
         ))
         poll5 = Poll.create_numeric("contactage", "What is your age?", "", [], user)
         script.steps.add(ScriptStep.objects.create(
@@ -74,10 +74,10 @@ class Command(BaseCommand):
             poll=poll5,
             order=6,
             rule=ScriptStep.STRICT_MOVEON,
-            num_tries=2,
+            num_tries=1,
             start_offset=60,
-            retry_offset=300,
-            giveup_offset=240,
+            retry_offset=86400,
+            giveup_offset=86400,
         ))
         poll3 = Poll.create_freeform("contactgender", "Are you male or female?  Type F for female, and M for Male", "", [], user)
         script.steps.add(ScriptStep.objects.create(
@@ -85,10 +85,10 @@ class Command(BaseCommand):
             poll=poll3,
             order=7,
             rule=ScriptStep.RESEND_MOVEON,
-            num_tries=2,
+            num_tries=1,
             start_offset=60,
-            retry_offset=300,
-            giveup_offset=240,
+            retry_offset=86400,
+            giveup_offset=86400,
         ))
         poll3.categories.create(name='male')
         poll3.categories.get(name='male').rules.create(
@@ -107,10 +107,10 @@ class Command(BaseCommand):
             poll=poll9,
             order=8,
             rule=ScriptStep.RESEND_MOVEON,
-            num_tries=2,
+            num_tries=1,
             start_offset=0,
-            retry_offset=300,
-            giveup_offset=540,
+            retry_offset=86400,
+            giveup_offset=86400,
         ))
         script.steps.add(ScriptStep.objects.create(
             script=script,
