@@ -45,7 +45,7 @@ urlpatterns = patterns('',
     url(r'^ureport/show_excluded/$', show_ignored_tags),
     url(r"^ureport/(\d+)/message_history/$", view_message_history),
     url(r'^ureport/timeseries/$',show_timeseries),
-    url(r'^ureport/reporter/$', generic, {
+    url(r'^ureport/reporter/$', login_required(generic), {
         'model':Contact,
         'queryset':get_contacts,
         'results_title':'uReporters',
