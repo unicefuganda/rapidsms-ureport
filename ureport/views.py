@@ -91,11 +91,7 @@ def show_ignored_tags(request):
     tags=IgnoredTags.objects.all()
     return render_to_response("ureport/partials/ignored_tags.html", {'tags':tags},context_instance=RequestContext(request))
 
-def tag_cloud(request):
-    """
-        generates a tag cloud
-    """
-    polls = retrieve_poll(request)
+def _get_tags(polls):
     responses=Response.objects.filter(poll__in=polls)
     words=''
     word_count={}
@@ -129,7 +125,17 @@ def tag_cloud(request):
     tags=generate_tag_cloud(word_count,counts_dict,TAG_CLASSES,max_count)
     #randomly shuffle tags
     random.shuffle(tags)
+    return tags
 
+def tag_cloud(request):
+    """
+        generates a tag cloud
+    """
+    polls = retrieve_poll(request)
+
+    poll_qn=['Qn:'+' '.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?' for poll in polls]
+
+    tags = _get_tags(polls) 
     return render_to_response("ureport/partials/tag_cloud.html", {'tags':tags,'poll_qn':poll_qn[0]},
                               context_instance=RequestContext(request))
 
@@ -431,18 +437,15 @@ def view_responses(req, poll_id):
         columns=columns,
         partial_row='ureport/partials/response_row.html'
     )
-    
+
 def best_visualization(req):
-    view_dict = {
-        'c':mapmodule,
-        'n':histogram,
-        't':tag_cloud,
-    }
-    polls = retrieve_poll(req)
+    polls = retrieve_poll(request)
     poll = polls[0]
-    poll_type = 'c' if poll.categories.count() else poll.type
-    poll_type = poll_type if poll_type in view_dict else 't'
-    return view_dict[poll_type](req)
+    dict = {'poll':poll, 'polls':[poll]}
+    
+    if poll.categories.count() == 0:
+        dict.update({'tags':_get_tags(poll)})
+    return "ureport/best_visualization.html"
 
 def message_feed(request):
     polls = retrieve_poll(request)
@@ -457,3 +460,4 @@ def message_feed(request):
         '/ureport/partials/message_feed.html',
         {'poll':poll,'responses':responses},
         context_instance=RequestContext(request))
+    
