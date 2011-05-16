@@ -1,5 +1,5 @@
 body {
-    
+    background:url("/static/ureport/images/bg.png") repeat-x;
 }
 
 #header {
@@ -7,7 +7,9 @@ body {
     font-size: 8pt;
     color:black;
 }
-
+#inner{
+    margin-top:50px;
+}
 #header a {
     text-decoration: none;
     color: black;
@@ -148,4 +150,13 @@ body {
 
 .filter_form_help {
     display:none;
+}
+
+.clear {	display:inline-block; }
+.clear:after {
+	display:block;
+	visibility:hidden;
+	clear:both;
+	height:0;
+	content: ".";
 }
