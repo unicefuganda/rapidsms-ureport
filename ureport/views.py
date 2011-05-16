@@ -24,11 +24,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
-from generic.views import generic
+from generic.views import generic, generic_dashboard
 
 from .models import MassText
 from .forms import EditReporterForm, ReplyForm
 from .utils import retrieve_poll
+from ureport.forms import *
+from generic.forms import StaticModuleForm
+from generic.models import Dashboard
 
 import re
 import bisect
@@ -438,26 +441,41 @@ def view_responses(req, poll_id):
         partial_row='ureport/partials/response_row.html'
     )
 
-def best_visualization(req):
-    polls = retrieve_poll(request)
-    poll = polls[0]
-    dict = {'poll':poll, 'polls':[poll]}
-    
-    if poll.categories.count() == 0:
-        dict.update({'tags':_get_tags(poll)})
-    return "ureport/best_visualization.html"
-
-def message_feed(request):
-    polls = retrieve_poll(request)
-    poll = polls[0]
+def _get_responses(poll):
     bad_words = getattr(settings, 'BAD_WORDS', [])
     responses = Response.objects.filter(poll=poll)
     for helldamn in bad_words:
         responses = responses.exclude(message__text__icontains=(" %s " % helldamn)).exclude(message__text__istartswith=("%s " % helldamn))
     paginator = Paginator(responses, 8)
     responses = paginator.page(1).object_list
+    return responses
+
+def best_visualization(request):
+    polls = retrieve_poll(request)
+    poll = polls[0]
+    dict = {'poll':poll, 'polls':[poll]}
+    
+    if poll.categories.count() == 0:
+        dict.update({'tags':_get_tags(polls), 'responses':_get_responses(poll)})
+    return render_to_response(\
+        "/ureport/partials/best_visualization.html",
+        dict,
+        context_instance=RequestContext(request))
+
+def ureport_content(request, slug):
+    reporter = get_object_or_404(Dashboard, slug=slug, user=None)
+    return generic_dashboard(request,
+        slug=slug,
+        module_types=[('ureport', PollModuleForm, 'uReport Visualizations',),
+                       ('static', StaticModuleForm, 'Static Content',),],
+        base_template='ureport/homepage.html',
+        title=None)
+
+def message_feed(request):
+    polls = retrieve_poll(request)
+    poll = polls[0]
     return render_to_response(
         '/ureport/partials/message_feed.html',
-        {'poll':poll,'responses':responses},
+        {'poll':poll,'responses':_get_responses(poll)},
         context_instance=RequestContext(request))
     

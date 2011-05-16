@@ -5,10 +5,8 @@ from ureport.utils import get_contacts, get_polls
 from django.contrib.auth.decorators import login_required
 from contact.forms import FreeSearchForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm
 from generic.views import generic, generic_row, generic_dashboard
-from generic.forms import StaticModuleForm
 from generic.sorters import SimpleSorter
 from unregister.forms import BlacklistForm
-from ureport.forms import *
 
 urlpatterns = patterns('',
     url(r'^ureport/$', tag_view,name="tag_view"),
@@ -92,4 +90,9 @@ urlpatterns = patterns('',
    }),
     url(r'^ureport/bestviz/$', best_visualization, name="best-viz"),
     url(r'^ureport/messagefeed/$', message_feed),
+    url(r'^ureport/content/(?P<slug>[a-z]+)/$', ureport_content),
+    url(r'^home', ureport_content, {'slug':'ureport_home'}, name="ureport-home"),
+    url(r'^about', ureport_content, {'slug':'ureport_about'}, name="ureport-about"),
+    url(r'^polls', ureport_content, {'slug':'ureport_polls'}, name="ureport-polls"),
+    url(r'^stories', ureport_content, {'slug':'ureport_stories'}, name="ureport-stories"),
 )
