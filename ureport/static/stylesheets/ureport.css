@@ -1,20 +1,77 @@
+body{
+    font: 11px/165% trebuchet, 'Myriad Web',arial,noserif;
+    color: #302C29;
+    line-height:18px;
+
+
+}
+
+a {
+    text-decoration: none;
+    color: #27aae1;
+}
+
+a:visited {
+    text-decoration: none;
+    color: #144252;
+} {
+    text-decoration: none;
+    color: #27aae1;
+}
+
+#container{
+    
+    width:960px;
+   margin-left: auto;
+	margin-right: auto;
+}
 #header a {
     text-decoration: none;
     color: black;
 }
 
+#inner_content{
+    margin-top:10px;
+}
+.module-head
+{
+    padding-bottom:10px;
+    margin: 20px 15px 15px 10px;
+	border: 1px solid #EBEBEB;
+	background: #C1C192;
+    width:510px;
+    text-align:center;
+    height:25px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+
+}
+.module_content{
+    width:500px;
+    height:auto;
+    border: 1px solid #EBEBEB;
+    margin-left:10px;
+    padding:5px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+
+}
 #header a:hover {
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 #img_logo {
     border-style: none;
+    margin:auto;
+    padding-top:3px;
+    padding-left:30px;
 }
 
 #span_tagline {
     position:relative;
-    left:-100px;
+    left:-50px;
     bottom: 0px;
+    margin-top:2px;
 }
 
 #auth {
@@ -22,13 +79,22 @@
     right:5px;
     top:5px;   
 }
-
+#auth a{
+    text-decoration:none;
+    color:#fff;
+    z-index:999;
+}
 #tabs {
     list-style-type: none;
-    position:absolute;
-    right: 5px;
-    bottom: 0px;
-    margin: 0px;
+    float:left;
+    margin-top:15px;
+    margin-left:15px;
+    line-height: 15px;
+    padding: 5px 0px 9px;
+    line-height: 15px;
+    text-transform: uppercase;
+    font-weight:bold;
+
 }
 
 .tab:first-child {
@@ -40,7 +106,23 @@
 .tab {
     display: inline;
     padding-left:5px;
-    border-left: solid 1px black;
+
+}
+#tabs a{
+    text-decoration: none;
+    color: #27aae1;
+    padding: 5px 10px;
+    margin-right: 10px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+
+}
+
+#tabs a:hover{
+    background: #ccc;
+    color: #fff;
+    text-decoration: none;
+    
 }
 
 #header {
@@ -48,8 +130,12 @@
     font-family: noseriff;
     font-size: 8pt;
     color:black;
-    border-bottom: 8px solid #144252;
-    background-color: #33A7D2;
+    border-bottom: 8px solid #AFB077;
+    background-color: #757558;
+    height:90px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    border-bottom-right-radius: 5% 50%;
 }
 
 div.module h3 {
@@ -61,8 +147,14 @@ div.module h3 {
 #footer {
     font-family: noseriff;
     font-size: 6pt;
-    color:black;
-    float:right;    
+    color:#fff;
+    float:right;
+    background-color: #757558;
+    width:100%;
+    padding:5px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+
 }
 
 /*
