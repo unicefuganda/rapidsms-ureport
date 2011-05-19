@@ -46,15 +46,19 @@ a:visited {
     -moz-border-radius: 3px;
 
 }
-.module_content{
-    width:500px;
+.module{
+    width:auto;
     height:auto;
     border: 1px solid #EBEBEB;
     margin-left:10px;
-    padding:5px;
+    margin-top:800px;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
 
+
+}
+.module p{
+    padding:8px;
 }
 #header a:hover {
     text-decoration: none;
@@ -119,7 +123,7 @@ a:visited {
 }
 
 #tabs a:hover{
-    background: #ccc;
+    background: #757558;
     color: #fff;
     text-decoration: none;
     
@@ -135,15 +139,28 @@ a:visited {
     height:90px;
     -moz-border-radius: 10px;
     border-radius: 10px;
-    border-bottom-right-radius: 5% 50%;
+    -webkit-border-radius: 10px;
+
 }
 
 div.module h3 {
-    font-size: 80%;
-    background-image: none;
-    background-color: #94D149;
+    
+    border: 1px solid #EBEBEB;
+	background: #C1C192;
+    text-align:center;
+    height:20px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    margin-top:-50px;
+    font-weight:bold;
+    font-size:110%;
+    padding-top:10px;
+
 }
 
+div.module:first-child{
+    margin-top:100px;
+}
 #footer {
     font-family: noseriff;
     font-size: 6pt;
