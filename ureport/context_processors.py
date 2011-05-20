@@ -11,8 +11,17 @@ def map_params(request):
     """
     a context processor that passes all the pertinent map parameters to all templates.
     """
+    map_keys = getattr(settings, 'MAP_KEY', '')
+    if type(map_keys) == list:
+        map_key = map_keys[0][1]
+        for domain, key in map_keys:
+            if request.get_host() == domain:
+                map_key = key
+    else:
+        map_key = map_keys
+    print "MAP KEY IS %s" % map_key
     return {
-        'map_key':settings.MAP_KEY,
+        'map_key':map_key,
         'colors':colors,
         'min_lat':min_lat,
         'max_lat':max_lat,
