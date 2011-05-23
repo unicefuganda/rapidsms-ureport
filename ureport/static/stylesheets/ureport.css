@@ -69,6 +69,21 @@ a:visited {
     font-variant:small-caps;
 }
 
+#span_info {
+    position:relative;
+    color:white;
+    font-size:9pt;
+    font-weight:bold;
+    font-variant:small-caps;
+    top: 72px;
+    float:right;
+    padding-right:60px;
+}
+
+#span_total {
+    font-size:12pt;
+}
+
 #auth {
     position:absolute;
     right:5px;
