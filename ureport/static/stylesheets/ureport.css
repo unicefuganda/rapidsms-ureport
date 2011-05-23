@@ -5,20 +5,13 @@ body{
 }
 
 a {
-    text-decoration: none;
     color: #00bfff;
 }
 
 a:visited {
-    text-decoration: none;
     color: #144252;
 } {
-    text-decoration: none;
     color: #00bfff;
-}
-
-a:hover {
-    text-decoration: underline;
 }
 
 #container{
