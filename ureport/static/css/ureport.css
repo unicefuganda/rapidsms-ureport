@@ -2,6 +2,10 @@
     font-size: 8pt;
 }
 
+tt {
+    margin: 5px;
+}
+
 .tag1 {
     font-size: 1.2em;
 }
@@ -31,18 +35,18 @@
 }
 
 #tag_cloud {
-
     width: 400px;
     padding: 1em;
-  }
+}
 
-  #tag_cloud tt {
+#tag_cloud tt {
     display: block;
     text-align: center;
     margin: .25em;
     padding-top: 0em;
     float: left;
-  }
+}
+
 #chart_polls {
 
     min-height:300px;
