@@ -6,6 +6,7 @@ from django.conf import settings
 from ureport.settings import MAP_URLS, MAP_TYPES, min_lat, max_lat, min_lon, max_lon, colors
 from django.utils.safestring import mark_safe
 from django.utils import simplejson
+from rapidsms.models import Contact
 
 def map_params(request):
     """
@@ -28,6 +29,7 @@ def map_params(request):
         'min_lon':min_lon,
         'max_lon':max_lon,
         'map_urls':mark_safe(simplejson.dumps(MAP_URLS)),
-        'map_types':mark_safe(simplejson.dumps(MAP_TYPES)),        
+        'map_types':mark_safe(simplejson.dumps(MAP_TYPES)),
+        'total_ureporters':Contact.objects.count(),        
     }
 
