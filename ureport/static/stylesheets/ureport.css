@@ -25,9 +25,6 @@ a:visited {
     color: black;
 }
 
-#inner_content{
-    margin-top:40px;
-}
 .module-head
 {
     padding-bottom:10px;
@@ -142,15 +139,11 @@ div.module h3 {
     height:20px;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
-    margin-top:-50px;
     font-weight:bold;
     font-size:110%;
     padding-top:10px;
 }
 
-div.module:first-child{
-    margin-top:30px;
-}
 #footer {
     font-family: noseriff;
     font-size: 6pt;
