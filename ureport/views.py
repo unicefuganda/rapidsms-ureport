@@ -477,4 +477,12 @@ def message_feed(request):
         '/ureport/partials/message_feed.html',
         {'poll':poll,'responses':_get_responses(poll)},
         context_instance=RequestContext(request))
+
+def poll_summary(request):
+    polls = Poll.objects.order_by('-start_date')
+    return render_to_response(
+        '/ureport/poll_summary.html',
+        {'polls':polls,
+         'poll':polls[0]},
+        context_instance=RequestContext(request))
     
