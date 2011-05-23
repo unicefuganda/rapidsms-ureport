@@ -137,10 +137,11 @@ div#visual{
     min-height: 400px;
     height: auto !important;
     height: 400px;
+    clear:left;
 }
 
 #columns #column1 {
-    float: left;
+    float: right;
     width: 68%;
     min-height: 400px;
     height: auto !important;
