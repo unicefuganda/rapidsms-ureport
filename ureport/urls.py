@@ -93,5 +93,5 @@ urlpatterns = patterns('',
     url(r'^ureport/content/(?P<slug>[a-z]+)/$', ureport_content),
     url(r'^home/$', ureport_content, {'slug':'ureport_home', 'base_template':'ureport/homepage.html', 'num_columns':3}, name="ureport-home"),
     url(r'^about/$', ureport_content, {'slug':'ureport_about'}, name="ureport-about"),
-    url(r'^stories/$', ureport_content, {'slug':'ureport_stories'}, name="ureport-stories"),
+    url(r'^stories/$', ureport_content, {'slug':'ureport_stories', 'base_template':'ureport/homepage.html', 'num_columns':3}, name="ureport-stories"),
 )
