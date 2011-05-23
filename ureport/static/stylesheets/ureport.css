@@ -92,7 +92,7 @@ a:hover {
 }
 
 #tabs {
-    list-style-type: none;
+-    list-style-type: none;
     float:left;
     margin-top:5px;
     margin-left:-30px;
@@ -156,7 +156,7 @@ div.module h3 {
 }
 
 div.module:first-child{
-    margin-top:40px;
+    margin-top:30px;
 }
 #footer {
     font-family: noseriff;
