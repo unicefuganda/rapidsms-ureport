@@ -62,7 +62,7 @@ urlpatterns = patterns('',
     url(r'^ureport/reporter/(?P<reporter_pk>\d+)/edit', editReporter),
     url(r'^ureport/reporter/(?P<reporter_pk>\d+)/delete', deleteReporter),
     url(r'^ureport/reporter/(?P<pk>\d+)/show', generic_row, {'model':Contact, 'partial_row':'ureport/partials/contacts_row.html'}),
-    url(r'^ureport/polls/$', login_required(generic),  {
+    url(r'^ureport/polls/$', generic,  {
         'model':Poll,
 #        'queryset':get_contacts,
 #        'filter_forms':[FreeSearchForm, DistictFilterForm, FilterGroupsForm],
