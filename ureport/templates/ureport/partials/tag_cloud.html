@@ -4,21 +4,25 @@
     {{poll_qn}}
 {% endif %}
 </div>
-{%  for tag in tags%}
+<div class="tags">
+{% for tag in tags%}
     <tt class="{{ tag.class }}">
         <a
             {% if user.is_authenticated %}
                 onmouseover="$(this).next().attr('class', 'delete-tag')"
                 onmouseout="$(this).next().attr('class', 'default')"
             {% endif %}
-                rel="tag"
-                class="tag_link" href="javascript:void(0)">{{ tag.tag }}</a>
-            {% if user.is_authenticated %}
-                <span class="default" onmouseover="$(this).attr('class', 'delete-tag-hover')" onmouseout="$(this).attr('class', 'default')" title="remove {{ tag.tag }}" onclick="add_tag('{{ tag.tag }}',tag_poll_pk)">
-            {% endif %}
+            rel="tag"
+            class="tag_link" href="javascript:void(0)">
+            {{ tag.tag }}
+        </a>
+        {% if user.is_authenticated %}
+            <span class="default" onmouseover="$(this).attr('class', 'delete-tag-hover')" onmouseout="$(this).attr('class', 'default')" title="remove {{ tag.tag }}" onclick="add_tag('{{ tag.tag }}',tag_poll_pk)">
             </span>
-        </tt>
+        {% endif %}
+    </tt>
 {%  endfor %}
+</div>
 {% if user.is_authenticated %}
 <p>
     <a onclick="load_excluded_tags()" href="javascript:void(0)">edit excluded tags</a>

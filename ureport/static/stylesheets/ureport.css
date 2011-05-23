@@ -4,6 +4,10 @@ body{
     line-height:18px;
 }
 
+div.module {
+    margin-left:0px;
+}
+
 a {
     color: #00bfff;
 }
@@ -23,6 +27,15 @@ a:visited {
 #header a {
     text-decoration: none;
     color: black;
+}
+
+tt a {
+    text-decoration:none;
+    padding:5px;
+}
+
+.tags {
+    line-height:3em;
 }
 
 .module-head

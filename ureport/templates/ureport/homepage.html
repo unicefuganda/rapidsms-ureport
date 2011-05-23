@@ -20,17 +20,18 @@
     </script>
 {% endblock %}
 {% block modules %}
+<div id="mod">
 <table style="width:100%;border-style:none">
 <tr style="border-style:none" >
     <td style="border-style:none" valign="top" style="width:25%">
-        <div id="column0">
+        <div class="column" id="column0">
             {% for mod in modules.0.modules %}
                     {% include module_partial_template %}
             {% endfor %}
         </div>
    </td>
    <td style="border-style:none" valign="top" style="width:75%">
-        <div id="column1">
+        <div class="column" id="column1">
             {% for mod in modules.1.modules %}
                     {% include module_partial_template %}
             {% endfor %}
@@ -39,7 +40,7 @@
 </tr>
 <tr style="border-style:none" >
     <td style="border-style:none" colspan="2">
-        <div id="column2">
+        <div class="column" id="column2">
             {% for mod in modules.2.modules %}
                     {% include module_partial_template %}
             {% endfor %}
@@ -47,4 +48,5 @@
     </td>
 </tr>
 </table>
+</div>
 {% endblock %}
