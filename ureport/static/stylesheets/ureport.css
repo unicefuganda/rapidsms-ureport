@@ -1,14 +1,12 @@
 body{
     font: 11px/165% trebuchet, 'Myriad Web',arial,noserif;
-    color: #302C29;
+    color: black;
     line-height:18px;
-
-
 }
 
 a {
     text-decoration: none;
-    color: #27aae1;
+    color: #00bfff;
 }
 
 a:visited {
@@ -16,7 +14,7 @@ a:visited {
     color: #144252;
 } {
     text-decoration: none;
-    color: #27aae1;
+    color: #00bfff;
 }
 
 a:hover {
@@ -41,7 +39,7 @@ a:hover {
 {
     padding-bottom:10px;
     margin: 20px 15px 15px 10px;
-	background: #C1C192;
+	background: #a9a9a9;
     width:510px;
     text-align:center;
     height:25px;
@@ -113,7 +111,7 @@ a:hover {
 }
 #tabs a{
     text-decoration: none;
-    color: #27aae1;
+    color: #00bfff;
     padding: 5px 10px;
     margin-right: 10px;
     -webkit-border-radius: 3px;
@@ -122,7 +120,7 @@ a:hover {
 }
 
 #tabs a:hover{
-    background: #757558;
+    background: #696969;
     color: #fff;
     text-decoration: none;
     
@@ -133,8 +131,8 @@ a:hover {
     font-family: noseriff;
     font-size: 8pt;
     color:black;
-    border-bottom: 8px solid #AFB077;
-    background-color: #757558;
+    border-bottom: 8px solid #a9a9a9;
+    background-color: #696969;
     height:90px;
     -moz-border-radius: 10px;
     border-radius: 10px;
@@ -144,8 +142,8 @@ a:hover {
 
 div.module h3 {
     
-    border: 1px solid #EBEBEB;
-	background: #C1C192;
+    /*border: 1px solid #EBEBEB;*/
+	background: #a9a9a9;
     text-align:center;
     height:20px;
     -webkit-border-radius: 3px;
@@ -165,7 +163,7 @@ div.module:first-child{
     font-size: 6pt;
     color:#fff;
     float:right;
-    background-color: #757558;
+    background-color: #696969;
     width:100%;
     padding:5px;
     -webkit-border-radius: 3px;
