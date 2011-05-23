@@ -37,7 +37,6 @@ a:visited {
 {
     padding-bottom:10px;
     margin: 20px 15px 15px 10px;
-	border: 1px solid #EBEBEB;
 	background: #C1C192;
     width:510px;
     text-align:center;
@@ -49,13 +48,10 @@ a:visited {
 .module{
     width:auto;
     height:auto;
-    border: 1px solid #EBEBEB;
     margin-left:10px;
     margin-top:800px;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
-
-
 }
 .module p{
     padding:8px;
@@ -89,17 +85,15 @@ a:visited {
     color:#fff;
     z-index:999;
 }
+
 #tabs {
     list-style-type: none;
     float:left;
-    margin-top:15px;
-    margin-left:15px;
-    line-height: 15px;
-    padding: 5px 0px 9px;
+    margin-top:5px;
+    margin-left:-30px;
     line-height: 15px;
     text-transform: uppercase;
     font-weight:bold;
-
 }
 
 .tab:first-child {
@@ -160,7 +154,7 @@ div.module h3 {
 }
 
 div.module:first-child{
-    margin-top:100px;
+    margin-top:40px;
 }
 #footer {
     font-family: noseriff;
@@ -172,7 +166,7 @@ div.module:first-child{
     padding:5px;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
-
+    margin-top:10px;
 }
 
 /*
