@@ -19,6 +19,10 @@ a:visited {
     color: #27aae1;
 }
 
+a:hover {
+    text-decoration: underline;
+}
+
 #container{
     
     width:960px;
