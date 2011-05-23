@@ -1,22 +1,25 @@
-<span style="font-weight:bold;margin-bottom:5px;font-size:12pt">{{ poll.question }}</span>
+<span style="font-weight:bold;margin-bottom:5px;font-size:12pt">{{ poll.question }} : 
+{{ poll.start_date|date:"d-M-Y" }}
+</span>
+
 {% if tags %}
 
-{% include "/ureport/partials/tag_cloud.html" %}
-{% comment %}
-    {% include "/ureport/partials/message_feed.html" %}
-{% endcomment %}
+    {% include "/ureport/partials/tag_cloud.html" %}
+    {% comment %}
+        {% include "/ureport/partials/message_feed.html" %}
+    {% endcomment %}
 
 {% else %}
 
-<table style="width:100%">
-    <tr>
-        <td style="width:50%">
-            {% include "/ureport/partials/map_module.html" %}
-        </td>
-        <td style="width:50%">
-            {% include "/ureport/partials/piechart_module.html" %}
-        </td>
-    </tr>
-</table>
+    <table style="width:100%">
+        <tr>
+            <td style="width:50%">
+                {% include "/ureport/partials/map_module.html" %}
+            </td>
+            <td style="width:50%">
+                {% include "/ureport/partials/piechart_module.html" %}
+            </td>
+        </tr>
+    </table>
 
 {% endif %}

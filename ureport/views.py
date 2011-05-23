@@ -461,14 +461,14 @@ def best_visualization(request):
         dict,
         context_instance=RequestContext(request))
 
-def ureport_content(request, slug):
+def ureport_content(request, slug, base_template='ureport/content.html',**kwargs):
     reporter = get_object_or_404(Dashboard, slug=slug, user=None)
     return generic_dashboard(request,
         slug=slug,
         module_types=[('ureport', PollModuleForm, 'uReport Visualizations',),
                        ('static', StaticModuleForm, 'Static Content',),],
-        base_template='ureport/homepage.html',
-        title=None)
+        base_template=base_template,
+        title=None,**kwargs)
 
 def message_feed(request):
     polls = retrieve_poll(request)

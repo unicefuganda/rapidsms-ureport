@@ -19,32 +19,3 @@
         var zoom=9;
     </script>
 {% endblock %}
-{% block modules %}
-<table style="width:100%">
-<tr>
-    <td style="width:25%">
-        <div id="column0">
-            {% for mod in modules.0.modules %}
-                    {% include module_partial_template %}
-            {% endfor %}
-        </div>
-   </td>
-   <td style="width:75%">
-        <div id="column1">
-            {% for mod in modules.1.modules %}
-                    {% include module_partial_template %}
-            {% endfor %}
-        </div>
-   </td>
-</tr>
-<tr>
-    <td colspan="2">
-        <div id="column2">
-            {% for mod in modules.2.modules %}
-                    {% include module_partial_template %}
-            {% endfor %}
-        </div>
-    </td>
-</tr>
-</table>
-{% endblock %}

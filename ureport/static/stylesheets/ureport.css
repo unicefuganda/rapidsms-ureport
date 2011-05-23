@@ -72,15 +72,18 @@ a:hover {
 #span_tagline {
     position:relative;
     left:-50px;
-    bottom: 0px;
-    margin-top:2px;
+    top: 5px;
+    color: white;
+    font-size:9pt;
+    font-weight:bold;
     font-variant:small-caps;
 }
 
 #auth {
     position:absolute;
     right:5px;
-    top:5px;   
+    top:5px;
+    display:none;
 }
 #auth a{
     text-decoration:none;
@@ -141,8 +144,6 @@ a:hover {
 }
 
 div.module h3 {
-    
-    /*border: 1px solid #EBEBEB;*/
 	background: #a9a9a9;
     text-align:center;
     height:20px;
@@ -152,7 +153,6 @@ div.module h3 {
     font-weight:bold;
     font-size:110%;
     padding-top:10px;
-
 }
 
 div.module:first-child{
