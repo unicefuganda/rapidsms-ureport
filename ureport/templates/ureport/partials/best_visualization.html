@@ -1,7 +1,10 @@
+<span style="font-weight:bold;margin-bottom:5px">{{ poll.question }}</span>
 {% if tags %}
 
 {% include "/ureport/partials/tag_cloud.html" %}
-{% include "/ureport/partials/message_feed.html" %}
+{% comment %}
+    {% include "/ureport/partials/message_feed.html" %}
+{% endcomment %}
 
 {% else %}
 

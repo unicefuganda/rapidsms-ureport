@@ -137,6 +137,10 @@ function plot_pie(data, divstr) {
     pie_opts.series[0].data = data['data'];
     pie_opts.subtitle.text = data['poll_names'];
     pie_opts.series[0].data[0] = {'name':data['data'][0][0],'y':data['data'][0][1],sliced: true,selected: true};
+    if (divstr != '') {
+        pie_opts.title.text = '';
+        pie_opts.subtitle.text = '';
+    }
     chart = new Highcharts.Chart(pie_opts);
 
 }
@@ -247,7 +251,6 @@ function plot_piechart(pk, divstr) {
         success: function(data) {
             $('.ajax_loading').remove();
             plot_pie(data, divstr);
-
         }
     });
 }
@@ -377,13 +380,15 @@ function load_layer(pk, divstr) {
             //add legend
             $('#map_legend table').text(' ');
             map.clearOverlays();
-              $('.ajax_loading').remove();
-            $('#map_legend table').empty();
+            $('.ajax_loading').remove();
+            $('#map_legend' + divstr + ' table').empty();
             var qn='<tr><td><b>'+data['qn']+'</b></td></tr>';
-            $('#map_legend table.qn').append(qn);
+            if (divstr == '') {
+                $('#map_legend table.qn').append(qn);
+            }
             $.each(data['colors'], function(ky, vl) {
                 var elem = '<tr><td><span style="width:15px;height:15px;background-color:' + vl + ';float:left;display:block;margin-top:10px;"></span><td><td >' + ky + '</td></tr>';
-                $('#map_legend table.key').append(elem);
+                $('#map_legend' + divstr + ' table.key').append(elem);
             });
 
             $.each(data, function(key, value) {

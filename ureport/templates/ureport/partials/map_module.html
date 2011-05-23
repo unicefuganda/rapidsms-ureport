@@ -1,6 +1,13 @@
 <div id="visual_{{ poll.pk }}">
     <div id="map_{{ poll.pk }}" class="mapmodule">
     </div>
+    <div id="map_legend_{{ poll.pk }}" style="display:none;">
+        <h3>Key</h3>
+        <table class="key" border=0 style="float:left;max-width:30%;">
+        </table>
+         <table class="qn" style="margin-left:10px;border:none;">
+        </table>
+    </div>
 </div>
 <script language="javascript">
     init_map_divstr('_{{ poll.pk }}');
