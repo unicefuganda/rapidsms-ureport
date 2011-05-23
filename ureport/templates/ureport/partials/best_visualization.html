@@ -1,4 +1,4 @@
-{% ifequal poll.categores.count 0 %}
+{% if tags %}
 
 {% include "/ureport/partials/tag_cloud.html" %}
 {% include "/ureport/partials/message_feed.html" %}
@@ -16,4 +16,4 @@
     </tr>
 </table>
 
-{% endifequal %}
+{% endif %}

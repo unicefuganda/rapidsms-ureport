@@ -454,8 +454,7 @@ def best_visualization(request):
     polls = retrieve_poll(request)
     poll = polls[0]
     dict = {'poll':poll, 'polls':[poll]}
-    
-    if poll.categories.count() == 0:
+    if ResponseCategory.objects.filter(response__poll=poll).count() == 0:
         dict.update({'tags':_get_tags(polls), 'responses':_get_responses(poll)})
     return render_to_response(\
         "/ureport/partials/best_visualization.html",

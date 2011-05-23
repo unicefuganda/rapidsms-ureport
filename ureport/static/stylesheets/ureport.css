@@ -76,6 +76,7 @@ a:visited {
     left:-50px;
     bottom: 0px;
     margin-top:2px;
+    font-variant:small-caps;
 }
 
 #auth {
