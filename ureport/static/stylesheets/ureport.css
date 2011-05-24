@@ -6,6 +6,7 @@ body{
 
 div.module {
     margin-left:0px;
+    border-style:none;
 }
 
 a {
@@ -276,5 +277,4 @@ div.module h3 {
 	visibility:hidden;
 	clear:both;
 	height:0;
-	content: ".";
 }
