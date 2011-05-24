@@ -14,8 +14,6 @@ a {
 
 a:visited {
     color: #144252;
-} {
-    color: #00bfff;
 }
 
 #container{
@@ -170,6 +168,7 @@ div.module h3 {
     font-weight:bold;
     font-size:110%;
     padding-top:10px;
+    margin-bottom:15px;
 }
 
 #footer {
