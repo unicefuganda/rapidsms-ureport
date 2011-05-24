@@ -2,36 +2,32 @@
     font-size: 8pt;
 }
 
-.tag1, .tag2, .tag3, .tag4, .tag5, .tag6, .tag7 {
-    margin: 10px;
-}
-
 .tag1 {
-    font-size: 1.2em;
+    font-size: .8em;
 }
 
 .tag2 {
-    font-size: 1.4em;
+    font-size: 1em;
 }
 
 .tag3 {
-    font-size: 1.8em;
+    font-size: 1.2em;
 }
 
 .tag4 {
-    font-size: 2.2em;
+    font-size: 1.6em;
 }
 
 .tag5 {
-    font-size: 2.6em;
+    font-size: 2.0em;
 }
 
 .tag6 {
-    font-size: 3.0em;
+    font-size: 2.8em;
 }
 
 .tag7 {
-    font-size: 3.4em;
+    font-size: 3.6em;
 }
 
 #tag_cloud {
@@ -42,20 +38,18 @@
 #tag_cloud tt {
     display: block;
     text-align: center;
-    margin: .25em;
     padding-top: 0em;
     float: left;
 }
 
 #chart_polls {
-
     min-height:300px;
-
 }
+
 #pie_chart{
     min-height:300px;
-
 }
+
 .mapmodule {
     height:400px;
     width:100%;
@@ -109,11 +103,10 @@ div#visual{
 .delete-tag,.delete-tag-hover{
     background-image:url(../images/delete_tag.png);
     background-repeat:no-repeat;
-    overflow:hidden;
     width:14px;
     height:14px;
     display:inline-block;
-    vertical-align:top;
+    vertical-align:absmiddle;
     margin-top:1px;
     padding:0px;
 }

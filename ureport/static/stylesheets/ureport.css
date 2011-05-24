@@ -1,5 +1,5 @@
 body{
-    font: 11px/165% trebuchet, 'Myriad Web',arial,noserif;
+    font: 11px/165% "Trebuchet MS", 'Myriad Web',arial,noserif;
     color: black;
     line-height:18px;
 }
@@ -29,7 +29,6 @@ a:visited {
 
 tt a {
     text-decoration:none;
-    padding:5px;
 }
 
 .tags {
@@ -168,6 +167,7 @@ div.module h3 {
     font-weight:bold;
     font-size:110%;
     padding-top:10px;
+    padding-bottom:0px;
     margin-bottom:15px;
 }
 

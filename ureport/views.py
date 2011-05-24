@@ -59,12 +59,12 @@ def generate_tag_cloud(words,counts_dict,tag_classes,max_count):
             """
     tags=[]
     used_words_list=[]
-    divisor = (max_count / len(tag_classes)) + 1
+    divisor = (tag_cloud_size / len(tag_classes)) + 1
     for i in range(max_count,0,-1):
         for word in counts_dict[i]:
             if not word in used_words_list:
                 k={}
-                klass=tag_classes[i/divisor]
+                klass=tag_classes[len(tags)/divisor]
                 k['tag']=word
                 k['class']=klass
                 tags.append(k)

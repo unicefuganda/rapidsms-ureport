@@ -55,7 +55,6 @@
             </div>
             {% endblock %}
            <div class="clear"></div>
-
             <ul id="tabs">{% for tab in tabs %}
                 <li class="tab{% if tab.is_active %} active{% endif %}">
                     <a href="{{ tab.url }}"><span>{{ tab.caption }}</span></a>
