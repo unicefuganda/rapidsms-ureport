@@ -451,9 +451,12 @@ def _get_responses(poll):
     return responses
 
 def best_visualization(request):
+    module = False
+    if 'module' in request.GET:
+        module=True
     polls = retrieve_poll(request)
     poll = polls[0]
-    dict = { 'poll':poll, 'polls':[poll], 'unlabeled':True }
+    dict = { 'poll':poll, 'polls':[poll], 'unlabeled':True, 'module':module }
     if ResponseCategory.objects.filter(response__poll=poll).count() == 0:
         dict.update({'tags':_get_tags(polls), 'responses':_get_responses(poll)})
     return render_to_response(\
