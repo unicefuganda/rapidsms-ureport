@@ -1,5 +1,8 @@
-<span style="font-weight:bold;margin-bottom:5px;font-size:12pt">{{ poll.question }} : 
-{{ poll.start_date|date:"d-M-Y" }}
+<span style="font-weight:bold;margin-bottom:5px;margin-top:5px;font-size:14pt;color:#00bfff">
+{{ poll.start_date|date:"d-M-Y" }} : 
+</span>
+<span style="font-weight:bold;margin-bottom:5px;margin-top:5px;font-size:12pt">
+{{ poll.question }}
 </span>
 
 {% if tags %}
