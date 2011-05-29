@@ -65,7 +65,7 @@ urlpatterns = patterns('',
     url(r'^ureport/reporter/(?P<pk>\d+)/show', generic_row, {'model':Contact, 'partial_row':'ureport/partials/contacts_row.html'}),
     url(r'^ureport/polls/$', generic,  {
         'model':Poll,
-#        'queryset':get_contacts,
+        'queryset':get_polls,
 #        'filter_forms':[FreeSearchForm, DistictFilterForm, FilterGroupsForm],
 #        'action_forms':[MassTextForm, AssignGroupForm, BlacklistForm],
         'objects_per_page':10,
