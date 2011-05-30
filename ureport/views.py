@@ -488,4 +488,8 @@ def poll_summary(request):
         {'polls':polls,
          'poll':polls[0]},
         context_instance=RequestContext(request))
-    
+
+def get_all_contacts(request):
+    from uganda_common.utils import ExcelResponse
+    contacts=Contact.objects.all()
+    return ExcelResponse(contacts)
