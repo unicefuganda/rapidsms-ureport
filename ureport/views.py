@@ -424,7 +424,11 @@ def editReporter(request, reporter_pk):
 def view_responses(req, poll_id):
     poll = get_object_or_404(Poll,pk=poll_id)
 
-    responses = poll.responses.all().order_by('-date')
+    if hasattr(Contact, 'groups'):
+        responses = poll.responses.filter(contact__groups__in=req.user.groups.all())
+    else:
+        responses = poll.responses.all()
+    responses = responses.order_by('-date')
     typedef = Poll.TYPE_CHOICES[poll.type]
     columns = [('Sender', False, 'sender', None)]
     for column, style_class in typedef['report_columns']:
