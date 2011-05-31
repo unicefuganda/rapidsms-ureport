@@ -89,4 +89,6 @@ urlpatterns = patterns('',
     url(r'^about/$', ureport_content, {'slug':'ureport_about'}, name="ureport-about"),
     url(r'^stories/$', ureport_content, {'slug':'ureport_stories', 'base_template':'ureport/homepage.html', 'num_columns':3}, name="ureport-stories"),
     url(r'^pollresults/$', poll_summary, name="polls-summary"),
+    url(r'^getcontacts/$', get_all_contacts),
+
 )
