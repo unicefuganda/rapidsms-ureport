@@ -121,10 +121,18 @@ def autoreg(**kwargs):
         contact.village = find_closest_match(village, Area.objects)
 
     group = find_best_response(session, youthgrouppoll)
+    default_group
+    if Group.objects.filter(name='Other uReporters').count():
+        default_group = Group.objects.get(name='Other uReporters')
     if group:
         group = find_closest_match(group, Group.objects)
         if group:
             contact.groups.add(group)
+        elif default_group:
+            contact.groups.add(default_group)
+    elif default_group:
+        contact.groups.add(default_group)
+
     if not contact.name:
         contact.name = 'Anonymous User'
     contact.save()
