@@ -14,16 +14,8 @@
 
 {% else %}
 
-    <table style="width:100%">
-        <tr>
-            <td style="width:50%">
-                {% include "/ureport/partials/map_module.html" %}
-            </td>
-            <td style="width:50%">
-                {% include "/ureport/partials/piechart_module.html" %}
-            </td>
-        </tr>
-    </table>
+    {% include "/ureport/partials/map_module.html" %}
+    {% include "/ureport/partials/piechart_module.html" %}
 
 {% endif %}
 {% if module %}

@@ -116,7 +116,7 @@ var pie_opts = {
             left: 'auto',
             bottom: 'auto',
             right: '10px',
-            top: '525px'
+            top: '225px'
         }
     },
     credits:false,
@@ -327,7 +327,7 @@ function addGraph(data, x, y, color, desc) {
     var d = map.getBounds().toSpan();
     var height = d.lng();
     var width = d.lat();
-    var maxsize = 0.9;
+    var maxsize = 1 + (10.0 / map.getZoom());
     var pointpair = [];
     var increment = (parseFloat(height) / 10.0) / 100;
     var start = new GPoint(parseFloat(x), parseFloat(y));

@@ -48,7 +48,6 @@ def index(request):
 def tag_view(request):
     return render_to_response("ureport/tag_cloud.html", context_instance=RequestContext(request))
 
-
 def generate_tag_cloud(words,counts_dict,tag_classes,max_count):
     """
         returns tag words with assosiated tag classes depending on their frequency
@@ -143,56 +142,38 @@ def tag_cloud(request):
     return render_to_response("ureport/partials/tag_cloud.html", {'tags':tags,'poll_qn':poll_qn[0]},
                               context_instance=RequestContext(request))
 
-@login_required
-def polls(request,template,type=None):
-    """
-        view for freeform polls
-    """
-    
-    if type:
-        polls = Poll.objects.filter(type=type)
-    else:
-        polls=Poll.objects.all()
-    return render_to_response(template, {'polls':polls}, context_instance=RequestContext(request))
-
 def pie_graph(request):
     """
         view for pie-chart
 
     """
+    polls = retrieve_poll(request)
+    poll = polls[0]
 
-    all_polls=Poll.objects.all()
-    if request.GET.get('pks', None):
-        polls = retrieve_poll(request)
-        responses=Response.objects.filter(poll__in=polls)
+    categorized = ResponseCategory.objects.filter(response__poll__pk=poll.pk)\
+                  .values_list('category__name')\
+                  .annotate(Count('pk')).order_by('category__name')
 
-        poll_names=['Qn:'+'<br>'.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?<br>' for poll in polls]
+    uncategorized = Response.objects.filter(poll__pk=poll.pk)\
+                    .exclude(pk__in=ResponseCategory.objects.filter(response__poll__pk=poll.pk)\
+                             .values_list('response', flat=True))\
+                    .values_list('poll__pk')\
+                    .annotate(Count('pk'))
 
-        total_responses=responses.count()
-        category_count={}
-        plottable_data={}
-        plottable_data['data']=[]
-        plottable_data['poll_names']=''.join(poll_names).encode("iso-8859-15", "replace")
-        uncategorized=0
-        for response in responses:
-            if response.categories.count() >0:
-                categories=  [r.category.name for r in response.categories.all()]
-                if len(categories) > 1:
-                    key=' and '.join(categories)
-                else:
-                    key=  str(categories[0])
-                category_count.setdefault(key,0)
-                category_count[key]+=1
-            else:
-                uncategorized+=1
-        category_count['uncategorized']=uncategorized
+    poll_names=['Qn:'+'<br>'.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?<br>' for poll in polls]
 
-        for k in category_count.keys():
-            plottable_data['data'].append([k,(category_count[k]*100)/total_responses])
+    total_responses=poll.responses.count()
+    category_count={}
+    plottable_data={}
+    if total_responses:
+        plottable_data['data']=[[c[0], int(c[1]*100.0/total_responses)] for c in categorized]
+        if len(uncategorized):
+            plottable_data['data'].append(['uncategorized',int(uncategorized[0][1]*100.0/total_responses)])
+    else:
+        plottable_data['data'] = [['uncategorized',100]]
+    plottable_data['poll_names']=''.join(poll_names).encode("iso-8859-15", "replace")
 
-        return HttpResponse(mark_safe(simplejson.dumps(plottable_data)) )
-
-    return render_to_response("ureport/pie_graph.html", {'polls':all_polls}, context_instance=RequestContext(request))
+    return HttpResponse(mark_safe(simplejson.dumps(plottable_data)))
 
 def piegraph_module(request):
     polls = retrieve_poll(request)
@@ -256,50 +237,51 @@ def histogram(request):
     return render_to_response("ureport/histogram.html", {'polls':all_polls}, context_instance=RequestContext(request))
 
 def map(request):
-    polls=Poll.objects.all()
-    if request.GET.get('pks', None):
-        polls = retrieve_poll(request)
-        responses=Response.objects.filter(poll__in=polls)
-        layer_values={}
-        layer_values['colors']={}
-        for response in responses:
-            if response.message:
-                loc=response.message.connection.contact.reporting_location
-                if loc:
-                    try:
-                        layer_values.setdefault(loc.name,{'lat':float(loc.location.latitude),'lon':float(loc.location.longitude)})
-                        if response.categories.count()>0:
-                            categories=  [r.category.name for r in response.categories.all()]
-                            if len(categories) > 1:
-                                key=' and '.join(categories)
-                            else:
-                                key=  str(categories[0])
-                            layer_values[loc.name].setdefault('data',{})
-                            layer_values[loc.name]['data'].setdefault(key,0)
-                            layer_values[loc.name]['data'][key]+=1
-                        else:
-                            layer_values[loc.name].setdefault('data',{})
-                            layer_values[loc.name]['data'].setdefault('uncategorized',0)
-                            layer_values[loc.name]['data']['uncategorized']+=1
-                            if layer_values[loc.name]['data']['uncategorized'] >0:
-                                layer_values['colors']["uncategorized"]="#ff0000"
-                    except:
-                        continue
-        #set colors for category types
-        i=0
-        #poll question
-        poll_qn=['Qn:'+'<br>'.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?<br>' for poll in polls]
-        layer_values['qn']=poll_qn
-        for cat in Category.objects.filter(poll__in=polls):
-            try:
-                layer_values['colors'][cat.name]=colors[i]
-                i+=1
-            except IndexError:
-                layer_values['colors'][cat.name]='#000000'
+    polls = retrieve_poll(request)
+    poll = polls[0]
 
-        return HttpResponse(mark_safe(simplejson.dumps(layer_values)))
+    locname = 'response__message__connection__contact__reporting_location__name'
+    loclat = 'response__message__connection__contact__reporting_location__location__latitude'
+    loclon = 'response__message__connection__contact__reporting_location__location__longitude'
+    categorized = ResponseCategory.objects.filter(response__poll__pk=poll.pk)\
+                  .exclude(**{loclat:None})\
+                  .exclude(**{loclon:None})\
+                  .values_list(locname, loclat, loclon,'category__name')\
+                  .annotate(Count('pk')).order_by(locname, 'category__name')
 
-    return render_to_response("ureport/map.html", {'polls':polls}, context_instance=RequestContext(request))
+    locname = 'message__connection__contact__reporting_location__name'
+    loclat = 'message__connection__contact__reporting_location__location__latitude'
+    loclon = 'message__connection__contact__reporting_location__location__longitude'
+    uncategorized = Response.objects.filter(poll__pk=poll.pk)\
+                    .exclude(pk__in=ResponseCategory.objects.filter(response__poll__pk=poll.pk)\
+                             .values_list('response', flat=True))\
+                    .exclude(**{loclat:None})\
+                    .exclude(**{loclon:None})\
+                    .values_list(locname,loclat,loclon).annotate(Count('pk')).order_by(locname)
+
+    layer_values={'colors':{}}
+    for name, lat, lon, category, count in categorized:
+        layer_values.setdefault(name, {'lat':float(lat),'lon':float(lon),'data':{}})
+        layer_values[name]['data'][category] = count
+
+    for name, lat, lon, count in uncategorized:
+        layer_values.setdefault(name, {'lat':float(lat),'lon':float(lon),'data':{}})
+        layer_values[name]['data']['uncategorized'] = count
+
+    #poll question
+    poll_qn=['Qn:'+'<br>'.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?<br>' for poll in polls]
+    layer_values['qn']=poll_qn
+
+    #set colors for category types
+    i=0
+    for cat in Category.objects.filter(poll__in=polls):
+        try:
+            layer_values['colors'][cat.name]=colors[i]
+            i+=1
+        except IndexError:
+            layer_values['colors'][cat.name]='#000000'
+
+    return HttpResponse(mark_safe(simplejson.dumps(layer_values)))
 
 def mapmodule(request):
     polls = retrieve_poll(request)
@@ -316,63 +298,48 @@ def view_message_history(request, connection_id):
     direction_choices   = DIRECTION_CHOICES
     status_choices      = STATUS_CHOICES
     reply_form = ReplyForm()
+    connection = get_object_or_404(Connection, pk=connection_id)
+
+    if connection.contact:
+        messages = Message.objects.filter(connection__contact=connection.contact)
+    else:
+        messages = Message.objects.filter(connection=connection)
+    messages = messages.order_by('-date')
+
     try:
-        connection          = get_object_or_404(Connection, pk=connection_id)
-
-        if connection.contact:
-            try:
-                messages        = Message.objects.filter(connection__contact=connection.contact).order_by('-date')
-                latest_message  = Message.objects.filter(connection__contact=connection.contact).filter(direction="I").latest('date')
-                total_incoming  = Message.objects.filter(connection__contact=connection.contact).filter(direction="I").count()
-                total_outgoing  = Message.objects.filter(connection__contact=connection.contact).filter(direction="O").count()
-            except Message.DoesNotExist:
-                messages = []
-                latest_message = []
-                total_incoming = 0
-                total_outgoing = 0
-        else:
-            try:
-                messages = Message.objects.filter(connection=connection).order_by('-date')
-                latest_message  = Message.objects.filter(connection=connection).filter(direction="I").latest('date')
-                total_incoming  = Message.objects.filter(connection=connection).filter(direction="I").count()
-                total_outgoing  = Message.objects.filter(connection=connection).filter(direction="O").count()
-            except Message.DoesNotExist:
-                messages = []
-                latest_message = []
-                total_incoming = 0
-                total_outgoing = 0
-
-        #reply_form = str(reply_form).replace("\n","")
-        if request.method == 'POST':
-            reply_form = ReplyForm(request.POST)
-            if reply_form.is_valid():
-                if Connection.objects.filter(identity=reply_form.cleaned_data['recipient']).count():
-                    text = reply_form.cleaned_data['message']
-                    conn = Connection.objects.filter(identity=reply_form.cleaned_data['recipient'])[0]
-                    in_response_to = reply_form.cleaned_data['in_response_to']
-                    outgoing = OutgoingMessage(conn, text)
-                    get_router().handle_outgoing(outgoing, in_response_to)
-                    return redirect("/ureport/%d/message_history/" % connection.pk)
-                else:
-                    reply_form.errors.setdefault('short_description', ErrorList())
-                    reply_form.errors['recipient'].append("This number isn't in the system")
-    except Http404:
-        connection = None
+        latest_message  = messages.filter(direction="I").latest('date')
+        total_incoming = messages.filter(direction="I").count()
+        total_outgoing = messages.filter(direction="O").count()
+    except Message.DoesNotExist:
         messages = []
         latest_message = []
         total_incoming = 0
         total_outgoing = 0
+
+    if request.method == 'POST':
+        reply_form = ReplyForm(request.POST)
+        if reply_form.is_valid():
+            if Connection.objects.filter(identity=reply_form.cleaned_data['recipient']).count():
+                text = reply_form.cleaned_data['message']
+                conn = Connection.objects.filter(identity=reply_form.cleaned_data['recipient'])[0]
+                in_response_to = reply_form.cleaned_data['in_response_to']
+                outgoing = OutgoingMessage(conn, text)
+                get_router().handle_outgoing(outgoing, in_response_to)
+                return redirect("/ureport/%d/message_history/" % connection.pk)
+            else:
+                reply_form.errors.setdefault('short_description', ErrorList())
+                reply_form.errors['recipient'].append("This number isn't in the system")
+
     return render_to_response("ureport/message_history.html", {
-                        "messages": messages,
-                        "stats_latest_message": latest_message,
-                        "stats_total_incoming": total_incoming,
-                        "stats_total_outgoing": total_outgoing, 
-                        "connection": connection, 
-                        "direction_choices": direction_choices, 
-                        "status_choices": status_choices,
-                        "replyForm": reply_form
-                        }
-    , context_instance=RequestContext(request))
+        "messages": messages,
+        "stats_latest_message": latest_message,
+        "stats_total_incoming": total_incoming,
+        "stats_total_outgoing": total_outgoing,
+        "connection": connection,
+        "direction_choices": direction_choices,
+        "status_choices": status_choices,
+        "replyForm": reply_form
+    }, context_instance=RequestContext(request))
 
 def show_timeseries(request):
     polls = retrieve_poll(request)
@@ -390,7 +357,6 @@ def show_timeseries(request):
         current_date+=interval
 
     return render_to_response("ureport/partials/timeseries.html",{'counts':mark_safe(message_count_list),'start':start_date,'end':end_date,'poll':mark_safe(poll)},context_instance=RequestContext(request))
-
 
 @login_required
 def deleteReporter(request, reporter_pk):
