@@ -16,7 +16,7 @@ function get_color(category) {
 
 function ajax_loading(element)
 {
-    var t=$(element) ;
+    var t=$(element);
     var offset = t.offset();
                 var dim = {
                     left:    offset.left,
@@ -246,7 +246,7 @@ function plot_piechart(pk) {
     plot_piechart_module(pk, '');
 }
 
-function plot_piechart(pk, divstr) {
+function plot_piechart_module(pk, divstr) {
     ajax_loading('#visual' + divstr);
     remove_selection();
     $('#pie' + divstr).show();
@@ -370,10 +370,9 @@ function load_layer(pk, divstr) {
 
     $('img.map'+pk).addClass('selected');
     $('#map' + divstr).show();
-    $('#map_legend' + divstr).show();
     if($('.init').length > 0)
     {
-        init_map();
+        init_map_divstr(divstr);
     }
     $('#map' + divstr).removeClass('init');
     var id_list = "";
@@ -418,7 +417,8 @@ function load_layer(pk, divstr) {
             popup_description += "<p>Total number of responses:"+total+"</p>";
             addGraph(d, parseFloat(lat), parseFloat(lon), get_color(category),popup_description);
             //add legend
-            $('#map_legend' + divstr + ' table').text(' ');
+            $('#map_legend' + divstr).show();
+            $('#map_legend' + divstr + ' table').html(' ');
             for (category in category_color_lookup) {
                 category_span = '<span style="width:15px;height:15px;background-color:' + category_color_lookup[category] + ';float:left;display:block;margin-top:10px;"></span>'
                 $('#map_legend' + divstr + ' table').append('<tr><td>' + category + '</td><td>' + category_span + '</td></tr>')
