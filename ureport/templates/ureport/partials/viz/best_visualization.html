@@ -7,15 +7,15 @@
 
 {% if tags %}
 
-    {% include "/ureport/partials/tag_cloud.html" %}
+    {% include "/ureport/partials/tag_cloud/tag_cloud.html" %}
     {% comment %}
-        {% include "/ureport/partials/message_feed.html" %}
+        {% include "/ureport/partials/viz/message_feed.html" %}
     {% endcomment %}
 
 {% else %}
 
-    {% include "/ureport/partials/map_module.html" %}
-    {% include "/ureport/partials/piechart_module.html" %}
+    {% include "/ureport/partials/viz/map_module.html" %}
+    {% include "/ureport/partials/viz/piechart_module.html" %}
 
 {% endif %}
 {% if module %}

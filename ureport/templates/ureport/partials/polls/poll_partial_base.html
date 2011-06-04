@@ -8,17 +8,17 @@
                 }); 
             }
         }
-          
+
         function cancelResponse(link, url) {
             $(link).parents("tr").load(url);
         }
-        
+
         function saveResponse(link, url) {
             form = $(link).parents("form");
             form_data = form.serializeArray();
             $(link).parents("tr").load(url, form_data);
         }
-        
+
         function editResponse(link, url) {
             $(link).parents("tr").load(url);
         }
