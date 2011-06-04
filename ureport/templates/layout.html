@@ -65,6 +65,9 @@
         </div>
         {% endblock %}
         <div style="clear:both"></div>
+        <script language="JavaScript">
+        category_colors = [{% for c in colors %}'{{ c }}'{% if not forloop.last %},{% endif %}{% endfor %}];
+        </script>
         <div id="inner_content">
             {% block content %}{% endblock %}
         </div>
@@ -80,6 +83,7 @@
             </p>
         </div>
         {% endblock %}
+
     </div>
     </body>
 </html>

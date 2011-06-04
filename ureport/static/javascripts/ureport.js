@@ -1,3 +1,19 @@
+var category_colors = [];
+var category_color_lookup = {};
+var category_offset = 0;
+
+function get_color(category) {
+    if (!category_color_lookup[category]) {
+        if (category_colors.length <= category_offset) {
+            category_color_lookup[category] = '#000000';
+        } else {
+            category_color_lookup[category] = category_colors[category_offset];
+            category_offset += 1;
+        }
+    }
+    return category_color_lookup[category];
+}
+
 function ajax_loading(element)
 {
     var t=$(element) ;
@@ -30,8 +46,6 @@ var bar_opts = {
     },
     xAxis: {
         categories: [
-
-
         ]
     },
     yAxis: {
@@ -64,25 +78,20 @@ var bar_opts = {
 };
 
 function plot_barchart(data) {
-
-
     var chart;
     bar_opts.series = data['data'];
     bar_opts.xAxis.categories = data['categories'];
     bar_opts.subtitle.text = data['title'] + "</br>" + "mean:" + parseInt(data["mean"]) + " median:" + data["median"];
-
-
     chart = new Highcharts.Chart(bar_opts);
-
-
 }
+
 var pie_opts = {
     chart: {
         renderTo: 'pie',
         margin: [15, 15, 15, 15]
     },
     title: {
-        text: 'Poll Results For'
+        text: ''
     },
     plotArea: {
         shadow: true,
@@ -105,7 +114,7 @@ var pie_opts = {
                 },
                 color: 'white',
                 style: {
-                    font: '13px Trebuchet MS, Verdana, sans-serif'
+                    font: "13px \"Trebuchet MS\",  'Myriad Web', arial, noserif"
                 }
             }
         }
@@ -115,34 +124,38 @@ var pie_opts = {
         style: {
             left: 'auto',
             bottom: 'auto',
-            right: '10px',
-            top: '225px'
+            left: '0px',
+            top: '225px',
+            fontFamily: "\"Trebuchet MS\",  'Myriad Web', arial, noserif"
         }
     },
     credits:false,
     subtitle: {
-        text: 'test'
+        text: ''
     },
     series: [
         {
             type: 'pie',
-            name: 'Poll Results',
+            name: '',
             data: []
         }
     ]
 }
+
 function plot_pie(data, divstr) {
     var chart;
     pie_opts.chart.renderTo = 'pie' + divstr;
-    pie_opts.series[0].data = data['data'];
-    pie_opts.subtitle.text = data['poll_names'];
-    pie_opts.series[0].data[0] = {'name':data['data'][0][0],'y':data['data'][0][1],sliced: true,selected: true};
-    if (divstr != '') {
-        pie_opts.title.text = '';
-        pie_opts.subtitle.text = '';
-    }
-    chart = new Highcharts.Chart(pie_opts);
 
+    plot_data = []
+    plot_colors = []
+    for (i = 0; i < data.length; i++) {
+        plot_data[plot_data.length] = [data[i].category__name, data[i].value];
+        plot_colors[plot_colors.length] = get_color(data[i].category__name);
+    }
+    pie_opts.colors = plot_colors;
+    pie_opts.series[0].data = plot_data;
+    pie_opts.series[0].data[0] = {'name':data[0].category__name,'y':data[0].value,sliced: true,selected: true};
+    chart = new Highcharts.Chart(pie_opts);
 }
 
 function load_freeform_polls() {
@@ -200,13 +213,11 @@ function load_responses(pk) {
 
 function add_tag(tag,pk){
     var url="/ureport/add_tag/?tag="+tag +"&poll="+pk;
-
     $.ajax({
         type: "GET",
         url:url,
         dataType: "json",
         success: function() {
-
            load_tag_cloud(pk);
         }
     });
@@ -214,13 +225,11 @@ function add_tag(tag,pk){
 
 function remove_tag(tag){
      var url="/ureport/delete_tag/?tag="+tag
-
     $.ajax({
         type: "GET",
         url:url,
         dataType: "json",
         success: function() {
-
            load_excluded_tags();
         }
     });
@@ -243,7 +252,7 @@ function plot_piechart(pk, divstr) {
     $('#pie' + divstr).show();
     $('img.pie'+pk).addClass('selected');
     var id_list = "";
-    var url = "/ureport/pie_graph/" + "?pks=+" + pk;
+    var url = "/polls/responses/" + pk + "/stats/";
     $.ajax({
         type: "GET",
         url:url,
@@ -320,7 +329,6 @@ function Label(point, html, classname, pixelOffset) {
     }
 }
 
-
 //add graph to point
 function addGraph(data, x, y, color, desc) {
     //get map width and height in lat lon
@@ -329,26 +337,24 @@ function addGraph(data, x, y, color, desc) {
     var width = d.lat();
     var maxsize = 1 + (10.0 / map.getZoom());
     var pointpair = [];
-    var increment = (parseFloat(height) / 10.0) / 100;
-    var start = new GPoint(parseFloat(x), parseFloat(y));
+    var increment = parseFloat(height) / 1000.0;
+    var start = new GPoint(parseFloat(y), parseFloat(x));
     var volume = parseInt((parseFloat(data) * 100) / maxsize);
-
     pointpair.push(start);
     //draw the graph as an overlay
-    pointpair.push(new GPoint(parseFloat(x + increment), parseFloat(y + increment)));
+    pointpair.push(new GPoint(parseFloat(y + increment), parseFloat(x + increment)));
     var line = new GPolyline(pointpair, color, volume);
 
-    var label = new Label(new GLatLng(parseFloat(y), parseFloat(x)), parseInt(data * 100) + "%", "f", new GSize(-15, 0));
+    var label = new Label(new GLatLng(parseFloat(x), parseFloat(y)), parseInt(data * 100) + "%", "f", new GSize(-15, 0));
 
     map.addOverlay(label);
     map.addOverlay(line);
     //line.setDraggableCursor('pointer');
     GEvent.addListener(line,'click',function(para)
-        {map.openInfoWindowHtml(para,desc )});
+        {map.openInfoWindowHtml(para,desc)});
     GEvent.addListener(line, "mouseover", function() {
         $('#map').css("cursor" ,"pointer");
     });
-    
 }
 
 var map_poll_pk;
@@ -364,56 +370,59 @@ function load_layer(pk, divstr) {
 
     $('img.map'+pk).addClass('selected');
     $('#map' + divstr).show();
-    $('#map_legend').show();
+    $('#map_legend' + divstr).show();
     if($('.init').length > 0)
     {
         init_map();
     }
     $('#map' + divstr).removeClass('init');
     var id_list = "";
-    var url = "/ureport/map/" + "?pks=+" + pk;
+    var url = "/polls/responses/" + pk + "/stats/1/";
     $.ajax({
         type: "GET",
         url:url,
         dataType: "json",
         success: function(data) {
-            //add legend
-            $('#map_legend table').text(' ');
             map.clearOverlays();
             $('.ajax_loading').remove();
-            $('#map_legend' + divstr + ' table').empty();
-            var qn='<tr><td><b>'+data['qn']+'</b></td></tr>';
-            if (divstr == '') {
-                $('#map_legend table.qn').append(qn);
-            }
-            $.each(data['colors'], function(ky, vl) {
-                var elem = '<tr><td><span style="width:15px;height:15px;background-color:' + vl + ';float:left;display:block;margin-top:10px;"></span><td><td >' + ky + '</td></tr>';
-                $('#map_legend' + divstr + ' table.key').append(elem);
-            });
 
-            $.each(data, function(key, value) {
-                if (!key.match('color') && !key.match('qn') ) {
-                    var max = 0;
-                    var total = 0;
-                    var category = "";
-                    //get the total
-                    $.each(value['data'], function(k, v) {
-
-                        total = total + v;
-                        if (v > max) {
-                            max = v;
-                            category = k;
-                        }
-                    });
+            location_name = data[0].location_name;
+            lat = data[0].lat;
+            lon = data[0].lon;
+            max = 0;
+            category = data[0].category__name;
+            total = 0;
+            popup_description = "<b>" + location_name + "</b>";
+            for (i = 0; i < data.length; i++) {
+                if (location_name != data[i].location_name) {
                     d = max / total;
-                    var pop_desc="";
-                    $.each(value['data'], function(k, v) {
-                    	pop_desc=pop_desc+"<p>"+k+":"+parseInt(v*100/total)+"%</p>";	
-                    });
-                    var desc="<b>"+key+"</b>" + pop_desc+"<p>Total number of responses:"+total+"</p>";
-                    addGraph(d, parseFloat(value['lon']), parseFloat(value['lat']), data['colors'][category],desc);
+                    popup_description += "<p>Total number of responses:"+total+"</p>";
+                    addGraph(d, parseFloat(lat), parseFloat(lon), get_color(category),popup_description);
+
+                    location_name = data[i].location_name;
+                    lat = data[i].lat;
+                    lon = data[i].lon;
+                    category = data[i].category__name;
+                    max = 0;
+                    total = 0;
+                    popup_description = "<b>" + location_name + "</b>";
                 }
-            });
+                popup_description += "<p>" + data[i].category__name + ":" + data[i].value + "</p>";
+                total += data[i].value;
+                if (data[i].value > max) {
+                    max = data[i].value;
+                    category = data[i].category__name;
+                }
+            }
+            d = max / total;
+            popup_description += "<p>Total number of responses:"+total+"</p>";
+            addGraph(d, parseFloat(lat), parseFloat(lon), get_color(category),popup_description);
+            //add legend
+            $('#map_legend' + divstr + ' table').text(' ');
+            for (category in category_color_lookup) {
+                category_span = '<span style="width:15px;height:15px;background-color:' + category_color_lookup[category] + ';float:left;display:block;margin-top:10px;"></span>'
+                $('#map_legend' + divstr + ' table').append('<tr><td>' + category + '</td><td>' + category_span + '</td></tr>')
+            }
         }
     });
 }
