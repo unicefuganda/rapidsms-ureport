@@ -41,13 +41,6 @@ import random
 
 TAG_CLASSES=['tag1','tag2','tag3','tag4','tag5','tag6','tag7']
 
-def index(request):
-    return render_to_response("ureport/index.html", {}, RequestContext(request)) 
-
-@login_required
-def tag_view(request):
-    return render_to_response("ureport/tag_cloud.html", context_instance=RequestContext(request))
-
 def generate_tag_cloud(words,counts_dict,tag_classes,max_count):
     """
         returns tag words with assosiated tag classes depending on their frequency
@@ -92,7 +85,7 @@ def delete_drop_word(request):
 @login_required
 def show_ignored_tags(request):
     tags=IgnoredTags.objects.all()
-    return render_to_response("ureport/partials/ignored_tags.html", {'tags':tags},context_instance=RequestContext(request))
+    return render_to_response("ureport/partials/tag_cloud/ignored_tags.html", {'tags':tags},context_instance=RequestContext(request))
 
 def _get_tags(polls):
     responses=Response.objects.filter(poll__in=polls)
@@ -139,46 +132,7 @@ def tag_cloud(request):
     poll_qn=['Qn:'+' '.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?' for poll in polls]
 
     tags = _get_tags(polls) 
-    return render_to_response("ureport/partials/tag_cloud.html", {'tags':tags,'poll_qn':poll_qn[0]},
-                              context_instance=RequestContext(request))
-
-def pie_graph(request):
-    """
-        view for pie-chart
-
-    """
-    polls = retrieve_poll(request)
-    poll = polls[0]
-
-    categorized = ResponseCategory.objects.filter(response__poll__pk=poll.pk)\
-                  .values_list('category__name')\
-                  .annotate(Count('pk')).order_by('category__name')
-
-    uncategorized = Response.objects.filter(poll__pk=poll.pk)\
-                    .exclude(pk__in=ResponseCategory.objects.filter(response__poll__pk=poll.pk)\
-                             .values_list('response', flat=True))\
-                    .values_list('poll__pk')\
-                    .annotate(Count('pk'))
-
-    poll_names=['Qn:'+'<br>'.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?<br>' for poll in polls]
-
-    total_responses=poll.responses.count()
-    category_count={}
-    plottable_data={}
-    if total_responses:
-        plottable_data['data']=[[c[0], int(c[1]*100.0/total_responses)] for c in categorized]
-        if len(uncategorized):
-            plottable_data['data'].append(['uncategorized',int(uncategorized[0][1]*100.0/total_responses)])
-    else:
-        plottable_data['data'] = [['uncategorized',100]]
-    plottable_data['poll_names']=''.join(poll_names).encode("iso-8859-15", "replace")
-
-    return HttpResponse(mark_safe(simplejson.dumps(plottable_data)))
-
-def piegraph_module(request):
-    polls = retrieve_poll(request)
-    poll = polls[0]
-    return render_to_response("ureport/partials/piechart_module.html", {"poll":poll}, context_instance=RequestContext(request))
+    return render_to_response("ureport/partials/tag_cloud/tag_cloud.html", {'tags':tags,'poll_qn':poll_qn[0]})
 
 def histogram(request):
     """
@@ -235,58 +189,6 @@ def histogram(request):
         return HttpResponse(mark_safe(simplejson.dumps(plottable_data)) )
 
     return render_to_response("ureport/histogram.html", {'polls':all_polls}, context_instance=RequestContext(request))
-
-def map(request):
-    polls = retrieve_poll(request)
-    poll = polls[0]
-
-    locname = 'response__message__connection__contact__reporting_location__name'
-    loclat = 'response__message__connection__contact__reporting_location__location__latitude'
-    loclon = 'response__message__connection__contact__reporting_location__location__longitude'
-    categorized = ResponseCategory.objects.filter(response__poll__pk=poll.pk)\
-                  .exclude(**{loclat:None})\
-                  .exclude(**{loclon:None})\
-                  .values_list(locname, loclat, loclon,'category__name')\
-                  .annotate(Count('pk')).order_by(locname, 'category__name')
-
-    locname = 'message__connection__contact__reporting_location__name'
-    loclat = 'message__connection__contact__reporting_location__location__latitude'
-    loclon = 'message__connection__contact__reporting_location__location__longitude'
-    uncategorized = Response.objects.filter(poll__pk=poll.pk)\
-                    .exclude(pk__in=ResponseCategory.objects.filter(response__poll__pk=poll.pk)\
-                             .values_list('response', flat=True))\
-                    .exclude(**{loclat:None})\
-                    .exclude(**{loclon:None})\
-                    .values_list(locname,loclat,loclon).annotate(Count('pk')).order_by(locname)
-
-    layer_values={'colors':{}}
-    for name, lat, lon, category, count in categorized:
-        layer_values.setdefault(name, {'lat':float(lat),'lon':float(lon),'data':{}})
-        layer_values[name]['data'][category] = count
-
-    for name, lat, lon, count in uncategorized:
-        layer_values.setdefault(name, {'lat':float(lat),'lon':float(lon),'data':{}})
-        layer_values[name]['data']['uncategorized'] = count
-
-    #poll question
-    poll_qn=['Qn:'+'<br>'.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?<br>' for poll in polls]
-    layer_values['qn']=poll_qn
-
-    #set colors for category types
-    i=0
-    for cat in Category.objects.filter(poll__in=polls):
-        try:
-            layer_values['colors'][cat.name]=colors[i]
-            i+=1
-        except IndexError:
-            layer_values['colors'][cat.name]='#000000'
-
-    return HttpResponse(mark_safe(simplejson.dumps(layer_values)))
-
-def mapmodule(request):
-    polls = retrieve_poll(request)
-    poll = polls[0]
-    return render_to_response("ureport/partials/map_module.html", {'poll':poll}, context_instance=RequestContext(request)) 
 
 @login_required
 def view_message_history(request, connection_id):
@@ -356,13 +258,14 @@ def show_timeseries(request):
         message_count_list.append(count)
         current_date+=interval
 
-    return render_to_response("ureport/partials/timeseries.html",{'counts':mark_safe(message_count_list),'start':start_date,'end':end_date,'poll':mark_safe(poll)},context_instance=RequestContext(request))
+    return render_to_response("ureport/partials/viz/timeseries.html",{'counts':mark_safe(message_count_list),'start':start_date,'end':end_date,'poll':mark_safe(poll)},context_instance=RequestContext(request))
 
 @login_required
 def deleteReporter(request, reporter_pk):
     reporter = get_object_or_404(Contact, pk=reporter_pk)
     if request.method == 'POST':
         reporter.delete()
+    return HttpResponse(status=200)
 
 @login_required
 def editReporter(request, reporter_pk):
@@ -374,15 +277,16 @@ def editReporter(request, reporter_pk):
         if reporter_form.is_valid():
             reporter_form.save()
         else:
-            return render_to_response('ureport/partials/edit_reporter.html'
+            return render_to_response('ureport/partials/contacts/edit_reporter.html'
                     , {'reporter_form': reporter_form, 'reporter'
                     : reporter},
                     context_instance=RequestContext(request))
-        return render_to_response('/ureport/partials/contacts_row.html',
-                                  {'object':Contact.objects.get(pk=reporter_pk)},
+        return render_to_response('/ureport/partials/contacts/contacts_row.html',
+                                  {'object':Contact.objects.get(pk=reporter_pk),
+                                   'selectable':True},
                                   context_instance=RequestContext(request))
     else:
-        return render_to_response('ureport/partials/edit_reporter.html',
+        return render_to_response('ureport/partials/contacts/edit_reporter.html',
                                   {'reporter_form': reporter_form,
                                   'reporter': reporter},
                                   context_instance=RequestContext(request))
@@ -406,10 +310,10 @@ def view_responses(req, poll_id):
         queryset=responses,
         objects_per_page=25,
         selectable=False,
-        partial_base='ureport/partials/poll_partial_base.html',
+        partial_base='ureport/partials/polls/poll_partial_base.html',
         row_base=typedef['view_template'],
         columns=columns,
-        partial_row='ureport/partials/response_row.html'
+        partial_row='ureport/partials/polls/response_row.html'
     )
 
 def _get_responses(poll):
@@ -431,11 +335,11 @@ def best_visualization(request):
     if ResponseCategory.objects.filter(response__poll=poll).count() == 0:
         dict.update({'tags':_get_tags(polls), 'responses':_get_responses(poll)})
     return render_to_response(\
-        "/ureport/partials/best_visualization.html",
+        "/ureport/partials/viz/best_visualization.html",
         dict,
         context_instance=RequestContext(request))
 
-def ureport_content(request, slug, base_template='ureport/content.html',**kwargs):
+def ureport_content(request, slug, base_template='ureport/two-column.html',**kwargs):
     reporter = get_object_or_404(Dashboard, slug=slug, user=None)
     return generic_dashboard(request,
         slug=slug,
@@ -448,7 +352,7 @@ def message_feed(request):
     polls = retrieve_poll(request)
     poll = polls[0]
     return render_to_response(
-        '/ureport/partials/message_feed.html',
+        '/ureport/partials/viz/message_feed.html',
         {'poll':poll,'responses':_get_responses(poll)},
         context_instance=RequestContext(request))
 

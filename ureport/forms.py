@@ -16,6 +16,7 @@ class EditReporterForm(forms.ModelForm):
 
     class Meta:
         model=Contact
+        fields=('name','reporting_location','groups')
 
 class ReplyForm(forms.Form):        
     recipient = forms.CharField(max_length=20)

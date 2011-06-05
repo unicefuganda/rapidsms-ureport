@@ -18,8 +18,8 @@ urlpatterns = patterns('',
         'filter_forms':[],
         'action_forms':[],
         'objects_per_page':10,
-        'partial_row':'ureport/partials/poll_row.html',
-        'partial_header':'ureport/partials/partial_header_dashboard.html',
+        'partial_row':'ureport/partials/dashboard/poll_row.html',
+        'partial_header':'ureport/partials/dashboard/partial_header_dashboard.html',
         'base_template':'ureport/dashboard.html',
         'selectable':False,
         'columns':[('Name', True, 'name', SimpleSorter()),
@@ -40,7 +40,7 @@ urlpatterns = patterns('',
         'filter_forms':[FreeSearchForm, DistictFilterForm, FilterGroupsForm],
         'action_forms':[MassTextForm, AssignGroupForm, BlacklistForm],
         'objects_per_page':25,
-        'partial_row':'ureport/partials/contacts_row.html',
+        'partial_row':'ureport/partials/contacts/contacts_row.html',
         'base_template':'ureport/contacts_base.html',
         'columns':[('Name', True, 'name', SimpleSorter()),
                  ('Number', True, 'connection__identity', SimpleSorter(),),
@@ -51,7 +51,7 @@ urlpatterns = patterns('',
     }, name="ureport-contact"),
     url(r'^ureport/reporter/(?P<reporter_pk>\d+)/edit', editReporter),
     url(r'^ureport/reporter/(?P<reporter_pk>\d+)/delete', deleteReporter),
-    url(r'^ureport/reporter/(?P<pk>\d+)/show', generic_row, {'model':Contact, 'partial_row':'ureport/partials/contacts_row.html'}),
+    url(r'^ureport/reporter/(?P<pk>\d+)/show', generic_row, {'model':Contact, 'partial_row':'ureport/partials/contacts/contacts_row.html'}),
     url(r"^ureport/(\d+)/message_history/$", view_message_history),
 
     # poll management views using generic (rather than built-in poll views
@@ -60,7 +60,7 @@ urlpatterns = patterns('',
         'queryset':get_polls,
         'objects_per_page':10,
         'selectable':False,
-        'partial_row':'ureport/partials/poll_admin_row.html',
+        'partial_row':'ureport/partials/polls/poll_admin_row.html',
         'base_template':'ureport/poll_admin_base.html',
         'results_title':'Polls',
         'sort_column':'start_date',
@@ -77,9 +77,9 @@ urlpatterns = patterns('',
 
     # content pages (cms-style static pages)
     url(r'^ureport/content/(?P<slug>[a-z]+)/$', ureport_content),
-    url(r'^home/$', ureport_content, {'slug':'ureport_home', 'base_template':'ureport/homepage.html', 'num_columns':3}, name="ureport-home"),
+    url(r'^home/$', ureport_content, {'slug':'ureport_home', 'base_template':'ureport/three-square.html', 'num_columns':3}, name="ureport-home"),
     url(r'^about/$', ureport_content, {'slug':'ureport_about'}, name="ureport-about"),
-    url(r'^stories/$', ureport_content, {'slug':'ureport_stories', 'base_template':'ureport/homepage.html', 'num_columns':3}, name="ureport-stories"),
+    url(r'^stories/$', ureport_content, {'slug':'ureport_stories', 'base_template':'ureport/three-square.html', 'num_columns':3}, name="ureport-stories"),
 
     # real-time message feed from the live poll
     url(r'^ureport/messagefeed/$', message_feed),
@@ -94,16 +94,8 @@ urlpatterns = patterns('',
     url(r'^ureport/delete_tag/$', delete_drop_word),
     url(r'^ureport/show_excluded/$', show_ignored_tags),
 
-    # pie graph views
-    url(r'^ureport/pie_graph/$', pie_graph,name="pie_chart"),
-    url(r'^ureport/piegraph_module/$', piegraph_module),
-
     # histogram views
     url(r'^ureport/histogram/$', histogram,name="histogram"),
-
-    # map views
-    url(r'^ureport/map/$', map,name="map"),
-    url(r'^ureport/map/module/$', mapmodule),
 
     # total responses vs time view
     url(r'^ureport/timeseries/$',show_timeseries),
