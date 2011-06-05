@@ -2,6 +2,18 @@ var category_colors = [];
 var category_color_lookup = {};
 var category_offset = 0;
 
+/**
+ * Registers a category name with a particular color,
+ * for consistency across multiple visualizations.  If the
+ * category name hasn't been passed to this function yet, it
+ * will be added to category_color_lookup (as a key), and
+ * the next available color from the color list will be
+ * the value.  See ureport/templates/layout.html for the
+ * loading of the colors into the category_colors based on
+ * the values in ureport/settings.py
+ * @param category the category name, e.g. 'yes','no',etc
+ * @return the color value in css form e.g., '#ABff07'
+ */
 function get_color(category) {
     if (!category_color_lookup[category]) {
         if (category_colors.length <= category_offset) {
@@ -12,6 +24,19 @@ function get_color(category) {
         }
     }
     return category_color_lookup[category];
+}
+
+/**
+ * Clear the visualization area of previous visuals
+ */
+function remove_selection() {
+    $('#map_legend').hide();
+    $('.module   ul li img').each(function() {
+        $(this).removeClass('selected');
+    });
+    $('#visual').children().each(function() {
+        $(this).hide();
+    });
 }
 
 function ajax_loading(element)
@@ -31,49 +56,18 @@ function ajax_loading(element)
                     width:        dim.width + 'px',
                     height:        dim.height + 'px'
                 }).appendTo(document.body).show();
-
 }
+
 var bar_opts = {
-    chart: {
-        renderTo: 'bar',
-        defaultSeriesType: 'column'
-    },
-    title: {
-        text: 'Poll Results For'
-    },
-    subtitle: {
-        text: 'polls'
-    },
-    xAxis: {
-        categories: [
-        ]
-    },
-    yAxis: {
-        min: 0,
-        title: {
-            text: 'Number'
-        }
-    },
-    legend: {
-        layout: 'vertical',
-        backgroundColor: '#FFFFFF',
-        align: 'left',
-        verticalAlign: 'top',
-        x: 100,
-        y: 70
-    },
-    tooltip: {
-        formatter: function() {
-            return '' +
-                    this.x + ': ' + this.y;
-        }
-    },
-    plotOptions: {
-        column: {
-            pointPadding: 0.2,
-            borderWidth: 0
-        }
-    },
+    chart: {renderTo: 'bar',defaultSeriesType: 'column'},
+    title: {text: 'Poll Results For'},
+    subtitle: {text: 'polls'},
+    xAxis: {categories: []},
+    yAxis: {min: 0,title: {text: 'Number'}},
+    legend: {layout:'vertical',backgroundColor:'#FFFFFF',align:'left',
+             verticalAlign:'top',x:100,y:70},
+    tooltip: {formatter: function() {return '' + this.x + ': ' + this.y;}},
+    plotOptions: {column: {pointPadding: 0.2,borderWidth: 0}},
     series: []
 };
 
@@ -85,61 +79,33 @@ function plot_barchart(data) {
     chart = new Highcharts.Chart(bar_opts);
 }
 
+function plot_histogram(pk) {
+    remove_selection();
+    $('#bar').show();
+    $('img.bar'+pk).addClass('selected');
+    var id_list = "";
+    var url = "/ureport/histogram/" + "?pks=+" + pk;
+    $.ajax({
+        type: "GET",
+        url:url,
+        dataType: "json",
+        success: function(data) {
+            plot_barchart(data);
+        }
+    });
+}
+
 var pie_opts = {
-    chart: {
-        renderTo: 'pie',
-        margin: [15, 15, 15, 15]
-    },
-    title: {
-        text: ''
-    },
-    plotArea: {
-        shadow: true,
-        borderWidth: 30,
-        backgroundColor: null
-    },
-    tooltip: {
-        formatter: function() {
-            return '<b>' + this.point.name + '</b>: ' + this.y + ' %';
-        }
-    },
-    plotOptions: {
-        pie: {
-            allowPointSelect: true,
-            cursor: 'pointer',
-            dataLabels: {
-                enabled: true,
-                formatter: function() {
-                    //if (this.y > 5) return this.point.name;
-                },
-                color: 'white',
-                style: {
-                    font: "13px \"Trebuchet MS\",  'Myriad Web', arial, noserif"
-                }
-            }
-        }
-    },
-    legend: {
-        layout: 'horizontal',
-        style: {
-            left: 'auto',
-            bottom: 'auto',
-            left: '0px',
-            top: '225px',
-            fontFamily: "\"Trebuchet MS\",  'Myriad Web', arial, noserif"
-        }
-    },
-    credits:false,
-    subtitle: {
-        text: ''
-    },
-    series: [
-        {
-            type: 'pie',
-            name: '',
-            data: []
-        }
-    ]
+    chart: {renderTo: 'pie',margin: [15, 15, 15, 15]},
+    title: {text: ''},
+    plotArea: {shadow: true,borderWidth: 30,backgroundColor: null},
+    tooltip: {formatter: function() {return '<b>' + this.point.name + '</b>: ' + this.y + ' %';}},
+    plotOptions: {pie:{allowPointSelect:true,cursor:'pointer',dataLabels:{enabled:true,color: 'white',
+                style: {font: "13px \"Trebuchet MS\",  'Myriad Web', arial, noserif"}}}},
+    legend: {layout: 'horizontal',style: {left: 'auto',bottom: 'auto',left: '0px',top: '225px',
+            fontFamily: "\"Trebuchet MS\",  'Myriad Web', arial, noserif"}},
+    credits:false,subtitle: {text: ''},
+    series: [{type: 'pie',name: '',data: []}]
 }
 
 function plot_pie(data, divstr) {
@@ -158,20 +124,25 @@ function plot_pie(data, divstr) {
     chart = new Highcharts.Chart(pie_opts);
 }
 
-function load_freeform_polls() {
-    $('#poll_list').load('/ureport/polls/freeform/');
+function plot_piechart(pk) {
+    plot_piechart_module(pk, '');
 }
 
-/**
- * Clear the visualization area of previous visuals
- */
-function remove_selection() {
-    $('#map_legend').hide();
-    $('.module   ul li img').each(function() {
-        $(this).removeClass('selected');
-    });
-    $('#visual').children().each(function() {
-        $(this).hide();
+function plot_piechart_module(pk, divstr) {
+    ajax_loading('#visual' + divstr);
+    remove_selection();
+    $('#pie' + divstr).show();
+    $('img.pie'+pk).addClass('selected');
+    var id_list = "";
+    var url = "/polls/responses/" + pk + "/stats/";
+    $.ajax({
+        type: "GET",
+        url:url,
+        dataType: "json",
+        success: function(data) {
+            $('.ajax_loading').remove();
+            plot_pie(data, divstr);
+        }
     });
 }
 
@@ -187,26 +158,6 @@ function load_tag_cloud(pk) {
     var url = "/ureport/tag_cloud/" + "?pks=+" + pk;
 
     $('#tags').load(url,function(){
-       $('.ajax_loading').remove();
-    });
-}
-
-function load_report(pk) {
-    ajax_loading('#visual');
-    remove_selection();
-    $('#poll_report').show();
-    var url = '/polls/' + pk + '/report/module/';
-    $('#poll_report').load(url,function(){
-       $('.ajax_loading').remove();
-    });
-}
-
-function load_responses(pk) {
-    ajax_loading('#visual');
-    remove_selection();
-    $('#poll_responses').show();
-    var url = '/polls/' + pk + '/responses/module/';
-    $('#poll_responses').load(url,function(){
        $('.ajax_loading').remove();
     });
 }
@@ -242,44 +193,6 @@ function load_excluded_tags() {
     $('#excluded').show();
 }
 
-function plot_piechart(pk) {
-    plot_piechart_module(pk, '');
-}
-
-function plot_piechart_module(pk, divstr) {
-    ajax_loading('#visual' + divstr);
-    remove_selection();
-    $('#pie' + divstr).show();
-    $('img.pie'+pk).addClass('selected');
-    var id_list = "";
-    var url = "/polls/responses/" + pk + "/stats/";
-    $.ajax({
-        type: "GET",
-        url:url,
-        dataType: "json",
-        success: function(data) {
-            $('.ajax_loading').remove();
-            plot_pie(data, divstr);
-        }
-    });
-}
-
-function plot_histogram(pk) {
-    remove_selection();
-    $('#bar').show();
-    $('img.bar'+pk).addClass('selected');
-    var id_list = "";
-    var url = "/ureport/histogram/" + "?pks=+" + pk;
-    $.ajax({
-        type: "GET",
-        url:url,
-        dataType: "json",
-        success: function(data) {
-            plot_barchart(data);
-        }
-    });
-}
-
 function load_timeseries(pk) {
     remove_selection();
     $('#poll_timeseries').show();
@@ -288,6 +201,8 @@ function load_timeseries(pk) {
     var url = "/ureport/timeseries/?pks=+" + pk;
     $('#poll_timeseries').load(url);
 }
+
+var map_poll_pk;
 
 //function to create label
 function Label(point, html, classname, pixelOffset) {
@@ -356,8 +271,6 @@ function addGraph(data, x, y, color, desc) {
         $('#map').css("cursor" ,"pointer");
     });
 }
-
-var map_poll_pk;
 
 function load_layers(pk) {
     load_layer(pk, '');
@@ -431,7 +344,7 @@ function init_map() {
     init_map_divstr('');
 }
 
-//    function to draw simple map
+// function to draw simple map
 function init_map_divstr(divstr) {
 
     //initialise the map object
@@ -452,16 +365,11 @@ function init_map_divstr(divstr) {
 
 }
 
-function toggle_show_hide(elem)
-{
-    if($(elem).is(':visible')) {
-        $(elem).hide();
-    }
-    else {
-        $(elem).show();
-    }
-}
-
+/**
+ * See ureport/templates/ureport/partials/dashboard/poll_row.html
+ * This function collapses the poll list to allow the visualization
+ * to occupy the majority of the screen.
+ */
 function collapse() {
     $('#show_results_list').show();
     $('#object_list').hide();
@@ -480,6 +388,26 @@ function toggleReplyBox(anchor, phone, msg_id){
     $(_currentDiv).slideToggle(300);
     $('#id_recipient').val(phone);
     $('#id_in_response_to').val(msg_id);
+}
+
+function load_responses(pk) {
+    ajax_loading('#visual');
+    remove_selection();
+    $('#poll_responses').show();
+    var url = '/polls/' + pk + '/responses/module/';
+    $('#poll_responses').load(url,function(){
+       $('.ajax_loading').remove();
+    });
+}
+
+function load_report(pk) {
+    ajax_loading('#visual');
+    remove_selection();
+    $('#poll_report').show();
+    var url = '/polls/' + pk + '/report/module/';
+    $('#poll_report').load(url,function(){
+       $('.ajax_loading').remove();
+    });
 }
 
 function deleteReporter(elem, pk, name) {
@@ -503,18 +431,16 @@ function submitForm(link, action, resultDiv) {
 }
 
 $(document).ready(function() {
-	  //check if a map div is defined
-	  if($('#map').length > 0 ) {
-	        init_map();
-	  }
-	  if($('.freeform').length > 0 ) {
-	      load_freeform_polls();
-	  }
+	//check if a map div is defined
+	if($('#map').length > 0 ) {
+	    init_map();
+	}
 	//Accordion based messaging history list
-	$(function() {
-		$( "#accordion" ).accordion({ autoHeight: false, collapsible: true });
-	});
-	
+    if($('#accordion').length > 0) {
+    	$(function() {
+    		$( "#accordion" ).accordion({ autoHeight: false, collapsible: true });
+    	});
+    }
 	$(function() {    		
         $('.replyForm').hide();
 	});
