@@ -31,10 +31,11 @@ function get_color(category) {
  */
 function remove_selection() {
     $('#map_legend').hide();
-    $('.module   ul li img').each(function() {
+    $('.module ul li img').each(function() {
         $(this).removeClass('selected');
     });
     $('#visual').children().each(function() {
+        $(this).empty();
         $(this).hide();
     });
 }
@@ -82,6 +83,11 @@ function plot_histogram(data, element_id) {
         category = '' + i.toFixed(1) + '-' + (i + increment).toFixed(1);
         count = 0;
         categories[categories.length] = category;
+        if (i + increment == max) {
+            // the last range should be inclusive, otherwise we won't
+            // count one of the numbers
+            increment += 1;
+        }
         while (offset > -1 && data[offset][0] >= i && data[offset][0] < (i + increment)) {
             count += data[offset][1];
             offset -= 1;
@@ -95,6 +101,7 @@ function plot_histogram(data, element_id) {
 }
 
 function load_histogram(poll_id, element_id) {
+    remove_selection();
     $('#' + element_id).show();
     $('img.bar'+element_id).addClass('selected');
     var id_list = "";
