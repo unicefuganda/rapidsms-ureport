@@ -60,51 +60,74 @@ function ajax_loading(element)
 
 var bar_opts = {
     chart: {renderTo: 'bar',defaultSeriesType: 'column'},
-    title: {text: 'Poll Results For'},
-    subtitle: {text: 'polls'},
+    title: {text: ''},
+    subtitle: {text: ''},
     xAxis: {categories: []},
-    yAxis: {min: 0,title: {text: 'Number'}},
-    legend: {layout:'vertical',backgroundColor:'#FFFFFF',align:'left',
-             verticalAlign:'top',x:100,y:70},
+    yAxis: {min: 0,title: {text: 'Count'}},
     tooltip: {formatter: function() {return '' + this.x + ': ' + this.y;}},
     plotOptions: {column: {pointPadding: 0.2,borderWidth: 0}},
-    series: []
+    series: [{data:[]}]
 };
 
-function plot_barchart(data) {
+function plot_barchart(data, divstr) {
     var chart;
-    bar_opts.series = data['data'];
-    bar_opts.xAxis.categories = data['categories'];
-    bar_opts.subtitle.text = data['title'] + "</br>" + "mean:" + parseInt(data["mean"]) + " median:" + data["median"];
+    max = data[0][0];
+    min = data[data.length - 1][0];
+    // 6 bars
+    increment = (max - min) / 6.0;
+    offset = data.length - 1;
+    bar_data = [];
+    categories = [];
+    for (i = min; i < max; i += increment) {
+        category = '' + i.toFixed(1) + '-' + (i + increment).toFixed(1);
+        count = 0;
+        categories[categories.length] = category;
+        while (offset > -1 && data[offset][0] >= i && data[offset][0] < (i + increment)) {
+            count += data[offset][1];
+            offset -= 1;
+        }
+        bar_data[bar_data.length] = count;
+    }
+    bar_opts.series[0].data = bar_data;
+    bar_opts.xAxis.categories = categories;
+    bar_opts.chart.renderTo = 'bar' + divstr;
     chart = new Highcharts.Chart(bar_opts);
 }
 
-function plot_histogram(pk) {
-    remove_selection();
-    $('#bar').show();
+function plot_histogram_module(pk, divstr) {
+    $('#bar' + divstr).show();
     $('img.bar'+pk).addClass('selected');
     var id_list = "";
-    var url = "/ureport/histogram/" + "?pks=+" + pk;
+    var url = "/polls/responses/" + pk + "/numeric/";
+    // var url = "/ureport/histogram/" + "?pks=+" + pk;
     $.ajax({
         type: "GET",
         url:url,
         dataType: "json",
         success: function(data) {
-            plot_barchart(data);
+            plot_barchart(data, divstr);
         }
     });
 }
 
+function plot_histogram(pk) {
+    remove_selection();
+    plot_histogram_module(pk,'');
+}
+
 var pie_opts = {
-    chart: {renderTo: 'pie',margin: [15, 15, 15, 15]},
+    chart: {renderTo: 'pie',margin: [5,5,5,5]},
     title: {text: ''},
     plotArea: {shadow: true,borderWidth: 30,backgroundColor: null},
-    tooltip: {formatter: function() {return '<b>' + this.point.name + '</b>: ' + this.y + ' %';}},
-    plotOptions: {pie:{allowPointSelect:true,cursor:'pointer',dataLabels:{enabled:true,color: 'white',
-                style: {font: "13px \"Trebuchet MS\",  'Myriad Web', arial, noserif"}}}},
-    legend: {layout: 'horizontal',style: {left: 'auto',bottom: 'auto',left: '0px',top: '225px',
-            fontFamily: "\"Trebuchet MS\",  'Myriad Web', arial, noserif"}},
-    credits:false,subtitle: {text: ''},
+    tooltip: {formatter: function() {return '<b>' + this.point.name + '</b>: ' + this.y.toFixed(1) + ' %';}},
+    plotOptions: {pie: {allowPointSelect: true,cursor: 'pointer',dataLabels: {
+                enabled: true,
+                formatter: function() {},
+                color: 'white',
+                style: {font: '13px Trebuchet MS, Verdana, sans-serif'}}}},
+    legend: {layout: 'horizontal',style: {left: 'auto',bottom: 'auto',right: '10px',top: '525px'}},
+    credits:false,
+    subtitle: {text: ''},
     series: [{type: 'pie',name: '',data: []}]
 }
 
@@ -112,15 +135,20 @@ function plot_pie(data, divstr) {
     var chart;
     pie_opts.chart.renderTo = 'pie' + divstr;
 
-    plot_data = []
-    plot_colors = []
+    plot_data = [];
+    plot_colors = [];
+    total = 0;
     for (i = 0; i < data.length; i++) {
         plot_data[plot_data.length] = [data[i].category__name, data[i].value];
         plot_colors[plot_colors.length] = get_color(data[i].category__name);
+        total += plot_data[plot_data.length - 1][1];
+    }
+    for (i = 0; i < plot_data.length; i++) {
+        plot_data[i][1] = (plot_data[i][1] * 100.0) / total;
     }
     pie_opts.colors = plot_colors;
     pie_opts.series[0].data = plot_data;
-    pie_opts.series[0].data[0] = {'name':data[0].category__name,'y':data[0].value,sliced: true,selected: true};
+    pie_opts.series[0].data[0] = {'name':plot_data[0][0],'y':plot_data[0][1],sliced: true,selected: true};
     chart = new Highcharts.Chart(pie_opts);
 }
 
@@ -129,7 +157,7 @@ function plot_piechart(pk) {
 }
 
 function plot_piechart_module(pk, divstr) {
-    ajax_loading('#visual' + divstr);
+    // ajax_loading('#visual' + divstr);
     remove_selection();
     $('#pie' + divstr).show();
     $('img.pie'+pk).addClass('selected');
@@ -147,7 +175,7 @@ function plot_piechart_module(pk, divstr) {
 }
 
 function load_tag_cloud(pk) {
-     ajax_loading('#visual');
+     // ajax_loading('#visual');
      tag_poll_pk=pk;
     remove_selection();
     $('#tags').show();
@@ -278,7 +306,7 @@ function load_layers(pk) {
 
 function load_layer(pk, divstr) {
     map_poll_pk = pk;
-    ajax_loading('#visual' + divstr);
+    // ajax_loading('#visual' + divstr);
     remove_selection();
 
     $('img.map'+pk).addClass('selected');
@@ -391,7 +419,7 @@ function toggleReplyBox(anchor, phone, msg_id){
 }
 
 function load_responses(pk) {
-    ajax_loading('#visual');
+    // ajax_loading('#visual');
     remove_selection();
     $('#poll_responses').show();
     var url = '/polls/' + pk + '/responses/module/';
@@ -401,7 +429,7 @@ function load_responses(pk) {
 }
 
 function load_report(pk) {
-    ajax_loading('#visual');
+    // ajax_loading('#visual');
     remove_selection();
     $('#poll_report').show();
     var url = '/polls/' + pk + '/report/module/';

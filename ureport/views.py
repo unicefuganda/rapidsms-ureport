@@ -332,7 +332,7 @@ def best_visualization(request):
     polls = retrieve_poll(request)
     poll = polls[0]
     dict = { 'poll':poll, 'polls':[poll], 'unlabeled':True, 'module':module }
-    if ResponseCategory.objects.filter(response__poll=poll).count() == 0:
+    if poll.type == Poll.TYPE_TEXT and ResponseCategory.objects.filter(response__poll=poll).count() == 0:
         dict.update({'tags':_get_tags(polls), 'responses':_get_responses(poll)})
     return render_to_response(\
         "/ureport/partials/viz/best_visualization.html",

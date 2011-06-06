@@ -13,9 +13,16 @@
     {% endcomment %}
 
 {% else %}
+    {% ifequal poll.type 't' %}
+        {% include "/ureport/partials/viz/map_module.html" %}
+        {% include "/ureport/partials/viz/piechart_module.html" %}
+    {% else %}
+        {% ifequal poll.type 'n' %}
 
-    {% include "/ureport/partials/viz/map_module.html" %}
-    {% include "/ureport/partials/viz/piechart_module.html" %}
+            {% include "/ureport/partials/viz/bar_module.html" %}
+
+        {% endifequal %}
+    {% endifequal %}
 
 {% endif %}
 {% if module %}

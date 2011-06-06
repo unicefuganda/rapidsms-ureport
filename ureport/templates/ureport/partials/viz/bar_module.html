@@ -1,0 +1,9 @@
+<div id="visual_{{ poll.pk }}" style="width:500px">
+    <div id="bar_{{ poll.pk }}">
+    </div>
+</div>
+<script src="{{MEDIA_URL}}ureport/javascripts/highcharts.js" type="text/javascript"></script>
+<script language="javascript">
+    plot_histogram_module('{{ poll.pk }}', '_{{ poll.pk }}');
+</script>
+
