@@ -4,5 +4,5 @@
 </div>
 <script src="{{MEDIA_URL}}ureport/javascripts/highcharts.js" type="text/javascript"></script>
 <script language="javascript">
-    plot_piechart_module('{{ poll.pk }}', '_{{ poll.pk }}');
+    load_piechart('{{ poll.pk }}', 'pie_{{ poll.pk }}');
 </script>

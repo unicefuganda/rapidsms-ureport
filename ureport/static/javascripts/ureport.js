@@ -69,7 +69,7 @@ var bar_opts = {
     series: [{data:[]}]
 };
 
-function plot_barchart(data, divstr) {
+function plot_histogram(data, element_id) {
     var chart;
     max = data[0][0];
     min = data[data.length - 1][0];
@@ -90,29 +90,23 @@ function plot_barchart(data, divstr) {
     }
     bar_opts.series[0].data = bar_data;
     bar_opts.xAxis.categories = categories;
-    bar_opts.chart.renderTo = 'bar' + divstr;
+    bar_opts.chart.renderTo = element_id;
     chart = new Highcharts.Chart(bar_opts);
 }
 
-function plot_histogram_module(pk, divstr) {
-    $('#bar' + divstr).show();
-    $('img.bar'+pk).addClass('selected');
+function load_histogram(poll_id, element_id) {
+    $('#' + element_id).show();
+    $('img.bar'+element_id).addClass('selected');
     var id_list = "";
-    var url = "/polls/responses/" + pk + "/numeric/";
-    // var url = "/ureport/histogram/" + "?pks=+" + pk;
+    var url = "/polls/responses/" + poll_id + "/numeric/";
     $.ajax({
         type: "GET",
         url:url,
         dataType: "json",
         success: function(data) {
-            plot_barchart(data, divstr);
+            plot_histogram(data, element_id);
         }
     });
-}
-
-function plot_histogram(pk) {
-    remove_selection();
-    plot_histogram_module(pk,'');
 }
 
 var pie_opts = {
@@ -131,9 +125,9 @@ var pie_opts = {
     series: [{type: 'pie',name: '',data: []}]
 }
 
-function plot_pie(data, divstr) {
+function plot_piechart(data, element_id) {
     var chart;
-    pie_opts.chart.renderTo = 'pie' + divstr;
+    pie_opts.chart.renderTo = element_id;
 
     plot_data = [];
     plot_colors = [];
@@ -152,58 +146,54 @@ function plot_pie(data, divstr) {
     chart = new Highcharts.Chart(pie_opts);
 }
 
-function plot_piechart(pk) {
-    plot_piechart_module(pk, '');
-}
-
-function plot_piechart_module(pk, divstr) {
+function load_piechart(poll_id, element_id) {
     // ajax_loading('#visual' + divstr);
     remove_selection();
-    $('#pie' + divstr).show();
-    $('img.pie'+pk).addClass('selected');
+    $('#' + element_id).show();
+    $('img.pie'+poll_id).addClass('selected');
     var id_list = "";
-    var url = "/polls/responses/" + pk + "/stats/";
+    var url = "/polls/responses/" + poll_id + "/stats/";
     $.ajax({
         type: "GET",
         url:url,
         dataType: "json",
         success: function(data) {
             $('.ajax_loading').remove();
-            plot_pie(data, divstr);
+            plot_piechart(data, element_id);
         }
     });
 }
 
-function load_tag_cloud(pk) {
-     // ajax_loading('#visual');
-     tag_poll_pk=pk;
+function load_tag_cloud(poll_id) {
+    // ajax_loading('#visual');
+    tag_poll_pk=poll_id;
     remove_selection();
     $('#tags').show();
     var id_list = "";
 
-    $('img.tags'+pk).addClass('selected');
+    $('img.tags'+poll_id).addClass('selected');
 
-    var url = "/ureport/tag_cloud/" + "?pks=+" + pk;
+    var url = "/ureport/tag_cloud/" + "?pks=+" + poll_id;
 
     $('#tags').load(url,function(){
        $('.ajax_loading').remove();
     });
 }
 
-function add_tag(tag,pk){
-    var url="/ureport/add_tag/?tag="+tag +"&poll="+pk;
+function add_tag(tag,poll_id){
+    var url="/ureport/add_tag/?tag="+tag +"&poll="+poll_id;
     $.ajax({
         type: "GET",
         url:url,
         dataType: "json",
         success: function() {
-           load_tag_cloud(pk);
+           load_tag_cloud(poll_id);
         }
     });
 }
 
-function remove_tag(tag){
-     var url="/ureport/delete_tag/?tag="+tag
+function remove_tag(poll_id){
+     var url="/ureport/delete_tag/?tag="+poll_id
     $.ajax({
         type: "GET",
         url:url,
@@ -221,16 +211,14 @@ function load_excluded_tags() {
     $('#excluded').show();
 }
 
-function load_timeseries(pk) {
+function load_timeseries(poll_id) {
     remove_selection();
     $('#poll_timeseries').show();
-    $('img.series'+pk).addClass('selected');
+    $('img.series'+poll_id).addClass('selected');
     var id_list = "";
-    var url = "/ureport/timeseries/?pks=+" + pk;
+    var url = "/ureport/timeseries/?pks=+" + poll_id;
     $('#poll_timeseries').load(url);
 }
-
-var map_poll_pk;
 
 //function to create label
 function Label(point, html, classname, pixelOffset) {
@@ -254,15 +242,15 @@ function Label(point, html, classname, pixelOffset) {
         this.map_ = map;
         this.div_ = div;
     }
-// Remove the label DIV from the map pane
+    // Remove the label DIV from the map pane
     this.remove = function() {
         this.div_.parentNode.removeChild(this.div_);
     }
-// Copy the label data to a new instance
+    // Copy the label data to a new instance
     this.copy = function() {
         return new Label(this.point, this.html, this.classname, this.pixelOffset);
     }
-// Redraw based on the current projection and zoom level
+    // Redraw based on the current projection and zoom level
     this.redraw = function(force) {
         if (!force) return;
         var p = this.map_.fromLatLngToDivPixel(this.point);
@@ -300,24 +288,19 @@ function addGraph(data, x, y, color, desc) {
     });
 }
 
-function load_layers(pk) {
-    load_layer(pk, '');
-}
-
-function load_layer(pk, divstr) {
-    map_poll_pk = pk;
+function load_map(poll_id, element_id) {
     // ajax_loading('#visual' + divstr);
     remove_selection();
 
-    $('img.map'+pk).addClass('selected');
-    $('#map' + divstr).show();
+    $('img.map'+poll_id).addClass('selected');
+    $('#' + element_id).show();
     if($('.init').length > 0)
     {
-        init_map_divstr(divstr);
+        init_map(poll_id, element_id);
     }
-    $('#map' + divstr).removeClass('init');
+    $('#' + element_id).removeClass('init');
     var id_list = "";
-    var url = "/polls/responses/" + pk + "/stats/1/";
+    var url = "/polls/responses/" + poll_id + "/stats/1/";
     $.ajax({
         type: "GET",
         url:url,
@@ -358,25 +341,21 @@ function load_layer(pk, divstr) {
             popup_description += "<p>Total number of responses:"+total+"</p>";
             addGraph(d, parseFloat(lat), parseFloat(lon), get_color(category),popup_description);
             //add legend
-            $('#map_legend' + divstr).show();
-            $('#map_legend' + divstr + ' table').html(' ');
+            $('#' + element_id + "_legend").show();
+            $('#' + element_id + '_legend table').html(' ');
             for (category in category_color_lookup) {
                 category_span = '<span style="width:15px;height:15px;background-color:' + category_color_lookup[category] + ';float:left;display:block;margin-top:10px;"></span>'
-                $('#map_legend' + divstr + ' table').append('<tr><td>' + category + '</td><td>' + category_span + '</td></tr>')
+                $('#' + element_id + '_legend table').append('<tr><td>' + category + '</td><td>' + category_span + '</td></tr>')
             }
         }
     });
 }
 
-function init_map() {
-    init_map_divstr('');
-}
-
 // function to draw simple map
-function init_map_divstr(divstr) {
+function init_map(poll_id, element_id) {
 
     //initialise the map object
-    map = new GMap2(document.getElementById("map" + divstr));
+    map = new GMap2(document.getElementById(element_id));
     //add map controls
     map.addControl(new GLargeMapControl());
     map.addControl(new GMapTypeControl());
@@ -388,9 +367,28 @@ function init_map_divstr(divstr) {
     map.setCenter(bounds.getCenter(), map.getBoundsZoomLevel(bounds));
     
     GEvent.addListener(map,'zoomend',function() {
-        load_layer(map_poll_pk, divstr)
+        load_map(poll_id, element_id)
     });
+}
 
+function load_responses(poll_id) {
+    // ajax_loading('#visual');
+    remove_selection();
+    $('#poll_responses').show();
+    var url = '/polls/' + poll_id + '/responses/module/';
+    $('#poll_responses').load(url,function(){
+       $('.ajax_loading').remove();
+    });
+}
+
+function load_report(poll_id) {
+    // ajax_loading('#visual');
+    remove_selection();
+    $('#poll_report').show();
+    var url = '/polls/' + poll_id + '/report/module/';
+    $('#poll_report').load(url,function(){
+       $('.ajax_loading').remove();
+    });
 }
 
 /**
@@ -408,36 +406,6 @@ function expand() {
     $('#object_list').show();
 }
 
-function toggleReplyBox(anchor, phone, msg_id){
-	anchor.innerHTML = (anchor.text == '- send message -')? '- hide message box -' : '- send message -';
-	var _currentDiv = document.getElementById('replyForm_'+msg_id);
-	$(_currentDiv).append($('#formcontent'));
-	$('#formcontent').show();
-    $(_currentDiv).slideToggle(300);
-    $('#id_recipient').val(phone);
-    $('#id_in_response_to').val(msg_id);
-}
-
-function load_responses(pk) {
-    // ajax_loading('#visual');
-    remove_selection();
-    $('#poll_responses').show();
-    var url = '/polls/' + pk + '/responses/module/';
-    $('#poll_responses').load(url,function(){
-       $('.ajax_loading').remove();
-    });
-}
-
-function load_report(pk) {
-    // ajax_loading('#visual');
-    remove_selection();
-    $('#poll_report').show();
-    var url = '/polls/' + pk + '/report/module/';
-    $('#poll_report').load(url,function(){
-       $('.ajax_loading').remove();
-    });
-}
-
 function deleteReporter(elem, pk, name) {
     if (confirm('Are you sure you want to remove ' + name + '?')) {
         $(elem).parents('tr').remove();
@@ -452,6 +420,16 @@ function editReporter(elem, pk) {
     });
 }
 
+function toggleReplyBox(anchor, phone, msg_id){
+    anchor.innerHTML = (anchor.text == '- send message -')? '- hide message box -' : '- send message -';
+    var _currentDiv = document.getElementById('replyForm_'+msg_id);
+    $(_currentDiv).append($('#formcontent'));
+    $('#formcontent').show();
+    $(_currentDiv).slideToggle(300);
+    $('#id_recipient').val(phone);
+    $('#id_in_response_to').val(msg_id);
+}
+
 function submitForm(link, action, resultDiv) {
     form = $(link).parents("form");
     form_data = form.serializeArray();
@@ -459,10 +437,6 @@ function submitForm(link, action, resultDiv) {
 }
 
 $(document).ready(function() {
-	//check if a map div is defined
-	if($('#map').length > 0 ) {
-	    init_map();
-	}
 	//Accordion based messaging history list
     if($('#accordion').length > 0) {
     	$(function() {

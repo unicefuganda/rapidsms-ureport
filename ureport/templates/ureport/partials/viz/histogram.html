@@ -4,6 +4,6 @@
 </div>
 <script src="{{MEDIA_URL}}ureport/javascripts/highcharts.js" type="text/javascript"></script>
 <script language="javascript">
-    plot_histogram_module('{{ poll.pk }}', '_{{ poll.pk }}');
+    load_histogram('{{ poll.pk }}', 'bar_{{ poll.pk }}');
 </script>
 

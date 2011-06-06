@@ -14,12 +14,12 @@
 
 {% else %}
     {% ifequal poll.type 't' %}
-        {% include "/ureport/partials/viz/map_module.html" %}
-        {% include "/ureport/partials/viz/piechart_module.html" %}
+        {% include "/ureport/partials/viz/map.html" %}
+        {% include "/ureport/partials/viz/piechart.html" %}
     {% else %}
         {% ifequal poll.type 'n' %}
 
-            {% include "/ureport/partials/viz/bar_module.html" %}
+            {% include "/ureport/partials/viz/histogram.html" %}
 
         {% endifequal %}
     {% endifequal %}

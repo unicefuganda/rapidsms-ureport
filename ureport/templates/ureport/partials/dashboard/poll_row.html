@@ -28,10 +28,10 @@
             <a href="javascript:void(0)" onclick="collapse();load_tag_cloud({{object.pk}})">
                 <img class="tags{{object.pk}}" src="{{MEDIA_URL}}ureport/images/tags.png"/>
             </a>
-            <a href="javascript:void(0)" onclick="collapse();plot_piechart({{object.pk}})">
+            <a href="javascript:void(0)" onclick="collapse();load_piechart({{object.pk}}, 'pie')">
                 <img class="pie{{object.pk}}" src="{{MEDIA_URL}}ureport/images/pie.png"/>
             </a>
-            <a href="javascript:void(0)" onclick="collapse();load_layers({{object.pk}})">
+            <a href="javascript:void(0)" onclick="collapse();load_map({{object.pk}}, 'map')">
                 <img class="map{{object.pk}}" src="{{MEDIA_URL}}ureport/images/map.png"/>
             </a>
         {% endif %}
@@ -41,7 +41,7 @@
             </a>
         {% endif %}
         {% if object.type == 'n' %}
-            <a href="javascript:void(0)" onclick="collapse();plot_histogram({{object.pk}})">
+            <a href="javascript:void(0)" onclick="collapse();load_histogram({{ object.pk }},'histogram')">
                 <img class="bar{{object.pk}}" src="{{MEDIA_URL}}ureport/images/bar.png"/>
             </a>
         {% endif %}
