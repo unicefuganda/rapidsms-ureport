@@ -99,8 +99,9 @@ def autoreg(**kwargs):
         connection.save
     contact = connection.contact
 
-    contact.name = find_best_response(session, namepoll)
-    contact.name = contact.name[:100]
+    name = find_best_response(session, namepoll)
+    if name:
+        contact.name = name[:100]
 
     contact.reporting_location = find_best_response(session, districtpoll)
 
