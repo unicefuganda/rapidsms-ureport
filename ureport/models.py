@@ -106,7 +106,7 @@ def autoreg(**kwargs):
     contact.reporting_location = find_best_response(session, districtpoll)
 
     age = find_best_response(session, agepoll)
-    if age:
+    if age and age < 100:
         contact.birthdate = datetime.datetime.now() - datetime.timedelta(days=(365*int(age)))
 
     gresps = session.responses.filter(response__poll=genderpoll, response__has_errors=False).order_by('-response__date')
