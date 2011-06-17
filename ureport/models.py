@@ -10,7 +10,7 @@ from eav.models import Attribute
 from django.core.exceptions import ValidationError
 from script.signals import *
 from script.models import *
-from uganda_common.managers import BulkInsertManager
+from rapidsms_httprouter.managers import BulkInsertManager
 
 import datetime
 import re
