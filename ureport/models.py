@@ -10,6 +10,7 @@ from eav.models import Attribute
 from django.core.exceptions import ValidationError
 from script.signals import *
 from script.models import *
+from uganda_common.managers import BulkInsertManager
 
 import datetime
 import re
@@ -29,6 +30,7 @@ class MassText(models.Model):
     date = models.DateTimeField(auto_now_add=True,null=True)
     text = models.TextField()
     objects = (CurrentSiteManager('sites') if settings.SITE_ID else models.Manager())
+    bulk = BulkInsertManager()
     
     class Meta:
         permissions = (
