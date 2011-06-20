@@ -23,7 +23,7 @@ from ureport.models import find_closest_match
 PREFIXES = [('70', 'warid'), ('75', 'zain'), ('71', 'utl'), ('', 'dmark')]
 
 def assign_backend(number):
-    if number.startswith('0'):
+    if number.startswith('0') or len(number) == 9:
         number = '256%s' % number[1:]
     backendobj = None
     for prefix, backend in PREFIXES:

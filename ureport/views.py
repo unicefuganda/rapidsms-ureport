@@ -33,11 +33,17 @@ from .utils import retrieve_poll
 from ureport.forms import *
 from generic.forms import StaticModuleForm
 from generic.models import Dashboard
+from django.forms import forms
+from django.core.files import File
+from xlrd import open_workbook
+from uganda_common.utils import assign_backend
+from ureport.models import find_closest_match
 
 import re
 import bisect
 import textwrap
 import random
+import datetime
 
 TAG_CLASSES=['tag1','tag2','tag3','tag4','tag5','tag6','tag7']
 
@@ -400,4 +406,134 @@ def get_all_contacts(request):
             export_data_list.append(export_data)
 
     response = ExcelResponse(export_data_list)
+    return response
+
+def bulk_upload_contacts(request):
+    """
+    bulk upload contacts from an excel file
+    """
+    if request.method == 'POST':
+        contactsform = ExcelUploadForm(request.POST, request.FILES)
+        if contactsform.is_valid():
+            if contactsform.is_valid() and request.FILES.get('excel_file',None):
+                message= handle_excel_file(request.FILES['excel_file'])
+            return render_to_response('ureport/bulk_contact_upload.html', 
+                                      {'contactsform':contactsform,
+                                       'message':message
+                                       }, context_instance=RequestContext(request))
+
+    contactsform = ExcelUploadForm()
+    return render_to_response('ureport/bulk_contact_upload.html', 
+                              {'contactsform':contactsform
+                               }, context_instance=RequestContext(request))
+    
+def handle_excel_file(file):
+    if file:
+        excel = file.read()
+        workbook = open_workbook(file_contents=excel)
+        worksheet = workbook.sheet_by_index(0)
+        cols = parse_header_row(worksheet)
+        contacts = []
+        duplicates = []
+        invalid = []
+        info = ''
+        group = Group.objects.filter(name__icontains='ureporters')[0]
+        if worksheet.nrows > 1:
+            for row in range(worksheet.nrows)[1:]:
+                connections = []
+                numbers = parse_telephone(row, worksheet, cols)
+                for raw_num in numbers.split('/'):
+                    if raw_num[-2:] == '.0':
+                        raw_num = raw_num[:-2]
+                    if raw_num[:1] == '+':
+                        raw_num = raw_num[1:]
+                    if len(raw_num) >= 9:
+                        number, backend = assign_backend(raw_num)
+                        connection, created = Connection.objects.get_or_create(identity=number, backend=backend)
+                        if created:
+                            connections.append(Connection.objects.create(identity=number, backend=backend))
+                        else:
+                            duplicates.append(number)
+                    else:
+                        invalid.append(raw_num)
+                if len(connections) > 0:
+                    contact=Contact.objects.create(name=parse_name(row,worksheet,cols))
+                    district = parse_district(row, worksheet, cols)
+                    village = parse_village(row, worksheet, cols)
+                    birthdate = parse_birthdate(row, worksheet, cols)
+                    gender = parse_gender(row, worksheet, cols)
+                    if group:
+                        contact.groups.add(group)
+                    if district:
+                        contact.reporting_location = find_closest_match(district, Area.objects.filter(kind__name='district'))
+                    if village:
+                        contact.village = find_closest_match(village, Area.objects)
+                    if birthdate:
+                        contact.birthdate = birthdate
+                    if gender:
+                        contact.gender = gender
+                    contact.save()
+                    contacts.append(number)
+                    for c in connections:
+                        c.contact = contact
+                        c.save()
+            if len(contacts)>0:
+                info = 'Contacts with numbers... ' +' ,'.join(contacts) + " have been uploaded !\n\n"
+            if len(duplicates)>0:
+                info = info + 'The following numbers already exist in the system and thus have not been uploaded: ' +' ,'.join(duplicates)+ '\n\n'
+            if len(invalid)>0:
+                info = info + 'The following numbers may be invalid and thus have not been added to the system: '+' ,'.join(invalid)+ '\n\n'
+        else:
+            info = "You seem to have uploaded an empty excel file, please fill the excel Contacts Template with contacts and upload again..."
+    else:
+        info = "Invalid file"   
+    return info
+    
+def parse_header_row(worksheet):
+    fields=['telephone number','name', 'district', 'county', 'village', 'age', 'gender']
+    field_cols={}
+    for col in range(worksheet.ncols):
+        value = str(worksheet.cell(0, col).value).strip()
+        if value.lower() in fields:
+            field_cols[value.lower()] = col
+    return field_cols
+
+
+def parse_telephone(row,worksheet,cols):
+    number = str(worksheet.cell(row, cols['telephone number']).value)
+    return number.replace('-','').strip()
+
+def parse_name(row,worksheet,cols):
+    if str(worksheet.cell(row, cols['name']).value).__len__() > 0:
+        return str(worksheet.cell(row, cols['name']).value)
+    else:
+        return 'Anonymous User'
+
+def parse_district(row, worksheet, cols):
+    return str(worksheet.cell(row, cols['district']).value)
+
+def parse_village(row, worksheet, cols):
+    return str(worksheet.cell(row, cols['village']).value)
+
+def parse_birthdate(row, worksheet, cols):
+    try:
+        age = int(worksheet.cell(row, cols['age']).value)
+        birthdate= '%d/%d/%d'%(datetime.datetime.now().day, datetime.datetime.now().month,datetime.datetime.now().year-age)
+        return datetime.datetime.strptime(birthdate.strip(),'%d/%m/%Y')
+    except ValueError:
+        return None
+
+def parse_gender(row, worksheet, cols):
+    gender = str(worksheet.cell(row, cols['gender']).value)
+    if len(gender) > 1:
+        return gender[:1].upper()
+    else:
+        return genger.upper()
+
+def download_contacts_template(request, f):
+    path = getattr(settings, 'DOWNLOADS_FOLDER', [])
+    fh = open(path+f)
+    data = File(fh).read()
+    response = HttpResponse(data, mimetype='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename='+f
     return response

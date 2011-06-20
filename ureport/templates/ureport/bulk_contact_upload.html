@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block title %}
+    Ureport Messaging History - {{ block.super }}
+{% endblock %}
+{% block stylesheets %}
+    {{ block.super }}
+    <link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}ureport/stylesheets/jquery-ui.css"/>
+{% endblock %}
+{% block javascripts %}
+    {{ block.super }}
+    <script src="{{MEDIA_URL}}ureport/javascripts/jquery-ui.js" type="text/javascript"></script>
+    <script src="{{MEDIA_URL}}ureport/javascripts/ureport.js" type="text/javascript"></script>
+{% endblock %}
+{% block content %}
+	<div class="module">
+        <h2 style="white-space:normal">Upload Contacts</h2>
+    </div>
+	<div class="module">
+    <h3>Download Excel Template</h3>
+	<p><a href="{% url ureport.views.download_contacts_template "contacts_tmpl.xls" %}">Contacts Upload Excel Template</a></p>
+	</div>
+	<div class="module">
+    <h3>Upload Contacts Excel File</h3>
+    <table width="100%">
+    <form enctype="multipart/form-data" action="/uploadcontacts/" method="POST">
+    {{contactsform.as_table}}
+    <tr>
+    	<td></td>
+		<td><input type="submit" value="Submit" /></td>
+	</tr>
+    </form>
+    </table>
+        </div>
+<p>{{ message|linebreaks }}</p>
+{% endblock %}
