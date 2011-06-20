@@ -1,4 +1,6 @@
-from setuptools import setup, find_packages
+#from setuptools import setup, find_packages
+from setuptools import find_packages
+from distutils.core import setup
 
 setup(
     name='rapidsms-ureport',
@@ -9,9 +11,10 @@ setup(
         "rapidsms",
         'django-eav',
         'rapidsms-polls',
-        'rapidsms-autoregistration',
         'rapidsms-httprouter',
         'rapidsms-unregister',
+        'rapidsms-auth',
+        'rapidsms-script',
         'django-extensions',
         'django-uni-form',
         'simple-locations',
@@ -30,9 +33,12 @@ setup(
         "http://github.com/daveycrockett/rapidsms-polls/tarball/master#egg=rapidsms-polls",
         "http://github.com/mossplix/rapidsms-contact/tarball/master#egg=rapidsms-contact",
         "http://github.com/daveycrockett/rapidsms-generic/tarball/master#egg=rapidsms-generic",
-        "http://github.com/daveycrockett/rapidsms-autoregistration/tarball/master#egg=rapidsms-autoregistration",
+        "http://github.com/daveycrockett/rapidsms-script/tarball/master#egg=rapidsms-script",
         "http://github.com/mossplix/uganda_common/tarball/master#egg=uganda-common",
+        "http://github.com/daveycrockett/auth/tarball/master#egg=rapidsms-auth",
     ],
+
+    scripts = ["ureport-admin.py"],
 
     description='The uReport social advocacy program deployed in Uganda.',
     long_description=open('README.rst').read(),
@@ -55,5 +61,5 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Framework :: Django',
-    ]
+    ],
 )

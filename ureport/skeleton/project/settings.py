@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     # enable the django admin using a little shim app (which includes
     # the required urlpatterns), and a bunch of undocumented apps that
     # the AdminSite seems to explode without.
-    "django.contrib.sites",
     "django.contrib.auth",
     "django.contrib.admin",
     "django.contrib.sessions",
@@ -51,16 +50,18 @@ INSTALLED_APPS = [
     "simple_locations",
     "rapidsms_httprouter",
     "poll",
-    "autoregistration",
+    "auth",
     "generic",
     "contact",
     "ureport",
     "unregister",
+    "script",
 ]
 
 SMS_APPS = [
     "unregister",
-    "autoregistration",
+    "ureport",
+    "script",
     "poll",
 ]
 
@@ -103,7 +104,7 @@ ADMIN_MEDIA_PREFIX="/static/media/"
 # this is required for the django.contrib.sites tests to run, but also
 # not included in global_settings.py, and is almost always ``1``.
 # see: http://docs.djangoproject.com/en/dev/ref/contrib/sites/
-SITE_ID = 2 
+SITE_ID = 1
 
 
 # the default log settings are very noisy.
