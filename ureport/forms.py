@@ -60,3 +60,15 @@ class PollModuleForm(ModuleForm):
         param_value = str(self.cleaned_data['poll'])
         module.params.create(module=module, param_name=param_name, param_value=param_value, is_url_param=is_url_param)
         return module
+
+class ExcelUploadForm(forms.Form):
+    
+    excel_file = forms.FileField(label="Contacts Excel File",required=False)
+    
+    def clean(self):
+        excel = self.cleaned_data.get('excel_file',None)
+        if excel and excel.name.rsplit('.')[1] != 'xls':
+                msg=u'Upload valid excel file !!!'
+                self._errors["excel_file"]=ErrorList([msg])
+                return ''
+        return self.cleaned_data
