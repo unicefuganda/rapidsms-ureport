@@ -11,7 +11,7 @@ setup(
         "rapidsms",
         'django-eav',
         'rapidsms-polls',
-        'rapidsms-httprouter',
+        'rapidsms-router',
         'rapidsms-unregister',
         'rapidsms-auth',
         'rapidsms-script',
@@ -27,7 +27,7 @@ setup(
     dependency_links = [
         "http://github.com/mvpdev/django-eav/tarball/master#egg=django-eav",
         "http://github.com/daveycrockett/rapidsms-polls/tarball/master#egg=rapidsms-polls",
-        "http://github.com/daveycrockett/rapidsms-httprouter/tarball/master#egg=rapidsms-httprouter",
+        "http://github.com/daveycrockett/rapidsms-httprouter/tarball/master#egg=rapidsms-router",
         "http://github.com/daveycrockett/rapidsms-unregister/tarball/master#egg=rapidsms-unregister",
         "http://github.com/mossplix/simple_locations/tarball/master#egg=simple-locations",
         "http://github.com/daveycrockett/rapidsms-polls/tarball/master#egg=rapidsms-polls",
