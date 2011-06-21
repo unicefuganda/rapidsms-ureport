@@ -531,7 +531,7 @@ def parse_gender(row, worksheet, cols):
         return genger.upper()
 
 def download_contacts_template(request, f):
-    path = getattr(settings, 'DOWNLOADS_FOLDER', [])
+    path = getattr(settings, 'DOWNLOADS_FOLDER', None)
     fh = open(path+f)
     data = File(fh).read()
     response = HttpResponse(data, mimetype='application/vnd.ms-excel')
