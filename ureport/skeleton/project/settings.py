@@ -22,9 +22,11 @@ CLICKATELL_API_ID = "CLICKAPI"
 CLICKATELL_USERNAME = "CLICKUSER"
 CLICKATELL_PASSWORD = "CLICKPASS"
 
-# uses Clickatell out of the box: http://www.clickatell.com/downloads/http/Clickatell_HTTP.pdf
-
-ROUTER_URL = "http://api.clickatell.com/http/sendmsg?api_id=" + CLICKATELL_API_ID + "&user=" + CLICKATELL_USERNAME + "&password=" + CLICKATELL_PASSWORD + "&to=%(recipient)&text=%(text)" 
+# uses Clickatell out of the box, see: 
+# http://www.clickatell.com/downloads/http/Clickatell_HTTP.pdf
+# AND
+# http://www.clickatell.com/downloads/Clickatell_two-way_technical_guide.pdf
+ROUTER_URL = "http://api.clickatell.com/http/sendmsg?api_id=" + CLICKATELL_API_ID + "&user=" + CLICKATELL_USERNAME + "&password=" + CLICKATELL_PASSWORD + "&to=%(recipient)&text=%(text)&mo=1" 
 
 # An example using kannel
 # ROUTER_URL = "http://127.0.0.1:13013/cgi-bin/sendsms?from=myshortcode&username=username&password=password&text=%(text)s&to=%(recipient)s&smsc=%(backend)s&dlr-url=http%%3A%%2F%%2Fureport.rapidsms.org%%2Frouter%%2Fdelivered%%2F%%3Fmessage_id%%3D%(id)s&dlr-mask=1"

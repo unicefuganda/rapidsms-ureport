@@ -15,6 +15,7 @@ from poll.models import *
 
 from rapidsms.models import Contact
 from rapidsms_httprouter.router import get_router, start_sending_mass_messages, stop_sending_mass_messages
+from rapidsms_httprouter.views import receive
 from djtables import Column, Table
 from djtables.column import DateColumn
 from rapidsms.messages.outgoing import OutgoingMessage
@@ -539,3 +540,9 @@ def download_contacts_template(request, f):
     response = HttpResponse(data, mimetype='application/vnd.ms-excel')
     response['Content-Disposition'] = 'attachment; filename='+f
     return response
+
+def clickatell_wrapper(request):
+    import pdb;pdb.set_trace()
+    request.GET = request.GET.copy()
+    request.GET.update({'backend':'clickatell','sender':request.GET['from'],'message':request.GET['text']})
+    return receive(request)
