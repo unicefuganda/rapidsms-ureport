@@ -19,18 +19,19 @@ while true; do
                  createdb $dbname; 
                  break;;
         [Ss]*  ) engine="django.db.backends.sqlite3"
+                 break;;
     esac
 done
 read -p "Enter your clickatell api id: " api
 read -p "Enter your clickatell user name: " user
 read -p "Enter your clickatell password: " password
-sed -e 's/django\.db\.backends\.postgresql_psycopg2/'"$engine"'/' \
+sed -i -e 's/django\.db\.backends\.postgresql_psycopg2/'"$engine"'/' \
     -e 's/rapidsmsdb/'"$dbname"'/' \
     -e 's/dbuser/'"$user"'/' \
     -e 's/CLICKAPI/'"$api"'/' \
     -e 's/CLICKUSER/'"$user"'/' \
     -e 's/CLICKPASS/'"$password"'/' \
-    < ureport-project/settings.py > ureport-project/settings_tweaked.py
+    ureport-project/settings.py
 cd ureport-project
 python manage.py syncdb
 python manage.py runserver
