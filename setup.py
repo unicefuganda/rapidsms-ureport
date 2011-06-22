@@ -22,6 +22,7 @@ setup(
         'rapidsms-contact',
         'rapidsms-generic',
         'uganda-common',
+        'xlrd',
     ],
 
     dependency_links = [

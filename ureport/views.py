@@ -346,7 +346,9 @@ def best_visualization(request):
         context_instance=RequestContext(request))
 
 def ureport_content(request, slug, base_template='ureport/two-column.html',**kwargs):
-    reporter = get_object_or_404(Dashboard, slug=slug, user=None)
+    createpage = kwargs.setdefault('create',False)
+    if not createpage:
+        reporter = get_object_or_404(Dashboard, slug=slug, user=None)
     return generic_dashboard(request,
         slug=slug,
         module_types=[('ureport', PollModuleForm, 'uReport Visualizations',),

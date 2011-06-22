@@ -1,4 +1,5 @@
 ureport-admin.py startproject ureport-project
+patch -p2 -d env/lib/python2.6/site-packages/django < env/src/rapidsms-ureport/12890.Django-1.3.diff
 read -p "What name do you want to use for your database? (default is rapidsms)" dbname
 if  [ ! -n "$dbname" ] ; then
     dbname=rapidsms

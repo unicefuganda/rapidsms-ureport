@@ -6,7 +6,6 @@
 #                          MAIN CONFIGURATION                          #
 # -------------------------------------------------------------------- #
 BAD_WORDS=['poop']
-TIME_ZONE="Africa/Kampala"
 BASE_CSS="/static/ureport/stylesheets/ureport.css"
 
 # you should configure your database here before doing any real work.
@@ -36,6 +35,7 @@ INSTALLED_APPS = [
 
     # the essentials.
     "djtables",
+    "ureport",
     "rapidsms",
     "mptt",
     "uni_form",
@@ -62,7 +62,6 @@ INSTALLED_APPS = [
     "auth",
     "generic",
     "contact",
-    "ureport",
     "unregister",
     "script",
 ]
@@ -134,6 +133,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     "django.core.context_processors.request",
     "uganda_common.context_processors.layout",
     "ureport.context_processors.map_params",
+    "uganda_common.context_processors.authtabs",
 ]
 
 MIDDLEWARE_CLASSES = (
