@@ -38,7 +38,7 @@ setup(
         "http://github.com/daveycrockett/auth/tarball/master#egg=rapidsms-auth",
     ],
 
-    scripts = ["ureport-admin.py"],
+    scripts = ["ureport-admin.py","ureport-install.sh"],
 
     description='The uReport social advocacy program deployed in Uganda.',
     long_description=open('README.rst').read(),
