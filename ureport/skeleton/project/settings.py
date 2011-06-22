@@ -13,13 +13,22 @@ BASE_CSS="/static/ureport/stylesheets/ureport.css"
 # see: http://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
     'default': {
-        'ENGINE' : 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'rapidsms',
-        'USER': 'www-data',
+        'ENGINE':'django.db.backends.postgresql_psycopg2',
+        'NAME':'rapidsmsdb',
+        'USER':'dbuser',
     }
 }
 
-ROUTER_URL = "http://127.0.0.1:13013/cgi-bin/sendsms?from=myshortcode&username=username&password=password&text=%(text)s&to=%(recipient)s&smsc=%(backend)s&dlr-url=http%%3A%%2F%%2Fureport.rapidsms.org%%2Frouter%%2Fdelivered%%2F%%3Fmessage_id%%3D%(id)s&dlr-mask=1"
+CLICKATELL_API_ID = "CLICKAPI"
+CLICKATELL_USERNAME = "CLICKUSER"
+CLICKATELL_PASSWORD = "CLICKPASS"
+
+# uses Clickatell out of the box: http://www.clickatell.com/downloads/http/Clickatell_HTTP.pdf
+
+ROUTER_URL = "http://api.clickatell.com/http/sendmsg?api_id=" + CLICKATELL_API_ID + "&user=" + CLICKATELL_USERNAME + "&password=" + CLICKATELL_PASSWORD + "&to=%(recipient)&text=%(text)" 
+
+# An example using kannel
+# ROUTER_URL = "http://127.0.0.1:13013/cgi-bin/sendsms?from=myshortcode&username=username&password=password&text=%(text)s&to=%(recipient)s&smsc=%(backend)s&dlr-url=http%%3A%%2F%%2Fureport.rapidsms.org%%2Frouter%%2Fdelivered%%2F%%3Fmessage_id%%3D%(id)s&dlr-mask=1"
 
 # to help you get started quickly, many django/rapidsms apps are enabled
 # by default. you may wish to remove some and/or add your own.
