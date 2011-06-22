@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
     
     # RapidSMS core URLs
+    url(r'^$', 'ureport.views.ureport_content', {'slug':'ureport_home','base_template':'ureport/three-square.html','num_columns':3,'create':True}, name='rapidsms-dashboard'),
     (r'^account/', include('rapidsms.urls.login_logout')),
     url(r'^$', 'ureport.views.index', name='rapidsms-dashboard'),    
     url('^accounts/login', 'rapidsms.views.login'),
@@ -43,3 +44,6 @@ if settings.DEBUG:
         # production)
         (r'^', include('rapidsms.urls.static_media')),
     )
+
+from rapidsms_httprouter.router import get_router
+get_router(start_workers=True)
