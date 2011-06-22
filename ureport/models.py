@@ -11,6 +11,7 @@ from django.core.exceptions import ValidationError
 from script.signals import *
 from script.models import *
 from rapidsms_httprouter.managers import BulkInsertManager
+from rapidsms_httprouter.models import Message
 
 import datetime
 import re
@@ -36,6 +37,10 @@ class MassText(models.Model):
         permissions = (
             ("can_message", "Can send messages, create polls, etc"),
         )
+        
+class MessageFlag(models.Model):
+    #Track flagged messages
+    message = models.ForeignKey(Message, related_name='flags')
 
 def parse_district_value(value):
     location_template = STARTSWITH_PATTERN_TEMPLATE % '[a-zA-Z]*'
