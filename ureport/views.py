@@ -424,7 +424,7 @@ def bulk_upload_contacts(request):
         contactsform = ExcelUploadForm(request.POST, request.FILES)
         if contactsform.is_valid():
             if contactsform.is_valid() and request.FILES.get('excel_file',None):
-                message= handle_excel_file(request.FILES['excel_file'])
+                message= handle_excel_file(request.FILES['excel_file'],contactsform.cleaned_data['assign_to_group'])
             return render_to_response('ureport/bulk_contact_upload.html', 
                                       {'contactsform':contactsform,
                                        'message':message
@@ -435,7 +435,7 @@ def bulk_upload_contacts(request):
                               {'contactsform':contactsform
                                }, context_instance=RequestContext(request))
     
-def handle_excel_file(file):
+def handle_excel_file(file,group):
     if file:
         excel = file.read()
         workbook = open_workbook(file_contents=excel)
@@ -445,10 +445,14 @@ def handle_excel_file(file):
         duplicates = []
         invalid = []
         info = ''
-        group = Group.objects.filter(name__icontains='ureporters')[0]
+
+        default_group = Group.objects.filter(name__icontains='ureporters')[0]
+        if not group:
+            group = default_group
+
         if worksheet.nrows > 1:
-            for row in range(worksheet.nrows)[1:]:
-                connections = []
+            validated_numbers = []
+            for row in range(1,worksheet.nrows):
                 numbers = parse_telephone(row, worksheet, cols)
                 for raw_num in numbers.split('/'):
                     if raw_num[-2:] == '.0':
@@ -456,35 +460,47 @@ def handle_excel_file(file):
                     if raw_num[:1] == '+':
                         raw_num = raw_num[1:]
                     if len(raw_num) >= 9:
-                        number, backend = assign_backend(raw_num)
-                        connection, created = Connection.objects.get_or_create(identity=number, backend=backend)
-                        if created:
-                            connections.append(Connection.objects.create(identity=number, backend=backend))
-                        else:
-                            duplicates.append(number)
+                        validated_numbers.append(raw_num)
+            duplicates = Connection.objects.filter(identity__in=validated_numbers).values_list('identity',flat=True)
+
+            for row in range(1,worksheet.nrows):
+                numbers = parse_telephone(row, worksheet, cols)
+                contact = {}
+                contact['name']=parse_name(row,worksheet,cols)
+                district = parse_district(row, worksheet, cols)
+                village = parse_village(row, worksheet, cols)
+                birthdate = parse_birthdate(row, worksheet, cols)
+                gender = parse_gender(row, worksheet, cols)
+                if group:
+                    contact['groups'] = [group,]
+                if district:
+                    contact['reporting_location'] = find_closest_match(district, Area.objects.filter(kind__name='district'))
+                if village:
+                    contact['village'] = find_closest_match(village, Area.objects)
+                if birthdate:
+                    contact['birthdate'] = birthdate
+                if gender:
+                    contact['gender'] = gender
+
+                for raw_num in numbers.split('/'):
+                    if raw_num[-2:] == '.0':
+                        raw_num = raw_num[:-2]
+                    if raw_num[:1] == '+':
+                        raw_num = raw_num[1:]
+                    if len(raw_num) >= 9:
+                        if raw_num not in duplicates:
+                            number, backend = assign_backend(raw_num)
+                            Connection.bulk.bulk_insert(send_pre_save=False,
+                                                        identity=number,
+                                                        backend=backend,
+                                                        contact=contact)
+                            contacts.append(number)
+
                     else:
                         invalid.append(raw_num)
-                if len(connections) > 0:
-                    contact=Contact.objects.create(name=parse_name(row,worksheet,cols))
-                    district = parse_district(row, worksheet, cols)
-                    village = parse_village(row, worksheet, cols)
-                    birthdate = parse_birthdate(row, worksheet, cols)
-                    gender = parse_gender(row, worksheet, cols)
-                    if group:
-                        contact.groups.add(group)
-                    if district:
-                        contact.reporting_location = find_closest_match(district, Area.objects.filter(kind__name='district'))
-                    if village:
-                        contact.village = find_closest_match(village, Area.objects)
-                    if birthdate:
-                        contact.birthdate = birthdate
-                    if gender:
-                        contact.gender = gender
-                    contact.save()
-                    contacts.append(number)
-                    for c in connections:
-                        c.contact = contact
-                        c.save()
+
+            Connection.bulk.bulk_insert_commit(send_post_save=False, autoclobber=True)
+
             if len(contacts)>0:
                 info = 'Contacts with numbers... ' +' ,'.join(contacts) + " have been uploaded !\n\n"
             if len(duplicates)>0:
