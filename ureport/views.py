@@ -5,6 +5,7 @@ from django import forms
 from django.contrib.auth.models import Group
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
+from django.views.decorators.cache import cache_control
 from django.http import HttpResponse, Http404
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -78,6 +79,7 @@ def generate_tag_cloud(words,counts_dict,tag_classes,max_count):
 def add_drop_word(request):
     tag_name=request.GET.get('tag',None)
     poll_pk=int(request.GET.get('poll',1))
+    print "Adding ignored tag %s to %d" % (tag_name, poll_pk)
     IgnoredTags.objects.create(name=tag_name,poll=Poll.objects.get(pk=poll_pk))
     return HttpResponse(simplejson.dumps("success"))
 
@@ -90,6 +92,7 @@ def delete_drop_word(request):
     return HttpResponse(simplejson.dumps("success"))
 
 @login_required
+@cache_control(no_cache=True, max_age=0)
 def show_ignored_tags(request):
     tags=IgnoredTags.objects.all()
     return render_to_response("ureport/partials/tag_cloud/ignored_tags.html", {'tags':tags},context_instance=RequestContext(request))
@@ -102,6 +105,7 @@ def _get_tags(polls):
     used_words_list=[]
     max_count=0
     reg_words = re.compile('[^a-zA-Z]')
+    print "ignored tags = %s" % str(list(IgnoredTags.objects.filter(poll__in=polls).values_list('name',flat=True)))
     dropwords = list(IgnoredTags.objects.filter(poll__in=polls).values_list('name',flat=True)) + drop_words 
     all_words = ' '.join(Value.objects.filter(entity_ct=ContentType.objects.get_for_model(Response), entity_id__in=responses).values_list('value_text', flat=True)).lower()
     all_words = reg_words.split(all_words)
@@ -130,6 +134,7 @@ def _get_tags(polls):
     random.shuffle(tags)
     return tags
 
+@cache_control(no_cache=True, max_age=0)
 def tag_cloud(request):
     """
         generates a tag cloud
@@ -139,7 +144,7 @@ def tag_cloud(request):
     poll_qn=['Qn:'+' '.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?' for poll in polls]
 
     tags = _get_tags(polls) 
-    return render_to_response("ureport/partials/tag_cloud/tag_cloud.html", {'tags':tags,'poll_qn':poll_qn[0]})
+    return render_to_response("ureport/partials/tag_cloud/tag_cloud.html", {'poll':polls[0],'tags':tags,'poll_qn':poll_qn[0]}, context_instance=RequestContext(request))
 
 def histogram(request):
     """

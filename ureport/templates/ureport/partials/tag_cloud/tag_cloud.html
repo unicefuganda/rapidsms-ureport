@@ -1,10 +1,5 @@
-<div style='width:100%;clear:both;margin-bottom:30px;color:#3E576F;margin:5px;'>
-{% if not unlabeled %}
-    <center style="font-size:16px;">Poll Results For</center>
-    {{poll_qn}}
-{% endif %}
-</div>
-<div class="tags">
+<div id="tags" class="tags">
+<div id="tagcontent">
 {% for tag in tags%}
     <tt id="tag{{ forloop.counter0 }}" class="{{ tag.class }}">
        {% comment %}
@@ -16,7 +11,7 @@
                 onmouseout="$(this).next().attr('class', 'default')"
             {% endif %}
             rel="tag"
-            class="tag_link" href="javascript:void(0)">{{ tag.tag }}</a>{% if user.is_authenticated %}<span class="default" onmouseover="$(this).attr('class', 'delete-tag-hover')" onmouseout="$(this).attr('class', 'default')" title="remove {{ tag.tag }}" onclick="add_tag('{{ tag.tag }}',tag_poll_pk)"></span>{% endif %}
+            class="tag_link" href="javascript:void(0)">{{ tag.tag }}</a>{% if user.is_authenticated %}<span class="default" onmouseover="$(this).attr('class', 'delete-tag-hover')" onmouseout="$(this).attr('class', 'default')" title="remove {{ tag.tag }}" onclick="add_tag('{{ tag.tag }}','{{ poll.pk }}')"></span>{% endif %}
     </tt>
 {%  endfor %}
 </div>
@@ -24,6 +19,9 @@
 <p>
     <a onclick="load_excluded_tags()" href="javascript:void(0)">edit excluded tags</a>
 </p>
+<div id="excluded" style="display:none">
+</div>
 {% endif %}
+</div>
 
 

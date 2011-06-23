@@ -1,6 +1,6 @@
 from django.db import models
 from poll.models import Poll, LocationResponseForm, STARTSWITH_PATTERN_TEMPLATE
-from rapidsms.models import Contact
+from rapidsms.models import Contact, Connection
 from django.contrib.auth.models import User, Group
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
@@ -16,6 +16,12 @@ from rapidsms_httprouter.models import Message
 import datetime
 import re
 import difflib
+
+c_bulk_mgr = BulkInsertManager()
+c_bulk_mgr.contribute_to_class(Contact, 'bulk')
+
+cn_bulk_mgr = BulkInsertManager()
+cn_bulk_mgr.contribute_to_class(Connection, 'bulk')
 
 class IgnoredTags(models.Model):
     poll = models.ForeignKey(Poll)

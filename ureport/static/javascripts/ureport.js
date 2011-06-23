@@ -181,7 +181,6 @@ function load_tag_cloud(poll_id) {
     $('img.tags'+poll_id).addClass('selected');
 
     var url = "/ureport/tag_cloud/" + "?pks=+" + poll_id;
-
     $('#tags').load(url,function(){
        $('.ajax_loading').remove();
     });
@@ -212,8 +211,7 @@ function remove_tag(poll_id){
 }
 
 function load_excluded_tags() {
-    $('#tags').hide();
-    $('#visual').append("<div id='excluded'></div>") ;
+    $('#tagcontent').hide();
     $('#excluded').load("/ureport/show_excluded/");
     $('#excluded').show();
 }
