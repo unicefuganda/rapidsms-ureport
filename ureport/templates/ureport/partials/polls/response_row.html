@@ -2,11 +2,13 @@
 {% block message_information %}
     <td class="response_sender_col">
       <a href="/ureport/{{ response.message.connection.pk }}/message_history/">
-      {% if response.message.connection.contact %}
-        {{ response.message.connection.contact }}
-      {% else %}
-        {{ response.message.connection.identity }}
-      {% endif %}
+          {% if response.message.connection.contact %}
+            {{ response.message.connection.contact }} (
+          {% endif %}
+          <span style="font-size:8px">{{ response.message.connection.identity }}</span>
+          {% if response.message.connection.contact %}
+            )
+          {% endif %}
       </a>
        at {{ response.message.date|date:"d/m/Y H:i" }}
     </td>
