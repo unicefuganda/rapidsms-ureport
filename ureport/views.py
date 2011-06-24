@@ -471,8 +471,6 @@ def handle_excel_file(file,group):
                 village = parse_village(row, worksheet, cols)
                 birthdate = parse_birthdate(row, worksheet, cols)
                 gender = parse_gender(row, worksheet, cols)
-                if group:
-                    contact['groups'] = [group,]
                 if district:
                     contact['reporting_location'] = find_closest_match(district, Area.objects.filter(kind__name='district'))
                 if village:
@@ -481,6 +479,8 @@ def handle_excel_file(file,group):
                     contact['birthdate'] = birthdate
                 if gender:
                     contact['gender'] = gender
+                if group:
+                    contact['groups'] = group
 
                 for raw_num in numbers.split('/'):
                     if raw_num[-2:] == '.0':
@@ -490,16 +490,20 @@ def handle_excel_file(file,group):
                     if len(raw_num) >= 9:
                         if raw_num not in duplicates:
                             number, backend = assign_backend(raw_num)
-                            Connection.bulk.bulk_insert(send_pre_save=False,
-                                                        identity=number,
-                                                        backend=backend,
-                                                        contact=contact)
-                            contacts.append(number)
+                            if number not in contacts and backend is not None:
+                                Connection.bulk.bulk_insert(send_pre_save=False,
+                                                            identity=number,
+                                                            backend=backend,
+                                                            contact=contact)
+                                contacts.append(number)
+                            elif backend is None:
+                                invalid.append(raw_num)
 
                     else:
                         invalid.append(raw_num)
 
             Connection.bulk.bulk_insert_commit(send_post_save=False, autoclobber=True)
+            contact_pks = Connection.objects.values_list('contact__pk',flat=True)
 
             if len(contacts)>0:
                 info = 'Contacts with numbers... ' +' ,'.join(contacts) + " have been uploaded !\n\n"
@@ -529,7 +533,8 @@ def parse_telephone(row,worksheet,cols):
 
 def parse_name(row,worksheet,cols):
     if str(worksheet.cell(row, cols['name']).value).__len__() > 0:
-        return str(worksheet.cell(row, cols['name']).value)
+        name = str(worksheet.cell(row, cols['name']).value)
+        return ' '.join([t.capitalize() for t in name.lower().split(" ")])
     else:
         return 'Anonymous User'
 
@@ -549,10 +554,7 @@ def parse_birthdate(row, worksheet, cols):
 
 def parse_gender(row, worksheet, cols):
     gender = str(worksheet.cell(row, cols['gender']).value)
-    if len(gender) > 1:
-        return gender[:1].upper()
-    else:
-        return genger.upper()
+    return gender.upper()[:1] if gender else None
 
 def download_contacts_template(request, f):
     path = getattr(settings, 'DOWNLOADS_FOLDER', None)
