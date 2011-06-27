@@ -107,5 +107,6 @@ urlpatterns = patterns('',
     url(r'^uploadcontacts/$', bulk_upload_contacts),
 #    url(r'^download/(?P<file>[a-z\.]+)/$', download_contacts_template),
     url(r'^download/(?P<f>[a-z_\.]+)', download_contacts_template),
+    # wrapper for clickatell api callbacks
     url(r'^clickatell/$', clickatell_wrapper),
 )

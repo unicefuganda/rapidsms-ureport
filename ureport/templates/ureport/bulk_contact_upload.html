@@ -17,13 +17,13 @@
     </div>
 	<div class="module">
     <h3>Download Excel Template</h3>
-	<p><a href="{% url ureport.views.download_contacts_template "contacts_tmpl.xls" %}">Contacts Upload Excel Template</a></p>
+	<p><a href="{{ MEDIA_URL }}ureport/spreadsheets/contacts_tmpl.xls">Contacts Upload Excel Template</a></p>
 	</div>
 	<div class="module">
     <h3>Upload Contacts Excel File</h3>
     <table width="100%">
     <form enctype="multipart/form-data" action="/uploadcontacts/" method="POST">
-    {{contactsform.as_table}}
+    {{ contactsform.as_table }}
     <tr>
     	<td></td>
 		<td><input type="submit" value="Submit" /></td>
