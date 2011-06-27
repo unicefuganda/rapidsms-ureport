@@ -11,7 +11,7 @@ from poll.models import *
 
 urlpatterns = patterns('',
     # dashboard view for viewing all poll reports in one place
-    url(r'^ureport/dashboard/$', generic, {
+    url(r'^dashboard/$', generic, {
         'model':Poll,
         'queryset':get_polls,
         'results_title':'Polls',
@@ -33,7 +33,7 @@ urlpatterns = patterns('',
     }, name="poll_dashboard"),
 
     # ureporters (contact management views)
-    url(r'^ureport/reporter/$', login_required(generic), {
+    url(r'^reporter/$', login_required(generic), {
         'model':Contact,
         'queryset':get_contacts,
         'results_title':'uReporters',
@@ -49,13 +49,13 @@ urlpatterns = patterns('',
                  ('Total Poll Responses',True,'responses__count',SimpleSorter()),
                  ('',False,'',None)],
     }, name="ureport-contact"),
-    url(r'^ureport/reporter/(?P<reporter_pk>\d+)/edit', editReporter),
-    url(r'^ureport/reporter/(?P<reporter_pk>\d+)/delete', deleteReporter),
-    url(r'^ureport/reporter/(?P<pk>\d+)/show', generic_row, {'model':Contact, 'partial_row':'ureport/partials/contacts/contacts_row.html'}),
-    url(r"^ureport/(\d+)/message_history/$", view_message_history),
+    url(r'^reporter/(?P<reporter_pk>\d+)/edit', editReporter),
+    url(r'^reporter/(?P<reporter_pk>\d+)/delete', deleteReporter),
+    url(r'^reporter/(?P<pk>\d+)/show', generic_row, {'model':Contact, 'partial_row':'ureport/partials/contacts/contacts_row.html'}),
+    url(r"^(\d+)/message_history/$", view_message_history),
 
     # poll management views using generic (rather than built-in poll views
-    url(r'^ureport/polls/$', generic,  {
+    url(r'^polls/$', generic,  {
         'model':Poll,
         'queryset':get_polls,
         'objects_per_page':10,
@@ -73,37 +73,39 @@ urlpatterns = patterns('',
     }, name="ureport-polls"),
 
     # view responses for a poll (based on generic rather than built-in poll view
-    url(r"^ureport/(\d+)/responses/$", view_responses),
+    url(r"^(\d+)/responses/$", view_responses),
 
     # content pages (cms-style static pages)
-    url(r'^ureport/content/(?P<slug>[a-z]+)/$', ureport_content),
+    url(r'^content/(?P<slug>[a-z]+)/$', ureport_content),
+    #url(r'^$', ureport_content, {'slug':'ureport_home', 'base_template':'ureport/three-square.html', 'num_columns':3}, name="rapidsms-dashboard"),
     url(r'^home/$', ureport_content, {'slug':'ureport_home', 'base_template':'ureport/three-square.html', 'num_columns':3}, name="ureport-home"),
     url(r'^about/$', ureport_content, {'slug':'ureport_about'}, name="ureport-about"),
     url(r'^stories/$', ureport_content, {'slug':'ureport_stories', 'base_template':'ureport/three-square.html', 'num_columns':3}, name="ureport-stories"),
 
     # real-time message feed from the live poll
-    url(r'^ureport/messagefeed/$', message_feed),
+    url(r'^messagefeed/$', message_feed),
 
     # polls page and best-visualization module (different viz based on poll type
-    url(r'^pollresults/$', poll_summary, name="polls-summary"),
-    url(r'^ureport/bestviz/$', best_visualization, name="best-viz"),
+    url(r'^pollresults/$', poll_summary, name="polls-summary"),\
+    url(r'^bestviz/$', best_visualization, name="best-viz"),
+    url(r'^bestviz/(?P<poll_id>\d+)/$', best_visualization, name="best-viz"),
 
     # tag cloud views
-    url(r'^ureport/tag_cloud/$', tag_cloud),
-    url(r'^ureport/add_tag/$', add_drop_word),
-    url(r'^ureport/delete_tag/$', delete_drop_word),
-    url(r'^ureport/show_excluded/$', show_ignored_tags),
+    url(r'^tag_cloud/$', tag_cloud),
+    url(r'^add_tag/$', add_drop_word),
+    url(r'^delete_tag/$', delete_drop_word),
+    url(r'^show_excluded/$', show_ignored_tags),
 
     # histogram views
-    url(r'^ureport/histogram/$', histogram,name="histogram"),
+    url(r'^histogram/$', histogram,name="histogram"),
 
     # total responses vs time view
-    url(r'^ureport/timeseries/$',show_timeseries),
+    url(r'^timeseries/$',show_timeseries),
 
     # export contacts to excel
     url(r'^getcontacts/$', get_all_contacts),
     url(r'^uploadcontacts/$', bulk_upload_contacts),
 #    url(r'^download/(?P<file>[a-z\.]+)/$', download_contacts_template),
     url(r'^download/(?P<f>[a-z_\.]+)', download_contacts_template),
-    url(r'^ureport/clickatell/$', clickatell_wrapper),
+    url(r'^clickatell/$', clickatell_wrapper),
 )

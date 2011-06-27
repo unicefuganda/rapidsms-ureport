@@ -40,6 +40,7 @@ from django.core.files import File
 from xlrd import open_workbook
 from uganda_common.utils import assign_backend
 from ureport.models import find_closest_match
+from django.views.decorators.cache import cache_control
 
 import re
 import bisect
@@ -337,15 +338,19 @@ def _get_responses(poll):
     responses = paginator.page(1).object_list
     return responses
 
-def best_visualization(request):
+def best_visualization(request, poll_id=None):
     module = False
     if 'module' in request.GET:
         module=True
-    polls = retrieve_poll(request)
-    poll = polls[0]
+#    polls = retrieve_poll(request, pks)
+#    poll = polls[0]
+    if poll_id:
+        poll = Poll.objects.get(pk=poll_id)
+    else:
+        poll = Poll.objects.latest('start_date')
     dict = { 'poll':poll, 'polls':[poll], 'unlabeled':True, 'module':module }
     if poll.type == Poll.TYPE_TEXT and ResponseCategory.objects.filter(response__poll=poll).count() == 0:
-        dict.update({'tags':_get_tags(polls), 'responses':_get_responses(poll)})
+        dict.update({'tags':_get_tags([poll]), 'responses':_get_responses(poll)})
     return render_to_response(\
         "/ureport/partials/viz/best_visualization.html",
         dict,
@@ -370,6 +375,7 @@ def message_feed(request):
         {'poll':poll,'responses':_get_responses(poll)},
         context_instance=RequestContext(request))
 
+@cache_control(no_cache=True, max_age=0)
 def poll_summary(request):
     polls = Poll.objects.order_by('-start_date')
     return render_to_response(

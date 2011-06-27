@@ -12,11 +12,22 @@ def get_contacts(**kwargs):
 def get_polls(**kwargs):
     return Poll.objects.annotate(Count('responses'))
 
-def retrieve_poll(request):
-    pks=request.GET.get('pks', '').split('+')
-    if pks[0] == 'l':
+#def retrieve_poll(request):
+#    pks=request.GET.get('pks', '').split('+')
+#    if pks[0] == 'l':
+#        return [Poll.objects.latest('start_date')]
+#    else:
+#        pks=[eval(x) for x in list(str(pks[0]).rsplit())]
+#        return Poll.objects.filter(pk__in=pks)
+
+def retrieve_poll(request, pks=None):
+    import pdb
+    pdb.set_trace()
+    if pks == None:
+        pks=request.GET.get('pks', '')
+    if pks == 'l':
         return [Poll.objects.latest('start_date')]
     else:
-        pks=[eval(x) for x in list(str(pks[0]).rsplit())]
-        return Poll.objects.filter(pk__in=pks)
+        return [Poll.objects.get(pk=pks)]
+    
         
