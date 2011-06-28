@@ -1,6 +1,6 @@
 from django.shortcuts import  render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
-from django.db.models import Q
+from django.db.models import Q, Manager
 from django import forms
 from django.contrib.auth.models import Group
 from django.utils import simplejson
@@ -502,8 +502,13 @@ def handle_excel_file(file,group):
                     else:
                         invalid.append(raw_num)
 
-            Connection.bulk.bulk_insert_commit(send_post_save=False, autoclobber=True)
-            contact_pks = Connection.objects.values_list('contact__pk',flat=True)
+            connections = Connection.bulk.bulk_insert_commit(send_post_save=False, autoclobber=True)
+            contact_pks = connections.values_list('contact__pk',flat=True)
+
+            if "authsites" in settings.INSTALLED_APPS:
+                contact_queryset = Contact.allsites.filter(pk__in=contact_pks)
+                from authsites.models import ContactSite
+                ContactSite.add_all(contact_queryset)
 
             if len(contacts)>0:
                 info = 'Contacts with numbers... ' +' ,'.join(contacts) + " have been uploaded !\n\n"
