@@ -430,7 +430,8 @@ def bulk_upload_contacts(request):
         contactsform = ExcelUploadForm(request.POST, request.FILES)
         if contactsform.is_valid():
             if contactsform.is_valid() and request.FILES.get('excel_file',None):
-                message= handle_excel_file(request.FILES['excel_file'],contactsform.cleaned_data['assign_to_group'])
+                fields=['telephone number','name', 'district', 'county', 'village', 'age', 'gender']
+                message= handle_excel_file(request.FILES['excel_file'],contactsform.cleaned_data['assign_to_group'], fields)
             return render_to_response('ureport/bulk_contact_upload.html', 
                                       {'contactsform':contactsform,
                                        'message':message
@@ -441,19 +442,19 @@ def bulk_upload_contacts(request):
                               {'contactsform':contactsform
                                }, context_instance=RequestContext(request))
     
-def handle_excel_file(file,group):
+def handle_excel_file(file,group, fields):
     if file:
         excel = file.read()
         workbook = open_workbook(file_contents=excel)
         worksheet = workbook.sheet_by_index(0)
-        cols = parse_header_row(worksheet)
+        cols = parse_header_row(worksheet, fields)
         contacts = []
         duplicates = []
         invalid = []
         info = ''
 
-        default_group = Group.objects.filter(name__icontains='ureporters')[0]
         if not group:
+            default_group = Group.objects.filter(name__icontains='ureporters')[0]
             group = default_group
 
         if worksheet.nrows > 1:
@@ -473,10 +474,10 @@ def handle_excel_file(file,group):
                 numbers = parse_telephone(row, worksheet, cols)
                 contact = {}
                 contact['name']=parse_name(row,worksheet,cols)
-                district = parse_district(row, worksheet, cols)
-                village = parse_village(row, worksheet, cols)
-                birthdate = parse_birthdate(row, worksheet, cols)
-                gender = parse_gender(row, worksheet, cols)
+                district = parse_district(row, worksheet, cols) if 'district' in fields else None
+                village = parse_village(row, worksheet, cols) if 'village' in fields else None
+                birthdate = parse_birthdate(row, worksheet, cols) if 'age' in fields else None
+                gender = parse_gender(row, worksheet, cols) if 'gender' in fields else None
                 if district:
                     contact['reporting_location'] = find_closest_match(district, Area.objects.filter(kind__name='district'))
                 if village:
@@ -523,8 +524,8 @@ def handle_excel_file(file,group):
         info = "Invalid file"   
     return info
     
-def parse_header_row(worksheet):
-    fields=['telephone number','name', 'district', 'county', 'village', 'age', 'gender']
+def parse_header_row(worksheet, fields):
+#    fields=['telephone number','name', 'district', 'county', 'village', 'age', 'gender']
     field_cols={}
     for col in range(worksheet.ncols):
         value = str(worksheet.cell(0, col).value).strip()
