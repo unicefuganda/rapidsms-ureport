@@ -14,7 +14,7 @@ from ureport.settings import colors, drop_words, tag_cloud_size
 from ureport.models import IgnoredTags
 from poll.models import *
 
-from rapidsms.models import Contact
+from rapidsms.models import Contact, Connection
 from rapidsms_httprouter.router import get_router, start_sending_mass_messages, stop_sending_mass_messages
 from rapidsms_httprouter.views import receive
 from djtables import Column, Table
