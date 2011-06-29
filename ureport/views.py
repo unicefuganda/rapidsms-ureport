@@ -14,7 +14,7 @@ from ureport.settings import colors, drop_words, tag_cloud_size
 from ureport.models import IgnoredTags
 from poll.models import *
 
-from rapidsms.models import Contact
+from rapidsms.models import Contact, Connection
 from rapidsms_httprouter.router import get_router, start_sending_mass_messages, stop_sending_mass_messages
 from rapidsms_httprouter.views import receive
 from djtables import Column, Table
@@ -472,51 +472,52 @@ def handle_excel_file(file,group, fields):
 
             for row in range(1,worksheet.nrows):
                 numbers = parse_telephone(row, worksheet, cols)
-                contact = {}
-                contact['name']=parse_name(row,worksheet,cols)
-                district = parse_district(row, worksheet, cols) if 'district' in fields else None
-                village = parse_village(row, worksheet, cols) if 'village' in fields else None
-                birthdate = parse_birthdate(row, worksheet, cols) if 'age' in fields else None
-                gender = parse_gender(row, worksheet, cols) if 'gender' in fields else None
-                if district:
-                    contact['reporting_location'] = find_closest_match(district, Area.objects.filter(kind__name='district'))
-                if village:
-                    contact['village'] = find_closest_match(village, Area.objects)
-                if birthdate:
-                    contact['birthdate'] = birthdate
-                if gender:
-                    contact['gender'] = gender
-                if group:
-                    contact['groups'] = group
-
-                for raw_num in numbers.split('/'):
-                    if raw_num[-2:] == '.0':
-                        raw_num = raw_num[:-2]
-                    if raw_num[:1] == '+':
-                        raw_num = raw_num[1:]
-                    if len(raw_num) >= 9:
-                        if raw_num not in duplicates:
-                            number, backend = assign_backend(raw_num)
-                            if number not in contacts and backend is not None:
-                                Connection.bulk.bulk_insert(send_pre_save=False,
-                                                            identity=number,
-                                                            backend=backend,
-                                                            contact=contact)
-                                contacts.append(number)
-                            elif backend is None:
-                                invalid.append(raw_num)
-
-                    else:
-                        invalid.append(raw_num)
+                if len(numbers) > 0:
+                    contact = {}
+                    contact['name']=parse_name(row,worksheet,cols)
+                    district = parse_district(row, worksheet, cols) if 'district' in fields else None
+                    village = parse_village(row, worksheet, cols) if 'village' in fields else None
+                    birthdate = parse_birthdate(row, worksheet, cols) if 'age' in fields else None
+                    gender = parse_gender(row, worksheet, cols) if 'gender' in fields else None
+                    if district:
+                        contact['reporting_location'] = find_closest_match(district, Area.objects.filter(kind__name='district'))
+                    if village:
+                        contact['village'] = find_closest_match(village, Area.objects)
+                    if birthdate:
+                        contact['birthdate'] = birthdate
+                    if gender:
+                        contact['gender'] = gender
+                    if group:
+                        contact['groups'] = group
+    
+                    for raw_num in numbers.split('/'):
+                        if raw_num[-2:] == '.0':
+                            raw_num = raw_num[:-2]
+                        if raw_num[:1] == '+':
+                            raw_num = raw_num[1:]
+                        if len(raw_num) >= 9:
+                            if raw_num not in duplicates:
+                                number, backend = assign_backend(raw_num)
+                                if number not in contacts and backend is not None:
+                                    Connection.bulk.bulk_insert(send_pre_save=False,
+                                                                identity=number,
+                                                                backend=backend,
+                                                                contact=contact)
+                                    contacts.append(number)
+                                elif backend is None:
+                                    invalid.append(raw_num)
+    
+                        else:
+                            invalid.append(raw_num)
 
             connections = Connection.bulk.bulk_insert_commit(send_post_save=False, autoclobber=True)
             contact_pks = connections.values_list('contact__pk',flat=True)
-
+            
             if "authsites" in settings.INSTALLED_APPS:
                 contact_queryset = Contact.allsites.filter(pk__in=contact_pks)
                 from authsites.models import ContactSite
                 ContactSite.add_all(contact_queryset)
-
+                
             if len(contacts)>0:
                 info = 'Contacts with numbers... ' +' ,'.join(contacts) + " have been uploaded !\n\n"
             if len(duplicates)>0:
@@ -540,12 +541,19 @@ def parse_header_row(worksheet, fields):
 
 
 def parse_telephone(row,worksheet,cols):
-    number = str(worksheet.cell(row, cols['telephone number']).value)
-    return number.replace('-','').strip()
+    try:
+        number = str(worksheet.cell(row, cols['telephone number']).value)
+    except KeyError:
+        number = str(worksheet.cell(row, cols['telephone']).value)
+    return number.replace('-','').strip().replace(' ','')
 
 def parse_name(row,worksheet,cols):
-    if str(worksheet.cell(row, cols['name']).value).__len__() > 0:
+    try:
+        name = str(worksheet.cell(row, cols['company name']).value)
+    except KeyError:
         name = str(worksheet.cell(row, cols['name']).value)
+    if name.__len__() > 0:
+#        name = str(worksheet.cell(row, cols['name']).value)
         return ' '.join([t.capitalize() for t in name.lower().split(" ")])
     else:
         return 'Anonymous User'
