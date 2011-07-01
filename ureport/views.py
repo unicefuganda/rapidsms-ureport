@@ -9,7 +9,7 @@ from django.views.decorators.cache import cache_control
 from django.http import HttpResponse, Http404
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-
+from django.db import connection
 from ureport.settings import colors, drop_words, tag_cloud_size
 from ureport.models import IgnoredTags
 from poll.models import *
@@ -517,7 +517,7 @@ def handle_excel_file(file,group, fields):
                 contact_queryset = Contact.allsites.filter(pk__in=contact_pks)
                 from authsites.models import ContactSite
                 ContactSite.add_all(contact_queryset)
-                
+                    
             if len(contacts)>0:
                 info = 'Contacts with numbers... ' +' ,'.join(contacts) + " have been uploaded !\n\n"
             if len(duplicates)>0:
@@ -527,7 +527,7 @@ def handle_excel_file(file,group, fields):
         else:
             info = "You seem to have uploaded an empty excel file, please fill the excel Contacts Template with contacts and upload again..."
     else:
-        info = "Invalid file"   
+        info = "Invalid file"  
     return info
     
 def parse_header_row(worksheet, fields):
@@ -549,12 +549,12 @@ def parse_telephone(row,worksheet,cols):
 
 def parse_name(row,worksheet,cols):
     try:
-        name = str(worksheet.cell(row, cols['company name']).value)
+        name = str(worksheet.cell(row, cols['company name']).value).strip()
     except KeyError:
-        name = str(worksheet.cell(row, cols['name']).value)
+        name = str(worksheet.cell(row, cols['name']).value).strip()
     if name.__len__() > 0:
 #        name = str(worksheet.cell(row, cols['name']).value)
-        return ' '.join([t.capitalize() for t in name.lower().split(" ")])
+        return ' '.join([t.capitalize() for t in name.lower().split()])
     else:
         return 'Anonymous User'
 
