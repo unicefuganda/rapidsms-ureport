@@ -72,15 +72,22 @@ var bar_opts = {
 
 function plot_histogram(data, element_id) {
     var chart;
-    max = data[0][0];
-    min = data[data.length - 1][0];
+    max = Math.ceil(data[0][0]);
+    min = Math.floor(data[data.length - 1][0]);
     // 6 bars
-    increment = (max - min) / 6.0;
+    num_bars = 6;
+    while (((max - min) % num_bars) != 0 && min >= 0) {
+        min--;
+    }
+    while (((max - min) % num_bars) != 0) {
+        max++;
+    }
+    increment = (max - min) / num_bars;
     offset = data.length - 1;
     bar_data = [];
     categories = [];
     for (i = min; i < max; i += increment) {
-        category = '' + i.toFixed(1) + '-' + (i + increment).toFixed(1);
+        category = '' + i + '-' + (i + increment);
         count = 0;
         categories[categories.length] = category;
         if (i + increment == max) {
