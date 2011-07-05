@@ -21,8 +21,6 @@ def get_polls(**kwargs):
 #        return Poll.objects.filter(pk__in=pks)
 
 def retrieve_poll(request, pks=None):
-    import pdb
-    pdb.set_trace()
     if pks == None:
         pks=request.GET.get('pks', '')
     if pks == 'l':

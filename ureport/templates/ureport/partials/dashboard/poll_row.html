@@ -15,37 +15,37 @@
 <td style="width:25em;white-space:nowrap">
     <div class="buttons">
         {% if object.type == 't' or object.type == 'n' %}
-            <a href="javascript:void(0)" onclick="collapse();load_report('{{ object.pk }}')">
+            <a href="javascript:void(0)" onclick="collapse();load_report('{{ object.pk }}', '{% url poll.views.view_responses object.pk %}')">
                 <img src="{{ MEDIA_URL }}poll/icons/silk/database_table.png" border="0"/> Report
             </a>
         {% endif %}
-        <a href="javascript:void(0)" onclick="collapse();load_responses('{{ object.pk }}')">
+        <a href="javascript:void(0)" onclick="collapse();load_responses('{{ object.pk }}', '{% url poll.views.view_responses object.pk %}')">
             <img src="{{ MEDIA_URL }}poll/icons/silk/database_table.png" alt=""/>
             Responses
             ({{object.responses__count}})
         </a>
         {% if object.type == 't'  %}
-            <a href="javascript:void(0)" onclick="collapse();load_tag_cloud({{object.pk}})">
+            <a href="javascript:void(0)" onclick="collapse();load_tag_cloud({{object.pk}}, '{% url ureport.views.tag_cloud object.pk %}')">
                 <img class="tags{{object.pk}}" src="{{MEDIA_URL}}ureport/images/tags.png"/>
             </a>
-            <a href="javascript:void(0)" onclick="collapse();load_piechart({{object.pk}}, 'pie')">
+            <a href="javascript:void(0)" onclick="collapse();load_piechart({{object.pk}}, 'pie', '{% url poll.views.stats object.pk %}')">
                 <img class="pie{{object.pk}}" src="{{MEDIA_URL}}ureport/images/pie.png"/>
             </a>
-            <a href="javascript:void(0)" onclick="collapse();load_map({{object.pk}}, 'map')">
+            <a href="javascript:void(0)" onclick="collapse();load_map({{object.pk}}, 'map', '{% url poll.views.stats object.pk 1 %}')">
                 <img class="map{{object.pk}}" src="{{MEDIA_URL}}ureport/images/map.png"/>
             </a>
         {% endif %}
         {% if object.type == 'l' or object.type == 'r'  %}
-            <a href="javascript:void(0)" onclick="collapse();load_tag_cloud({{object.pk}})">
+            <a href="javascript:void(0)" onclick="collapse();load_tag_cloud({{object.pk}}, '{% url ureport.views.tag_cloud object.pk %}')">
                 <img class="tags{{object.pk}}" src="{{MEDIA_URL}}ureport/images/tags.png"/>
             </a>
         {% endif %}
         {% if object.type == 'n' %}
-            <a href="javascript:void(0)" onclick="collapse();load_histogram({{ object.pk }},'histogram')">
+            <a href="javascript:void(0)" onclick="collapse();load_histogram({{ object.pk }},'histogram', '{% url poll.views.number_details object.pk %}')">
                 <img class="bar{{object.pk}}" src="{{MEDIA_URL}}ureport/images/bar.png"/>
             </a>
         {% endif %}
-        <a href="javascript:void(0)" onclick="collapse();load_timeseries({{object.pk}})">
+        <a href="javascript:void(0)" onclick="collapse();load_timeseries('{% url ureport.views.show_timeseries object.pk %}', {{object.pk}})">
            <img class="series{{object.pk}}" src="{{MEDIA_URL}}ureport/images/timeseries.png"/>
         </a>
     </div>

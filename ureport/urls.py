@@ -91,16 +91,18 @@ urlpatterns = patterns('',
     url(r'^bestviz/(?P<poll_id>\d+)/$', best_visualization, name="best-viz"),
 
     # tag cloud views
-    url(r'^tag_cloud/$', tag_cloud),
-    url(r'^add_tag/$', add_drop_word),
-    url(r'^delete_tag/$', delete_drop_word),
-    url(r'^show_excluded/$', show_ignored_tags),
+    url(r'^tag_cloud/$', tag_cloud, name="tag_cloud"),
+    url(r'^tag_cloud/(?P<pks>\d+)/$', tag_cloud, name="tag_cloud"),
+    url(r'^add_tag/$', add_drop_word, name="add_tag"),
+    url(r'^delete_tag/$', delete_drop_word, name="delete_tag"),
+    url(r'^show_excluded/$', show_ignored_tags, name="show_excluded"),
 
     # histogram views
     url(r'^histogram/$', histogram,name="histogram"),
 
     # total responses vs time view
-    url(r'^timeseries/$',show_timeseries),
+    url(r'^timeseries/$',show_timeseries, name="time-series"),
+    url(r'^timeseries/(?P<pks>\d+)/$',show_timeseries, name="time-series"),
 
     # export contacts to excel
     url(r'^getcontacts/$', get_all_contacts),

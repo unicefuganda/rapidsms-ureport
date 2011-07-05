@@ -136,11 +136,11 @@ def _get_tags(polls):
     return tags
 
 @cache_control(no_cache=True, max_age=0)
-def tag_cloud(request):
+def tag_cloud(request, pks):
     """
         generates a tag cloud
     """
-    polls = retrieve_poll(request)
+    polls = retrieve_poll(request, pks)
 
     poll_qn=['Qn:'+' '.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?' for poll in polls]
 
@@ -256,8 +256,8 @@ def view_message_history(request, connection_id):
         "replyForm": reply_form
     }, context_instance=RequestContext(request))
 
-def show_timeseries(request):
-    polls = retrieve_poll(request)
+def show_timeseries(request, pks):
+    polls = retrieve_poll(request, pks)
     poll_obj= polls[0]
     responses=Response.objects.filter(poll=poll_obj)
     start_date=poll_obj.start_date

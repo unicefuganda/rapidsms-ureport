@@ -100,12 +100,11 @@ function plot_histogram(data, element_id) {
     chart = new Highcharts.Chart(bar_opts);
 }
 
-function load_histogram(poll_id, element_id) {
+function load_histogram(poll_id, element_id, url) {
     remove_selection();
     $('#' + element_id).show();
     $('img.bar'+element_id).addClass('selected');
     var id_list = "";
-    var url = "/polls/responses/" + poll_id + "/numeric/";
     $.ajax({
         type: "GET",
         url:url,
@@ -153,13 +152,12 @@ function plot_piechart(data, element_id) {
     chart = new Highcharts.Chart(pie_opts);
 }
 
-function load_piechart(poll_id, element_id) {
+function load_piechart(poll_id, element_id, url) {
     // ajax_loading('#visual' + divstr);
     remove_selection();
     $('#' + element_id).show();
     $('img.pie'+poll_id).addClass('selected');
     var id_list = "";
-    var url = "/polls/responses/" + poll_id + "/stats/";
     $.ajax({
         type: "GET",
         url:url,
@@ -171,7 +169,7 @@ function load_piechart(poll_id, element_id) {
     });
 }
 
-function load_tag_cloud(poll_id) {
+function load_tag_cloud(poll_id, url) {
     // ajax_loading('#visual');
     tag_poll_pk=poll_id;
     remove_selection();
@@ -179,8 +177,6 @@ function load_tag_cloud(poll_id) {
     var id_list = "";
 
     $('img.tags'+poll_id).addClass('selected');
-
-    var url = "/ureport/tag_cloud/" + "?pks=+" + poll_id;
     $('#tags').load(url,function(){
        $('.ajax_loading').remove();
     });
@@ -216,13 +212,12 @@ function load_excluded_tags() {
     $('#excluded').show();
 }
 
-function load_timeseries(poll_id) {
-    remove_selection();
-    $('#poll_timeseries').show();
-    $('img.series'+poll_id).addClass('selected');
-    var id_list = "";
-    var url = "/ureport/timeseries/?pks=+" + poll_id;
-    $('#poll_timeseries').load(url);
+function load_timeseries(url, poll_id) {
+	remove_selection();
+	$('#poll_timeseries').show();
+	$('img.series'+poll_id).addClass('selected');
+	var id_list = "";
+	$('#poll_timeseries').load(url);
 }
 
 //function to create label
@@ -293,7 +288,7 @@ function addGraph(data, x, y, color, desc) {
     });
 }
 
-function load_map(poll_id, element_id) {
+function load_map(poll_id, element_id, url) {
     // ajax_loading('#visual' + divstr);
     remove_selection();
 
@@ -305,7 +300,6 @@ function load_map(poll_id, element_id) {
     }
     $('#' + element_id).removeClass('init');
     var id_list = "";
-    var url = "/polls/responses/" + poll_id + "/stats/1/";
     $.ajax({
         type: "GET",
         url:url,
@@ -376,21 +370,19 @@ function init_map(poll_id, element_id) {
     });
 }
 
-function load_responses(poll_id) {
+function load_responses(poll_id, url) {
     // ajax_loading('#visual');
     remove_selection();
     $('#poll_responses').show();
-    var url = '/polls/' + poll_id + '/responses/module/';
     $('#poll_responses').load(url,function(){
        $('.ajax_loading').remove();
     });
 }
 
-function load_report(poll_id) {
+function load_report(poll_id, url) {
     // ajax_loading('#visual');
     remove_selection();
     $('#poll_report').show();
-    var url = '/polls/' + poll_id + '/report/module/';
     $('#poll_report').load(url,function(){
        $('.ajax_loading').remove();
     });
