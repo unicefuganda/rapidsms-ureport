@@ -74,7 +74,6 @@ function plot_histogram(data, element_id) {
     var chart;
     max = Math.ceil(data[0][0]);
     min = Math.floor(data[data.length - 1][0]);
-    // 6 bars
     num_bars = 6;
     while (((max - min) % num_bars) != 0 && min >= 0) {
         min--;

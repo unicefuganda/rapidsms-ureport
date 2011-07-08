@@ -6,7 +6,7 @@ import datetime
 
 from django.core.management.base import BaseCommand
 from code_generator.code_generator import generate_tracking_tag
-from simple_locations.models import Area,AreaType, Point
+from rapidsms.contrib.locations.models import Location
 from django.template.defaultfilters import slugify
 from django.db import IntegrityError
 from mptt.exceptions import InvalidMove
@@ -63,9 +63,9 @@ class Command(BaseCommand):
             if group:
                 contact.groups.add(group)
             if district:
-                contact.reporting_location = find_closest_match(district, Area.objects.filter(kind__name='district'))
+                contact.reporting_location = find_closest_match(district, Location.objects.filter(type__name='district'))
             if village:
-                contact.village = find_closest_match(village, Area.objects)
+                contact.village = find_closest_match(village, Location.objects)
             if birthdate:
                 print "%d: %s" % (rnum, birthdate)
                 contact.birthdate = datetime.datetime.strptime(birthdate.strip(),'%d/%m/%Y')
