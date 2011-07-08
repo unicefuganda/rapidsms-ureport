@@ -9,7 +9,7 @@ from django.views.decorators.cache import cache_control
 from django.http import HttpResponse, Http404
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-
+from django.db import connection
 from ureport.settings import colors, drop_words, tag_cloud_size
 from ureport.models import IgnoredTags
 from poll.models import *
@@ -40,6 +40,7 @@ from django.core.files import File
 from xlrd import open_workbook
 from uganda_common.utils import assign_backend
 from ureport.models import find_closest_match
+from django.views.decorators.cache import cache_control
 
 import re
 import bisect
@@ -135,11 +136,11 @@ def _get_tags(polls):
     return tags
 
 @cache_control(no_cache=True, max_age=0)
-def tag_cloud(request):
+def tag_cloud(request, pks):
     """
         generates a tag cloud
     """
-    polls = retrieve_poll(request)
+    polls = retrieve_poll(request, pks)
 
     poll_qn=['Qn:'+' '.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?' for poll in polls]
 
@@ -255,8 +256,8 @@ def view_message_history(request, connection_id):
         "replyForm": reply_form
     }, context_instance=RequestContext(request))
 
-def show_timeseries(request):
-    polls = retrieve_poll(request)
+def show_timeseries(request, pks):
+    polls = retrieve_poll(request, pks)
     poll_obj= polls[0]
     responses=Response.objects.filter(poll=poll_obj)
     start_date=poll_obj.start_date
@@ -337,15 +338,19 @@ def _get_responses(poll):
     responses = paginator.page(1).object_list
     return responses
 
-def best_visualization(request):
+def best_visualization(request, poll_id=None):
     module = False
     if 'module' in request.GET:
         module=True
-    polls = retrieve_poll(request)
-    poll = polls[0]
+#    polls = retrieve_poll(request, pks)
+#    poll = polls[0]
+    if poll_id:
+        poll = Poll.objects.get(pk=poll_id)
+    else:
+        poll = Poll.objects.latest('start_date')
     dict = { 'poll':poll, 'polls':[poll], 'unlabeled':True, 'module':module }
     if poll.type == Poll.TYPE_TEXT and ResponseCategory.objects.filter(response__poll=poll).count() == 0:
-        dict.update({'tags':_get_tags(polls), 'responses':_get_responses(poll)})
+        dict.update({'tags':_get_tags([poll]), 'responses':_get_responses(poll)})
     return render_to_response(\
         "/ureport/partials/viz/best_visualization.html",
         dict,
@@ -370,6 +375,7 @@ def message_feed(request):
         {'poll':poll,'responses':_get_responses(poll)},
         context_instance=RequestContext(request))
 
+@cache_control(no_cache=True, max_age=0)
 def poll_summary(request):
     polls = Poll.objects.order_by('-start_date')
     return render_to_response(
@@ -424,7 +430,8 @@ def bulk_upload_contacts(request):
         contactsform = ExcelUploadForm(request.POST, request.FILES)
         if contactsform.is_valid():
             if contactsform.is_valid() and request.FILES.get('excel_file',None):
-                message= handle_excel_file(request.FILES['excel_file'],contactsform.cleaned_data['assign_to_group'])
+                fields=['telephone number','name', 'district', 'county', 'village', 'age', 'gender']
+                message= handle_excel_file(request.FILES['excel_file'],contactsform.cleaned_data['assign_to_group'], fields)
             return render_to_response('ureport/bulk_contact_upload.html', 
                                       {'contactsform':contactsform,
                                        'message':message
@@ -435,19 +442,19 @@ def bulk_upload_contacts(request):
                               {'contactsform':contactsform
                                }, context_instance=RequestContext(request))
     
-def handle_excel_file(file,group):
+def handle_excel_file(file,group, fields):
     if file:
         excel = file.read()
         workbook = open_workbook(file_contents=excel)
         worksheet = workbook.sheet_by_index(0)
-        cols = parse_header_row(worksheet)
+        cols = parse_header_row(worksheet, fields)
         contacts = []
         duplicates = []
         invalid = []
         info = ''
 
-        default_group = Group.objects.filter(name__icontains='ureporters')[0]
         if not group:
+            default_group = Group.objects.filter(name__icontains='ureporters')[0]
             group = default_group
 
         if worksheet.nrows > 1:
@@ -465,51 +472,52 @@ def handle_excel_file(file,group):
 
             for row in range(1,worksheet.nrows):
                 numbers = parse_telephone(row, worksheet, cols)
-                contact = {}
-                contact['name']=parse_name(row,worksheet,cols)
-                district = parse_district(row, worksheet, cols)
-                village = parse_village(row, worksheet, cols)
-                birthdate = parse_birthdate(row, worksheet, cols)
-                gender = parse_gender(row, worksheet, cols)
-                if district:
-                    contact['reporting_location'] = find_closest_match(district, Area.objects.filter(kind__name='district'))
-                if village:
-                    contact['village'] = find_closest_match(village, Area.objects)
-                if birthdate:
-                    contact['birthdate'] = birthdate
-                if gender:
-                    contact['gender'] = gender
-                if group:
-                    contact['groups'] = group
-
-                for raw_num in numbers.split('/'):
-                    if raw_num[-2:] == '.0':
-                        raw_num = raw_num[:-2]
-                    if raw_num[:1] == '+':
-                        raw_num = raw_num[1:]
-                    if len(raw_num) >= 9:
-                        if raw_num not in duplicates:
-                            number, backend = assign_backend(raw_num)
-                            if number not in contacts and backend is not None:
-                                Connection.bulk.bulk_insert(send_pre_save=False,
-                                                            identity=number,
-                                                            backend=backend,
-                                                            contact=contact)
-                                contacts.append(number)
-                            elif backend is None:
-                                invalid.append(raw_num)
-
-                    else:
-                        invalid.append(raw_num)
+                if len(numbers) > 0:
+                    contact = {}
+                    contact['name']=parse_name(row,worksheet,cols)
+                    district = parse_district(row, worksheet, cols) if 'district' in fields else None
+                    village = parse_village(row, worksheet, cols) if 'village' in fields else None
+                    birthdate = parse_birthdate(row, worksheet, cols) if 'age' in fields else None
+                    gender = parse_gender(row, worksheet, cols) if 'gender' in fields else None
+                    if district:
+                        contact['reporting_location'] = find_closest_match(district, Area.objects.filter(kind__name='district'))
+                    if village:
+                        contact['village'] = find_closest_match(village, Area.objects)
+                    if birthdate:
+                        contact['birthdate'] = birthdate
+                    if gender:
+                        contact['gender'] = gender
+                    if group:
+                        contact['groups'] = group
+    
+                    for raw_num in numbers.split('/'):
+                        if raw_num[-2:] == '.0':
+                            raw_num = raw_num[:-2]
+                        if raw_num[:1] == '+':
+                            raw_num = raw_num[1:]
+                        if len(raw_num) >= 9:
+                            if raw_num not in duplicates:
+                                number, backend = assign_backend(raw_num)
+                                if number not in contacts and backend is not None:
+                                    Connection.bulk.bulk_insert(send_pre_save=False,
+                                                                identity=number,
+                                                                backend=backend,
+                                                                contact=contact)
+                                    contacts.append(number)
+                                elif backend is None:
+                                    invalid.append(raw_num)
+    
+                        else:
+                            invalid.append(raw_num)
 
             connections = Connection.bulk.bulk_insert_commit(send_post_save=False, autoclobber=True)
             contact_pks = connections.values_list('contact__pk',flat=True)
-
+            
             if "authsites" in settings.INSTALLED_APPS:
                 contact_queryset = Contact.allsites.filter(pk__in=contact_pks)
                 from authsites.models import ContactSite
                 ContactSite.add_all(contact_queryset)
-
+                    
             if len(contacts)>0:
                 info = 'Contacts with numbers... ' +' ,'.join(contacts) + " have been uploaded !\n\n"
             if len(duplicates)>0:
@@ -519,11 +527,11 @@ def handle_excel_file(file,group):
         else:
             info = "You seem to have uploaded an empty excel file, please fill the excel Contacts Template with contacts and upload again..."
     else:
-        info = "Invalid file"   
+        info = "Invalid file"  
     return info
     
-def parse_header_row(worksheet):
-    fields=['telephone number','name', 'district', 'county', 'village', 'age', 'gender']
+def parse_header_row(worksheet, fields):
+#    fields=['telephone number','name', 'district', 'county', 'village', 'age', 'gender']
     field_cols={}
     for col in range(worksheet.ncols):
         value = str(worksheet.cell(0, col).value).strip()
@@ -533,13 +541,20 @@ def parse_header_row(worksheet):
 
 
 def parse_telephone(row,worksheet,cols):
-    number = str(worksheet.cell(row, cols['telephone number']).value)
-    return number.replace('-','').strip()
+    try:
+        number = str(worksheet.cell(row, cols['telephone number']).value)
+    except KeyError:
+        number = str(worksheet.cell(row, cols['telephone']).value)
+    return number.replace('-','').strip().replace(' ','')
 
 def parse_name(row,worksheet,cols):
-    if str(worksheet.cell(row, cols['name']).value).__len__() > 0:
-        name = str(worksheet.cell(row, cols['name']).value)
-        return ' '.join([t.capitalize() for t in name.lower().split(" ")])
+    try:
+        name = str(worksheet.cell(row, cols['company name']).value).strip()
+    except KeyError:
+        name = str(worksheet.cell(row, cols['name']).value).strip()
+    if name.__len__() > 0:
+#        name = str(worksheet.cell(row, cols['name']).value)
+        return ' '.join([t.capitalize() for t in name.lower().split()])
     else:
         return 'Anonymous User'
 
