@@ -1,7 +1,6 @@
 from django.conf.urls.defaults import *
 from django.conf import settings
 from django.contrib import admin
-from simple_locations.urls import urlpatterns as location_urls
 from rapidsms_httprouter.urls import urlpatterns as router_urls
 from ureport.urls import urlpatterns as ureport_urls
 from contact.urls import urlpatterns as contact_urls
@@ -35,7 +34,7 @@ urlpatterns = patterns('',
     (r'^messaging/', include('rapidsms.contrib.messaging.urls')),
     (r'^scheduler/', include('rapidsms.contrib.scheduler.urls')),
     (r'^polls/', include('poll.urls')),
-) + router_urls + location_urls + ureport_urls + contact_urls + generic_urls
+) + router_urls + ureport_urls + contact_urls + generic_urls
 
 if settings.DEBUG:
     urlpatterns += patterns('',

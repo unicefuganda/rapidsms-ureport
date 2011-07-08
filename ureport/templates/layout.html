@@ -1,6 +1,7 @@
+{% load tabs_tags %}
+{% block top_container %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-{% load tabs_tags %}
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
         <title>{% block title %}Ureport{% endblock %}</title>
@@ -69,7 +70,9 @@
         category_colors = [{% for c in colors %}'{{ c }}'{% if not forloop.last %},{% endif %}{% endfor %}];
         </script>
         <div id="inner_content">
+{% endblock %}{% comment %}ends block top_container{% endcomment %}
             {% block content %}{% endblock %}
+{% block bottom_container %}
         </div>
         {% block footer %}
 
@@ -87,3 +90,4 @@
     </div>
     </body>
 </html>
+{% endblock %}{% comment %}ends block bottom_container{% endcomment %}

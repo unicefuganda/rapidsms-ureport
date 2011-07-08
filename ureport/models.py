@@ -5,7 +5,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
 from django.conf import settings
-from simple_locations.models import Area, AreaType
+from rapidsms.contrib.locations.models import Location
 from eav.models import Attribute
 from django.core.exceptions import ValidationError
 from script.signals import *
@@ -51,7 +51,7 @@ class MessageFlag(models.Model):
 def parse_district_value(value):
     location_template = STARTSWITH_PATTERN_TEMPLATE % '[a-zA-Z]*'
     regex = re.compile(location_template)
-    toret = find_closest_match(value, Area.objects.filter(kind__name='district'))
+    toret = find_closest_match(value, Location.objects.filter(type__name='district'))
     if not toret:
         raise ValidationError("We didn't recognize your district.  Please carefully type the name of your district and re-send.")
     else:
@@ -132,7 +132,7 @@ def autoreg(**kwargs):
 
     village = find_best_response(session, villagepoll)
     if village:
-        contact.village = find_closest_match(village, Area.objects)
+        contact.village = find_closest_match(village, Location.objects)
 
     group = find_best_response(session, youthgrouppoll)
     default_group = None
