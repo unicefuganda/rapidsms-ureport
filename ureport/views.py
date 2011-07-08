@@ -78,15 +78,15 @@ def generate_tag_cloud(words,counts_dict,tag_classes,max_count):
 
 @login_required
 def add_drop_word(request, tag_name=None, poll_pk=None):
-    tag_name=tag_name if tag_name != None else request.GET.get('tag',None)
-    poll_pk= poll_pk if poll_pk != None else int(request.GET.get('poll',1))
+    tag_name = tag_name if tag_name != None else request.GET.get('tag',None)
+    poll_pk = int(poll_pk) if poll_pk != None else int(request.GET.get('poll',1))
     print "Adding ignored tag %s to %d" % (tag_name, poll_pk)
     IgnoredTags.objects.create(name=tag_name,poll=Poll.objects.get(pk=poll_pk))
     return HttpResponse(simplejson.dumps("success"))
 
 @login_required
-def delete_drop_word(request):
-    tag_name=request.GET.get('tag',None)
+def delete_drop_word(request, tag):
+    tag_name=tag if tag !=None else request.GET.get('tag',None)
     tags=IgnoredTags.objects.filter(name=tag_name)
     for tag in tags:
         tag.delete()

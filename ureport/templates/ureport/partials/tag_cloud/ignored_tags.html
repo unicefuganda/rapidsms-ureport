@@ -1,7 +1,7 @@
   <h4>Excluded tags</h4>
 {%  for tag in tags%}
      <a href="javascript:void(0)">{{ tag.name }}</a>
-     <span class="delete-tag" onmouseover="$(this).attr('class', 'delete-tag-hover')" onmouseout="$(this).attr('class', 'delete-tag')" title="Remove from excluded" onclick="remove_tag('{{ tag.name }}')"></span>
+     <span class="delete-tag" onmouseover="$(this).attr('class', 'delete-tag-hover')" onmouseout="$(this).attr('class', 'delete-tag')" title="Remove from excluded" onclick="remove_tag('{{ tag_poll_pk }}', '{% url ureport.views.delete_drop_word tag.name %}', '{% url ureport.views.tag_cloud tag_poll_pk %}')"></span>
 {%  endfor %}
 <p>
     <a onclick="back()" href="javascript:void(0)">Back to tagcloud</a>
