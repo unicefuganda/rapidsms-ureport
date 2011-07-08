@@ -188,14 +188,14 @@ function load_tag_cloud(poll_id, url) {
     });
 }
 
-function add_tag(tag,poll_id){
-    var url="/ureport/add_tag/?tag="+tag +"&poll="+poll_id;
+function add_tag(poll_id, add_tag_url,load_cloud_url){
+//    var url="/ureport/add_tag/?tag="+tag +"&poll="+poll_id;
     $.ajax({
         type: "GET",
-        url:url,
+        url:add_tag_url,
         dataType: "json",
         success: function() {
-           load_tag_cloud(poll_id);
+           load_tag_cloud(poll_id, load_cloud_url);
         }
     });
 }

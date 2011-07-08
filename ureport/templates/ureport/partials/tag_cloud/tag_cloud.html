@@ -11,7 +11,7 @@
                 onmouseout="$(this).next().attr('class', 'default')"
             {% endif %}
             rel="tag"
-            class="tag_link" href="javascript:void(0)">{{ tag.tag }}</a>{% if user.is_authenticated %}<span class="default" onmouseover="$(this).attr('class', 'delete-tag-hover')" onmouseout="$(this).attr('class', 'default')" title="remove {{ tag.tag }}" onclick="add_tag('{{ tag.tag }}','{{ poll.pk }}')"></span>{% endif %}
+            class="tag_link" href="javascript:void(0)">{{ tag.tag }}</a>{% if user.is_authenticated %}<span class="default" onmouseover="$(this).attr('class', 'delete-tag-hover')" onmouseout="$(this).attr('class', 'default')" title="remove {{ tag.tag }}" onclick="add_tag('{{ poll.pk }}', '{% url ureport.views.add_drop_word tag.tag poll.pk %}', '{% url ureport.views.tag_cloud poll.pk %}')"></span>{% endif %}
     </tt>
 {%  endfor %}
 </div>
