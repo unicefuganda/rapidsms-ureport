@@ -9,6 +9,6 @@
 <script language="javascript">
     function back() {
         $('#excluded').hide();
-        load_tag_cloud(tag_poll_pk);
+        load_tag_cloud(tag_poll_pk, '{% url ureport.views.tag_cloud tag_poll_pk %}');
     }
 </script>

@@ -17,7 +17,7 @@
 </div>
 {% if user.is_authenticated %}
 <p>
-    <a onclick="load_excluded_tags()" href="javascript:void(0)">edit excluded tags</a>
+    <a onclick="load_excluded_tags('{% url ureport.views.show_ignored_tags %}')" href="javascript:void(0)">edit excluded tags</a>
 </p>
 <div id="excluded" style="display:none">
 </div>

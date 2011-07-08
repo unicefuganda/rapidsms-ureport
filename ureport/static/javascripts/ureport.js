@@ -213,9 +213,9 @@ function remove_tag(poll_id){
     });
 }
 
-function load_excluded_tags() {
+function load_excluded_tags(url) {
     $('#tagcontent').hide();
-    $('#excluded').load("/ureport/show_excluded/");
+    $('#excluded').load(url);
     $('#excluded').show();
 }
 
