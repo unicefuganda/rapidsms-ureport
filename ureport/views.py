@@ -94,9 +94,9 @@ def delete_drop_word(request):
 
 @login_required
 @cache_control(no_cache=True, max_age=0)
-def show_ignored_tags(request):
+def show_ignored_tags(request, poll_id):
     tags=IgnoredTags.objects.all()
-    return render_to_response("ureport/partials/tag_cloud/ignored_tags.html", {'tags':tags},context_instance=RequestContext(request))
+    return render_to_response("ureport/partials/tag_cloud/ignored_tags.html", {'tags':tags, 'tag_poll_pk':poll_id},context_instance=RequestContext(request))
 
 def _get_tags(polls):
     responses=Response.objects.filter(poll__in=polls)
@@ -145,7 +145,7 @@ def tag_cloud(request, pks):
     poll_qn=['Qn:'+' '.join(textwrap.wrap(poll.question.rsplit('?')[0]))+'?' for poll in polls]
 
     tags = _get_tags(polls) 
-    return render_to_response("ureport/partials/tag_cloud/tag_cloud.html", {'poll':polls[0],'tags':tags,'poll_qn':poll_qn[0]}, context_instance=RequestContext(request))
+    return render_to_response("ureport/partials/tag_cloud/tag_cloud.html", {'poll':polls[0],'tags':tags,'poll_qn':poll_qn[0], 'poll_id':pks}, context_instance=RequestContext(request))
 
 def histogram(request):
     """

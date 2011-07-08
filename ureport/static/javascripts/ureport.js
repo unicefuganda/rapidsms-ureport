@@ -212,7 +212,7 @@ function remove_tag(poll_id){
     });
 }
 
-function load_excluded_tags(url) {
+function load_excluded_tags(poll_id, url) {
     $('#tagcontent').hide();
     $('#excluded').load(url);
     $('#excluded').show();
