@@ -9,5 +9,5 @@
 </div>
 <script language="javascript">
     init_map({{ poll.pk }}, 'map_{{ poll.pk }}');
-    load_map('{{ poll.pk }}', 'map_{{ poll.pk }}');
+    load_map('{{ poll.pk }}', 'map_{{ poll.pk }}', '{% url poll.views.stats poll.pk %}');
 </script>

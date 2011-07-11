@@ -10,6 +10,6 @@
 </div>
 <script language="javascript">
     window.setTimeout(function() {
-        $('.messagefeed').load('{% url ureport.views.message_feed %}?pks=+{{ poll.pk }}');
+        $('.messagefeed').load('{% url ureport.views.message_feed poll.pk %}');
     },10000);
 </script>

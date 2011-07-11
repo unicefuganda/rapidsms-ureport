@@ -1,7 +1,7 @@
   <h4>Excluded tags</h4>
 {%  for tag in tags%}
      <a href="javascript:void(0)">{{ tag.name }}</a>
-     <span class="delete-tag" onmouseover="$(this).attr('class', 'delete-tag-hover')" onmouseout="$(this).attr('class', 'delete-tag')" title="Remove from excluded" onclick="remove_tag('{{ tag_poll_pk }}', '{% url ureport.views.delete_drop_word tag.name %}', '{% url ureport.views.tag_cloud tag_poll_pk %}')"></span>
+     <span class="delete-tag" onmouseover="$(this).attr('class', 'delete-tag-hover')" onmouseout="$(this).attr('class', 'delete-tag')" title="Remove from excluded" onclick="remove_tag('{{ poll_id }}', '{% url ureport.views.delete_drop_word tag.name %}', '{% url ureport.views.tag_cloud poll_id %}')"></span>
 {%  endfor %}
 <p>
     <a onclick="back()" href="javascript:void(0)">Back to tagcloud</a>
@@ -9,6 +9,6 @@
 <script language="javascript">
     function back() {
         $('#excluded').hide();
-        load_tag_cloud(tag_poll_pk, '{% url ureport.views.tag_cloud tag_poll_pk %}');
+        load_tag_cloud({{ poll_id }}, '{% url ureport.views.tag_cloud poll_id %}');
     }
 </script>

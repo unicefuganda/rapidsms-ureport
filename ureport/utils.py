@@ -26,6 +26,6 @@ def retrieve_poll(request, pks=None):
     if pks == 'l':
         return [Poll.objects.latest('start_date')]
     else:
-        return [Poll.objects.get(pk=pks)]
+        return Poll.objects.filter(pk__in=[pks])
     
         

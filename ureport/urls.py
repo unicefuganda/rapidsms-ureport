@@ -83,7 +83,8 @@ urlpatterns = patterns('',
     url(r'^stories/$', ureport_content, {'slug':'ureport_stories', 'base_template':'ureport/three-square.html', 'num_columns':3}, name="ureport-stories"),
 
     # real-time message feed from the live poll
-    url(r'^messagefeed/$', message_feed),
+    url(r'^messagefeed/$', message_feed, name="message-feed"),
+    url(r'^messagefeed/(?P<pks>\d+)/$', message_feed, name="message-feed"),
 
     # polls page and best-visualization module (different viz based on poll type
     url(r'^pollresults/$', poll_summary, name="polls-summary"),\
@@ -102,6 +103,7 @@ urlpatterns = patterns('',
 
     # histogram views
     url(r'^histogram/$', histogram,name="histogram"),
+    url(r'^histogram/(?P<pks>\d+)/$', histogram,name="histogram"),
 
     # total responses vs time view
     url(r'^timeseries/$',show_timeseries, name="time-series"),

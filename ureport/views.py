@@ -96,7 +96,7 @@ def delete_drop_word(request, tag):
 @cache_control(no_cache=True, max_age=0)
 def show_ignored_tags(request, poll_id):
     tags=IgnoredTags.objects.all()
-    return render_to_response("ureport/partials/tag_cloud/ignored_tags.html", {'tags':tags, 'tag_poll_pk':poll_id},context_instance=RequestContext(request))
+    return render_to_response("ureport/partials/tag_cloud/ignored_tags.html", {'tags':tags, 'poll_id':poll_id},context_instance=RequestContext(request))
 
 def _get_tags(polls):
     responses=Response.objects.filter(poll__in=polls)
@@ -147,15 +147,16 @@ def tag_cloud(request, pks):
     tags = _get_tags(polls) 
     return render_to_response("ureport/partials/tag_cloud/tag_cloud.html", {'poll':polls[0],'tags':tags,'poll_qn':poll_qn[0], 'poll_id':pks}, context_instance=RequestContext(request))
 
-def histogram(request):
+def histogram(request, pks = None):
     """
          view for numeric polls
     """
 
     all_polls=Poll.objects.filter(type=u'n')
-    if request.GET.get('pks', None):
+    pks = pks if pks != None else request.GET.get('pks', None)
+    if pks:
         items=6
-        polls = retrieve_poll(request)
+        polls = retrieve_poll(request, pks)
         responses=Response.objects.filter(poll__in=polls)
         pks = polls.values_list('pk', flat=True)
         responses=Response.objects.filter(poll__in=polls,poll__type=u'n')
@@ -342,15 +343,15 @@ def best_visualization(request, poll_id=None):
     module = False
     if 'module' in request.GET:
         module=True
-#    polls = retrieve_poll(request, pks)
-#    poll = polls[0]
-    if poll_id:
-        poll = Poll.objects.get(pk=poll_id)
-    else:
-        poll = Poll.objects.latest('start_date')
+    polls = retrieve_poll(request, poll_id)
+    poll = polls[0]
+#    if poll_id:
+#        poll = Poll.objects.get(pk=poll_id)
+#    else:
+#        poll = Poll.objects.latest('start_date')
     dict = { 'poll':poll, 'polls':[poll], 'unlabeled':True, 'module':module }
     if poll.type == Poll.TYPE_TEXT and ResponseCategory.objects.filter(response__poll=poll).count() == 0:
-        dict.update({'tags':_get_tags([poll]), 'responses':_get_responses(poll)})
+        dict.update({'tags':_get_tags(polls), 'responses':_get_responses(poll), 'poll_id':poll.pk})
     return render_to_response(\
         "/ureport/partials/viz/best_visualization.html",
         dict,
@@ -367,8 +368,8 @@ def ureport_content(request, slug, base_template='ureport/two-column.html',**kwa
         base_template=base_template,
         title=None,**kwargs)
 
-def message_feed(request):
-    polls = retrieve_poll(request)
+def message_feed(request, pks):
+    polls = retrieve_poll(request, pks)
     poll = polls[0]
     return render_to_response(
         '/ureport/partials/viz/message_feed.html',
