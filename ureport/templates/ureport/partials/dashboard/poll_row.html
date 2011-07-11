@@ -15,7 +15,7 @@
 <td style="width:25em;white-space:nowrap">
     <div class="buttons">
         {% if object.type == 't' or object.type == 'n' %}
-            <a href="javascript:void(0)" onclick="collapse();load_report('{{ object.pk }}', '{% url poll.views.view_responses object.pk %}')">
+            <a href="javascript:void(0)" onclick="collapse();load_report('{{ object.pk }}', '{% url poll.views.view_report object.pk %}')">
                 <img src="{{ MEDIA_URL }}poll/icons/silk/database_table.png" border="0"/> Report
             </a>
         {% endif %}
