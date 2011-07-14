@@ -13,7 +13,7 @@
 {% endblock %}
 {% block content %}
 	<div class="module">
-        <h2 style="white-space:normal">Messaging History for <span class="message_history_contact">{{ connection.contact }}</span>
+        <h2 style="white-space:normal">Messaging History for <span class="message_history_contact">{{ connection.contact }} ({{ connection.identity }})</span>
             <img id="collapse_img" style="float:right" src="{{ MEDIA_URL }}rapidsms/icons/silk/section_expanded--bright.png" onclick="collapse()"/>
             <img id="expand_img" style="float:right;display:none" src="{{ MEDIA_URL }}rapidsms/icons/silk/section_collapsed--bright.png" onclick="expand()"/>            
         </h2>
