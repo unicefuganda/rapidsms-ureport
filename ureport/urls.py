@@ -52,7 +52,7 @@ urlpatterns = patterns('',
     url(r'^reporter/(?P<reporter_pk>\d+)/edit', editReporter),
     url(r'^reporter/(?P<reporter_pk>\d+)/delete', deleteReporter),
     url(r'^reporter/(?P<pk>\d+)/show', generic_row, {'model':Contact, 'partial_row':'ureport/partials/contacts/contacts_row.html'}),
-    url(r"^(\d+)/message_history/$", view_message_history),
+    url(r"^(\d+)/message_history/$", view_message_history, name="message_history"),
 
     # poll management views using generic (rather than built-in poll views
     url(r'^polls/$', generic,  {
