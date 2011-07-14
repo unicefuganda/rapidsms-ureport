@@ -13,7 +13,7 @@
             <a href="{% url poll-report object.pk %}">
                 <img src="{{ MEDIA_URL }}poll/icons/silk/zoom.png" alt=""/> Report
             </a>
-            <a href="/ureport/{{ object.pk }}/responses/">
+            <a href="{% url ureport.views.view_responses object.pk %}">
                 <img src="{{ MEDIA_URL }}poll/icons/silk/database_table.png" alt=""/> Responses ({{ object.responses__count }})
             </a>
         {% endif %}

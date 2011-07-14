@@ -73,7 +73,7 @@ urlpatterns = patterns('',
     }, name="ureport-polls"),
 
     # view responses for a poll (based on generic rather than built-in poll view
-    url(r"^(\d+)/responses/$", view_responses),
+    url(r"^(\d+)/responses/$", view_responses, name="responses"),
 
     # content pages (cms-style static pages)
     url(r'^content/(?P<slug>[a-z]+)/$', ureport_content),
