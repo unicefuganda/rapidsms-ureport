@@ -4,7 +4,7 @@ from ureport.views import *
 from ureport.utils import get_contacts, get_polls
 from django.contrib.auth.decorators import login_required
 from contact.forms import FreeSearchForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm
-from generic.views import generic, generic_row, generic_dashboard
+from generic.views import generic, generic_row, generic_dashboard, generic_map
 from generic.sorters import SimpleSorter
 from unregister.forms import BlacklistForm
 from poll.models import *
@@ -116,4 +116,8 @@ urlpatterns = patterns('',
     url(r'^download/(?P<f>[a-z_\.]+)', download_contacts_template),
     # wrapper for clickatell api callbacks
     url(r'^clickatell/$', clickatell_wrapper),
+#    url(r'^ureport/maptest/', generic_map, { 
+#        'map_layers' : [{'name':'A poll','url':'/polls/responses/48/stats/1/'},
+#                       ],
+#    }),
 )

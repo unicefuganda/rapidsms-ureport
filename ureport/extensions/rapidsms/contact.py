@@ -7,8 +7,7 @@ from rapidsms.contrib.locations.models import Location
 class DemographicContact(models.Model):
     """
     This extension for Contacts allows developers to tie a Contact to
-    the Location object they're reporting from.  This extension
-    depends on the simple_locations app.
+    the Location object they're reporting from.
     """
     birthdate = models.DateTimeField(null=True)
     gender = models.CharField(

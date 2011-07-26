@@ -1,13 +1,15 @@
 <div id="visual_{{ poll.pk }}">
     <div id="map_{{ poll.pk }}" class="mapmodule init">
     </div>
-    <div id="map_{{ poll.pk }}_legend" style="display:none">
+    <div id="map_layers">
         <h3>Key</h3>
-        <table class="key" border=0 style="float:left;max-width:30%;">
-        </table>
+        <ul class="key" border=0 style="float:left;max-width:30%;list-style-type:none">
+        </ul>
     </div>
 </div>
 <script language="javascript">
-    init_map({{ poll.pk }}, 'map_{{ poll.pk }}');
-    load_map('{{ poll.pk }}', 'map_{{ poll.pk }}', '{% url poll.views.stats poll.pk 1 %}');
+    $(document).ready(function() {
+        init_map('map_{{ poll.pk }}', {{ min_lat }}, {{ max_lat }}, {{ min_lon }}, {{ max_lon }}, {% autoescape off %}{{ colors }}{% endautoescape %});
+        plot_layer('map_{{ poll.pk }}', 'Poll Results', '{% url poll.views.stats poll.pk 1 %}', '{% url poll.views.stats poll.pk 1 %}');
+    });
 </script>

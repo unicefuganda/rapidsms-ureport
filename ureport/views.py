@@ -10,7 +10,7 @@ from django.http import HttpResponse, Http404
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import connection
-from ureport.settings import colors, drop_words, tag_cloud_size
+from ureport.settings import drop_words, tag_cloud_size
 from ureport.models import IgnoredTags
 from poll.models import *
 
