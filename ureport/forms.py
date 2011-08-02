@@ -1,5 +1,5 @@
 from django import forms
-from rapidsms.models import Contact,Connection
+from rapidsms.models import Contact, Connection
 from django.db.models import Q
 from django.forms.widgets import HiddenInput
 from django.contrib.auth.models import Group
@@ -13,30 +13,26 @@ from generic.forms import ActionForm, FilterForm, ModuleForm
 class EditReporterForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
            super(EditReporterForm, self).__init__(*args, **kwargs)
-           self.fields['reporting_location'] = TreeNodeChoiceField(queryset=self.fields['reporting_location'].queryset,level_indicator=u'.')
+           self.fields['reporting_location'] = TreeNodeChoiceField(queryset=self.fields['reporting_location'].queryset, level_indicator=u'.')
 
     class Meta:
-        model=Contact
-        fields=('name','reporting_location','groups')
+        model = Contact
+        fields = ('name', 'reporting_location', 'groups')
 
-class ReplyForm(forms.Form):        
-    recipient = forms.CharField(max_length=20)
-    message = forms.CharField(max_length=160, widget=forms.TextInput(attrs={'size':'60'}))
-    in_response_to = forms.ModelChoiceField(queryset=Message.objects.filter(direction='I'), widget=forms.HiddenInput())
 
 class PollModuleForm(ModuleForm):
-    viz_type=forms.ChoiceField(choices=(
-        ('ureport.views.show_timeseries','Poll responses vs time'),
-        ('ureport.views.mapmodule','Map'),
-        ('histogram','Histogram'),
-        ('ureport.views.piegraph_module','Pie chart'),
-        ('ureport.views.tag_cloud','Tag cloud'),
-        ('poll-responses-module','Responses list'),
-        ('poll-report-module','Tabular report'),
+    viz_type = forms.ChoiceField(choices=(
+        ('ureport.views.show_timeseries', 'Poll responses vs time'),
+        ('ureport.views.mapmodule', 'Map'),
+        ('histogram', 'Histogram'),
+        ('ureport.views.piegraph_module', 'Pie chart'),
+        ('ureport.views.tag_cloud', 'Tag cloud'),
+        ('poll-responses-module', 'Responses list'),
+        ('poll-report-module', 'Tabular report'),
         ('best-viz', 'Results'),
         ('ureport.views.message_feed', 'Message Feed'),
     ), label="Poll visualization")
-    poll = forms.ChoiceField(choices = (('l','Latest Poll'),) + tuple([(int(p.pk), str(p)) for p in Poll.objects.all().order_by('-start_date')]), required=True)
+    poll = forms.ChoiceField(choices=(('l', 'Latest Poll'),) + tuple([(int(p.pk), str(p)) for p in Poll.objects.all().order_by('-start_date')]), required=True)
 
     def setModuleParams(self, dashboard, module=None, title=None):
         title_dict = {
@@ -53,7 +49,7 @@ class PollModuleForm(ModuleForm):
         viz_type = self.cleaned_data['viz_type']
         title = title_dict[viz_type]
         module = module or self.createModule(dashboard, viz_type, title=title)
-        is_url_param = viz_type in ['poll-responses-module','poll-report-module']
+        is_url_param = viz_type in ['poll-responses-module', 'poll-report-module']
         if is_url_param:
             param_name = 'poll_id'
         else:
@@ -64,7 +60,7 @@ class PollModuleForm(ModuleForm):
 
 class ExcelUploadForm(forms.Form):
 
-    excel_file = forms.FileField(label="Contacts Excel File",required=False)
+    excel_file = forms.FileField(label="Contacts Excel File", required=False)
     assign_to_group = forms.ModelChoiceField(queryset=Group.objects.all(), required=False)
 #    def __init__(self, data=None, **kwargs):
 #        self.request=kwargs.pop('request')
@@ -79,9 +75,9 @@ class ExcelUploadForm(forms.Form):
 #                self.fields['assign_to_group'] = forms.ModelChoiceField(queryset=Group.objects.all(), required=False)
 
     def clean(self):
-        excel = self.cleaned_data.get('excel_file',None)
+        excel = self.cleaned_data.get('excel_file', None)
         if excel and excel.name.rsplit('.')[1] != 'xls':
-                msg=u'Upload valid excel file !!!'
-                self._errors["excel_file"]=ErrorList([msg])
+                msg = u'Upload valid excel file !!!'
+                self._errors["excel_file"] = ErrorList([msg])
                 return ''
         return self.cleaned_data

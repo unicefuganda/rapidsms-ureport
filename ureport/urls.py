@@ -24,9 +24,9 @@ urlpatterns = patterns('',
         'selectable':False,
         'columns':[('Name', True, 'name', SimpleSorter()),
                  ('Question', True, 'question', SimpleSorter(),),
-                 ('Start Date',True,'start_date', SimpleSorter(),),
-                 ('# Participants', False, 'participants',None,),
-                 ('Visuals',False,'visuals',None,),
+                 ('Start Date', True, 'start_date', SimpleSorter(),),
+                 ('# Participants', False, 'participants', None,),
+                 ('Visuals', False, 'visuals', None,),
                  ],
         'sort_column':'start_date',
         'sort_ascending':False,
@@ -44,18 +44,17 @@ urlpatterns = patterns('',
         'base_template':'ureport/contacts_base.html',
         'columns':[('Name', True, 'name', SimpleSorter()),
                  ('Number', True, 'connection__identity', SimpleSorter(),),
-                 ('Location',True,'reporting_location__name', SimpleSorter(),),
-                 ('Group(s)', True, 'groups__name',SimpleSorter()),
-                 ('Total Poll Responses',True,'responses__count',SimpleSorter()),
-                 ('',False,'',None)],
+                 ('Location', True, 'reporting_location__name', SimpleSorter(),),
+                 ('Group(s)', True, 'groups__name', SimpleSorter()),
+                 ('Total Poll Responses', True, 'responses__count', SimpleSorter()),
+                 ('', False, '', None)],
     }, name="ureport-contact"),
     url(r'^reporter/(?P<reporter_pk>\d+)/edit', editReporter),
     url(r'^reporter/(?P<reporter_pk>\d+)/delete', deleteReporter),
     url(r'^reporter/(?P<pk>\d+)/show', generic_row, {'model':Contact, 'partial_row':'ureport/partials/contacts/contacts_row.html'}),
-    url(r"^(\d+)/message_history/$", view_message_history, name="message_history"),
 
     # poll management views using generic (rather than built-in poll views
-    url(r'^polls/$', generic,  {
+    url(r'^polls/$', generic, {
         'model':Poll,
         'queryset':get_polls,
         'objects_per_page':10,
@@ -67,9 +66,9 @@ urlpatterns = patterns('',
         'sort_ascending':False,
         'columns':[('Name', True, 'name', SimpleSorter()),
                  ('Question', True, 'question', SimpleSorter(),),
-                 ('Start Date',True,'start_date', SimpleSorter(),),
-                 ('Closing Date', True, 'end_date',SimpleSorter()),
-                 ('',False,'',None)],
+                 ('Start Date', True, 'start_date', SimpleSorter(),),
+                 ('Closing Date', True, 'end_date', SimpleSorter()),
+                 ('', False, '', None)],
     }, name="ureport-polls"),
 
     # view responses for a poll (based on generic rather than built-in poll view
@@ -87,7 +86,7 @@ urlpatterns = patterns('',
     url(r'^messagefeed/(?P<pks>\d+)/$', message_feed, name="message-feed"),
 
     # polls page and best-visualization module (different viz based on poll type
-    url(r'^pollresults/$', poll_summary, name="polls-summary"),\
+    url(r'^pollresults/$', poll_summary, name="polls-summary"), \
     url(r'^bestviz/$', best_visualization, name="best-viz"),
     url(r'^bestviz/(?P<poll_id>\d+)/$', best_visualization, name="best-viz"),
 
@@ -102,12 +101,12 @@ urlpatterns = patterns('',
     url(r'^show_excluded/(?P<poll_id>\d+)/$', show_ignored_tags, name="show_excluded"),
 
     # histogram views
-    url(r'^histogram/$', histogram,name="histogram"),
-    url(r'^histogram/(?P<pks>\d+)/$', histogram,name="histogram"),
+    url(r'^histogram/$', histogram, name="histogram"),
+    url(r'^histogram/(?P<pks>\d+)/$', histogram, name="histogram"),
 
     # total responses vs time view
-    url(r'^timeseries/$',show_timeseries, name="time-series"),
-    url(r'^timeseries/(?P<pks>\d+)/$',show_timeseries, name="time-series"),
+    url(r'^timeseries/$', show_timeseries, name="time-series"),
+    url(r'^timeseries/(?P<pks>\d+)/$', show_timeseries, name="time-series"),
 
     # export contacts to excel
     url(r'^getcontacts/$', get_all_contacts),
