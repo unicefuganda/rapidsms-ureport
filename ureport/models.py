@@ -25,25 +25,25 @@ cn_bulk_mgr.contribute_to_class(Connection, 'bulk')
 
 class IgnoredTags(models.Model):
     poll = models.ForeignKey(Poll)
-    name=models.CharField(max_length=20)
+    name = models.CharField(max_length=20)
 
     def __unicode__(self):
-        return '%s'%self.name
+        return '%s' % self.name
 
 class MassText(models.Model):
     sites = models.ManyToManyField(Site)
     contacts = models.ManyToManyField(Contact, related_name='masstexts')
     user = models.ForeignKey(User)
-    date = models.DateTimeField(auto_now_add=True,null=True)
+    date = models.DateTimeField(auto_now_add=True, null=True)
     text = models.TextField()
-    objects = (CurrentSiteManager('sites') if settings.SITE_ID else models.Manager())
+    objects = (CurrentSiteManager('sites') if getattr(settings, 'SITE_ID', False) else models.Manager())
     bulk = BulkInsertManager()
-    
+
     class Meta:
         permissions = (
             ("can_message", "Can send messages, create polls, etc"),
         )
-        
+
 class MessageFlag(models.Model):
     #Track flagged messages
     message = models.ForeignKey(Message, related_name='flags')
@@ -57,10 +57,10 @@ def parse_district_value(value):
     else:
         return toret
 
-Poll.register_poll_type('district', 'District Response', parse_district_value, db_type=Attribute.TYPE_OBJECT,\
+Poll.register_poll_type('district', 'District Response', parse_district_value, db_type=Attribute.TYPE_OBJECT, \
                         view_template='polls/response_location_view.html',
                         edit_template='polls/response_location_edit.html',
-                        report_columns=(('Text','text'),('Location','location'),('Categories','categories')),
+                        report_columns=(('Text', 'text'), ('Location', 'location'), ('Categories', 'categories')),
                         edit_form=LocationResponseForm)
 
 def find_best_response(session, poll):
@@ -120,7 +120,7 @@ def autoreg(**kwargs):
 
     age = find_best_response(session, agepoll)
     if age and age < 100:
-        contact.birthdate = datetime.datetime.now() - datetime.timedelta(days=(365*int(age)))
+        contact.birthdate = datetime.datetime.now() - datetime.timedelta(days=(365 * int(age)))
 
     gresps = session.responses.filter(response__poll=genderpoll, response__has_errors=False).order_by('-response__date')
     if gresps.count():
