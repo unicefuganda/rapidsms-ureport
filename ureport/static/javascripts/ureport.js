@@ -1,6 +1,7 @@
 /**
  * Clear the visualization area of previous visuals
  */
+
 function remove_selection() {
     $('#map_legend').hide();
     $('.module ul li img').each(function() {
@@ -156,46 +157,58 @@ function load_piechart(poll_id, element_id, url) {
     });
 }
 
-function load_tag_cloud(poll_id, url) {
+/*
+loads a tagcloud for a given poll given the GET url
+ */
+function load_tag_cloud(url) {
     // ajax_loading('#visual');
-    tag_poll_pk=poll_id;
     remove_selection();
     $('#tags').show();
-    var id_list = "";
-
-    $('img.tags'+poll_id).addClass('selected');
     $('#tags').load(url,function(){
        $('.ajax_loading').remove();
     });
 }
 
-function add_tag(poll_id, add_tag_url,load_cloud_url){
+/*
+add a word to the ignored list for a given poll
+@param  add_tag_url  -> the HTTP POST url to add the word
+@load_cloud_url ->  the HTTP GET url to fetch the updated tagcloud for the poll
+ */
+function add_tag(add_tag_url,load_cloud_url){
     $.ajax({
         type: "GET",
         url:add_tag_url,
         dataType: "json",
         success: function() {
-           load_tag_cloud(poll_id, load_cloud_url);
+           load_tag_cloud(load_cloud_url);
         }
     });
 }
 
-function remove_tag(poll_id, delete_tag_url, load_cloud_url){
+/* removes a word from the ignored list for the poll tagloud
+  @param  delete_tag_url   -> the HTTP PUT url to delete tag
+  @param   load_cloud_url   -> the HTTP GET url to fetch the updated tagcloud for the poll  
+ */
+function remove_tag(delete_tag_url, load_cloud_url){
     $.ajax({
         type: "GET",
         url:delete_tag_url,
         dataType: "json",
         success: function() {
-           load_excluded_tags(poll_id, load_cloud_url);
+           load_excluded_tags(load_cloud_url);
         }
     });
 }
 
-function load_excluded_tags(poll_id, url) {
+/* loads all ignored words for the poll tagcloud
+* the url is of form /show_excluded/<poll_id>/
+*/
+function load_excluded_tags(url) {
     $('#tagcontent').hide();
     $('#excluded').load(url);
     $('#excluded').show();
 }
+
 
 function load_timeseries(url, poll_id) {
 	remove_selection();
@@ -206,7 +219,7 @@ function load_timeseries(url, poll_id) {
 }
 
 
-function load_responses(poll_id, url) {
+function load_responses(url) {
     // ajax_loading('#visual');
     remove_selection();
     $('#poll_responses').show();
