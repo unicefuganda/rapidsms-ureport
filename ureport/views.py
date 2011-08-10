@@ -86,16 +86,15 @@ def add_drop_word(request, tag_name=None, poll_pk=None):
 
 @login_required
 def delete_drop_word(request, tag):
-    tag_name = tag if tag != None else request.GET.get('tag', None)
-    tags = IgnoredTags.objects.filter(name=tag_name)
-    for tag in tags:
-        tag.delete()
+    tag_pk = tag if tag != None else request.GET.get('tag', None)
+    tag= IgnoredTags.objects.get(pk=int(tag_pk))
+    tag.delete()
     return HttpResponse(simplejson.dumps("success"))
 
 @login_required
 @cache_control(no_cache=True, max_age=0)
 def show_ignored_tags(request, poll_id):
-    tags = IgnoredTags.objects.all()
+    tags = IgnoredTags.objects.filter(poll__pk=poll_id)
     return render_to_response("ureport/partials/tag_cloud/ignored_tags.html", {'tags':tags, 'poll_id':poll_id}, context_instance=RequestContext(request))
 
 def _get_tags(polls):

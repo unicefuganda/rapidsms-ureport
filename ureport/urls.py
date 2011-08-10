@@ -96,7 +96,7 @@ urlpatterns = patterns('',
     url(r'^add_tag/$', add_drop_word, name="add_tag"),
     url(r'^add_tag/(?P<tag_name>[a-zA-Z]+)/(?P<poll_pk>\d+)/$', add_drop_word, name="add_tag"),
     url(r'^delete_tag/$', delete_drop_word, name="delete_tag"),
-    url(r'^delete_tag/(?P<tag>[a-zA-Z]+)/$', delete_drop_word, name="delete_tag"),
+    url(r'^delete_tag/(?P<tag>\d+)/$', delete_drop_word, name="delete_tag"),
     url(r'^show_excluded/$', show_ignored_tags, name="show_excluded"),
     url(r'^show_excluded/(?P<poll_id>\d+)/$', show_ignored_tags, name="show_excluded"),
 
