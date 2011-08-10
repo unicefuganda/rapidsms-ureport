@@ -5,7 +5,7 @@ from django.db.models import Count
 def get_contacts(**kwargs):
     request = kwargs.pop('request')
     if request.user.is_authenticated() and hasattr(Contact, 'groups'):
-        return Contact.objects.filter(groups__in=request.user.groups.all()).annotate(Count('responses')) 
+        return Contact.objects.filter(groups__in=request.user.groups.all()).distinct().annotate(Count('responses'))
     else:
         return Contact.objects.annotate(Count('responses'))
 
@@ -22,10 +22,9 @@ def get_polls(**kwargs):
 
 def retrieve_poll(request, pks=None):
     if pks == None:
-        pks=request.GET.get('pks', '')
+        pks = request.GET.get('pks', '')
     if pks == 'l':
         return [Poll.objects.latest('start_date')]
     else:
         return Poll.objects.filter(pk__in=[pks])
-    
-        
+
