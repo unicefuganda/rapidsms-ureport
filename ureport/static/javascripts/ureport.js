@@ -156,9 +156,10 @@ function load_piechart(poll_id, element_id, url) {
         }
     });
 }
-
-/*
-loads a tagcloud for a given poll given the GET url
+/**
+ * Fetches an HTML fragment of tags and loads them into the div with id "tags."
+ * (see ureport/partials/tag_cloud/tag_cloud.html and ureport.views.generate_tag_cloud).
+ * @param url the url, containing a poll id, that will be ajax loaded for the HTML fragment
  */
 function load_tag_cloud(url) {
     // ajax_loading('#visual');
@@ -169,10 +170,11 @@ function load_tag_cloud(url) {
     });
 }
 
-/*
-add a word to the ignored list for a given poll
-@param  add_tag_url  -> the HTTP POST url to add the word
-@load_cloud_url ->  the HTTP GET url to fetch the updated tagcloud for the poll
+/**
+adds a word to the ignored list and returns a call to  load_tag_cloud on success.
+The call to load_tag_cloud returns an updated tagcloud.
+@param  add_tag_url  the url containing the word to be added to drop list
+@param load_cloud_url the url parameter to load_tag_cloud
  */
 function add_tag(add_tag_url,load_cloud_url){
     $.ajax({
@@ -185,9 +187,11 @@ function add_tag(add_tag_url,load_cloud_url){
     });
 }
 
-/* removes a word from the ignored list for the poll tagloud
-  @param  delete_tag_url   -> the HTTP PUT url to delete tag
-  @param   load_cloud_url   -> the HTTP GET url to fetch the updated tagcloud for the poll  
+/**
+removes a word to the ignored list and returns a call to  load_tag_cloud on success.
+The call to load_tag_cloud returns an updated tagcloud.
+@param  add_tag_url  the url containing the primary key of the word to be deleted from the drop list
+@param load_cloud_url the url parameter to load_tag_cloud
  */
 function remove_tag(delete_tag_url, load_cloud_url){
     $.ajax({
@@ -200,9 +204,11 @@ function remove_tag(delete_tag_url, load_cloud_url){
     });
 }
 
-/* loads all ignored words for the poll tagcloud
-* the url is of form /show_excluded/<poll_id>/
-*/
+/**
+ * Fetches an HTML component  containing ignored words and loads them into div#excluded
+ * (refer to ureport/templates/ureport/partials/tag_cloud/ignored_tags.html and ureport.views.show_ignored_tags)
+ * @param url the url, containing a poll id for a poll whose excluded tags will be ajax loaded into div#excluded
+ */
 function load_excluded_tags(url) {
     $('#tagcontent').hide();
     $('#excluded').load(url);
