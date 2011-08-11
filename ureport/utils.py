@@ -1,5 +1,6 @@
 from rapidsms.models import Contact
 from poll.models import Poll
+from script.models import ScriptStep
 from django.db.models import Count
 
 def get_contacts(**kwargs):
@@ -21,10 +22,11 @@ def get_polls(**kwargs):
 #        return Poll.objects.filter(pk__in=pks)
 
 def retrieve_poll(request, pks=None):
+    script_polls = ScriptStep.objects.exclude(poll=None).values_list('poll',flat=True)
     if pks == None:
         pks = request.GET.get('pks', '')
     if pks == 'l':
-        return [Poll.objects.latest('start_date')]
+        return [Poll.objects.latest('start_date').exclude(pk__in=script_polls)]
     else:
-        return Poll.objects.filter(pk__in=[pks])
+        return Poll.objects.filter(pk__in=[pks]).exclude(pk__in=script_polls)
 
