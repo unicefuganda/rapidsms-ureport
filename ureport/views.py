@@ -13,6 +13,7 @@ from django.db import connection
 from ureport.settings import drop_words, tag_cloud_size
 from ureport.models import IgnoredTags
 from poll.models import *
+from script.models import ScriptStep
 
 from rapidsms.models import Contact, Connection
 from rapidsms_httprouter.router import get_router, start_sending_mass_messages, stop_sending_mass_messages
