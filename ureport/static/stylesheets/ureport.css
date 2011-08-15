@@ -500,3 +500,40 @@ span.message_history_replies{
     font-size:11px;
     padding:0 0 0 15px;
 }
+.filterform{
+    display: inline;
+	float: left;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+#div_filter_0{
+    margin-left:0px;
+}
+#div_filter_0 input{
+    width:130px;
+}
+
+#div_filter_0 label{
+    margin-top:50px;
+}
+#div_filter_1{
+
+    margin-left:250px;
+}
+
+#div_filter_2{
+   margin-left:-50px;
+    width:150px;
+}
+#div_filter_3{
+    margin-left:600px;
+
+}
+#div_filter_4 input{
+    width:100px;
+}
+
+#div_filter_4{
+margin-top:-30px;
+    margin-left:720px;
+}
