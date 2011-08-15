@@ -321,7 +321,8 @@ def message_feed(request, pks):
 
 @cache_control(no_cache=True, max_age=0)
 def poll_summary(request):
-    polls = Poll.objects.order_by('-start_date')
+    script_polls = ScriptStep.objects.exclude(poll=None).values_list('poll',flat=True)
+    polls = Poll.objects.exclude(pk__in=script_polls).order_by('-start_date')
     return render_to_response(
         '/ureport/poll_summary.html',
         {'polls':polls,
