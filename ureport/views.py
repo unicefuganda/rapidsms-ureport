@@ -269,6 +269,7 @@ def view_responses(req, poll_id):
         objects_per_page=25,
         selectable=False,
         partial_base='ureport/partials/polls/poll_partial_base.html',
+        base_template='ureport/responses_base.html',
         row_base=typedef['view_template'],
         columns=columns,
         partial_row='ureport/partials/polls/response_row.html'

@@ -54,7 +54,7 @@ urlpatterns = patterns('',
     url(r'^reporter/(?P<pk>\d+)/show', generic_row, {'model':Contact, 'partial_row':'ureport/partials/contacts/contacts_row.html'}),
 
     # poll management views using generic (rather than built-in poll views
-    url(r'^polls/$', generic, {
+    url(r'^mypolls/$', generic, {
         'model':Poll,
         'queryset':get_polls,
         'objects_per_page':10,

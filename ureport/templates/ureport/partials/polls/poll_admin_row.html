@@ -10,7 +10,7 @@
     <a style="float:right;padding-top:7px;" href="javascript:void(0);" onclick="deletePoll(this, '{% url poll.views.delete_poll object.pk %}','{{object.question|addslashes}}');"><img border="0" src="{{ MEDIA_URL }}rapidsms/icons/silk/delete.png"/></a>
     <div class="buttons">
         {% if object.responses__count %}
-            <a href="{% url poll-report object.pk %}">
+            <a href="/fuck/{% url poll-report object.pk %}">
                 <img src="{{ MEDIA_URL }}poll/icons/silk/zoom.png" alt=""/> Report
             </a>
             <a href="{% url ureport.views.view_responses object.pk %}">
