@@ -27,7 +27,9 @@
 {% endblock %}
 {% block partial_base_content %}
     {% for response in object_list %}
+
         <tr class="row_{% cycle 'reg' 'alt' %}">
+        <td><input type="checkbox" id="{{response.pk}}" name="results" value="{{ response.pk }}"></td>
             {% include partial_row %}
         </tr>
     {% endfor %}

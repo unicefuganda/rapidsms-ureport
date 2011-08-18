@@ -9,6 +9,7 @@ from poll.models import Poll, Response
 from mptt.forms import TreeNodeChoiceField
 from rapidsms_httprouter.models import Message
 from generic.forms import ActionForm, FilterForm, ModuleForm
+from django.forms.widgets import Select
 
 class EditReporterForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -81,3 +82,27 @@ class ExcelUploadForm(forms.Form):
                 self._errors["excel_file"] = ErrorList([msg])
                 return ''
         return self.cleaned_data
+
+class SearchResponsesForm(FilterForm):
+
+    """ search responses 
+    """
+
+    search = forms.CharField(max_length=100, required=True, label="search Responses")
+
+    def filter(self, request, queryset):
+        search = self.cleaned_data['search']
+        return queryset.filter(message__text__icontains=search)
+
+
+class AssignToPollForm(ActionForm):
+
+    poll=forms.CharField(widget=Select(choices=tuple([(int(d.pk), d.name) for d in Poll.objects.all().order_by('name')])))
+    action_label = 'Assign selected to poll'
+    def perform(self, request, results):
+        poll = Poll.objects.get(pk=int(self.cleaned_data['poll']))
+        for c in results:
+            c.poll=poll
+            c.poll.save()
+            c.save()
+        return ('%d responses assigned to  %s poll' % (results.count(), poll.name), 'success',)
