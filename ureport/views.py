@@ -267,10 +267,12 @@ def view_responses(req, poll_id):
         model=Response,
         queryset=responses,
         objects_per_page=25,
-        selectable=False,
+        selectable=True,
         partial_base='ureport/partials/polls/poll_partial_base.html',
         base_template='ureport/responses_base.html',
         row_base=typedef['view_template'],
+        action_forms=[AssignToPollForm],
+        filter_forms=[SearchResponsesForm],
         columns=columns,
         partial_row='ureport/partials/polls/response_row.html'
     )
