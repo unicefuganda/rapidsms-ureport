@@ -26,7 +26,7 @@ def retrieve_poll(request, pks=None):
     if pks == None:
         pks = request.GET.get('pks', '')
     if pks == 'l':
-        return [Poll.objects.latest('start_date').exclude(pk__in=script_polls)]
+        return [Poll.objects.exclude(pk__in=script_polls).latest('start_date')]
     else:
         return Poll.objects.filter(pk__in=[pks]).exclude(pk__in=script_polls)
 
