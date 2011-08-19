@@ -21,10 +21,11 @@
               <img src="{{ MEDIA_URL }}poll/icons/silk/pencil.png" alt=""/> 
               Edit
           </a>
-          <a onclick="deleteResponse(this, '{% url poll.views.delete_response response.pk %}');" href="javascript:void(0)" class="negative">
+
+      </div>
+         <a onclick="deleteResponse(this, '{% url poll.views.delete_response response.pk %}');" href="javascript:void(0)" class="negative">
               <img style="vertical-alignment:bottom;padding-top:7px" src="{{ MEDIA_URL }}rapidsms/icons/silk/delete.png" alt=""/>
           </a>
-      </div>
     {% endblock %}
     </td>
 {% endblock %}

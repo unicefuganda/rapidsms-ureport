@@ -26,6 +26,11 @@
     {{ block.super }}
 {% endblock %}
 {% block partial_base_content %}
+    <div class="buttons">
+        <a href="{% url poll.views.responses_as_csv object_list.0.poll.pk %}">
+            <img src="{{ MEDIA_URL }}poll/icons/silk/table_save.png" alt=""/> Export
+        </a>
+    </div>
     {% for response in object_list %}
 
         <tr class="row_{% cycle 'reg' 'alt' %}">
