@@ -254,9 +254,9 @@ def view_responses(req, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
 
     if hasattr(Contact, 'groups'):
-        responses = poll.responses.filter(contact__groups__in=req.user.groups.all())
+        responses = poll.responses.filter(contact__groups__in=req.user.groups.all()).distinct()
     else:
-        responses = poll.responses.all()
+        responses = poll.responses.all().distinct()
     responses = responses.order_by('-date')
     typedef = Poll.TYPE_CHOICES[poll.type]
     columns = [('Sender', False, 'sender', None)]
