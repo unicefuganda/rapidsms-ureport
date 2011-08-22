@@ -258,6 +258,18 @@ def view_responses(req, poll_id):
     else:
         responses = poll.responses.all()
     responses = responses.order_by('-date')
+    response_rates={}
+    for group in req.user.groups.all():
+        try:
+            contact_count=poll.contacts.filter(groups__in=[group]).distinct().count()
+            response_count=poll.responses.filter(contact__groups__in=[group]).distinct().count()
+            response_rates[str(group.name)]=[contact_count]
+            response_rates[str(group.name)].append(response_count)
+            response_rates[str(group.name)].append(response_count* 100.0 / contact_count)
+
+        except(ZeroDivisionError):
+            response_rates.pop(group.name)
+    print response_rates
     typedef = Poll.TYPE_CHOICES[poll.type]
     columns = [('Sender', False, 'sender', None)]
     for column, style_class in typedef['report_columns']:
@@ -265,6 +277,7 @@ def view_responses(req, poll_id):
 
     return generic(req,
         model=Response,
+        response_rates=response_rates,
         queryset=responses,
         objects_per_page=25,
         selectable=True,

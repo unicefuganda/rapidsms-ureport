@@ -38,5 +38,18 @@ padding:7px;
 
 .response_categories_col{
     width:200px;
-    
+
+}
+.responses_meta
+{
+     font-size: 13px;
+
+}
+.responses_meta p
+{
+background-color: #eee;
+    display: block;
+    border-color: #ccc;
+    padding: 4px;
+
 }
