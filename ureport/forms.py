@@ -96,11 +96,10 @@ class SearchResponsesForm(FilterForm):
 
 
 class AssignToPollForm(ActionForm):
-
-    poll=forms.CharField(widget=Select(choices=tuple([(int(d.pk), d.name) for d in Poll.objects.all().order_by('name')])))
+    poll=forms.ModelChoiceField(queryset=Poll.objects.all().order_by('name'))
     action_label = 'Assign selected to poll'
     def perform(self, request, results):
-        poll = Poll.objects.get(pk=int(self.cleaned_data['poll']))
+        poll = self.cleaned_data['poll']
         for c in results:
             c.poll=poll
             c.poll.save()
