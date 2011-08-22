@@ -26,6 +26,12 @@
     {{ block.super }}
 {% endblock %}
 {% block partial_base_content %}
+    <div class="responses_meta">
+    <h4>{{ object_list.0.poll.question }}</h4>
+    {% for rate,value in response_rates.items %}
+        <p>{{ rate }} : {{ value.0}} Participants, total responses {{ value.1 }} ({{ value.2|floatformat }}%)</p>
+    {% endfor %}
+    </div>
     <div class="buttons">
         <a href="{% url poll.views.responses_as_csv object_list.0.poll.pk %}">
             <img src="{{ MEDIA_URL }}poll/icons/silk/table_save.png" alt=""/> Export
