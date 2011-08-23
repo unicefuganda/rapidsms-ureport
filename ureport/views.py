@@ -102,7 +102,6 @@ def _get_tags(polls):
     used_words_list = []
     max_count = 0
     reg_words = re.compile('[^a-zA-Z]')
-    print "ignored tags = %s" % str(list(IgnoredTags.objects.filter(poll__in=polls).values_list('name', flat=True)))
     dropwords = list(IgnoredTags.objects.filter(poll__in=polls).values_list('name', flat=True)) + drop_words
     all_words = ' '.join(Value.objects.filter(entity_ct=ContentType.objects.get_for_model(Response), entity_id__in=responses).values_list('value_text', flat=True)).lower()
     all_words = reg_words.split(all_words)
@@ -269,7 +268,6 @@ def view_responses(req, poll_id):
 
         except(ZeroDivisionError):
             response_rates.pop(group.name)
-    print response_rates
     typedef = Poll.TYPE_CHOICES[poll.type]
     columns = [('Sender', False, 'sender', None)]
     for column, style_class in typedef['report_columns']:
