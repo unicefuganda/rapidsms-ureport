@@ -1,9 +1,7 @@
 from django.core.management.base import BaseCommand
 from script.models import ScriptSession,Script
 import traceback
-from django.db.models import Q
 from django.contrib.auth.models import Group
-import difflib
 class Command(BaseCommand):
 
     def handle(self, **options):
@@ -27,11 +25,10 @@ class Command(BaseCommand):
                 txt=response.message.text.strip().lower()
                 for group, word_list in groups.items( ):
                     for word in word_list:
-                        if len(set(word_list).intersection(set(txt.split()))) >0:
+                        if word in txt.split():
                             if group not in response.contact.groups.all():
                                 response.contact.groups.add(group)
-                                print txt 
-
+                                print "added contact with response " +txt+ "to " +str(group.name)
 
 
         except Exception, exc:
