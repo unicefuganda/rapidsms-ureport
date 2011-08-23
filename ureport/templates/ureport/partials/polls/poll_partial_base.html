@@ -26,7 +26,15 @@
     {{ block.super }}
 {% endblock %}
 {% block partial_base_content %}
-    <div class="responses_meta">
+<a href="javascript:void(0)">
+ Response rates
+     <img id="collapse_img" style="float:left" src="{{ MEDIA_URL }}rapidsms/icons/silk/section_expanded--bright.png" onclick="$('.responses_meta').hide();$('#expand_img').show();$('#collapse_img').hide();"/>
+     <img id="expand_img" style="float:left;display:none" src="{{ MEDIA_URL }}rapidsms/icons/silk/section_collapsed--bright.png" onclick="$('.responses_meta').show();$('#collapse_img').show();$('#expand_img').hide();"/>
+    </a>
+
+    <div class="responses_meta ">
+
+    <h2 class="collapsed">Responses</h2>
     <h4>{{ object_list.0.poll.question }}</h4>
     {% for rate,value in response_rates.items %}
         <p>{{ rate }} : {{ value.0}} Participants, total responses {{ value.1 }} ({{ value.2|floatformat }}%)</p>
