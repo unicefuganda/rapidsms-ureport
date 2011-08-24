@@ -231,7 +231,7 @@ div.module h3 {
 }
 
 #actions {
-    height: 10em;
+    min-height: 10em;
 }
 
 #div_action_0 {
@@ -536,4 +536,16 @@ span.message_history_replies{
 #div_filter_4{
 margin-top:-30px;
     margin-left:720px;
+}
+#div_action_3{
+    position: relative;
+    height:auto;
+    margin-bottom:2px;
+    display: block;
+    margin-left: 500px;
+
+}
+
+#div_action_3{
+    
 }
