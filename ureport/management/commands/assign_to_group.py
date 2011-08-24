@@ -7,7 +7,7 @@ class Command(BaseCommand):
     def handle(self, **options):
         try:
             group_poll_responses=Script.objects.get(pk="ureport_autoreg").steps.get(order=1).poll.responses.all()
-            gem=Group.objects.get(name="Girl Education Movement")
+            gem=Group.objects.get(name="GEM")
             world_vision=Group.objects.get(name="World Vision")
             bosco=Group.objects.get(name="BOSCO")
             msc=Group.objects.get(name="MSC")
