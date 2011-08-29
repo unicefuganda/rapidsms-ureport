@@ -9,6 +9,6 @@ def voices(request):
     a context processor that passes the total number of ureporters to all templates.
     """
     return {
-        'total_ureporters':Contact.objects.count(),        
+        'total_ureporters':Contact.objects.exclude(connection__in=Blacklist.objects.all()).count(),
     }
 
