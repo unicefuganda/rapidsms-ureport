@@ -3,6 +3,7 @@ template context. Each function takes the request object as its only parameter
 and returns a dictionary to add to the context.
 """
 from rapidsms.models import Contact
+from unregister.models import Blacklist
 
 def voices(request):
     """
