@@ -10,6 +10,9 @@ from mptt.forms import TreeNodeChoiceField
 from rapidsms_httprouter.models import Message
 from generic.forms import ActionForm, FilterForm, ModuleForm
 from django.forms.widgets import Select
+from poll.forms import NewPollForm
+from django.conf import settings
+from django.contrib.sites.models import Site
 
 class EditReporterForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -96,13 +99,31 @@ class SearchResponsesForm(FilterForm):
 
 
 class AssignToPollForm(ActionForm):
-
-    poll=forms.CharField(widget=Select(choices=tuple([(int(d.pk), d.name) for d in Poll.objects.all().order_by('name')])))
+    poll=forms.ModelChoiceField(queryset=Poll.objects.all().order_by('name'))
     action_label = 'Assign selected to poll'
     def perform(self, request, results):
-        poll = Poll.objects.get(pk=int(self.cleaned_data['poll']))
+        poll = self.cleaned_data['poll']
         for c in results:
             c.poll=poll
             c.poll.save()
             c.save()
         return ('%d responses assigned to  %s poll' % (results.count(), poll.name), 'success',)
+
+class AssignToNewPollForm(ActionForm):
+    action_label = 'Assign to New poll'
+    poll_name=forms.CharField(label="Poll Name",max_length="100")
+  
+    def perform(self, request, results):
+        name = self.cleaned_data['poll_name']
+        poll = Poll.create_with_bulk(\
+                                 name=name,
+                                 type=Poll.TYPE_TEXT,
+                                question="",
+                                 default_response="",
+                                 contacts=results,
+                                 user=request.user)
+
+        if settings.SITE_ID:
+            poll.sites.add(Site.objects.get_current())
+        return ('%d participants added to  %s poll' % (results.count(), poll.name), 'success',)
+

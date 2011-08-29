@@ -17,7 +17,40 @@
     cursor:pointer;
     padding:5px 10px 6px 7px; /* Links */
 }
+.buttons a.no-dec{
+    border:none;
+    padding:0px 0px  0px  0px;
+    background:transparent;
+}
 .buttons button{
     width:auto;
     overflow:visible;
     padding:4px 10px 3px 7px; /* IE6 */
+}
+
+.response_options_col
+{
+padding:7px;
+  padding-left:5px;
+  margin:0px;
+  width:100px;
+}
+
+.response_categories_col{
+    width:200px;
+
+}
+.responses_meta
+{
+     font-size: 13px;
+    border:none;
+
+}
+.responses_meta p
+{
+background-color: #eee;
+    display: block;
+    border-color: #ccc;
+    padding: 4px;
+
+}
