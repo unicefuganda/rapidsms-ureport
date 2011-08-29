@@ -11,9 +11,7 @@ class Command(BaseCommand):
 
             from uganda_common.utils import ExcelResponse
             excel_file_path = os.path.join(os.path.join(UREPORT_ROOT,'static'),'ureporters.xls')
-            excel_file=open(excel_file_path,'w')
-
-            contacts = Contact.objects.all()
+            contacts = Contact.objects.all()[0:100]
             export_data_list = []
             for contact in contacts:
                 if contact.name:
@@ -47,9 +45,7 @@ class Command(BaseCommand):
 
                     export_data_list.append(export_data)
 
-            response = ExcelResponse(export_data_list,output_name=excel_file_path,write_to_file=True)
-            response.write(excel_file)
-            excel_file.close()
+            ExcelResponse(export_data_list,output_name=excel_file_path,write_to_file=True)
 
         except Exception, exc:
             print traceback.format_exc(exc)
