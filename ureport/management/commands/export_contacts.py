@@ -13,7 +13,7 @@ class Command(BaseCommand):
             excel_file_path = os.path.join(os.path.join(UREPORT_ROOT,'static'),'ureporters.xls')
             excel_file=open(excel_file_path,'w')
 
-            contacts = Contact.objects.all()[0:100]
+            contacts = Contact.objects.all()
             export_data_list = []
             for contact in contacts:
                 if contact.name:
