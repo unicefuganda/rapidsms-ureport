@@ -2,7 +2,10 @@ from django.db.models import get_models
 from script import models as script_app
 from poll import models as poll_app
 from django.contrib.sites import models as sites_app
-from authsites import models  as authsites_app
+try:
+    from authsites import models  as authsites_app
+except ImportError:
+    pass
 from django.contrib.auth import models as auth_app
 from script.models import *
 from poll.models import *
