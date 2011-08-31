@@ -2,7 +2,6 @@ from django.db.models import get_models
 from script import models as script_app
 from poll import models as poll_app
 from django.contrib.sites import models as sites_app
-from authsites import models  as authsites_app
 from django.contrib.auth import models as auth_app
 from script.models import *
 from poll.models import *
@@ -17,7 +16,10 @@ def create_auto_reg_script(app, created_models, verbosity, **kwargs):
     models_created=models_created+get_models(app)
     required_models = get_models(script_app) + get_models(poll_app) + get_models(auth_app)
     if 'django.contrib.sites' in settings.INSTALLED_APPS:
-        required_models = required_models + get_models(sites_app) + get_models(authsites_app)
+        required_models = required_models + get_models(sites_app)
+    if 'authsites' in settings.INSTALLED_APPS:
+        from authsites import models as authsites_app
+        required_models = required_models + get_models(authsites_app)
     for model in  required_models:
         if not model in models_created:
             return
