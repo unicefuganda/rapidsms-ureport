@@ -102,7 +102,6 @@ def _get_tags(polls):
     used_words_list = []
     max_count = 0
     reg_words = re.compile('[^a-zA-Z]')
-    print "ignored tags = %s" % str(list(IgnoredTags.objects.filter(poll__in=polls).values_list('name', flat=True)))
     dropwords = list(IgnoredTags.objects.filter(poll__in=polls).values_list('name', flat=True)) + drop_words
     all_words = ' '.join(Value.objects.filter(entity_ct=ContentType.objects.get_for_model(Response), entity_id__in=responses).values_list('value_text', flat=True)).lower()
     all_words = reg_words.split(all_words)
@@ -254,10 +253,21 @@ def view_responses(req, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
 
     if hasattr(Contact, 'groups'):
-        responses = poll.responses.filter(contact__groups__in=req.user.groups.all())
+        responses = poll.responses.filter(contact__groups__in=req.user.groups.all()).distinct()
     else:
         responses = poll.responses.all()
     responses = responses.order_by('-date')
+    response_rates={}
+    for group in req.user.groups.all():
+        try:
+            contact_count=poll.contacts.filter(groups__in=[group]).distinct().count()
+            response_count=poll.responses.filter(contact__groups__in=[group]).distinct().count()
+            response_rates[str(group.name)]=[contact_count]
+            response_rates[str(group.name)].append(response_count)
+            response_rates[str(group.name)].append(response_count* 100.0 / contact_count)
+
+        except(ZeroDivisionError):
+            response_rates.pop(group.name)
     typedef = Poll.TYPE_CHOICES[poll.type]
     columns = [('Sender', False, 'sender', None)]
     for column, style_class in typedef['report_columns']:
@@ -265,6 +275,7 @@ def view_responses(req, poll_id):
 
     return generic(req,
         model=Response,
+        response_rates=response_rates,
         queryset=responses,
         objects_per_page=25,
         selectable=True,

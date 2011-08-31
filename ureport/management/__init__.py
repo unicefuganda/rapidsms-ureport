@@ -10,8 +10,9 @@ from django.contrib.auth import models as auth_app
 from script.models import *
 from poll.models import *
 from django.conf import settings
-models_created = []
+from django.db.models.signals import post_syncdb
 
+models_created = []
 def create_auto_reg_script(app, created_models, verbosity, **kwargs):
     """ callback to post_syncdb signal to create auto_reg  script """
 
