@@ -10,6 +10,7 @@ from eav.models import Attribute
 from django.core.exceptions import ValidationError
 from script.signals import *
 from script.models import *
+from script.utils.handling import find_closest_match, find_best_response
 from rapidsms_httprouter.managers import BulkInsertManager
 from rapidsms_httprouter.models import Message
 
@@ -63,35 +64,6 @@ Poll.register_poll_type('district', 'District Response', parse_district_value, d
                         report_columns=(('Text', 'text'), ('Location', 'location'), ('Categories', 'categories')),
                         edit_form=LocationResponseForm)
 
-def find_best_response(session, poll):
-    resps = session.responses.filter(response__poll=poll, response__has_errors=False).order_by('-response__date')
-    if resps.count():
-        resp = resps[0].response
-        typedef = Poll.TYPE_CHOICES[poll.type]
-        if typedef['db_type'] == Attribute.TYPE_TEXT:
-            return resp.eav.poll_text_value
-        elif typedef['db_type'] == Attribute.TYPE_FLOAT:
-            return resp.eav.poll_number_value
-        elif typedef['db_type'] == Attribute.TYPE_OBJECT:
-            return resp.eav.poll_location_value
-    return None
-
-def find_closest_match(value, model):
-    string_template = STARTSWITH_PATTERN_TEMPLATE % '[a-zA-Z]*'
-    regex = re.compile(string_template)
-    try:
-        if regex.search(value):
-            spn = regex.search(value).span()
-            name_str = value[spn[0]:spn[1]]
-            toret = None
-            model_names = model.values_list('name', flat=True)
-            model_names_lower = [ai.lower() for ai in model_names]
-            model_names_matches = difflib.get_close_matches(name_str.lower(), model_names_lower)
-            if model_names_matches:
-                toret = model.get(name__iexact=model_names_matches[0])
-                return toret
-    except:
-        return None
 
 def autoreg(**kwargs):
     connection = kwargs['connection']
