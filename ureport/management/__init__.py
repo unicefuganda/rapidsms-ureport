@@ -2,7 +2,6 @@ from django.db.models import get_models
 from script import models as script_app
 from poll import models as poll_app
 from django.contrib.sites import models as sites_app
-from authsites import models  as authsites_app
 from django.contrib.auth import models as auth_app
 from script.models import *
 from poll.models import *
@@ -14,19 +13,19 @@ def create_auto_reg_script(app, created_models, verbosity, **kwargs):
     """ callback to post_syncdb signal to create auto_reg  script """
 
     global models_created
-    models_created=models_created+get_models(app)
+    models_created = models_created + get_models(app)
     required_models = get_models(script_app) + get_models(poll_app) + get_models(auth_app)
     if 'django.contrib.sites' in settings.INSTALLED_APPS:
-        required_models = required_models + get_models(sites_app) + get_models(authsites_app)
+        required_models = required_models + get_models(sites_app)
     for model in  required_models:
         if not model in models_created:
             return
     else:
         if 'django.contrib.sites' in settings.INSTALLED_APPS:
             try:
-                site=Site.objects.get_current()
+                site = Site.objects.get_current()
             except Site.DoesNotExist:
-                site=Site.objects.create(pk=settings.SITE_ID, domain='ureport.ug')
+                site = Site.objects.create(pk=settings.SITE_ID, domain='ureport.ug')
         script, created = Script.objects.get_or_create(
                 slug="ureport_autoreg",
                 name="uReport autoregistration script",
@@ -163,4 +162,4 @@ def create_auto_reg_script(app, created_models, verbosity, **kwargs):
                 poll.sites.add(Site.objects.get_current())
 
 post_syncdb.connect(create_auto_reg_script,
-     dispatch_uid = "ureport.utils.create_auto_reg_script")
+     dispatch_uid="ureport.utils.create_auto_reg_script")
