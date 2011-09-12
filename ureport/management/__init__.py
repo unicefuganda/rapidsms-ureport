@@ -21,17 +21,11 @@ def create_auto_reg_script(app, created_models, verbosity, **kwargs):
         if not model in models_created:
             return
 
-    if 'django.contrib.sites' in settings.INSTALLED_APPS:
-        try:
-            site = Site.objects.get_current()
-        except Site.DoesNotExist:
-            site = Site.objects.create(pk=settings.SITE_ID, domain='ureport.ug')
     script, created = Script.objects.get_or_create(
             slug="ureport_autoreg",
             name="uReport autoregistration script",
             )
     if created:
-        script.sites.add(site)
         user, created = User.objects.get_or_create(username="admin")
         script.steps.add(ScriptStep.objects.create(
                 script=script,
@@ -157,9 +151,7 @@ def create_auto_reg_script(app, created_models, verbosity, **kwargs):
                 start_offset=60,
                 giveup_offset=0,
                 ))
-        polls = [poll, poll2, poll3, poll4, poll5, poll9]
-        for poll in polls:
-            poll.sites.add(Site.objects.get_current())
+
 
 post_syncdb.connect(create_auto_reg_script,
      dispatch_uid="ureport.utils.create_auto_reg_script")
