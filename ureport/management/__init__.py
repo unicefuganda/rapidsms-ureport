@@ -163,3 +163,4 @@ def create_auto_reg_script(app, created_models, verbosity, **kwargs):
 
 post_syncdb.connect(create_auto_reg_script,
      dispatch_uid="ureport.utils.create_auto_reg_script")
+
