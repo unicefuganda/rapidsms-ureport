@@ -99,6 +99,7 @@ class SearchResponsesForm(FilterForm):
 
 
 class AssignToPollForm(ActionForm):
+    """ assigns responses to poll  """
     poll=forms.ModelChoiceField(queryset=Poll.objects.all().order_by('name'))
     action_label = 'Assign selected to poll'
     def perform(self, request, results):
@@ -110,14 +111,18 @@ class AssignToPollForm(ActionForm):
         return ('%d responses assigned to  %s poll' % (results.count(), poll.name), 'success',)
 
 class AssignToNewPollForm(ActionForm):
+    """ assigns contacts to poll"""
     action_label = 'Assign to New poll'
     poll_name=forms.CharField(label="Poll Name",max_length="100")
-  
+    POLL_TYPES=[('yn', 'Yes/No Question')]+[(c['type'],c['label']) for c in Poll.TYPE_CHOICES.values()]
+    poll_type = forms.ChoiceField(choices=POLL_TYPES)
+
     def perform(self, request, results):
         name = self.cleaned_data['poll_name']
+        poll_type=self.cleaned_data['poll_type']
         poll = Poll.create_with_bulk(\
                                  name=name,
-                                 type=Poll.TYPE_TEXT,
+                                 type=poll_type,
                                 question="",
                                  default_response="",
                                  contacts=results,
@@ -126,4 +131,3 @@ class AssignToNewPollForm(ActionForm):
         if settings.SITE_ID:
             poll.sites.add(Site.objects.get_current())
         return ('%d participants added to  %s poll' % (results.count(), poll.name), 'success',)
-
