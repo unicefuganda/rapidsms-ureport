@@ -84,7 +84,7 @@ def add_drop_word(request, tag_name=None, poll_pk=None):
 
 @login_required
 def delete_drop_word(request, tag_pk):
-    tag=get_object_or_404(IgnoredTags, pk=int(tag_pk))
+    tag = get_object_or_404(IgnoredTags, pk=int(tag_pk))
     tag.delete()
     return HttpResponse(simplejson.dumps("success"))
 
@@ -257,14 +257,14 @@ def view_responses(req, poll_id):
     else:
         responses = poll.responses.all()
     responses = responses.order_by('-date')
-    response_rates={}
+    response_rates = {}
     for group in req.user.groups.all():
         try:
-            contact_count=poll.contacts.filter(groups__in=[group]).distinct().count()
-            response_count=poll.responses.filter(contact__groups__in=[group]).distinct().count()
-            response_rates[str(group.name)]=[contact_count]
+            contact_count = poll.contacts.filter(groups__in=[group]).distinct().count()
+            response_count = poll.responses.filter(contact__groups__in=[group]).distinct().count()
+            response_rates[str(group.name)] = [contact_count]
             response_rates[str(group.name)].append(response_count)
-            response_rates[str(group.name)].append(response_count* 100.0 / contact_count)
+            response_rates[str(group.name)].append(response_count * 100.0 / contact_count)
 
         except(ZeroDivisionError):
             response_rates.pop(group.name)
@@ -336,7 +336,7 @@ def message_feed(request, pks):
 
 @cache_control(no_cache=True, max_age=0)
 def poll_summary(request):
-    script_polls = ScriptStep.objects.exclude(poll=None).values_list('poll',flat=True)
+    script_polls = ScriptStep.objects.exclude(poll=None).values_list('poll', flat=True)
     polls = Poll.objects.exclude(pk__in=script_polls).order_by('-start_date')
     return render_to_response(
         '/ureport/poll_summary.html',
@@ -472,11 +472,6 @@ def handle_excel_file(file, group, fields):
 
             connections = Connection.bulk.bulk_insert_commit(send_post_save=False, autoclobber=True)
             contact_pks = connections.values_list('contact__pk', flat=True)
-
-            if "authsites" in settings.INSTALLED_APPS:
-                contact_queryset = Contact.allsites.filter(pk__in=contact_pks)
-                from authsites.models import ContactSite
-                ContactSite.add_all(contact_queryset)
 
             if len(contacts) > 0:
                 info = 'Contacts with numbers... ' + ' ,'.join(contacts) + " have been uploaded !\n\n"
