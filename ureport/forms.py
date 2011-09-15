@@ -108,7 +108,7 @@ class AssignToPollForm(ActionForm):
             c.poll=poll
             c.poll.save()
             c.save()
-        return ('%d responses assigned to  %s poll' % (results.count(), poll.name), 'success',)
+        return ('%d responses assigned to  %s poll' % (len(results), poll.name), 'success',)
 
 class AssignToNewPollForm(ActionForm):
     """ assigns contacts to poll"""
@@ -130,4 +130,4 @@ class AssignToNewPollForm(ActionForm):
 
         if settings.SITE_ID:
             poll.sites.add(Site.objects.get_current())
-        return ('%d participants added to  %s poll' % (results.count(), poll.name), 'success',)
+        return ('%d participants added to  %s poll' % (len(results), poll.name), 'success',)
