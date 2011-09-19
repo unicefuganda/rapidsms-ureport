@@ -116,18 +116,28 @@ class AssignToNewPollForm(ActionForm):
     poll_name=forms.CharField(label="Poll Name",max_length="100")
     POLL_TYPES=[('yn', 'Yes/No Question')]+[(c['type'],c['label']) for c in Poll.TYPE_CHOICES.values()]
     poll_type = forms.ChoiceField(choices=POLL_TYPES)
+    question = forms.CharField(max_length=160, required=True)
+    default_response = forms.CharField(max_length=160, required=False)
+    start_immediately = forms.BooleanField(required=False)
 
     def perform(self, request, results):
+        if not len(results):
+            return ("No contacts selected","error")
         name = self.cleaned_data['poll_name']
         poll_type=self.cleaned_data['poll_type']
+        question=self.cleaned_data.get('question').replace('%', '%%')
+        default_response=self.cleaned_data['default_response']
+        start_immediately=self.cleaned_data['start_immediately']
         poll = Poll.create_with_bulk(\
                                  name=name,
                                  type=poll_type,
-                                question="",
-                                 default_response="",
+                                question=question,
+                                 default_response=default_response,
                                  contacts=results,
                                  user=request.user)
 
         if settings.SITE_ID:
             poll.sites.add(Site.objects.get_current())
+        if start_immediately:
+            poll.start()
         return ('%d participants added to  %s poll' % (len(results), poll.name), 'success',)
