@@ -4,14 +4,21 @@ import os
 from ureport.settings import UREPORT_ROOT
 from rapidsms.models import Contact
 from django.utils.datastructures import SortedDict
+from poll.models import Poll
+import datetime
+
+
+import optparse
+
 class Command(BaseCommand):
 
     def handle(self, **options):
         try:
 
             from uganda_common.utils import ExcelResponse
+
             excel_file_path = os.path.join(os.path.join(UREPORT_ROOT,'static'),'ureporters.xls')
-            contacts = Contact.objects.all()[0:100]
+            contacts = Contact.objects.all()
             export_data_list = []
             for contact in contacts:
                 if contact.name:
@@ -49,4 +56,54 @@ class Command(BaseCommand):
 
         except Exception, exc:
             print traceback.format_exc(exc)
+        polls =Poll.objects.all()
+        for poll in polls:
+            if poll.responses.exists():
+                responses=poll.responses.all()
+                response_data_list=[]
+                excel_file_path = os.path.join(os.path.join(UREPORT_ROOT,'static'),'poll_%d.xls'%poll.pk)
+                for response in responses:
+                    response_export_data = SortedDict()
+
+                    response_export_data['contact_name'] = response.contact.name
+                    if response.contact.gender:
+                        response_export_data['sex'] = response.contact.gender
+                    else:
+                        response_export_data['sex'] = 'N/A'
+                    if response.contact.default_connection:
+                        response_export_data['mobile']=response.contact.default_connection.identity
+                    else:
+                        response_export_data['mobile']="N/A"
+                    if response.contact.birthdate:
+                        try:
+                            contact.birthdate.tzinfo = None
+                            response_export_data['age'] = (datetime.datetime.now() - response.contact.birthdate).days \
+                            / 365
+                        except:
+                            continue
+                    else:
+                        response_export_data['age'] = 'N/A'
+                    if response.contact.reporting_location:
+                        response_export_data['district'] = response.contact.reporting_location.name
+                    else:
+                        response_export_data['district'] = 'N/A'
+                    if response.contact.village:
+                        response_export_data['village'] = response.contact.village.name
+                    else:
+                        response_export_data['village'] = 'N/A'
+                    if response.contact.groups.count() > 0:
+                        response_export_data['groups'] = ",".join([group.name for group in response.contact.groups.all\
+                                ()])
+                    else:
+                        response_export_data['groups'] = 'N/A'
+                    if response.message:
+                        response_export_data['response']=response.message.text
+                        response_export_data['date']=response.message.date
+                    else:
+                        response_export_data['response']=''
+                        response_export_data['date']=''
+
+
+                    response_data_list.append(response_export_data)
+                ExcelResponse(response_data_list,output_name=excel_file_path,write_to_file=True)
 

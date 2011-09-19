@@ -40,11 +40,13 @@
         <p>{{ rate }} : {{ value.0}} Participants, total responses {{ value.1 }} ({{ value.2|floatformat }}%)</p>
     {% endfor %}
     </div>
+    {% block export %}
     <div class="buttons">
-        <a href="{% url poll.views.responses_as_csv object_list.0.poll.pk %}">
+            <a href="{{ MEDIA_URL }}ureport/poll_{{object_list.0.poll.pk }}.xls">
             <img src="{{ MEDIA_URL }}poll/icons/silk/table_save.png" alt=""/> Export
         </a>
     </div>
+        {% endblock %}
     {% for response in object_list %}
 
         <tr class="row_{% cycle 'reg' 'alt' %}">
