@@ -17,7 +17,7 @@ class Command(BaseCommand):
 
             from uganda_common.utils import ExcelResponse
 
-            excel_file_path = os.path.join(os.path.join(UREPORT_ROOT,'static'),'ureporters.xls')
+            excel_file_path = os.path.join(os.path.join(os.path.join(UREPORT_ROOT,'static'),'spreadsheets'),'ureporters.xls')
             contacts = Contact.objects.all()
             export_data_list = []
             for contact in contacts:
@@ -61,7 +61,7 @@ class Command(BaseCommand):
             if poll.responses.exists():
                 responses=poll.responses.all()
                 response_data_list=[]
-                excel_file_path = os.path.join(os.path.join(UREPORT_ROOT,'static'),'poll_%d.xls'%poll.pk)
+                excel_file_path = os.path.join(os.path.join(os.path.join(UREPORT_ROOT,'static'),'spreadsheets'),'poll_%d.xls'%poll.pk)
                 for response in responses:
                     response_export_data = SortedDict()
 
