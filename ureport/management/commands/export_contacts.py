@@ -30,11 +30,12 @@ class Command(BaseCommand):
                     else:
                         export_data['sex'] = 'N/A'
                     if contact.birthdate:
-                        try:
-                            contact.birthdate.tzinfo = None
-                            export_data['age'] = (datetime.datetime.now() - contact.birthdate).days / 365
-                        except:
-                            continue
+
+                        #contact.birthdate.tzinfo = None
+                        #import pdb;pdb.set_trace()
+
+                        export_data['age'] = (datetime.datetime.now() - contact.birthdate).days / 365
+
                     else:
                         export_data['age'] = 'N/A'
                     if contact.reporting_location:
@@ -75,12 +76,9 @@ class Command(BaseCommand):
                     else:
                         response_export_data['mobile']="N/A"
                     if response.contact.birthdate:
-                        try:
-                            contact.birthdate.tzinfo = None
-                            response_export_data['age'] = (datetime.datetime.now() - response.contact.birthdate).days \
-                            / 365
-                        except:
-                            continue
+                        
+                        response_export_data['age'] = (datetime.datetime.now() - response.contact.birthdate).days/365
+
                     else:
                         response_export_data['age'] = 'N/A'
                     if response.contact.reporting_location:
@@ -98,11 +96,17 @@ class Command(BaseCommand):
                         response_export_data['groups'] = 'N/A'
                     if response.message:
                         response_export_data['response']=response.message.text
-                        response_export_data['date']=response.message.date
+                        response_export_data['date']=response.message.date.date()
+                        response_export_data['time']=response.message.date.time()
+
                     else:
                         response_export_data['response']=''
                         response_export_data['date']=''
-
+                        response_export_data['time']=''
+                    if response.poll:
+                        response_export_data['question']=response.poll.question
+                    else:
+                        response_export_data['question']=''
 
                     response_data_list.append(response_export_data)
                 ExcelResponse(response_data_list,output_name=excel_file_path,write_to_file=True)
