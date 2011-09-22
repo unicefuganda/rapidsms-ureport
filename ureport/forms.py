@@ -125,7 +125,7 @@ class AssignToNewPollForm(ActionForm):
             return ("No contacts selected","error")
         name = self.cleaned_data['poll_name']
         poll_type=self.cleaned_data['poll_type']
-        question=self.cleaned_data.get('question').replace('%', '%%')
+        question=self.cleaned_data.get('question').replace('%', u'\u0025')
         default_response=self.cleaned_data['default_response']
         start_immediately=self.cleaned_data['start_immediately']
         poll = Poll.create_with_bulk(\
