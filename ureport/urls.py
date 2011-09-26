@@ -3,9 +3,9 @@ from django.views.generic.simple import direct_to_template
 from ureport.views import *
 from ureport.utils import get_contacts, get_polls
 from django.contrib.auth.decorators import login_required
-from contact.forms import FreeSearchTextForm,FreeSearchForm, HandledByForm, ReplyTextForm, FlaggedForm, FlagMessageForm,DistictFilterMessageForm,GenderFilterForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm, AgeFilterForm
+from contact.forms import FreeSearchTextForm, FreeSearchForm, HandledByForm, ReplyTextForm, FlaggedForm, FlagMessageForm, DistictFilterMessageForm, GenderFilterForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm, AgeFilterForm
 from generic.views import generic, generic_row, generic_dashboard, generic_map
-from generic.sorters import SimpleSorter,TupleSorter
+from generic.sorters import SimpleSorter, TupleSorter
 from unregister.forms import BlacklistForm
 from poll.models import *
 from uganda_common.utils import get_messages
@@ -40,8 +40,8 @@ urlpatterns = patterns('',
         'model':Contact,
         'queryset':get_contacts,
         'results_title':'uReporters',
-        'filter_forms':[ FreeSearchForm, DistictFilterForm, FilterGroupsForm,GenderFilterForm,AgeFilterForm],
-        'action_forms':[MassTextForm, AssignGroupForm, BlacklistForm,AssignToNewPollForm],
+        'filter_forms':[ FreeSearchForm, DistictFilterForm, FilterGroupsForm, GenderFilterForm, AgeFilterForm],
+        'action_forms':[MassTextForm, AssignGroupForm, BlacklistForm, AssignToNewPollForm],
         'objects_per_page':25,
         'partial_row':'ureport/partials/contacts/contacts_row.html',
         'base_template':'ureport/ureporters_base.html',
