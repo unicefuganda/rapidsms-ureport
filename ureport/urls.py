@@ -3,11 +3,14 @@ from django.views.generic.simple import direct_to_template
 from ureport.views import *
 from ureport.utils import get_contacts, get_polls
 from django.contrib.auth.decorators import login_required
-from contact.forms import FreeSearchForm,GenderFilterForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm, AgeFilterForm
+from contact.forms import FreeSearchTextForm,FreeSearchForm, HandledByForm, ReplyTextForm, FlaggedForm, FlagMessageForm,DistictFilterMessageForm,GenderFilterForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm, AgeFilterForm
 from generic.views import generic, generic_row, generic_dashboard, generic_map
-from generic.sorters import SimpleSorter
+from generic.sorters import SimpleSorter,TupleSorter
 from unregister.forms import BlacklistForm
 from poll.models import *
+from uganda_common.utils import get_messages
+from rapidsms_httprouter.models import Message
+from contact.utils import  get_mass_messages
 
 urlpatterns = patterns('',
     # dashboard view for viewing all poll reports in one place
@@ -41,7 +44,7 @@ urlpatterns = patterns('',
         'action_forms':[MassTextForm, AssignGroupForm, BlacklistForm,AssignToNewPollForm],
         'objects_per_page':25,
         'partial_row':'ureport/partials/contacts/contacts_row.html',
-        'base_template':'ureport/contacts_base.html',
+        'base_template':'ureport/ureporters_base.html',
         'columns':[('Name', True, 'name', SimpleSorter()),
                  ('Number', True, 'connection__identity', SimpleSorter(),),
                  ('Location', True, 'reporting_location__name', SimpleSorter(),),
@@ -70,6 +73,42 @@ urlpatterns = patterns('',
                  ('Closing Date', True, 'end_date', SimpleSorter()),
                  ('', False, '', None)],
     }, name="ureport-polls"),
+
+     url(r'^messages/$', login_required(generic), {
+      'model':Message,
+      'queryset':get_messages,
+      'filter_forms':[FreeSearchTextForm, DistictFilterMessageForm, HandledByForm, FlaggedForm],
+      'action_forms':[ReplyTextForm, FlagMessageForm],
+      'objects_per_page':25,
+      'partial_row':'contact/partials/message_row.html',
+      'base_template':'ureport/contact_message_base.html',
+      'columns':[('Text', True, 'text', SimpleSorter()),
+                 ('Contact Information', True, 'connection__contact__name', SimpleSorter(),),
+                 ('Date', True, 'date', SimpleSorter(),),
+                 ('Type', True, 'application', SimpleSorter(),),
+                 ('Response', False, 'response', None,),
+                 ],
+      'sort_column':'date',
+      'sort_ascending':False,
+    }, name="messagelog"),
+
+
+     url(r'^massmessages/$', login_required(generic), {
+      'model':MassText,
+      'queryset':get_mass_messages,
+      'objects_per_page':10,
+      'partial_row':'contact/partials/mass_message_row.html',
+      'base_template':'ureport/contacts_base.html',
+      'columns':[('Message', True, 'text', TupleSorter(0)),
+                 ('Time', True, 'date', TupleSorter(1),),
+                 ('User', True, 'user', TupleSorter(2),),
+                 ('Recipients', True, 'response', TupleSorter(3),),
+                 ('Type', True, 'type', TupleSorter(4),),
+                 ],
+      'sort_column':'date',
+      'sort_ascending':False,
+      'selectable':False,
+    }),
 
     # view responses for a poll (based on generic rather than built-in poll view
     url(r"^(\d+)/responses/$", view_responses, name="responses"),

@@ -505,52 +505,21 @@ span.message_history_replies{
     font-size:11px;
     padding:0 0 0 15px;
 }
-.filterform{
-    display: inline;
-	float: left;
-	margin-left: 5px;
-	margin-right: 5px;
-}
-#div_filter_0{
-    margin-left:0px;
-}
-#div_filter_0 input{
-    width:130px;
-}
 
-#div_filter_0 label{
-    margin-top:50px;
+label    { font-weight: bold;
 }
-#div_filter_1{
-
-    margin-left:250px;
-}
-
-#div_filter_2{
-   margin-left:-50px;
-    width:150px;
-}
-#div_filter_3{
-    margin-left:600px;
+input[type=text],
+textarea {
+  background-color:#fff;
+  border:1px solid #bbb;
+  color:#000;
 
 }
-#div_filter_4 input{
-    width:100px;
+input[type=text]:focus,
+textarea:focus {
+  border-color:#666;
 }
 
-#div_filter_4{
-margin-top:-30px;
-    margin-left:720px;
-}
-#div_action_3{
-    position: relative;
-    height:auto;
-    margin-bottom:2px;
-    display: block;
-    margin-left: 500px;
-
-}
-
-#div_action_3{
-    
+select {
+  margin:0.5em 0;
 }
