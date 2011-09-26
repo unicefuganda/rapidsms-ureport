@@ -252,6 +252,11 @@ div.module h3 {
     top: 9em;
 }
 
+#div_action_3{
+    padding-top:20px;
+    z-index: 800;
+}
+
 .results ul {
     list-style-type:none;
     margin:2px;
