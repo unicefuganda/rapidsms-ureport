@@ -11,7 +11,12 @@ def get_contacts(**kwargs):
         return Contact.objects.annotate(Count('responses'))
 
 def get_polls(**kwargs):
-    return Poll.objects.annotate(Count('responses'))
+    script_polls = ScriptStep.objects.exclude(poll=None).values_list('poll', flat=True)
+    return Poll.objects.exclude(pk__in=script_polls).annotate(Count('responses'))
+
+def get_script_polls(**kwargs):
+    script_polls = ScriptStep.objects.exclude(poll=None).values_list('poll', flat=True)
+    return Poll.objects.filter(pk__in=script_polls).annotate(Count('responses'))
 
 #def retrieve_poll(request):
 #    pks=request.GET.get('pks', '').split('+')
