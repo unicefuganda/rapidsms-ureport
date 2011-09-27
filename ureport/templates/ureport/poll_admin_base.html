@@ -21,6 +21,9 @@
 <div class="buttons"> 
     <a href="{% url poll.views.new_poll %}" style="float:left"> 
       <img border="0" src="/static/rapidsms/icons/silk/add.png" alt=""/>Add New Poll
-    </a> 
+    </a>
+    {% if request.path == "/mypolls/" %}
+<a href="{% url script-polls %}" style="float:right" class="">View AutoReg Polls</a>
+{% endif %}
 </div>
 {% endblock %}

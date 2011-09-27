@@ -1,7 +1,6 @@
 from django.conf.urls.defaults import *
-from django.views.generic.simple import direct_to_template
 from ureport.views import *
-from ureport.utils import get_contacts, get_polls
+from ureport.utils import get_contacts, get_polls ,get_script_polls
 from django.contrib.auth.decorators import login_required
 from contact.forms import FreeSearchTextForm, FreeSearchForm, HandledByForm, ReplyTextForm, FlaggedForm, FlagMessageForm, DistictFilterMessageForm, GenderFilterForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm, AgeFilterForm
 from generic.views import generic, generic_row, generic_dashboard, generic_map
@@ -73,6 +72,24 @@ urlpatterns = patterns('',
                  ('Closing Date', True, 'end_date', SimpleSorter()),
                  ('', False, '', None)],
     }, name="ureport-polls"),
+
+    # poll management views using generic (rather than built-in poll views
+    url(r'^scriptpolls/$', generic, {
+        'model':Poll,
+        'queryset':get_script_polls,
+        'objects_per_page':10,
+        'selectable':False,
+        'partial_row':'ureport/partials/polls/poll_admin_row.html',
+        'base_template':'ureport/poll_admin_base.html',
+        'results_title':'Polls',
+        'sort_column':'start_date',
+        'sort_ascending':False,
+        'columns':[('Name', True, 'name', SimpleSorter()),
+                 ('Question', True, 'question', SimpleSorter(),),
+                 ('Start Date', True, 'start_date', SimpleSorter(),),
+                 ('Closing Date', True, 'end_date', SimpleSorter()),
+                 ('', False, '', None)],
+    }, name="script-polls"),
 
      url(r'^messages/$', login_required(generic), {
       'model':Message,
