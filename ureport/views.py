@@ -1,27 +1,14 @@
-from django.shortcuts import  render_to_response, redirect, get_object_or_404
+from django.shortcuts import  render_to_response, get_object_or_404
 from django.template import RequestContext
-from django.db.models import Q, Manager
-from django import forms
-from django.contrib.auth.models import Group
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
-from django.views.decorators.cache import cache_control
-from django.http import HttpResponse, Http404
-from django.conf import settings
-from django.contrib.auth.decorators import login_required
-from django.db import connection
+from django.http import HttpResponse
 from ureport.settings import drop_words, tag_cloud_size
 from ureport.models import IgnoredTags
 from poll.models import *
 from script.models import ScriptStep
 
-from rapidsms.models import Contact, Connection
-from rapidsms_httprouter.router import get_router, start_sending_mass_messages, stop_sending_mass_messages
 from rapidsms_httprouter.views import receive
-from djtables import Column, Table
-from djtables.column import DateColumn
-from rapidsms.messages.outgoing import OutgoingMessage
-from rapidsms_httprouter.models import Message, DIRECTION_CHOICES, STATUS_CHOICES
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
@@ -31,12 +18,10 @@ from django.utils.datastructures import SortedDict
 from generic.views import generic, generic_dashboard
 
 from .models import MassText
-from .forms import EditReporterForm
 from .utils import retrieve_poll
 from ureport.forms import *
 from generic.forms import StaticModuleForm
 from generic.models import Dashboard
-from django.forms import forms
 from django.core.files import File
 from xlrd import open_workbook
 from uganda_common.utils import assign_backend
