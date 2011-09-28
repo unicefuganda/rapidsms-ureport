@@ -10,9 +10,7 @@ from rapidsms.models import Contact
 class App (AppBase):
     
     def handle (self, message):
-        if not message.connection.contact:
-            message.connection.contact = Contact.objects.create(name='Anonymous User')
-            message.connection.save()
+        if not message.connection.contact and not ScriptProgress.objects.filter(script__slug='ureport_autoreg', connection=message.connection).exists():
             ScriptProgress.objects.create(script=Script.objects.get(slug="ureport_autoreg"),\
                                           connection=message.connection)
             return True

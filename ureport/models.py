@@ -67,6 +67,8 @@ Poll.register_poll_type('district', 'District Response', parse_district_value, d
 
 def autoreg(**kwargs):
     connection = kwargs['connection']
+    connection.contact = Contact.objects.create(name='Anonymous User')
+    connection.save()
     progress = kwargs['sender']
     if not progress.script.slug == 'ureport_autoreg':
         return
@@ -78,12 +80,7 @@ def autoreg(**kwargs):
     agepoll = script.steps.get(order=6).poll
     genderpoll = script.steps.get(order=7).poll
     villagepoll = script.steps.get(order=8).poll
-
-    if not connection.contact:
-        connection.contact = Contact.objects.create()
-        connection.save
     contact = connection.contact
-
     name = find_best_response(session, namepoll)
     if name:
         contact.name = name[:100]
