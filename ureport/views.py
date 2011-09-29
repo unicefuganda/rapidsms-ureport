@@ -3,6 +3,7 @@ from django.template import RequestContext
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.http import HttpResponse
+from generic.sorters import SimpleSorter
 from ureport.settings import drop_words, tag_cloud_size
 from ureport.models import IgnoredTags
 from poll.models import *
@@ -17,7 +18,7 @@ from django.utils.datastructures import SortedDict
 
 from generic.views import generic, generic_dashboard
 
-from .models import MassText
+from .models import MassText, Flag
 from .utils import retrieve_poll
 from ureport.forms import *
 from generic.forms import StaticModuleForm
@@ -528,3 +529,26 @@ def clickatell_wrapper(request):
     request.GET = request.GET.copy()
     request.GET.update({'backend':'clickatell', 'sender':request.GET['from'], 'message':request.GET['text']})
     return receive(request)
+def view_flagged_with(request,pk):
+    flag=get_object_or_404(Flag,pk=pk)
+    messages=flag.get_messages()
+    return generic(request,
+        model=Message,
+        queryset=messages,
+
+        objects_per_page=25,
+        partial_row="contact/partials/message_row.html",
+        base_template='ureport/contact_message_base.html',
+        results_title="Messages Flagged With %s"%flag.name,
+        columns=[('Message', True, 'text', SimpleSorter()),
+            ('Sender Information', True, 'connection__contact__name', SimpleSorter(),),
+            ('Date', True, 'date', SimpleSorter(),),
+            ('Type', True, 'application', SimpleSorter(),),
+
+        ],
+        sort_column='date',
+        sort_ascending=False,
+
+        )
+def cerate_flags(request):
+    pass

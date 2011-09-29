@@ -45,10 +45,29 @@ class MassText(models.Model):
             ("can_message", "Can send messages, create polls, etc"),
         )
 
-class MessageFlag(models.Model):
-    #Track flagged messages
-    message = models.ForeignKey(Message, related_name='flags')
+class Flag(models.Model):
+    """
+    a Message flag
+    """
+    name=models.CharField(max_length=50,unique=True,db_index=True)
+    rule=models.CharField(max_length=50,null=True)
+    
+    def get_messages(self):
+        message_flags=self.messages.values_list('message',flat=True)
+        return Message.objects.filter(pk__in=message_flags)
 
+    def __unicode__(self):
+        return self.name
+    
+class MessageFlag(models.Model):
+    """ relation between flag and message
+    """
+    message = models.ForeignKey(Message, related_name='flagged')
+    flag=models.ForeignKey(Flag,related_name="messages",null=True)
+
+    def flags(self):
+        mf=MessageFlag.objects.filter(message=self.message).values_list("flag",flat=True)
+        return Flag.objects.filter(pk__in=mf)
 def parse_district_value(value):
     location_template = STARTSWITH_PATTERN_TEMPLATE % '[a-zA-Z]*'
     regex = re.compile(location_template)
