@@ -147,6 +147,7 @@ urlpatterns = patterns('',
     }, name="messagelog"),
 
     url(r"^flags/(\d+)/messages/$", view_flagged_with, name="flagged_with"),
+     url(r"^flags/new/$", create_flags ,name="flags_new"),
     
     # view responses for a poll (based on generic rather than built-in poll view
     url(r"^(\d+)/responses/$", view_responses, name="responses"),

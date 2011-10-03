@@ -145,13 +145,8 @@ class AssignToNewPollForm(ActionForm):
 class FlaggedMessageForm(forms.Form):
     contains_all_of=1
     contains_one_of=2
-    contains_none_of=3
-    contains_digits=4
-    contains_nodigits=5
 
     flag_name=forms.CharField(max_length=50,required=True)
-    words=forms.CharField(max_length=200)
-    flags=forms.ChoiceField(choices=( (contains_all_of, 'Contains All Of'), (contains_one_of,'Contains One Of'), (contains_none_of, 'Contains None of'),(contains_digits, 'Contains Numbers'),(contains_nodigits, 'Has only Text')))
-    def clean(self):
-        cleaned_data=self.cleaned_data
-        return cleaned_data
+    words=forms.CharField(max_length=200,required=True)
+    flags=forms.ChoiceField(choices=(  (contains_one_of,'Contains One Of'),(contains_all_of, 'Contains All Of')))
+   

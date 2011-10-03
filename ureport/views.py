@@ -2,7 +2,7 @@ from django.shortcuts import  render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from generic.sorters import SimpleSorter
 from ureport.settings import drop_words, tag_cloud_size
 from ureport.models import IgnoredTags
@@ -28,6 +28,7 @@ from xlrd import open_workbook
 from uganda_common.utils import assign_backend
 from ureport.models import find_closest_match
 from django.views.decorators.cache import cache_control
+from ureport.forms import FlaggedMessageForm
 
 import re
 import bisect
@@ -550,5 +551,27 @@ def view_flagged_with(request,pk):
         sort_ascending=False,
 
         )
-def cerate_flags(request):
-    pass
+def create_flags(request):
+    flags_form=FlaggedMessageForm()
+    if request.method=='POST':
+        flags_form=FlaggedMessageForm(request.POST)
+        if flags_form.is_valid():
+            words=flags_form.cleaned_data['words'].replace(','," ").split()
+            if flags_form.cleaned_data['flags']==u"1":
+                all_template=r"(?=.*\b%s\b)"
+                w_regex=r""
+                for word in words:
+                    w_regex=w_regex+all_template%word
+                rule=w_regex
+
+            elif flags_form.cleaned_data['flags']==u"2":
+                one_template=r"(\b%s\b)"
+                w_regex=r""
+                for word in words:
+                    w_regex=w_regex+r"|"+one_template%word
+                rule=w_regex
+            flag,created=Flag.objects.get_or_create(name=flags_form.cleaned_data['flag_name'],rule=rule)
+            return HttpResponseRedirect("/")
+    return render_to_response('ureport/new_flag.html',dict(flags_form=flags_form),
+            context_instance=RequestContext(request))
+    

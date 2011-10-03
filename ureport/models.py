@@ -50,7 +50,7 @@ class Flag(models.Model):
     a Message flag
     """
     name=models.CharField(max_length=50,unique=True,db_index=True)
-    rule=models.CharField(max_length=50,null=True)
+    rule=models.CharField(max_length=200,null=True)
     
     def get_messages(self):
         message_flags=self.messages.values_list('message',flat=True)
