@@ -49,8 +49,7 @@ class Flag(models.Model):
     """
     a Message flag
     """
-    name=models.CharField(max_length=50,unique=True,db_index=True)
-    rule=models.CharField(max_length=200,null=True)
+    name=models.CharField(max_length=50,unique=True)
     
     def get_messages(self):
         message_flags=self.messages.values_list('message',flat=True)
@@ -62,7 +61,7 @@ class Flag(models.Model):
 class MessageFlag(models.Model):
     """ relation between flag and message
     """
-    message = models.ForeignKey(Message, related_name='flagged')
+    message = models.ForeignKey(Message, related_name='flags')
     flag=models.ForeignKey(Flag,related_name="messages",null=True)
 
     def flags(self):

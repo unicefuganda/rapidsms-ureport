@@ -13,12 +13,12 @@ from rapidsms_httprouter.views import receive
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
-from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from django.core.paginator import Paginator
 from django.utils.datastructures import SortedDict
 
 from generic.views import generic, generic_dashboard
 
-from .models import MassText, Flag
+from .models import MassText
 from .utils import retrieve_poll
 from ureport.forms import *
 from generic.forms import StaticModuleForm
@@ -28,7 +28,6 @@ from xlrd import open_workbook
 from uganda_common.utils import assign_backend
 from ureport.models import find_closest_match
 from django.views.decorators.cache import cache_control
-from ureport.forms import FlaggedMessageForm
 
 import re
 import bisect
@@ -530,48 +529,3 @@ def clickatell_wrapper(request):
     request.GET = request.GET.copy()
     request.GET.update({'backend':'clickatell', 'sender':request.GET['from'], 'message':request.GET['text']})
     return receive(request)
-def view_flagged_with(request,pk):
-    flag=get_object_or_404(Flag,pk=pk)
-    messages=flag.get_messages()
-    return generic(request,
-        model=Message,
-        queryset=messages,
-
-        objects_per_page=25,
-        partial_row="contact/partials/message_row.html",
-        base_template='ureport/contact_message_base.html',
-        results_title="Messages Flagged With %s"%flag.name,
-        columns=[('Message', True, 'text', SimpleSorter()),
-            ('Sender Information', True, 'connection__contact__name', SimpleSorter(),),
-            ('Date', True, 'date', SimpleSorter(),),
-            ('Type', True, 'application', SimpleSorter(),),
-
-        ],
-        sort_column='date',
-        sort_ascending=False,
-
-        )
-def create_flags(request):
-    flags_form=FlaggedMessageForm()
-    if request.method=='POST':
-        flags_form=FlaggedMessageForm(request.POST)
-        if flags_form.is_valid():
-            words=flags_form.cleaned_data['words'].replace(','," ").split()
-            if flags_form.cleaned_data['flags']==u"1":
-                all_template=r"(?=.*\b%s\b)"
-                w_regex=r""
-                for word in words:
-                    w_regex=w_regex+all_template%word
-                rule=w_regex
-
-            elif flags_form.cleaned_data['flags']==u"2":
-                one_template=r"(\b%s\b)"
-                w_regex=r""
-                for word in words:
-                    w_regex=w_regex+r"|"+one_template%word
-                rule=w_regex
-            flag,created=Flag.objects.get_or_create(name=flags_form.cleaned_data['flag_name'],rule=rule)
-            return HttpResponseRedirect("/")
-    return render_to_response('ureport/new_flag.html',dict(flags_form=flags_form),
-            context_instance=RequestContext(request))
-    

@@ -142,11 +142,3 @@ class AssignToNewPollForm(ActionForm):
             poll.start()
         return ('%d participants added to  %s poll' % (len(results), poll.name), 'success',)
 
-class FlaggedMessageForm(forms.Form):
-    contains_all_of=1
-    contains_one_of=2
-
-    flag_name=forms.CharField(max_length=50,required=True)
-    words=forms.CharField(max_length=200,required=True)
-    flags=forms.ChoiceField(choices=(  (contains_one_of,'Contains One Of'),(contains_all_of, 'Contains All Of')))
-   

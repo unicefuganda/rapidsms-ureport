@@ -15,10 +15,13 @@ class App (AppBase):
             ScriptProgress.objects.create(script=Script.objects.get(slug="ureport_autoreg"),\
                                           connection=message.connection)
             return True
-        flags=Flag.objects.all()
-        pattern_list=[[re.compile(flag.rule, re.IGNORECASE),flag] for flag in flags if flag.rule ]
-        for reg in pattern_list:
-            match= reg[0].search(message.text)
-            if match:
-                MessageFlag.objects.create(message=message,flag=reg[1])
+        flags=Flag.objects.values_list('name',flat=True).distinct()
+        one_template=r"(.*\b%s\b.*)"
+        w_regex=[]
+        for word in flags:
+            w_regex.append(one_template%str(word).strip())
+        reg =re.compile("|".join(w_regex))
+        match= reg.search(message.text)
+        if match:
+            MessageFlag.objects.create(message=message)
         return False
