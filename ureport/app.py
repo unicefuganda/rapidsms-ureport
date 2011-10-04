@@ -23,5 +23,8 @@ class App (AppBase):
         reg =re.compile("|".join(w_regex))
         match= reg.search(message.text)
         if match:
-            MessageFlag.objects.create(message=message)
+            #we assume ureport is not the first sms app in the list so there is no need to create db_message
+            if hasattr(message, 'db_message'):
+                db_message = message.db_message
+                MessageFlag.objects.create(message=db_message)
         return False
