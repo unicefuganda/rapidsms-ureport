@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Basic tests for RapidSMS-Ureport
 """
@@ -13,6 +14,7 @@ from django.core.management import call_command
 from rapidsms_xforms.models import XForm
 from poll.models import Poll
 from script.utils.handling import find_closest_match
+import re
 
 class ModelTest(TestCase): #pragma: no cover
 
@@ -51,9 +53,12 @@ class ModelTest(TestCase): #pragma: no cover
         self.assertEquals(MessageFlag.objects.count(), 1)
 
     def testyouthgrouppoll(self):
-        groups=["GEM","gem","GEM group","it is GEM"]
-        for g in groups:
-            group = find_closest_match(g, Group.objects)
+        groups=[u"GEM",u"gem",u"GEM group",u"it is GEM",u"yes GEM masaka group",u"yes GEM",u"Gem masaka",u"Girls Education Movement(GEM)",u"GEM-Uganda",u"YES GEM?§U",u"Yes Gem's chapter"]
+        for gr in groups:
+            for g in re.findall(r'\w+', gr):
+                group = find_closest_match(g, Group.objects)
+                if group:
+                    break
             self.assertEqual(self.gem_group,group)
 
 

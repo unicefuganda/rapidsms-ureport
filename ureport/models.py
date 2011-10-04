@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.db import models
 from poll.models import Poll, LocationResponseForm, STARTSWITH_PATTERN_TEMPLATE
 from rapidsms.models import Contact, Connection
@@ -126,7 +127,10 @@ def autoreg(**kwargs):
     if Group.objects.filter(name='Other uReporters').count():
         default_group = Group.objects.get(name='Other uReporters')
     if group:
-        group = find_closest_match(group, Group.objects)
+        for g in re.findall(r'\w+', group):
+            group = find_closest_match(g, Group.objects)
+            if group:
+                break
         if group:
             contact.groups.add(group)
         elif default_group:
