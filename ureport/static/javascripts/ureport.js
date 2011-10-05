@@ -45,36 +45,89 @@ var bar_opts = {
     series: [{data:[]}]
 };
 
+function weighted_average(data) {
+    weighted_sum = 0;
+    total_count=0;
+    $.each(data, function(index, value) {
+        weighted_sum += value[1] * value[0];
+        total_count += value[1];
+    });
+    return weighted_sum /total_count;
+}
+
+
+function std_dev(data) {
+    average = weighted_average(data);
+    variance = 0;
+    total_count = 0;
+    $.each(data, function(index, value){
+        variance += (Math.pow((value[0] - average), 2) * value[1]);
+        total_count += value[1];
+    });
+    return Math.sqrt(variance / total_count);
+}
+
+function clean_data(data)
+{
+    sd=std_dev(data);
+    mean=weighted_average(data);
+    max=mean+3*sd;
+    min=mean-3*sd;
+    _clean_data=[];
+    $.each(data, function(index, value) {
+       if(value[0]>min && value[0]<max )
+       {
+            _clean_data.push(value);
+       }
+    });
+    return _clean_data
+
+}
 
 function plot_histogram(data, element_id) {
     var chart;
-    max = Math.ceil(data[0][0]);
-    min = Math.floor(data[data.length - 1][0]);
-    num_bars = 6;
-    while (((max - min) % num_bars) != 0 && min >= 0) {
-        min--;
-    }
-    while (((max - min) % num_bars) != 0) {
-        max++;
-    }
-    increment = (max - min) / num_bars;
-    offset = data.length - 1;
-    bar_data = [];
-    categories = [];
-    for (i = min; i < max; i += increment) {
-        category = '' + i + '-' + (i + increment);
-        count = 0;
-        categories[categories.length] = category;
-        if (i + increment == max) {
-            // the last range should be inclusive, otherwise we won't
-            // count one of the numbers
-            increment += 1;
+    if (data.length <= 6) {
+        max = Math.ceil(data[0][0]);
+        min = Math.floor(data[data.length - 1][0]);
+        num_bars = data.length;
+        bar_data = [];
+
+        categories = [];
+        $.each(data, function(index, value) {
+            bar_data.push(Math.round(value[1]));
+            categories.push(Math.round(value[0]));
+        });
+
+    } else {
+        data=clean_data(data);
+        max = Math.ceil(data[0][0]);
+        min = Math.floor(data[data.length - 1][0]);
+        num_bars = 6;
+        while (((max - min) % num_bars) != 0 && min >= 0) {
+            min--;
         }
-        while (offset > -1 && data[offset][0] >= i && data[offset][0] < (i + increment)) {
-            count += data[offset][1];
-            offset -= 1;
+        while (((max - min) % num_bars) != 0) {
+            max++;
         }
-        bar_data[bar_data.length] = count;
+        increment = (max - min) / num_bars;
+        offset = data.length - 1;
+        bar_data = [];
+        categories = [];
+        for (i = min; i < max; i += increment) {
+            category = '' + i + '-' + (i + increment);
+            count = 0;
+            categories[categories.length] = category;
+            if (i + increment == max) {
+                // the last range should be inclusive, otherwise we won't
+                // count one of the numbers
+                increment += 1;
+            }
+            while (offset > -1 && data[offset][0] >= i && data[offset][0] < (i + increment)) {
+                count += data[offset][1];
+                offset -= 1;
+            }
+            bar_data[bar_data.length] = count;
+        }
     }
     bar_opts.series[0].data = bar_data;
     bar_opts.xAxis.categories = categories;
