@@ -20,7 +20,9 @@ class App (AppBase):
         w_regex=[]
         for word in flags:
             w_regex.append(one_template%str(word).strip())
-        reg =re.compile("|".join(w_regex))
+        if len(flags)>=2:
+            w_regex="|".join(w_regex)
+        reg =re.compile(w_regex)
         match= reg.search(message.text)
         if match:
             #we assume ureport is not the first sms app in the list so there is no need to create db_message
