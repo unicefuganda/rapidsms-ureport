@@ -1,4 +1,30 @@
 <div id="tags" class="tags">
+<style type="text/css">
+.delete-tag,.delete-tag-hover{
+    <!--FIXME: need to find a better way to do this    -->
+    background-image:url("http://ureport.ug/static/ureport/images/delete_tag.png");
+    background-repeat:no-repeat;
+    width:14px;
+    height:14px;
+    display:inline-block;
+    vertical-align:absmiddle;
+    margin-top:1px;
+    padding:0px;
+}
+
+.delete-tag{
+    background-position:0 -30px;
+}
+
+.default{
+    background-position:0 -90px;
+}
+
+.delete-tag-hover {
+    cursor:pointer;
+    background-position:0 -4px;
+    }
+    </style>
 <div id="tagcontent">
 {% for tag in tags%}
     <tt id="tag{{ forloop.counter0 }}" class="{{ tag.class }}">
