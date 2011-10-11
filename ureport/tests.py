@@ -49,7 +49,13 @@ class ModelTest(TestCase): #pragma: no cover
         #create flagged messages
         #reload the connection object
         connection=Connection.objects.all()[0]
-        incomingmessage = self.fakeIncoming('My village is being invaded by an army of zombies',self.connection)
+        incomingmessage1 = self.fakeIncoming('My village is being invaded by an army of zombies',self.connection)
+        incomingmessage2 = self.fakeIncoming('yes',self.connection)
+        #delete all flags
+        flags=Flag.objects.all()
+        for flag in flags:
+            flag.delete()
+        incomingmessage3 = self.fakeIncoming('yes please',self.connection)
         self.assertEquals(MessageFlag.objects.count(), 1)
 
     def testyouthgrouppoll(self):

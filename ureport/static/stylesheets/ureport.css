@@ -386,29 +386,7 @@ div#visual{
     background-position: center center;
 }
 
-.delete-tag,.delete-tag-hover{
-    background-image:url(../images/delete_tag.png);
-    background-repeat:no-repeat;
-    width:14px;
-    height:14px;
-    display:inline-block;
-    vertical-align:absmiddle;
-    margin-top:1px;
-    padding:0px;
-}
 
-.delete-tag{
-    background-position:0 -30px;
-}
-
-.default{
-    background-position:0 -90px;
-}
-
-.delete-tag-hover {
-    cursor:pointer;
-    background-position:0 -4px;
-}
 
 #columns #column0 {
     float: left;
