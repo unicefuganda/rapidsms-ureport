@@ -32,8 +32,22 @@ class ModelTest(TestCase): #pragma: no cover
         self.connection.save()
         #create message flags
         word_list=['zombies','inferi','waves','living dead','monsters']
+        word_list2=['cabbages','pumpkins']
+        all_template=r"(?=.*\b%s\b)"
+        w_regex=r""
+        for word in word_list2:
+            w_regex=w_regex+all_template%word
+        flag,created=Flag.objects.get_or_create(name="all zombies",rule=w_regex)
+        one_template=r"(.*\b%s\b.*)"
+        w_regex=[]
         for word in word_list:
-            flag=Flag.objects.create(name=word)
+            w_regex.append(one_template%str(word).strip())
+        if len(word_list)>=2:
+            rule=r"|".join(w_regex)
+        else:
+            rule=r"".join(w_regex)
+
+        flag,created=Flag.objects.get_or_create(name="one zombie",rule=rule)
         #create test group
         self.gem_group=Group.objects.create(name="GEM")
 
@@ -49,14 +63,17 @@ class ModelTest(TestCase): #pragma: no cover
         #create flagged messages
         #reload the connection object
         connection=Connection.objects.all()[0]
-        incomingmessage1 = self.fakeIncoming('My village is being invaded by an army of zombies',self.connection)
+        incomingmessage1 = self.fakeIncoming('My village pumpkins are devoured by cabbages',self.connection)
         incomingmessage2 = self.fakeIncoming('yes',self.connection)
+        incomingmessage3 = self.fakeIncoming('which are worse? zombies of inferi',self.connection)
+
+        self.assertEquals(MessageFlag.objects.count(), 2)
         #delete all flags
         flags=Flag.objects.all()
         for flag in flags:
             flag.delete()
         incomingmessage3 = self.fakeIncoming('yes please',self.connection)
-        self.assertEquals(MessageFlag.objects.count(), 1)
+        self.assertEquals(MessageFlag.objects.count(), 0)
 
     def testyouthgrouppoll(self):
         groups=[u"GEM",u"gem",u"GEM group",u"it is GEM",u"yes GEM masaka group",u"yes GEM",u"Gem masaka",u"Girls Education Movement(GEM)",u"GEM-Uganda",u"YES GEM?§U",u"Yes Gem's chapter"]

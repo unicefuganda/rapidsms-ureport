@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from models import MessageFlag
 from rapidsms.models import Contact
 from poll.models import Poll
@@ -37,9 +38,6 @@ def retrieve_poll(request, pks=None):
         return Poll.objects.filter(pk__in=[pks]).exclude(pk__in=script_polls)
 
 def get_flagged_messages(**kwargs):
-    request = kwargs.pop('request')
-    if request.user.is_authenticated():
-        return MessageFlag.objects.select_related().filter( message__connection__contact__groups__in=request.user.groups.all()).distinct()
-
+  
     return MessageFlag.objects.all()
 

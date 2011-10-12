@@ -1,0 +1,35 @@
+{% extends 'generic/partials/partial_row.html' %}
+{% block remaining_row_content %}
+{% load extra_tags %}
+<td>
+    <span class="textmessage">
+    {{ object.message.text }}
+    </span>
+</td>
+<td><span class="small">
+        {% if object.message.connection.contact %}
+            {{ object.message.connection.contact.name }} ({% endif %}{{ object.message.message.connection.identity }}{% if object.message.connection.contact %}){% endif %}
+    <ul>
+        <li>
+            <a href="/contact/{{ object.message.connection.pk }}/message_history/">
+                Show history
+            </a>
+        </li>
+    </ul>
+    </span>
+</td>
+<td>
+    <span class="small">
+        {{ object.message.date|date:"m/d/Y H:i:s" }}
+    </span>
+</td>
+
+<td>
+   {% for mf in   object.message.flags.all %}
+<ul >
+ <li><a href="/flags/{{ mf.flag.pk }}/messages/"/> {{ mf.flag.name }}</a></li>
+       </ul>
+{% endfor %}
+
+</td>
+{% endblock %}
