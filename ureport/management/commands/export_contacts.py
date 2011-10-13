@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 import traceback
 import os
+from script.models import ScriptSession
 from ureport.settings import UREPORT_ROOT
 from rapidsms.models import Contact
 from django.utils.datastructures import SortedDict
@@ -50,6 +51,15 @@ class Command(BaseCommand):
                         export_data['group'] = contact.groups.all()[0].name
                     else:
                         export_data['group'] = 'N/A'
+                    if ScriptSession.objects.filter(connection__contact=contact).exists():
+                         export_data["join date"]=ScriptSession.objects.filter(connection__contact=contact)[0].start_time
+
+                    elif contact.default_connection and contact.default_connection.messages.exists():
+                        export_data["join date"]= contact.default_connection.messages.order_by('date')[0].date
+                    else:
+                        export_data["join date"]="N/A"
+
+                    export_data["Total Poll Responses"]=contact.responses.count()
 
                     export_data_list.append(export_data)
 
@@ -108,6 +118,8 @@ class Command(BaseCommand):
                             response_export_data['question']=response.poll.question
                         else:
                             response_export_data['question']=''
+
+
 
                         response_data_list.append(response_export_data)
                 ExcelResponse(response_data_list,output_name=excel_file_path,write_to_file=True)
