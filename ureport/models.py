@@ -51,9 +51,7 @@ class Flag(models.Model):
     a Message flag
     """
     name=models.CharField(max_length=50,unique=True)
-    rule=models.CharField(max_length=200,null=True)
-    words=models.CharField(max_length=200,null=True)
-    
+
     def get_messages(self):
         message_flags=self.messages.values_list('message',flat=True)
         return Message.objects.filter(pk__in=message_flags)
@@ -67,9 +65,7 @@ class MessageFlag(models.Model):
     message = models.ForeignKey(Message, related_name='flags')
     flag=models.ForeignKey(Flag,related_name="messages",null=True)
 
-    def flags(self):
-        mf=MessageFlag.objects.filter(message=self.message).values_list("flag",flat=True)
-        return Flag.objects.filter(pk__in=mf)
+    
 def parse_district_value(value):
     location_template = STARTSWITH_PATTERN_TEMPLATE % '[a-zA-Z]*'
     regex = re.compile(location_template)

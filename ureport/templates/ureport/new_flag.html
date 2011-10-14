@@ -13,10 +13,10 @@
     <div>
     <h3>All Flags</h3>
     <table width="100%">
-    <thead><tr><td>name</td> <td>words</td> <td>messages</td> <td></td></tr></thead>
+    <thead><tr><td>name</td> <td>messages</td> <td></td></tr></thead>
     {% for flag in all_flags %}
 
-<tr><td>{{flag.name}}</td> <td>{{ flag.words }}</td> <td><a href="/flags/{{ flag.pk }}/messages/">messages</a></td><a href="/flags/{{ flag.pk }}/delete/">delete</a> <td></td></tr>
+<tr><td>{{flag.name}}</td>  <td><a href="/flags/{{ flag.pk }}/messages/">messages</a></td><td><a href="/flags/{{ flag.pk }}/delete/">delete</a> </td></tr>
     {% endfor %}
     </table>
     </div>

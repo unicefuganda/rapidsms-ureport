@@ -17,4 +17,10 @@
 {% endblock %}
 {% block content %}
 {{ block.super }}
+
+    <div class="buttons">
+    <a href="{% url ureport.views.create_flags %}" style="float:left">
+      <img border="0" src="/static/rapidsms/icons/silk/add.png" alt=""/>Add New Flag
+    </a>
+    </div>
 {% endblock %}

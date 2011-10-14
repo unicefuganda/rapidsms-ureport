@@ -560,26 +560,7 @@ def create_flags(request):
     if request.method=='POST':
         flags_form=FlaggedMessageForm(request.POST)
         if flags_form.is_valid():
-            words=flags_form.cleaned_data['words'].replace(','," ").split()
-            if flags_form.cleaned_data['flags']==u"1":
-                all_template=r"(?=.*\b%s\b)"
-                w_regex=r""
-                for word in words:
-                    w_regex=w_regex+all_template%word
-                rule=w_regex
-
-
-            elif flags_form.cleaned_data['flags']==u"2":
-                one_template=r"(.*\b%s\b.*)"
-                w_regex=[]
-                for word in words:
-                    w_regex.append(one_template%str(word).strip())
-                if len(w_regex)>=2:
-                    rule=r"|".join(w_regex)
-                else:
-                    rule=r"".join(w_regex)
-
-            flag,created=Flag.objects.get_or_create(name=flags_form.cleaned_data['flag_name'],rule=rule,words="".join(words))
+            flags_form.save()
             return HttpResponseRedirect("/flaggedmessages")
     return render_to_response('ureport/new_flag.html',dict(flags_form=flags_form,all_flags=all_flags),
             context_instance=RequestContext(request))
@@ -591,4 +572,3 @@ def delete_flag(request,flag_pk):
         return HttpResponse("Success")
     else:
         return HttpResponse("Failed")
-    
