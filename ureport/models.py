@@ -120,18 +120,18 @@ def autoreg(**kwargs):
     if village:
         contact.village = find_closest_match(village, Location.objects)
 
-    group = find_best_response(session, youthgrouppoll)
+    group_to_match = find_best_response(session, youthgrouppoll)
     default_group = None
     if Group.objects.filter(name='Other uReporters').count():
         default_group = Group.objects.get(name='Other uReporters')
-    if group:
-        for g in re.findall(r'\w+', group):
+    if group_to_match:
+        for g in re.findall(r'\w+', group_to_match):
             group = find_closest_match(g, Group.objects)
             if group:
+                contact.groups.add(group)
                 break
-        if group:
-            contact.groups.add(group)
-        elif default_group:
+                
+        if default_group:
             contact.groups.add(default_group)
     elif default_group:
         contact.groups.add(default_group)
