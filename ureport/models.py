@@ -84,11 +84,12 @@ Poll.register_poll_type('district', 'District Response', parse_district_value, d
 
 def autoreg(**kwargs):
     connection = kwargs['connection']
-    connection.contact = Contact.objects.create(name='Anonymous User')
-    connection.save()
     progress = kwargs['sender']
     if not progress.script.slug == 'ureport_autoreg':
         return
+
+    connection.contact = Contact.objects.create(name='Anonymous User')
+    connection.save()
     session = ScriptSession.objects.filter(script=progress.script, connection=connection).order_by('-end_time')[0]
     script = progress.script
     youthgrouppoll = script.steps.get(order=1).poll
