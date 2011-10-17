@@ -26,6 +26,11 @@ class Command(BaseCommand):
                     print "adding " + contact.name
                     export_data = SortedDict()
                     export_data['name'] = contact.name
+                    if contact.default_connection:
+                        export_data['mobile']=contact.default_connection.identity
+                    else:
+                        export_data['mobile']="N/A"
+                        
                     if contact.gender:
                         export_data['sex'] = contact.gender
                     else:
