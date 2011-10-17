@@ -572,3 +572,7 @@ def delete_flag(request,flag_pk):
         return HttpResponse("Success")
     else:
         return HttpResponse("Failed")
+
+def ureport_home(request):
+    return render_to_response('ureport/home.html',{},
+            context_instance=RequestContext(request))
