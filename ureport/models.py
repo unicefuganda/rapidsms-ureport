@@ -51,7 +51,7 @@ class Flag(models.Model):
     a Message flag
     """
     name=models.CharField(max_length=50,unique=True)
-    
+
     def get_messages(self):
         message_flags=self.messages.values_list('message',flat=True)
         return Message.objects.filter(pk__in=message_flags)
@@ -65,9 +65,7 @@ class MessageFlag(models.Model):
     message = models.ForeignKey(Message, related_name='flags')
     flag=models.ForeignKey(Flag,related_name="messages",null=True)
 
-    def flags(self):
-        mf=MessageFlag.objects.filter(message=self.message).values_list("flag",flat=True)
-        return Flag.objects.filter(pk__in=mf)
+    
 def parse_district_value(value):
     location_template = STARTSWITH_PATTERN_TEMPLATE % '[a-zA-Z]*'
     regex = re.compile(location_template)
@@ -123,18 +121,18 @@ def autoreg(**kwargs):
     if village:
         contact.village = find_closest_match(village, Location.objects)
 
-    group = find_best_response(session, youthgrouppoll)
+    group_to_match = find_best_response(session, youthgrouppoll)
     default_group = None
     if Group.objects.filter(name='Other uReporters').count():
         default_group = Group.objects.get(name='Other uReporters')
-    if group:
-        for g in re.findall(r'\w+', group):
+    if group_to_match:
+        for g in re.findall(r'\w+', group_to_match):
             group = find_closest_match(g, Group.objects)
             if group:
+                contact.groups.add(group)
                 break
-        if group:
-            contact.groups.add(group)
-        elif default_group:
+                
+        if default_group:
             contact.groups.add(default_group)
     elif default_group:
         contact.groups.add(default_group)

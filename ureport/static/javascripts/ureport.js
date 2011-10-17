@@ -40,9 +40,12 @@ var bar_opts = {
     subtitle: {text: ''},
     xAxis: {categories: []},
     yAxis: {min: 0,title: {text: 'Count'}},
+    legend: false,
+    credits:false,
     tooltip: {formatter: function() {return '' + this.x + ': ' + this.y;}},
     plotOptions: {column: {pointPadding: 0.2,borderWidth: 0}},
-    series: [{data:[]}]
+    series: [{data:[]}],
+    
 };
 
 function weighted_average(data) {
@@ -84,55 +87,67 @@ function clean_data(data)
 
 }
 
+function make_hist_plottable(data,bar_data,categories)
+{
+    // reverse the list since it is returning in descending order
+    data=data.reverse();
+    max = Math.ceil(data[0][0]);
+    min = Math.floor(data[data.length - 1][0]);
+    num_bars = data.length;
+
+    $.each(data, function(index, value) {
+        bar_data.push(Math.round(value[1]));
+        categories.push(Math.round(value[0]));
+    });
+
+}
 function plot_histogram(data, element_id) {
     var chart;
-    if (data.length <= 6) {
-        max = Math.ceil(data[0][0]);
-        min = Math.floor(data[data.length - 1][0]);
-        num_bars = data.length;
-        bar_data = [];
-
-        categories = [];
-        $.each(data, function(index, value) {
-            bar_data.push(Math.round(value[1]));
-            categories.push(Math.round(value[0]));
-        });
+    num_bars = 6;
+    bar_data = [];
+    categories = [];
+    if (data.length <= num_bars) {
+        make_hist_plottable(data, bar_data, categories)
 
     } else {
-        data=clean_data(data);
-        max = Math.ceil(data[0][0]);
-        min = Math.floor(data[data.length - 1][0]);
-        num_bars = 6;
-        while (((max - min) % num_bars) != 0 && min >= 0) {
-            min--;
+        data = clean_data(data);
+        if (data.length <= num_bars) {
+            make_hist_plottable(data, bar_data, categories)
+
         }
-        while (((max - min) % num_bars) != 0) {
-            max++;
-        }
-        increment = (max - min) / num_bars;
-        offset = data.length - 1;
-        bar_data = [];
-        categories = [];
-        for (i = min; i < max; i += increment) {
-            category = '' + i + '-' + (i + increment);
-            count = 0;
-            categories[categories.length] = category;
-            if (i + increment == max) {
-                // the last range should be inclusive, otherwise we won't
-                // count one of the numbers
-                increment += 1;
+        else {
+            max = Math.ceil(data[0][0]);
+            min = Math.floor(data[data.length - 1][0]);
+
+            while (((max - min) % num_bars) != 0 && min >= 0) {
+                min--;
             }
-            while (offset > -1 && data[offset][0] >= i && data[offset][0] < (i + increment)) {
-                count += data[offset][1];
-                offset -= 1;
+            while (((max - min) % num_bars) != 0) {
+                max++;
             }
-            bar_data[bar_data.length] = count;
+            increment = (max - min) / num_bars;
+            offset = data.length - 1;
+            for (i = min; i < max; i += increment) {
+                category = '' + i + '-' + (i + increment);
+                count = 0;
+                categories[categories.length] = category;
+                if (i + increment == max) {
+                    // the last range should be inclusive, otherwise we won't
+                    // count one of the numbers
+                    increment += 1;
+                }
+                while (offset > -1 && data[offset][0] >= i && data[offset][0] < (i + increment)) {
+                    count += data[offset][1];
+                    offset -= 1;
+                }
+                bar_data[bar_data.length] = count;
+            }
         }
+        bar_opts.series[0].data = bar_data;
+        bar_opts.xAxis.categories = categories;
+        bar_opts.chart.renderTo = element_id;
+        chart = new Highcharts.Chart(bar_opts);
     }
-    bar_opts.series[0].data = bar_data;
-    bar_opts.xAxis.categories = categories;
-    bar_opts.chart.renderTo = element_id;
-    chart = new Highcharts.Chart(bar_opts);
 }
 
 

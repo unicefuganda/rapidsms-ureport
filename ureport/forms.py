@@ -1,4 +1,6 @@
+# -*- coding: utf-8 -*-
 from django import forms
+from models import Flag
 from rapidsms.models import Contact, Connection
 from django.db.models import Q
 from django.forms.widgets import HiddenInput
@@ -142,3 +144,7 @@ class AssignToNewPollForm(ActionForm):
             poll.start()
         return ('%d participants added to  %s poll' % (len(results), poll.name), 'success',)
 
+class FlaggedMessageForm(forms.ModelForm):
+    class Meta:
+        model = Flag
+   

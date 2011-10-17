@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+{% load region_tags %}
+{% load tabs_tags %}
+{% load i18n %}
+<html lang="en">
+<head>
+    <title>Ureport | {% block page_title %}{% endblock %}</title>
+
+    {% block stylesheets %}
+
+        <link rel="stylesheet" type="text/css"
+              href="{{ MEDIA_URL }}ureport/stylesheets/bootstrap/bootstrap.min.css">
+        <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/splits.css" />
+        <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/modules.css" />
+        <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/tables.css" />
+        <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/forms.css" />
+        <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/icons.css" />
+        <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/ureport.css"/>
+       
+        <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+            <!--[if lt IE 9]>
+              <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+            <![endif]-->
+
+
+
+    {% endblock %}
+
+    {% block javascripts %}
+       <script type="text/javascript" src="{{ MEDIA_URL }}rapidsms/javascripts/jquery-1.3.2.min.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}rapidsms/javascripts/collapse.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}generic/javascripts/jquery-ui-1.8.11.custom.min.js"></script>
+        
+            <script type="text/javascript">
+
+              var _gaq = _gaq || [];
+              _gaq.push(['_setAccount', 'UA-23521720-1']);
+              _gaq.push(['_trackPageview']);
+
+              (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+              })();
+
+            </script>
+    {%endblock %}
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+
+
+            {% block auth %}
+            <div id="auth">{% if user.is_authenticated %}
+                <a href="{% url rapidsms-logout %}">Log out {{ user.username }}</a>{% else %}
+                <a href="{% url rapidsms-login %}">Log in</a>{% endif %}
+            </div>
+            {% endblock %}
+           <div class="clear"></div>
+            <ul id="tabs">{% for tab in tabs %}
+                <li class="tab{% if tab.is_active %} active{% endif %}">
+                    <a href="{{ tab.url }}"><span>{{ tab.caption }}</span></a>
+                </li>{% endfor %}
+            </ul>
+            {% block page_tabs %}
+            {% endblock %}
+           
+        </div>
+    </div>
+
+ <div class="container" style="margin-top:130px;">
+    <section class="content">
+        {% block content %}
+        {% endblock %}
+    </section>
+</div>
+    <footer>
+            <p>&copy; Unicef Uganda 2011</p>
+          </footer>
+
+</div>
+</body>
+</html>

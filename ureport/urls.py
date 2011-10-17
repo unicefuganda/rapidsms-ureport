@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.conf.urls.defaults import *
 from ureport.views import *
 from ureport.utils import get_contacts, get_polls ,get_script_polls
@@ -9,6 +10,8 @@ from unregister.forms import BlacklistForm
 from poll.models import *
 from rapidsms_httprouter.models import Message
 from contact.utils import  get_mass_messages,get_messages
+from utils import get_flagged_messages
+from models import MessageFlag
 
 urlpatterns = patterns('',
     # dashboard view for viewing all poll reports in one place
@@ -126,8 +129,29 @@ urlpatterns = patterns('',
       'selectable':False,
     }),
 
-      
-    
+    #flagged messages
+    url(r'^flaggedmessages/$', login_required(generic), {
+      'model':MessageFlag,
+      'queryset':get_flagged_messages,
+      'objects_per_page':10,
+      'results_title':'Flagged Messages',
+      'selectable':False,
+      'partial_row':'ureport/partials/messages/flagged_message_row.html',
+      'base_template':'ureport/flagged_message_base.html',
+      'columns':[('Message', True, 'message__text', SimpleSorter()),
+                 ('Sender Information', True, 'message__connection__contact__name', SimpleSorter(),),
+                 ('Date', True, 'message__date', SimpleSorter(),),
+                 ('Flags', False, 'message__flagged', None,),
+
+                 ],
+      'sort_column':'date',
+      'sort_ascending':False,
+    }, name="flaggedmessages"),
+
+    url(r"^flags/(\d+)/messages/$", view_flagged_with, name="flagged_with"),
+     url(r"^flags/new/$", create_flags ,name="flags_new"),
+     url(r'^flags/(?P<flag_pk>\d+)/delete/',delete_flag,name="delete_flag"),
+
     # view responses for a poll (based on generic rather than built-in poll view
     url(r"^(\d+)/responses/$", view_responses, name="responses"),
 
