@@ -353,4 +353,5 @@ div.why-placeholder span{
 }
 .step_txt{
     color:#7dafc3;
+    min-height: 42px;
 }
