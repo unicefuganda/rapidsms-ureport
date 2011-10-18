@@ -72,11 +72,12 @@ div.why-placeholder span {
 .why-join ul {
     margin-top: 0px;
     background-color: #fae6d9;
-    padding: 25px;
+    padding: 30px;
 }
 
 .why-join ul li {
     list-style: square outside;
+    padding-bottom: 2px;
     color: #07668c;
 }
 
@@ -350,7 +351,8 @@ div.why-placeholder span {
     width:350px;
     height:300px;
     float:right;
-    border-bottom: 1px solid  
+    border-bottom: 1px solid #9b9b9b;
+    margin-left:10px;
 }
 
 .step_name
@@ -359,4 +361,10 @@ div.why-placeholder span {
 }
 .step_txt{
     color:#7dafc3;
+    min-height: 42px;
+}
+.step img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
