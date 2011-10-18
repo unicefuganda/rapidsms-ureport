@@ -35,6 +35,7 @@ a {
     margin-left: auto;
     margin-right: auto;
 }
+
 div.why-placeholder{
     background:#fae6d9 url('../images/why_join.png') no-repeat right;
     height: 66px;
@@ -54,10 +55,11 @@ div.why-placeholder span{
 .why-join ul{
     margin-top: 0px;
     background-color: #fae6d9;
-    padding: 25px;
+    padding: 30px;
 }
 .why-join ul li{
     list-style: square outside;
+    padding-bottom: 2px;
     color: #07668c;
 }
 /*for the spanned text*/
@@ -352,6 +354,7 @@ div.why-placeholder span{
 }
 .step_txt{
     color:#7dafc3;
+    min-height: 42px;
 }
 .step img{
     display: block;
