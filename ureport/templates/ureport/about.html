@@ -2,7 +2,7 @@
 {% block page_title %} About Ureport {% endblock %}
 {% block content %}
 <div class="about"">
-    <h3 class="about_header">About Ureport <img src="{{ MEDIA_URL }}ureport/images/shout_out.png"/></h3>
+    <div class="about_header"><span class="about_title">About Ureport</span> <img class="ab_img"src="{{ MEDIA_URL }}ureport/images/shout_out.png"/></div>
 
 
     <div class="page">
@@ -13,8 +13,9 @@
         with other community leaders for positive change.
     </p>
     <div class="pointers">
-        <h3>Ureport is made up of:</h3>
-        <ul>
+
+        <ul class="about_quoted">
+             <span class="about_subtitle">Ureport is made up of:</span>
             <li>
                 Weekly SMS messages and polls to and from
                 a growing community of Ureporters
@@ -30,8 +31,8 @@
         </ul>
     </div>
     <div class="mission">
-        <h3>The mission of Ureport</h3>
-        <p>
+        <span class="about_subtitle">The mission of Ureport</span>
+        <p >
             Inspire action within our communities to unite
             and share the responsibility of creating a better
             environment for eveyone.<br/>
