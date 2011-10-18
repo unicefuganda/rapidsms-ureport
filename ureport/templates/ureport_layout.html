@@ -21,6 +21,9 @@
         <div class="banner">
             <span class="brand">UReport</span>
             <span class="tagline">VOICE MATTERS</span>
+            {% load humanize %}
+            <span id="span_info"><span id="span_total">{{ total_ureporters|intcomma }}</span> Members to date
+                Join us Now</span>
         </div>
         <div class="content">
             {% block content %}
