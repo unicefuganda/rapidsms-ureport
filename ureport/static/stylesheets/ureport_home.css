@@ -317,3 +317,18 @@ a {
     font-size:20px;
 
 }
+
+.step{
+    width:350px;
+    height:300px;
+    float:right;
+    border-bottom: 1px solid  
+}
+
+.step_name
+{
+    color:#000000;
+}
+.step_txt{
+    color:#7dafc3;
+}
