@@ -183,9 +183,39 @@ body{
 }
 .about_header{
     border-bottom: 2px solid #e3713a;
+    padding-bottom: 0px;
 }
 
+.ab_img{
+    position:relative;
+    top:4px;
+}
+.about_title{
+    font-weight:bold;
+    font-size:17px;
+}
 
+.about_subtitle
+{
+    font-size:12px;
+    color:#0e6c90;
+    margin-bottom:10px;
+
+}
+.about_quoted{
+    border-top: 2px solid #d7d7d7;
+    border-bottom: 2px solid #d7d7d7;
+     width:200px;
+    padding-top:10px;
+    padding-bottom:10px;
+    padding-left:10px;
+
+}
+.about_quoted li{
+
+    margin-left:25px;
+    margin-top:8px;
+}
 .poll-title {
 	margin-bottom:5px;
 	margin-top:5px;
