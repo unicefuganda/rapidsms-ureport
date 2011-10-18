@@ -27,6 +27,8 @@ body{
 }
 .why-join{
     width:250px;
+    margin-left: auto;
+    margin-right: auto;
 }
 .why-join h3{
     background:#fae6d9 url('../images/why_join.png') no-repeat right;
