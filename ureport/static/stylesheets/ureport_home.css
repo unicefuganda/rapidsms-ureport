@@ -25,6 +25,19 @@ body{
     width: 720px;
     padding: 10px;
 }
+.why-join{
+    width:250px;
+}
+.why-join h3{
+    background:#fae6d9 url('../images/why_join.png') no-repeat right;
+    height: 66px;
+    margin-bottom: 2px;
+}
+.why-join ul{
+    margin-top: 0px;
+    background-color: #fae6d9;
+    padding: 25px;
+}
 
 .brand {
     display:none;
