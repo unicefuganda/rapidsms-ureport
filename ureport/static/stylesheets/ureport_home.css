@@ -23,6 +23,9 @@ a {
 	height:91px;
 	border-bottom: solid 3px #bbd8e7;
 }
+.banner a{
+    text-decoration: none;
+}
 
 #span_info {
     border-bottom: 1px solid #BBD8E7;
