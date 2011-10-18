@@ -1,5 +1,12 @@
 {% extends "ureport_layout.html" %}
 
 {% block content %}
-Home
+<div id="viz">
+</div>
+<script language="javascript">
+    $(document).ready(function() {
+        $('#viz').load('/bestviz?pks=l&module=true');
+    });
+</script>
+
 {%endblock%}

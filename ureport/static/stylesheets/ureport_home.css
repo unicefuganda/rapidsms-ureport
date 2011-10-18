@@ -22,7 +22,8 @@ body{
 
 .content {
     float: right;
-    width: 740px;
+    width: 720px;
+    padding: 10px;
 }
 
 .brand {
@@ -166,4 +167,31 @@ body{
 
 .footerlinks ul, .footerlinks p {
     margin: 0;
+}
+
+#viz {
+}
+
+.poll-heading {
+    padding-left:70px;
+    background: url('../images/header_logo.png') no-repeat;
+    border-bottom: solid 1px black;	
+}
+
+.poll-title {
+	margin-bottom:5px;
+	margin-top:5px;
+	font-size:14pt;
+	color:#00638a;
+}
+
+.poll-date {
+    color: #7d7d80;
+    font-size: 14px;
+}
+
+.poll-question {
+	margin-bottom:5px;
+	margin-top:5px;
+	font-size:16px;
 }
