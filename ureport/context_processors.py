@@ -4,6 +4,7 @@ and returns a dictionary to add to the context.
 """
 from rapidsms.models import Contact
 from unregister.models import Blacklist
+from poll.models import Poll
 
 def voices(request):
     """
@@ -11,5 +12,6 @@ def voices(request):
     """
     return {
         'total_ureporters':Contact.objects.exclude(connection__identity__in=Blacklist.objects.values_list('connection__identity')).count(),
+        'polls':Poll.objects.exclude(contacts=None, start_date=None).order_by('-start_date'),
     }
 
