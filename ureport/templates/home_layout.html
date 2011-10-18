@@ -1,80 +1,86 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-{% load region_tags %}
-{% load tabs_tags %}
-{% load i18n %}
 <html lang="en">
 <head>
-    <title>Ureport --Your matters! {% block page_title %}{% endblock %}</title>
+    <title>Ureport - {% block page_title %}Voice Matters{% endblock %}</title>
 
     {% block stylesheets %}
-     
-        <link rel="stylesheet" type="text/css"
-              href="{{ MEDIA_URL }}ureport/stylesheets/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/ureport_home.css">
-        <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
-            <!--[if lt IE 9]>
-              <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-            <![endif]-->
-
-
-
     {% endblock %}
 
     {% block javascripts %}
         <script type="text/javascript" src="{{ MEDIA_URL }}rapidsms/javascripts/jquery-1.3.2.min.js"></script>
         <script type="text/javascript" src="{{ MEDIA_URL }}rapidsms/javascripts/collapse.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}generic/javascripts/jquery-ui-1.8.11.custom.min.js"></script>    
+        <script type="text/javascript" src="{{ MEDIA_URL }}generic/javascripts/jquery-ui-1.8.11.custom.min.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/ureport.js"></script>    
     {% endblock %}
 </head>
 <body>
+    <div class="container container-fluid" style="background-color:#ffffff;">
+        <div class="banner">
+            <span class="brand">UReport</span>
+            <span class="tagline">VOICE MATTERS</span>
+        </div>
+        <div class="content">
+            {% block content %}
+                <!--  MAIN CONTENT GOES HERE -->
+            {% endblock %}
+        </div>
 
-<div class="container container-fluid" style="background-color:#ffffff;">
-    <div class="row">
-        <div class="topbar" style="width:100%;">
-            <div class="custom_fill_left" style="overflow: visible;">
-             <a href="/"><img src="{{ MEDIA_URL }}ureport/images/logo.png"></a>
-
-
+        <div class="sidebar">
+            <div class="nav-side">
+                <ul>
+                <li><a href="#">HOME</a></li>
+                <li><a href="#">POLL RESULTS</a></li>
+                <li><a href="#">ABOUT UREPORT</a></li>
+                <li><a href="#">HOW TO JOIN</a></li>
+                </ul>
             </div>
-            <div class="custom_fill_right" style="width:50%;float:right;margin-top:-105px;height:105px;margin-right:-20px;overflow-x: visible;">
-            
-               <img src="{{ MEDIA_URL }}ureport/images/bd.png" style="float:left;margin-left:-50px;">
+            <div class="intro">
+                <p>
+                    Ureport is a free SMS-based system that allows young Ugandans to speak out on what's happening
+                    in communities across the country, and work together with other community leaders for positive change.
+                </p>
+            </div>
+            <div class="join">
+                <img src="{{ MEDIA_URL }}ureport/images/join_us.png"/>
+            </div>
+            <div class="quotebox">
+                <div class="title">
+                YOUR SAY:
+                </div>
+                <div class="topquote">
+                How are women treated in your community?
+                </div>
+                <div class="bottomquote">
+                My husband does not treat me equally and I feel inferior.
+                </div>
+                <div class="quoted">
+                -Ureporter from Masaka
+                </div>
             </div>
         </div>
+
+	    <div class="footer">
+	       <div class="sponsors">
+	           Supported by:<img src="{{ MEDIA_URL }}ureport/images/unicef_logo.png"/>
+	       </div>
+	       <div class="footerlinks">
+	           <div class="nav-bottom">
+                <ul>
+	                <li class="first"><a href="#">HOME</a></li>
+	                <li><a href="#">POLL RESULTS</a></li>
+	                <li><a href="#">ABOUT UREPORT</a></li>
+	                <li><a href="#">HOW TO JOIN</a></li>
+	                <li><a href="#">SITE MAP</a></li>
+	                <li><a href="#">CONTACT US</a></li>
+                </ul>
+	           </div>
+	           <p>Copyright &copy; 2010 - 2011 UNICEF et al.</p>
+	           <p>RapidSMS and Ureport are available under the BSD license.</p>
+	        </div>
+	    </div>
     </div>
-    <div class="sidebar" style="padding-top:26px;">
-        <nav class="nav-side">
-            <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Poll Results</a></li>
-            <li><a href="#">About UReport</a></li>
-            <li><a href="#">How to Join</a></li>
-            </ul>
-        </nav>
-
-        <div class="intro">
-            <blockquote>
-            <p>
-                Ureport is a free SMS-based system that allows young Ugandans to speak out on what's happening
-                in communities across the country, and work together with other community leaders for positive change.
-            </p>
-                </blockquote>
-        </div>
-        <div class="join">
-            <img src="images/join_us.png"/>
-        </div>
-    </div>
-
-
-    
-
-
-
-</div>
-
- <footer>
-            <p>&copy; Unicef Uganda 2011</p>
-          </footer>
 </body>
 </html>
