@@ -40,6 +40,10 @@
                 <li><a href="/join/">HOW TO JOIN</a></li>
                 </ul>
             </div>
+
+            {% block sidecontent %}
+
+
             <div class="intro">
                 <p>
                     Ureport is a free SMS-based system that allows young Ugandans to speak out on what's happening
@@ -49,6 +53,7 @@
             <div class="join">
                 <img src="{{ MEDIA_URL }}ureport/images/join_us.png"/>
             </div>
+
             <div class="quotebox">
                 <div class="title">
                 YOUR SAY:
@@ -63,6 +68,7 @@
                 -Ureporter from Masaka
                 </div>
             </div>
+            {% endblock %}
         </div>
 
 	    <div class="footer">

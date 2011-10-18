@@ -30,15 +30,26 @@ a {
     padding: 10px;
 }
 .why-join{
-    width:250px;
+    width:200px;
+    padding-top: 5px;
     margin-left: auto;
     margin-right: auto;
 }
-.why-join h3{
+div.why-placeholder{
     background:#fae6d9 url('../images/why_join.png') no-repeat right;
     height: 66px;
     margin-bottom: 2px;
+    margin-top:5px;
 }
+div.why-placeholder span{
+    font-size: 20px;
+    padding-top: 10px;
+    width:85px;
+    height:50px;
+    margin-left:12px;
+    display: block;
+}
+
 .why-join ul{
     margin-top: 0px;
     background-color: #fae6d9;
