@@ -168,15 +168,10 @@ body{
 .footerlinks ul, .footerlinks p {
     margin: 0;
 }
-
-#viz {
+.about_header{
+    border-bottom: 2px solid #e3713a;
 }
 
-.poll-heading {
-    padding-left:70px;
-    background: url('../images/header_logo.png') no-repeat;
-    border-bottom: solid 1px black;	
-}
 
 .poll-title {
 	margin-bottom:5px;
