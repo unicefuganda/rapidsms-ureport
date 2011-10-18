@@ -303,3 +303,15 @@ a {
 .key li {
     padding: 2px;	
 }
+#span_info{
+    float:right;
+    width:60px;
+    margin-right:20px;
+    margin-top:10px;
+
+}
+#span_total{
+    color:#ffffff;
+    font-size:20px;
+
+}
