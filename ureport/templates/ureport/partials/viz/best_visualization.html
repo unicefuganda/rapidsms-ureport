@@ -1,10 +1,14 @@
-<span style="font-weight:bold;margin-bottom:5px;margin-top:5px;font-size:14pt;color:#00bfff">
-{{ poll.start_date|date:"d-M-Y" }} : 
+<h4 class="poll-heading">
+<span class="poll-title">
+CURRENT POLL
 </span>
-<span style="font-weight:bold;margin-bottom:5px;margin-top:5px;font-size:12pt">
+<span class="poll-date">
+ - {{ poll.start_date|date:"d/M/Y" }} : 
+</span>
+<span class="poll-question">
 {{ poll.question }}
 </span>
-
+</h4>
 {% if tags %}
 
     {% include "/ureport/partials/tag_cloud/tag_cloud.html" %}

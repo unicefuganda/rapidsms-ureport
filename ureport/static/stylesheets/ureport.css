@@ -28,13 +28,7 @@ a:visited {
     color: black;
 }
 
-tt a {
-    text-decoration:none;
-}
 
-.tags {
-    line-height:3em;
-}
 
 .module-head
 {
@@ -288,45 +282,6 @@ div.module h3 {
     font-size: 8pt;
 }
 
-.tag1 {
-    font-size: .8em;
-}
-
-.tag2 {
-    font-size: 1em;
-}
-
-.tag3 {
-    font-size: 1.2em;
-}
-
-.tag4 {
-    font-size: 1.6em;
-}
-
-.tag5 {
-    font-size: 2.0em;
-}
-
-.tag6 {
-    font-size: 2.8em;
-}
-
-.tag7 {
-    font-size: 3.6em;
-}
-
-#tag_cloud {
-    width: 400px;
-    padding: 1em;
-}
-
-#tag_cloud tt {
-    display: block;
-    text-align: center;
-    padding-top: 0em;
-    float: left;
-}
 
 #chart_polls {
     min-height:300px;
@@ -356,14 +311,7 @@ div.module h3 {
     font-family:tahoma,arial,sans-serif;
 }
 
-#tags a{
-    color:#000000;
-    padding:0;
-}
 
-#tags p>a{
-    color: #aad0d4;
-}
 
 .qns{
     margin: 0 auto;
@@ -500,4 +448,22 @@ textarea:focus {
 
 select {
   margin:0.5em 0;
+}
+
+.topbar .custom_fill
+{
+   background-color: #0098d1;
+  background-color: #0098d1;
+  background-repeat: repeat-x;
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#0098d1), to(#0098d1));
+  background-image: -moz-linear-gradient(top, #0098d1, #0098d1);
+  background-image: -ms-linear-gradient(top, #0098d1, #0098d1);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #333333), color-stop(100%, #222222));
+  background-image: -webkit-linear-gradient(top, #0098d1, #0098d1);
+  background-image: -o-linear-gradient(top, #0098d1, #0098d1);
+  background-image: linear-gradient(top, #0098d1, #0098d1);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0098d1', endColorstr='#0098d1', GradientType=0);
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
 }
