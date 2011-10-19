@@ -107,8 +107,8 @@ class AssignToPollForm(ActionForm):
     def perform(self, request, results):
         poll = self.cleaned_data['poll']
         for c in results:
+            c.categories.all().delete()
             c.poll=poll
-            c.poll.save()
             c.save()
         return ('%d responses assigned to  %s poll' % (len(results), poll.name), 'success',)
 
