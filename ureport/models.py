@@ -146,7 +146,7 @@ def autoreg(**kwargs):
     contact.save()
 
     total_ureporters = Contact.objects.exclude(connection__identity__in=Blacklist.objects.values_list('connection__identity')).count()
-    if total_ureporters % 500 == 0:
+    if total_ureporters % getattr(settings, 'USER_MILESTONE', 500) == 0:
         recipients = getattr(settings, 'ADMINS', None)
         if recipients:
             recipients = [email for name, email in recipients]
