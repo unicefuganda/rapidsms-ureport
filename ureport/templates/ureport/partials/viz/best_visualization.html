@@ -18,12 +18,14 @@ CURRENT POLL
 
 {% else %}
     {% ifequal poll.type 't' %}
-        {% if poll.is_yesno_poll %}
-            {% include "/ureport/partials/viz/choropleth.html" %}
-        {% else %}
-            {% include "/ureport/partials/viz/map.html" %}
-        {% endif %}
-        {% include "/ureport/partials/viz/piechart.html" %}
+        <div id="visual_{{ poll.pk }}">
+	        {% if poll.is_yesno_poll %}
+	            {% include "/ureport/partials/viz/choropleth.html" %}
+	        {% else %}
+	            {% include "/ureport/partials/viz/map.html" %}
+	        {% endif %}
+	        {% include "/ureport/partials/viz/piechart.html" %}
+        </div>
     {% else %}
         {% ifequal poll.type 'n' %}
 
