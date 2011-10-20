@@ -336,13 +336,17 @@ div.why-placeholder span {
     height: 400px;	
 }
 
+#map_layers {
+    position:relative;  
+}
+
 .key {
-    float: left;
     list-style-type: none;
     margin: 10px 0 0;
-    width: 80px;
+    width: 150px;
     padding-left: 0;
     position: absolute;
+    left: 0px;
     z-index: 1;	
 }
 
