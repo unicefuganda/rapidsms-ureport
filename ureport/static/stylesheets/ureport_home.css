@@ -202,7 +202,8 @@ div.why-placeholder span {
 }
 
 .sponsors img {
-    vertical-align:top
+    vertical-align:top;
+    padding-left: 20px;
 }
 
 .footerlinks {
