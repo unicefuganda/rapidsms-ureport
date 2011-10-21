@@ -50,6 +50,9 @@
             var map;
             var tiled;
             var pureCoverage = false;
+            var EVT;
+            var popups={};
+            var response;
             // pink tile avoidance
             OpenLayers.IMAGE_RELOAD_ATTEMPTS = 5;
             OpenLayers.Util.onImageLoadErrorColor = "transparent";
@@ -114,46 +117,78 @@
 
 
 
-                // support GetFeatureInfo
-                map.events.register('click', map, function (e) {
-                    document.getElementById('nodelist').innerHTML = "Loading... please wait...";
-                    var params = {
-                        REQUEST: "GetFeatureInfo",
-                        EXCEPTIONS: "application/vnd.ogc.se_xml",
-                        BBOX: map.getExtent().toBBOX(),
-                        SERVICE: "WMS",
-                        VERSION: "1.1.1",
-                        X: e.xy.x,
-                        Y: e.xy.y,
-                        INFO_FORMAT: 'text/html',
-                        QUERY_LAYERS: 'unicef:polls',
-                        FEATURE_COUNT: 50,
-                        Viewparams: 'poll:{{poll.pk}};app:{{deployment_id}}',
-                        Layers: 'unicef:polls',
-                        WIDTH: map.size.w,
-                        HEIGHT: map.size.h,
-                        format: format,
-                        styles: '',
-                        srs: "EPSG:900913"};
-                    if(map.layers[1].params.CQL_FILTER != null) {
-                        params.cql_filter = map.layers[0].params.CQL_FILTER;
-                    }
-                    if(map.layers[1].params.FILTER != null) {
-                        params.filter = map.layers[0].params.FILTER;
-                    }
-                    if(map.layers[1].params.FEATUREID) {
-                        params.featureid = map.layers[0].params.FEATUREID;
-                    }
-                    OpenLayers.loadURL("http://ureport.ug:80/geoserver/unicef/wms", params, this, setHTML);
-                    OpenLayers.Event.stop(e);
-                });
+               // support GetFeatureInfo
+        map.events.register('click', map, function (e) {
+            EVT = e;
+            var params = {
+                REQUEST: "GetFeatureInfo",
+                EXCEPTIONS: "text/plain",
+                BBOX: map.getExtent().toBBOX(),
+                SERVICE: "WMS",
+                VERSION: "1.1.1",
+
+                X: Math.round(e.xy.x),
+                Y: Math.round(e.xy.y),
+                INFO_FORMAT: 'text/plain',
+                QUERY_LAYERS: map.layers[1].params.LAYERS,
+                FEATURE_COUNT: 1,
+                Layers: 'unicef:polls',
+                VIEWPARAMS: 'poll:{{poll.pk}};app:{{deployment_id}}',
+                WIDTH: map.size.w,
+                HEIGHT: map.size.h,
+                format: format,
+                styles: map.layers[1].params.STYLES,
+                srs: map.layers[1].params.SRS};
+            // merge filters
+            if (map.layers[1].params.CQL_FILTER != null) {
+                params.cql_filter = map.layers[1].params.CQL_FILTER;
+            }
+            if (map.layers[1].params.FILTER != null) {
+                params.filter = map.layers[1].params.FILTER;
+            }
+            if (map.layers[1].params.FEATUREID) {
+                params.featureid = map.layers[1].params.FEATUREID;
+            }
+            OpenLayers.loadURL("http://ureport.ug:80/geoserver/unicef/wms", params, this, create_popup,create_popup);
+            OpenLayers.Event.stop(e);
+        });
+                
             }
 
             // sets the HTML provided into the nodelist element
-            function setHTML(response){
-                document.getElementById('nodelist').innerHTML = response.responseText;
+    function create_popup(response) {
+        var text = response.responseText;
+        response=text;
 
-            };
+        var popupId = EVT.xy.x + "," + EVT.xy.y;
+      
+        var popup = popups[popupId];
+        if (!popup || !popup.map) {
+            popup = new OpenLayers.Popup.Anchored(
+                    popupId,
+                    map.getLonLatFromPixel(EVT.xy),
+                    null,
+                    " ",
+                    null,
+                    true,
+                    function(evt) {
+                        delete popups[this.id];
+                        this.hide();
+                        OpenLayers.Event.stop(evt);
+                    }
+            );
+            popup.autoSize = true;
+            popup.useInlineStyles = false;
+            popups[popupId] = popup;
+            tiled.map.addPopup(popup, true);
+        }
+        popup.setContentHTML(popup.contentHTML + text);
+        popup.show();
+        //document.getElementById('nodelist').innerHTML = response.responseText;
+
+    }
+
+
     $(document).ready(function() {
         init_chmap();
     });
