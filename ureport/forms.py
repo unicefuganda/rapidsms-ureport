@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django import forms
-from models import Flag
+from contact.models import Flag
 from rapidsms.models import Contact, Connection
 from django.db.models import Q
 from django.forms.widgets import HiddenInput
@@ -102,21 +102,21 @@ class SearchResponsesForm(FilterForm):
 
 class AssignToPollForm(ActionForm):
     """ assigns responses to poll  """
-    poll=forms.ModelChoiceField(queryset=Poll.objects.all().order_by('name'))
+    poll = forms.ModelChoiceField(queryset=Poll.objects.all().order_by('name'))
     action_label = 'Assign selected to poll'
     def perform(self, request, results):
         poll = self.cleaned_data['poll']
         for c in results:
             c.categories.all().delete()
-            c.poll=poll
+            c.poll = poll
             c.save()
         return ('%d responses assigned to  %s poll' % (len(results), poll.name), 'success',)
 
 class AssignToNewPollForm(ActionForm):
     """ assigns contacts to poll"""
     action_label = 'Assign to New poll'
-    poll_name=forms.CharField(label="Poll Name",max_length="100")
-    POLL_TYPES=[('yn', 'Yes/No Question')]+[(c['type'],c['label']) for c in Poll.TYPE_CHOICES.values()]
+    poll_name = forms.CharField(label="Poll Name", max_length="100")
+    POLL_TYPES = [('yn', 'Yes/No Question')] + [(c['type'], c['label']) for c in Poll.TYPE_CHOICES.values()]
     poll_type = forms.ChoiceField(choices=POLL_TYPES)
     question = forms.CharField(max_length=160, required=True)
     default_response = forms.CharField(max_length=160, required=False)
@@ -124,12 +124,12 @@ class AssignToNewPollForm(ActionForm):
 
     def perform(self, request, results):
         if not len(results):
-            return ("No contacts selected","error")
+            return ("No contacts selected", "error")
         name = self.cleaned_data['poll_name']
-        poll_type=self.cleaned_data['poll_type']
-        question=self.cleaned_data.get('question').replace('%', u'\u0025')
-        default_response=self.cleaned_data['default_response']
-        start_immediately=self.cleaned_data['start_immediately']
+        poll_type = self.cleaned_data['poll_type']
+        question = self.cleaned_data.get('question').replace('%', u'\u0025')
+        default_response = self.cleaned_data['default_response']
+        start_immediately = self.cleaned_data['start_immediately']
         poll = Poll.create_with_bulk(\
                                  name=name,
                                  type=poll_type,
@@ -144,7 +144,3 @@ class AssignToNewPollForm(ActionForm):
             poll.start()
         return ('%d participants added to  %s poll' % (len(results), poll.name), 'success',)
 
-class FlaggedMessageForm(forms.ModelForm):
-    class Meta:
-        model = Flag
-   

@@ -19,7 +19,7 @@ from django.utils.datastructures import SortedDict
 
 from generic.views import generic, generic_dashboard
 
-from .models import MassText, Flag
+from contact.models import MassText, Flag
 from .utils import retrieve_poll
 from ureport.forms import *
 from generic.forms import StaticModuleForm
@@ -27,10 +27,10 @@ from generic.models import Dashboard
 from django.core.files import File
 from xlrd import open_workbook
 from uganda_common.utils import assign_backend
-from ureport.models import find_closest_match
+from script.utils.handling import find_closest_match
 from django.views.decorators.cache import cache_control
 
-from ureport.forms import FlaggedMessageForm
+from contact.forms import FlaggedMessageForm
 
 import re
 import bisect

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls.defaults import *
 from ureport.views import *
-from ureport.utils import get_contacts, get_polls ,get_script_polls
+from ureport.utils import get_contacts, get_polls , get_script_polls
 from django.contrib.auth.decorators import login_required
 from contact.forms import FreeSearchTextForm, FreeSearchForm, HandledByForm, ReplyTextForm, FlaggedForm, FlagMessageForm, DistictFilterMessageForm, GenderFilterForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm, AgeFilterForm
 from generic.views import generic, generic_row, generic_dashboard, generic_map
@@ -9,9 +9,9 @@ from generic.sorters import SimpleSorter, TupleSorter
 from unregister.forms import BlacklistForm
 from poll.models import *
 from rapidsms_httprouter.models import Message
-from contact.utils import  get_mass_messages,get_messages
+from contact.utils import  get_mass_messages, get_messages
 from utils import get_flagged_messages
-from models import MessageFlag
+from contact.models import MessageFlag
 
 urlpatterns = patterns('',
     # dashboard view for viewing all poll reports in one place
@@ -149,8 +149,8 @@ urlpatterns = patterns('',
     }, name="flaggedmessages"),
 
     url(r"^flags/(\d+)/messages/$", view_flagged_with, name="flagged_with"),
-     url(r"^flags/new/$", create_flags ,name="flags_new"),
-     url(r'^flags/(?P<flag_pk>\d+)/delete/',delete_flag,name="delete_flag"),
+     url(r"^flags/new/$", create_flags , name="flags_new"),
+     url(r'^flags/(?P<flag_pk>\d+)/delete/', delete_flag, name="delete_flag"),
 
     # view responses for a poll (based on generic rather than built-in poll view
     url(r"^(\d+)/responses/$", view_responses, name="responses"),
