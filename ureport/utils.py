@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from models import MessageFlag
+from contact.models import MessageFlag
 from rapidsms.models import Contact
 from poll.models import Poll
 from script.models import ScriptStep
@@ -29,7 +29,7 @@ def get_script_polls(**kwargs):
 #        return Poll.objects.filter(pk__in=pks)
 
 def retrieve_poll(request, pks=None):
-    script_polls = ScriptStep.objects.exclude(poll=None).values_list('poll',flat=True)
+    script_polls = ScriptStep.objects.exclude(poll=None).values_list('poll', flat=True)
     if pks == None:
         pks = request.GET.get('pks', '')
     if pks == 'l':
@@ -38,6 +38,6 @@ def retrieve_poll(request, pks=None):
         return Poll.objects.filter(pk__in=[pks]).exclude(pk__in=script_polls)
 
 def get_flagged_messages(**kwargs):
-  
+
     return MessageFlag.objects.all()
 
