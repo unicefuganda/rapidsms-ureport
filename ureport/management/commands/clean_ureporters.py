@@ -20,8 +20,8 @@ class Command(BaseCommand):
             age = str(int((datetime.datetime.now() - c.birthdate).days / 365.0)) if c.birthdate else ''
             groups = ','.join(c.groups.values_list('name',flat=True))
             msgs = []
-            for m in Message.objects.filter(connection__contact=c).order_by('date').values_list('text',flat=True):
-                msgs.append(smart_str(m.replace("\n","").replace("\r","")))
+            for m in Message.objects.filter(connection__contact=c).order_by('date'):
+                msgs.append(smart_str(m.text.replace("\n","").replace("\r","")))
                 msgs.append("%s" % m.date)
             message_history = smart_str("\t").join(msgs)
             location_pk = str(c.reporting_location.pk) if c.reporting_location else ''
