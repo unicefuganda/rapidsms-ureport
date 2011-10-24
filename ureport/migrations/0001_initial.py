@@ -16,66 +16,11 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('ureport', ['IgnoredTags'])
 
-        # Adding model 'MassText'
-        db.create_table('ureport_masstext', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('date', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, null=True, blank=True)),
-            ('text', self.gf('django.db.models.fields.TextField')()),
-        ))
-        db.send_create_signal('ureport', ['MassText'])
-
-        # Adding M2M table for field sites on 'MassText'
-        db.create_table('ureport_masstext_sites', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('masstext', models.ForeignKey(orm['ureport.masstext'], null=False)),
-            ('site', models.ForeignKey(orm['sites.site'], null=False))
-        ))
-        db.create_unique('ureport_masstext_sites', ['masstext_id', 'site_id'])
-
-        # Adding M2M table for field contacts on 'MassText'
-        db.create_table('ureport_masstext_contacts', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('masstext', models.ForeignKey(orm['ureport.masstext'], null=False)),
-            ('contact', models.ForeignKey(orm['rapidsms.contact'], null=False))
-        ))
-        db.create_unique('ureport_masstext_contacts', ['masstext_id', 'contact_id'])
-
-        # Adding model 'Flag'
-        db.create_table('ureport_flag', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=50)),
-        ))
-        db.send_create_signal('ureport', ['Flag'])
-
-        # Adding model 'MessageFlag'
-        db.create_table('ureport_messageflag', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('message', self.gf('django.db.models.fields.related.ForeignKey')(related_name='flags', to=orm['rapidsms_httprouter.Message'])),
-            ('flag', self.gf('django.db.models.fields.related.ForeignKey')(related_name='messages', null=True, to=orm['ureport.Flag'])),
-        ))
-        db.send_create_signal('ureport', ['MessageFlag'])
-
 
     def backwards(self, orm):
         
         # Deleting model 'IgnoredTags'
         db.delete_table('ureport_ignoredtags')
-
-        # Deleting model 'MassText'
-        db.delete_table('ureport_masstext')
-
-        # Removing M2M table for field sites on 'MassText'
-        db.delete_table('ureport_masstext_sites')
-
-        # Removing M2M table for field contacts on 'MassText'
-        db.delete_table('ureport_masstext_contacts')
-
-        # Deleting model 'Flag'
-        db.delete_table('ureport_flag')
-
-        # Deleting model 'MessageFlag'
-        db.delete_table('ureport_messageflag')
 
 
     models = {
@@ -168,13 +113,18 @@ class Migration(SchemaMigration):
         },
         'rapidsms.contact': {
             'Meta': {'object_name': 'Contact'},
+            'active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'birthdate': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
+            'gender': ('django.db.models.fields.CharField', [], {'max_length': '1', 'null': 'True'}),
             'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['auth.Group']", 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'language': ('django.db.models.fields.CharField', [], {'max_length': '6', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             'reporting_location': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['locations.Location']", 'null': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'contact'", 'unique': 'True', 'null': 'True', 'to': "orm['auth.User']"}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
+            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
+            'village': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'villagers'", 'null': 'True', 'to': "orm['locations.Location']"}),
+            'village_name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'})
         },
         'rapidsms_httprouter.message': {
             'Meta': {'object_name': 'Message'},
@@ -200,31 +150,11 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
-        'ureport.flag': {
-            'Meta': {'object_name': 'Flag'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'})
-        },
         'ureport.ignoredtags': {
             'Meta': {'object_name': 'IgnoredTags'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
             'poll': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['poll.Poll']"})
-        },
-        'ureport.masstext': {
-            'Meta': {'object_name': 'MassText'},
-            'contacts': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'masstexts'", 'symmetrical': 'False', 'to': "orm['rapidsms.Contact']"}),
-            'date': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'null': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'sites': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['sites.Site']", 'symmetrical': 'False'}),
-            'text': ('django.db.models.fields.TextField', [], {}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
-        },
-        'ureport.messageflag': {
-            'Meta': {'object_name': 'MessageFlag'},
-            'flag': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'messages'", 'null': 'True', 'to': "orm['ureport.Flag']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'message': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'flags'", 'to': "orm['rapidsms_httprouter.Message']"})
         }
     }
 
