@@ -182,7 +182,7 @@
              {
                render_text=render_text+"<p>uncategorized: "+String(parseFloat(jQuery(data[k]).text())*100)+"%</p>";
              }
-             else  if (jQuery(v).text() == "unknown")
+             else (jQuery(v).text() == "unknown")
              {
                render_text=render_text+"<p>unknown: "+String(parseFloat(jQuery(data[k]).text())*100)+"%</p>";
              }
