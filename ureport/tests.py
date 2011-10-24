@@ -5,7 +5,8 @@ Basic tests for RapidSMS-Ureport
 from django.contrib.auth.models import User, Group
 
 from django.test import TestCase
-from models import Flag, MessageFlag, Script
+from contact.models import Flag, MessageFlag
+from script.models import Script
 from rapidsms.models import Contact, Connection, Backend
 from rapidsms.messages.incoming import IncomingMessage
 from rapidsms_httprouter.models import Message
