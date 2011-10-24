@@ -1,4 +1,4 @@
 from django.contrib import admin
-from ureport.models import IgnoredTags,Flag
+from ureport.models import IgnoredTags
 admin.site.register(IgnoredTags)
-admin.site.register(Flag)
+

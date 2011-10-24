@@ -13,17 +13,16 @@ from script.signals import *
 from script.models import *
 from script.utils.handling import find_closest_match, find_best_response
 from rapidsms_httprouter.managers import BulkInsertManager
-from rapidsms_httprouter.models import Message
+from rapidsms_httprouter.models import Message, MessageBatch
+from unregister.models import Blacklist
+from django.db.models.signals import post_save
+from django.conf import settings
+from django.core.mail import send_mail
 
 import datetime
 import re
 import difflib
 
-c_bulk_mgr = BulkInsertManager()
-c_bulk_mgr.contribute_to_class(Contact, 'bulk')
-
-cn_bulk_mgr = BulkInsertManager()
-cn_bulk_mgr.contribute_to_class(Connection, 'bulk')
 
 class IgnoredTags(models.Model):
     poll = models.ForeignKey(Poll)
@@ -32,40 +31,7 @@ class IgnoredTags(models.Model):
     def __unicode__(self):
         return '%s' % self.name
 
-class MassText(models.Model):
-    sites = models.ManyToManyField(Site)
-    contacts = models.ManyToManyField(Contact, related_name='masstexts')
-    user = models.ForeignKey(User)
-    date = models.DateTimeField(auto_now_add=True, null=True)
-    text = models.TextField()
-    objects = (CurrentSiteManager('sites') if getattr(settings, 'SITE_ID', False) else models.Manager())
-    bulk = BulkInsertManager()
 
-    class Meta:
-        permissions = (
-            ("can_message", "Can send messages, create polls, etc"),
-        )
-
-class Flag(models.Model):
-    """
-    a Message flag
-    """
-    name=models.CharField(max_length=50,unique=True)
-
-    def get_messages(self):
-        message_flags=self.messages.values_list('message',flat=True)
-        return Message.objects.filter(pk__in=message_flags)
-
-    def __unicode__(self):
-        return self.name
-    
-class MessageFlag(models.Model):
-    """ relation between flag and message
-    """
-    message = models.ForeignKey(Message, related_name='flags')
-    flag=models.ForeignKey(Flag,related_name="messages",null=True)
-
-    
 def parse_district_value(value):
     location_template = STARTSWITH_PATTERN_TEMPLATE % '[a-zA-Z]*'
     regex = re.compile(location_template)
@@ -131,7 +97,7 @@ def autoreg(**kwargs):
             if group:
                 contact.groups.add(group)
                 break
-                
+
         if default_group:
             contact.groups.add(default_group)
     elif default_group:
@@ -141,4 +107,37 @@ def autoreg(**kwargs):
         contact.name = 'Anonymous User'
     contact.save()
 
+    total_ureporters = Contact.objects.exclude(connection__identity__in=Blacklist.objects.values_list('connection__identity')).count()
+    if total_ureporters % getattr(settings, 'USER_MILESTONE', 500) == 0:
+        recipients = getattr(settings, 'ADMINS', None)
+        if recipients:
+            recipients = [email for name, email in recipients]
+        mgr = getattr(settings, 'MANAGERS', None)
+        if mgr:
+            for email in mgr:
+                recipients.append(email)
+        send_mail("UReport now %d voices strong!" % total_ureporters, "%s (%s) was the %dth member to finish the sign-up.  Let's welcome them!" % (contact.name, connection.identity, total_ureporters), 'root@uganda.rapidsms.org', recipients, fail_silently=True)
+
+
+def bulk_blacklist(sender, **kwargs):
+    """
+    This method optimizes the handling of blacklisted numbers.  Normally,
+    messages would have to be checked one by one, using the outgoing() methods
+    of all SMS_APPS.  However, with UReport, the only app that actually uses outgoing()
+    is unregister, and this method handles doing this process for all messages at once
+    """
+    if sender == Poll:
+        poll = kwargs['instance']
+        if poll.start_date:
+            bad_conns = Blacklist.objects.values_list('connection__pk', flat=True).distinct()
+            bad_conns = Connection.objects.filter(pk__in=bad_conns)
+            poll.messages.filter(status='P').exclude(connection__in=bad_conns).update(status='Q')
+    elif sender == MessageBatch:
+        batch = kwargs['instance']
+        bad_conns = Blacklist.objects.values_list('connection__pk', flat=True).distinct()
+        bad_conns = Connection.objects.filter(pk__in=bad_conns)
+        batch.messages.filter(status='P').exclude(connection__in=bad_conns).update(status='Q')
+
+
 script_progress_was_completed.connect(autoreg, weak=False)
+post_save.connect(bulk_blacklist, weak=False)

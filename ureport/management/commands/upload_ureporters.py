@@ -18,7 +18,7 @@ from django.contrib.auth.models import Group
 
 from rapidsms.models import Backend, Connection, Contact
 from poll.models import *
-from ureport.models import find_closest_match
+from script.utils.handling import find_closest_match
 
 PREFIXES = [('70', 'warid'), ('75', 'zain'), ('71', 'utl'), ('', 'dmark')]
 
@@ -38,12 +38,12 @@ class Command(BaseCommand):
     """
     option_list = BaseCommand.option_list + (
     make_option("-f", "--file", dest="path"),
-    make_option("-g","--group", dest="group"),
+    make_option("-g", "--group", dest="group"),
     )
 
     def handle(self, **options):
-        path=options["path"]
-        group=options["group"]
+        path = options["path"]
+        group = options["group"]
         if group:
             group = find_closest_match(group, Group.objects)
         csv_rows = csv.reader(open(path), delimiter="\t")
@@ -54,10 +54,10 @@ class Command(BaseCommand):
             district, village, name, phones, birthdate, gender = tuple(row)
             connections = []
             for raw_num in phones.split(','):
-                number, backend = assign_backend(raw_num.replace('-','').strip())
+                number, backend = assign_backend(raw_num.replace('-', '').strip())
                 connection, created = Connection.objects.get_or_create(identity=number, backend=backend)
                 connections.append(connection)
-            
+
             name = ' '.join([n.capitalize() for n in name.lower().split(' ')])
             contact = Contact.objects.create(name=name)
             if group:
@@ -68,7 +68,7 @@ class Command(BaseCommand):
                 contact.village = find_closest_match(village, Location.objects)
             if birthdate:
                 print "%d: %s" % (rnum, birthdate)
-                contact.birthdate = datetime.datetime.strptime(birthdate.strip(),'%d/%m/%Y')
+                contact.birthdate = datetime.datetime.strptime(birthdate.strip(), '%d/%m/%Y')
             if gender:
                 contact.gender = gender
             contact.save()
