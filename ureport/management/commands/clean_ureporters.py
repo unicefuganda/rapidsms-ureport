@@ -22,6 +22,7 @@ class Command(BaseCommand):
             msgs = []
             for m in Message.objects.filter(connection__contact=c).order_by('date').values_list('text',flat=True):
                 msgs.append(smart_str(m.replace("\n","").replace("\r","")))
+                msgs.append("%s" % m.date)
             message_history = smart_str("\t").join(msgs)
             location_pk = str(c.reporting_location.pk) if c.reporting_location else ''
             location_name = c.reporting_location.name if c.reporting_location else ''
