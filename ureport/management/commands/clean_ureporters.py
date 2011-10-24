@@ -69,6 +69,9 @@ class Command(BaseCommand):
                         export_data["message %d" % mnum] = m.text
                         export_data["message %d date" % mnum] = str(m.date)
                         mnum += 1
+                    for i in range(mnum, 200):
+                        export_data["message %d" % i] = ''
+                        export_data["message %d date" % i] = ''
                     export_data_list.append(export_data)
 
             ExcelResponse(export_data_list, output_name=excel_file_path, write_to_file=True)
