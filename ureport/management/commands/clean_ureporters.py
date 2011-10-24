@@ -6,6 +6,7 @@ from ureport.settings import UREPORT_ROOT
 from rapidsms.models import Contact
 from django.utils.datastructures import SortedDict
 from poll.models import Poll
+from rapidsms_httprouter.models import Message
 import datetime
 import optparse
 
@@ -64,7 +65,7 @@ class Command(BaseCommand):
 
                     export_data["Total Poll Responses"] = contact.responses.count()
                     mnum = 0
-                    for m in Message.objects.filter(connection__contact=c).order_by('date'):
+                    for m in Message.objects.filter(connection__contact=contact).order_by('date'):
                         export_data["message %d" % mnum] = m.text
                         export_data["message %d date" % mnum] = str(m.date)
                         mnum += 1
