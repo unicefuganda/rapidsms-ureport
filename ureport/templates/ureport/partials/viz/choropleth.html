@@ -5,39 +5,39 @@
 		<li>No (50-60%)
 		   <span style="width: 15px; height: 15px; background-color: #f5cbae; position: absolute; right: 0px;" class="category"></span>
 		</li>
-		
+
 		<li>No (60-70%)
 		   <span style="width: 15px; height: 15px; background-color: #eba988; position: absolute; right: 0px;" class="category"></span>
 		</li>
-		
+
 		<li>No (70-80%)
 		   <span style="width: 15px; height: 15px; background-color: #e08465; position: absolute; right: 0px;" class="category"></span>
 		</li>
-		
+
 		<li>No (80-90%)
 		   <span style="width: 15px; height: 15px; background-color: #d65d45; position: absolute; right: 0px;" class="category"></span>
 		</li>
-		
+
 		<li>No (90-100%)
 		   <span style="width: 15px; height: 15px; background-color: #c40a0a; position: absolute; right: 0px;" class="category"></span>
 		</li>
-		
+
 		<li>Yes (50-60%)
 		   <span style="width: 15px; height: 15px; background-color: #aef5cb; position: absolute; right: 0px;" class="category"></span>
 		</li>
-		
+
 		<li>Yes (60-70%)
 		   <span style="width: 15px; height: 15px; background-color: #88eba9; position: absolute; right: 0px;" class="category"></span>
 		</li>
-		
+
 		<li>Yes (70-80%)
 		   <span style="width: 15px; height: 15px; background-color: #65e084; position: absolute; right: 0px;" class="category"></span>
 		</li>
-		
+
 		<li>Yes (80-90%)
 		   <span style="width: 15px; height: 15px; background-color: #45d65d; position: absolute; right: 0px;" class="category"></span>
 		</li>
-		
+
 		<li>Yes (90-100%)
 		   <span style="width: 15px; height: 15px; background-color: #0ac40a; position: absolute; right: 0px;" class="category"></span>
        	</li>
@@ -129,7 +129,7 @@
 
                 X: Math.round(e.xy.x),
                 Y: Math.round(e.xy.y),
-                INFO_FORMAT: 'text/plain',
+                INFO_FORMAT: 'text/html',
                 QUERY_LAYERS: map.layers[1].params.LAYERS,
                 FEATURE_COUNT: 1,
                 Layers: 'unicef:polls',
@@ -152,22 +152,53 @@
             OpenLayers.loadURL("http://ureport.ug:80/geoserver/unicef/wms", params, this, create_popup,create_popup);
             OpenLayers.Event.stop(e);
         });
-                
+
             }
 
             // sets the HTML provided into the nodelist element
     function create_popup(response) {
         var text = response.responseText;
-        response=text;
+        var render_text="";
+        var data=jQuery(text).find('td');
+
+
+        var th=[];
+        th=jQuery(text).find('th');
+        jQuery.each(th,function(k,v){
+
+
+            if (String(jQuery(v).text()) == "district")
+            {
+
+
+                render_text=render_text+"<p>District: "+String(jQuery(data[k]).text())+"</p>";
+            }
+             else if (String(jQuery(v).text()) == "yes")
+             {
+
+               render_text=render_text+"<p>Yes: "+String(parseFloat(jQuery(data[k]).text())*100)+"%</p>";
+             }
+             else if (jQuery(v).text() == "no")
+             {
+               render_text=render_text+"<p>uncategorized: "+String(parseFloat(jQuery(data[k]).text())*100)+"%</p>";
+             }
+             else  if (jQuery(v).text() == "unknown")
+             {
+               render_text=render_text+"<p>unknown: "+String(parseFloat(jQuery(data[k]).text())*100)+"%</p>";
+             }
+
+
+            });
+
 
         var popupId = EVT.xy.x + "," + EVT.xy.y;
-      
+
         var popup = popups[popupId];
         if (!popup || !popup.map) {
             popup = new OpenLayers.Popup.Anchored(
                     popupId,
                     map.getLonLatFromPixel(EVT.xy),
-                    null,
+                    new OpenLayers.Size(200,150),
                     " ",
                     null,
                     true,
@@ -177,12 +208,15 @@
                         OpenLayers.Event.stop(evt);
                     }
             );
-            popup.autoSize = true;
+
             popup.useInlineStyles = false;
             popups[popupId] = popup;
             tiled.map.addPopup(popup, true);
+
         }
-        popup.setContentHTML(popup.contentHTML + text);
+         console.log("here3");
+        popup.setContentHTML(popup.contentHTML + render_text);
+
         popup.show();
         //document.getElementById('nodelist').innerHTML = response.responseText;
 
