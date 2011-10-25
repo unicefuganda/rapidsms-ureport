@@ -31,6 +31,16 @@ class IgnoredTags(models.Model):
     def __unicode__(self):
         return '%s' % self.name
 
+class QuoteBox(models.Model):
+    question=models.TextField()
+    quote=models.TextField()
+    quoted=models.TextField()
+    creation_date=models.DateTimeField(auto_now=True)
+
+    class Meta:
+        get_latest_by = 'creation_date'
+
+    
 
 def parse_district_value(value):
     location_template = STARTSWITH_PATTERN_TEMPLATE % '[a-zA-Z]*'

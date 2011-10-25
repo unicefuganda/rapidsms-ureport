@@ -54,21 +54,22 @@
             <div class="join">
                 <img src="{{ MEDIA_URL }}ureport/images/join_us.png"/>
             </div>
-
-            <div class="quotebox">
-                <div class="title">
-                YOUR SAY:
-                </div>
-                <div class="topquote">
-                How are women treated in your community?
-                </div>
-                <div class="bottomquote">
-                My husband does not treat me equally and I feel inferior.
-                </div>
-                <div class="quoted">
-                -Ureporter from Masaka
-                </div>
-            </div>
+                {% if quote %}
+                    <div class="quotebox">
+                        <div class="title">
+                            YOUR SAY:
+                        </div>
+                        <div class="topquote">
+                            {{ quote.question }}
+                        </div>
+                        <div class="bottomquote">
+                            {{ quote.quote }}
+                        </div>
+                        <div class="quoted">
+                            {{ quote.quoted }}
+                        </div>
+                    </div>
+                {% endif %}
             {% endblock %}
         </div>
 
