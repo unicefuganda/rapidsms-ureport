@@ -32,15 +32,14 @@ class IgnoredTags(models.Model):
         return '%s' % self.name
 
 class QuoteBox(models.Model):
-    question=models.TextField()
-    quote=models.TextField()
-    quoted=models.TextField()
-    creation_date=models.DateTimeField(auto_now=True)
+    question = models.TextField()
+    quote = models.TextField()
+    quoted = models.TextField()
+    creation_date = models.DateTimeField(auto_now=True)
 
     class Meta:
         get_latest_by = 'creation_date'
 
-    
 
 def parse_district_value(value):
     location_template = STARTSWITH_PATTERN_TEMPLATE % '[a-zA-Z]*'
@@ -103,10 +102,11 @@ def autoreg(**kwargs):
         default_group = Group.objects.get(name='Other uReporters')
     if group_to_match:
         for g in re.findall(r'\w+', group_to_match):
-            group = find_closest_match(g, Group.objects)
-            if group:
-                contact.groups.add(group)
-                break
+            if g:
+                group = find_closest_match(str(g), Group.objects)
+                if group:
+                    contact.groups.add(group)
+                    break
 
         if default_group:
             contact.groups.add(default_group)
