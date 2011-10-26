@@ -1,20 +1,13 @@
 # -*- coding: utf-8 -*-
 from django import forms
-from contact.models import Flag
-from rapidsms.models import Contact, Connection
-from django.db.models import Q
-from django.forms.widgets import HiddenInput
+from rapidsms.models import Contact
 from django.contrib.auth.models import Group
-from rapidsms.messages.outgoing import OutgoingMessage
-from generic.forms import ActionForm, FilterForm
-from poll.models import Poll, Response
+from poll.models import Poll
 from mptt.forms import TreeNodeChoiceField
-from rapidsms_httprouter.models import Message
 from generic.forms import ActionForm, FilterForm, ModuleForm
-from django.forms.widgets import Select
-from poll.forms import NewPollForm
 from django.conf import settings
 from django.contrib.sites.models import Site
+from django.forms.widgets import RadioSelect
 
 class EditReporterForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -117,6 +110,7 @@ class AssignToNewPollForm(ActionForm):
     action_label = 'Assign to New poll'
     poll_name = forms.CharField(label="Poll Name", max_length="100")
     POLL_TYPES = [('yn', 'Yes/No Question')] + [(c['type'], c['label']) for c in Poll.TYPE_CHOICES.values()]
+    response_type=forms.ChoiceField(choices=Poll.RESPONSE_TYPE_CHOICES,widget=RadioSelect)
     poll_type = forms.ChoiceField(choices=POLL_TYPES)
     question = forms.CharField(max_length=160, required=True)
     default_response = forms.CharField(max_length=160, required=False)
@@ -130,6 +124,7 @@ class AssignToNewPollForm(ActionForm):
         question = self.cleaned_data.get('question').replace('%', u'\u0025')
         default_response = self.cleaned_data['default_response']
         start_immediately = self.cleaned_data['start_immediately']
+        response_type = self.cleaned_data['response_type']
         poll = Poll.create_with_bulk(\
                                  name=name,
                                  type=poll_type,
@@ -137,6 +132,8 @@ class AssignToNewPollForm(ActionForm):
                                  default_response=default_response,
                                  contacts=results,
                                  user=request.user)
+        poll.response_type=response_type
+        poll.save()
 
         if settings.SITE_ID:
             poll.sites.add(Site.objects.get_current())

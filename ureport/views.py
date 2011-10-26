@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+from django.forms.models import ModelForm
 from django.shortcuts import  render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.http import HttpResponse, HttpResponseRedirect
 from generic.sorters import SimpleSorter
+from models import QuoteBox
 from ureport.settings import drop_words, tag_cloud_size
 from ureport.models import IgnoredTags
 from poll.models import *
@@ -573,3 +575,25 @@ def delete_flag(request, flag_pk):
     else:
         return HttpResponse("Failed")
 
+class QuoteForm(ModelForm):
+    class Meta:
+        model=QuoteBox
+        exclude=('creation_date',)
+        
+def edit_quotebox(request,pk=None):
+    if pk :
+        quote=get_object_or_404(QuoteBox,pk=pk)
+        quote_form=QuoteForm(instance=quote)
+
+    elif request.method=='POST':
+        quote_form=QuoteForm(request.POST)
+        if quote_form.is_valid():
+            quote=quote_form.save()
+            if quote:
+                return HttpResponseRedirect("/")
+
+
+    else:
+        quote_form=QuoteForm()
+    return render_to_response('ureport/edit_quotebox.html',{'quote_form':quote_form},
+                    context_instance=RequestContext(request))

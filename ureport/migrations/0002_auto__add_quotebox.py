@@ -8,19 +8,21 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Adding model 'IgnoredTags'
-        db.create_table('ureport_ignoredtags', (
+        # Adding model 'QuoteBox'
+        db.create_table('ureport_quotebox', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('poll', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['poll.Poll'])),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=20)),
+            ('question', self.gf('django.db.models.fields.TextField')()),
+            ('quote', self.gf('django.db.models.fields.TextField')()),
+            ('quoted', self.gf('django.db.models.fields.TextField')()),
+            ('creation_date', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
         ))
-        db.send_create_signal('ureport', ['IgnoredTags'])
+        db.send_create_signal('ureport', ['QuoteBox'])
 
 
     def backwards(self, orm):
         
-        # Deleting model 'IgnoredTags'
-        db.delete_table('ureport_ignoredtags')
+        # Deleting model 'QuoteBox'
+        db.delete_table('ureport_quotebox')
 
 
     models = {
@@ -96,6 +98,7 @@ class Migration(SchemaMigration):
             'messages': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['rapidsms_httprouter.Message']", 'null': 'True', 'symmetrical': 'False'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
             'question': ('django.db.models.fields.CharField', [], {'max_length': '160'}),
+            'response_type': ('django.db.models.fields.CharField', [], {'default': "'a'", 'max_length': '1', 'null': 'True'}),
             'sites': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['sites.Site']", 'symmetrical': 'False'}),
             'start_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
             'type': ('django.db.models.fields.SlugField', [], {'db_index': 'True', 'max_length': '8', 'null': 'True', 'blank': 'True'}),
@@ -157,6 +160,14 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
             'poll': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['poll.Poll']"})
+        },
+        'ureport.quotebox': {
+            'Meta': {'object_name': 'QuoteBox'},
+            'creation_date': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'question': ('django.db.models.fields.TextField', [], {}),
+            'quote': ('django.db.models.fields.TextField', [], {}),
+            'quoted': ('django.db.models.fields.TextField', [], {})
         }
     }
 
