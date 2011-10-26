@@ -8,6 +8,8 @@
     var map;
     var tiled;
     var pureCoverage = false;
+    var EVT;
+    var popups = {};
     // pink tile avoidance
     OpenLayers.IMAGE_RELOAD_ATTEMPTS = 5;
     OpenLayers.Util.onImageLoadErrorColor = "transparent";
@@ -38,7 +40,7 @@
 
         // setup tiled layer
         tiled = new OpenLayers.Layer.WMS(
-                "unicef:pollcategories", "http://ureport.ug:80/geoserver/unicef/wms",
+                "unicef:pollcategories", "/geoserver/unicef/wms",
                 {
                     VIEWPARAMS: 'poll:{{poll.pk}};app:{{deployment_id}}',
                     LAYERS: 'unicef:pollcategories',
@@ -73,16 +75,17 @@
 
         // support GetFeatureInfo
         map.events.register('click', map, function (e) {
+            EVT = e;
             var params = {
                 REQUEST: "GetFeatureInfo",
                 EXCEPTIONS: "application/vnd.ogc.se_xml",
                 BBOX: map.getExtent().toBBOX(),
                 SERVICE: "WMS",
                 VERSION: "1.1.1",
-                X: e.xy.x,
-                Y: e.xy.y,
+                X: Math.round(e.xy.x),
+                Y: Math.round(e.xy.y),
                 INFO_FORMAT: 'text/html',
-                QUERY_LAYERS: 'unicef:pollcategories',
+                QUERY_LAYERS: map.layers[1].params.LAYERS,
                 FEATURE_COUNT: 1,
                 Viewparams: 'poll:{{poll.pk}};app:{{deployment_id}}',
                 Layers: 'unicef:pollcategories',
@@ -90,17 +93,17 @@
                 HEIGHT: map.size.h,
                 format: format,
                 styles: '',
-                srs: "EPSG:900913"};
+                srs: map.layers[1].params.SRS};
             if (map.layers[1].params.CQL_FILTER != null) {
-                params.cql_filter = map.layers[0].params.CQL_FILTER;
+                params.cql_filter = map.layers[1].params.CQL_FILTER;
             }
             if (map.layers[1].params.FILTER != null) {
-                params.filter = map.layers[0].params.FILTER;
+                params.filter = map.layers[1].params.FILTER;
             }
             if (map.layers[1].params.FEATUREID) {
-                params.featureid = map.layers[0].params.FEATUREID;
+                params.featureid = map.layers[1].params.FEATUREID;
             }
-            OpenLayers.loadURL("http://ureport.ug:80/geoserver/unicef/wms", params, create_popup,create_popup);
+            OpenLayers.loadURL("/geoserver/unicef/wms", params, create_popup,create_popup);
             OpenLayers.Event.stop(e);
         });
     }
@@ -122,17 +125,10 @@
 
                 render_text = render_text + "<p>District: " + String(jQuery(data[k]).text()) + "</p>";
             }
-            else if (String(jQuery(v).text()) == "yes") {
+            else if (String(jQuery(v).text()) == "description") {
 
                 render_text = render_text + "<p>Yes: " + String(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
             }
-            else if (jQuery(v).text() == "no") {
-                render_text = render_text + "<p>uncategorized: " + String(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
-            }
-            else if (jQuery(v).text() == "unknown") {
-                render_text = render_text + "<p>unknown: " + String(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
-            }
-
 
         });
 

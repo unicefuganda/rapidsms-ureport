@@ -94,7 +94,7 @@
 
         // setup tiled layer
         tiled = new OpenLayers.Layer.WMS(
-                "unicef:polls", "http://ureport.ug:80/geoserver/unicef/wms",
+                "unicef:polls", "/geoserver/unicef/wms",
                 {
                     VIEWPARAMS: 'poll:{{poll.pk}};app:{{deployment_id}}',
                     LAYERS: 'unicef:polls',
@@ -159,7 +159,7 @@
             if (map.layers[1].params.FEATUREID) {
                 params.featureid = map.layers[1].params.FEATUREID;
             }
-            OpenLayers.loadURL("http://ureport.ug:80/geoserver/unicef/wms", params, this, create_popup, create_popup);
+            OpenLayers.loadURL("/geoserver/unicef/wms", params, this, create_popup, create_popup);
             OpenLayers.Event.stop(e);
         });
 
@@ -180,17 +180,17 @@
             if (String(jQuery(v).text()) == "district") {
 
 
-                render_text = render_text + "<p>District: " + String(jQuery(data[k]).text()) + "</p>";
+                render_text = render_text + "<p>District: " + Math.round(jQuery(data[k]).text()) + "</p>";
             }
             else if (String(jQuery(v).text()) == "yes") {
 
-                render_text = render_text + "<p>Yes: " + String(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
+                render_text = render_text + "<p>Yes: " + Math.round(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
             }
             else if (jQuery(v).text() == "no") {
-                render_text = render_text + "<p>uncategorized: " + String(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
+                render_text = render_text + "<p>uncategorized: " + Math.round(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
             }
             else if (jQuery(v).text() == "unknown") {
-                render_text = render_text + "<p>unknown: " + String(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
+                render_text = render_text + "<p>unknown: " + Math.round(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
             }
 
 
