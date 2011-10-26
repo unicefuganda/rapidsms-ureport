@@ -127,7 +127,7 @@
             }
             else if (String(jQuery(v).text()) == "description") {
 
-                render_text = render_text + "<p>" + String(jQuery(data[k]).text()).replace("\n","<b/>") + "%</p>";
+                render_text = render_text + String(jQuery(data[k]).text()).replace("\n","<b/>") ;
             }
 
         });
