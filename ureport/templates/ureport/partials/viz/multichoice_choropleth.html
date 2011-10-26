@@ -166,6 +166,7 @@
     });
 
     CATEGORY_COLORS =  {% autoescape off %}{{ colors }}{% endautoescape %};
+    CATEGORY_COLOR_LOOKUP={};
     {% for c in poll.categories.all %}
         set_color('{{ c.name }}', CATEGORY_COLORS[{{ forloop.counter0 }}]);
         {% if forloop.last %}
