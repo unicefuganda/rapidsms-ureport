@@ -73,7 +73,6 @@
 
         // support GetFeatureInfo
         map.events.register('click', map, function (e) {
-            document.getElementById('nodelist').innerHTML = "Loading... please wait...";
             var params = {
                 REQUEST: "GetFeatureInfo",
                 EXCEPTIONS: "application/vnd.ogc.se_xml",
