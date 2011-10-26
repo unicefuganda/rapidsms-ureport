@@ -23,6 +23,7 @@ def voices(request):
         'polls':Poll.objects.exclude(contacts=None, start_date=None).order_by('-start_date'),
        'deployment_id':settings.DEPLOYMENT_ID,
        'quote':quote,
+       'geoserver_url':settings.GEOSERVER_URL,
 
         }
 

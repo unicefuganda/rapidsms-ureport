@@ -94,7 +94,7 @@
 
         // setup tiled layer
         tiled = new OpenLayers.Layer.WMS(
-                "unicef:polls", "/geoserver/unicef/wms",
+                "unicef:polls", "{{ geoserver_url }}unicef/wms",
                 {
                     VIEWPARAMS: 'poll:{{poll.pk}};app:{{deployment_id}}',
                     LAYERS: 'unicef:polls',
@@ -159,7 +159,7 @@
             if (map.layers[1].params.FEATUREID) {
                 params.featureid = map.layers[1].params.FEATUREID;
             }
-            OpenLayers.loadURL("/geoserver/unicef/wms", params, this, create_popup, create_popup);
+            OpenLayers.loadURL("{{ geoserver_url }}unicef/wms", params, this, create_popup, create_popup);
             OpenLayers.Event.stop(e);
         });
 

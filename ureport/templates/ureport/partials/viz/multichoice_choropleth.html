@@ -40,7 +40,7 @@
 
         // setup tiled layer
         tiled = new OpenLayers.Layer.WMS(
-                "unicef:pollcategories", "/geoserver/unicef/wms",
+                "unicef:pollcategories", "{{ geoserver_url }}unicef/wms",
                 {
                     VIEWPARAMS: 'poll:{{poll.pk}};app:{{deployment_id}}',
                     LAYERS: 'unicef:pollcategories',
@@ -103,7 +103,7 @@
             if (map.layers[1].params.FEATUREID) {
                 params.featureid = map.layers[1].params.FEATUREID;
             }
-            OpenLayers.loadURL("/geoserver/unicef/wms", params, create_popup,create_popup);
+            OpenLayers.loadURL("{{ geoserver_url }}unicef/wms", params, create_popup,create_popup);
             OpenLayers.Event.stop(e);
         });
     }
@@ -127,7 +127,7 @@
             }
             else if (String(jQuery(v).text()) == "description") {
 
-                render_text = render_text + String(jQuery(data[k]).text()).replace("\n","<b/>") ;
+                render_text = render_text +"<div>"+ String(jQuery(data[k]).text())+"</div>";
             }
 
         });
