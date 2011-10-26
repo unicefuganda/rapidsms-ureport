@@ -127,7 +127,7 @@
             }
             else if (String(jQuery(v).text()) == "description") {
 
-                render_text = render_text + "<p>Yes: " + String(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
+                render_text = render_text + "<p>" + String(jQuery(data[k]).text()) + "%</p>";
             }
 
         });
