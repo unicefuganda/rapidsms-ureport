@@ -1,117 +1,171 @@
-<div id="map_{{ poll.pk }}" class="mapmodule"  >
+<div id="map_{{ poll.pk }}" class="mapmodule">
 </div>
 <div id="map_layers">
     <ul class="key">
     </ul>
 </div>
- <script defer="defer" type="text/javascript">
-            var map;
-            var tiled;
-            var pureCoverage = false;
-            // pink tile avoidance
-            OpenLayers.IMAGE_RELOAD_ATTEMPTS = 5;
-            OpenLayers.Util.onImageLoadErrorColor = "transparent";
-            // make OL compute scale according to WMS spec
-            OpenLayers.DOTS_PER_INCH = 25.4 / 0.28;
+<script defer="defer" type="text/javascript">
+    var map;
+    var tiled;
+    var pureCoverage = false;
+    // pink tile avoidance
+    OpenLayers.IMAGE_RELOAD_ATTEMPTS = 5;
+    OpenLayers.Util.onImageLoadErrorColor = "transparent";
+    // make OL compute scale according to WMS spec
+    OpenLayers.DOTS_PER_INCH = 25.4 / 0.28;
 
-            function  init_chmap(){
-                // if this is just a coverage or a group of them, disable a few items,
-                // and default to jpeg format
-                format = 'image/png';
-
-
-                var bounds = new OpenLayers.Bounds(
-                    3292022.5, -164636.828,
-                    3896216.5, 471764.844
-                );
-                var options = {
-                    controls: [],
-                    maxExtent: bounds,
-                    maxResolution: 2485.94403125,
-                    projection: new OpenLayers.Projection("EPSG:900913"),
-                    displayProjection: new OpenLayers.Projection("EPSG:4326"),
-                    units: "m",
-                    numZoomLevels: 20,
-
-                };
-                map = new OpenLayers.Map('map_{{ poll.pk }}', options);
-
-                // setup tiled layer
-                tiled = new OpenLayers.Layer.WMS(
-                		"unicef:pollcategories", "http://ureport.ug:80/geoserver/unicef/wms",
-                    {
-                        VIEWPARAMS: 'poll:{{poll.pk}};app:{{deployment_id}}',
-                        LAYERS: 'unicef:pollcategories',
-                        STYLES: '',
-                        format: format,
-                        tiled: true,
-                        transparent:true,
-                        tilesOrigin : map.maxExtent.left + ',' + map.maxExtent.bottom
-                    },
-                    {
-                        buffer: 0,
-                        displayOutsideMaxExtent: false,
-                        isBaseLayer: false,
-                        'opacity': 1.0,
-                    }
-                );
-                var ghyb = new OpenLayers.Layer.Google(
-        "Google RoadMap",
-        {type: google.maps.MapTypeId.ROADMAP, numZoomLevels: 20}
-    );
-
-                map.addLayers([ ghyb,tiled ]);
-
-                // build up all controls
-                map.addControl(new OpenLayers.Control.PanZoomBar({
-                    position: new OpenLayers.Pixel(2, 15)
-                }));
-                map.addControl(new OpenLayers.Control.Navigation());
-                map.addControl(new OpenLayers.Control.LayerSwitcher());
-                map.zoomToExtent(bounds);
+    function init_chmap() {
+        // if this is just a coverage or a group of them, disable a few items,
+        // and default to jpeg format
+        format = 'image/png';
 
 
+        var bounds = new OpenLayers.Bounds(
+                3292022.5, -164636.828,
+                3896216.5, 471764.844
+        );
+        var options = {
+            controls: [],
+            maxExtent: bounds,
+            maxResolution: 2485.94403125,
+            projection: new OpenLayers.Projection("EPSG:900913"),
+            displayProjection: new OpenLayers.Projection("EPSG:4326"),
+            units: "m",
+            numZoomLevels: 20,
 
-                // support GetFeatureInfo
-                map.events.register('click', map, function (e) {
-                    document.getElementById('nodelist').innerHTML = "Loading... please wait...";
-                    var params = {
-                        REQUEST: "GetFeatureInfo",
-                        EXCEPTIONS: "application/vnd.ogc.se_xml",
-                        BBOX: map.getExtent().toBBOX(),
-                        SERVICE: "WMS",
-                        VERSION: "1.1.1",
-                        X: e.xy.x,
-                        Y: e.xy.y,
-                        INFO_FORMAT: 'text/html',
-                        QUERY_LAYERS: 'unicef:pollcategories',
-                        FEATURE_COUNT: 50,
-                        Viewparams: 'poll:{{poll.pk}};app:{{deployment_id}}',
-                        Layers: 'unicef:pollcategories',
-                        WIDTH: map.size.w,
-                        HEIGHT: map.size.h,
-                        format: format,
-                        styles: '',
-                        srs: "EPSG:900913"};
-                    if(map.layers[1].params.CQL_FILTER != null) {
-                        params.cql_filter = map.layers[0].params.CQL_FILTER;
-                    }
-                    if(map.layers[1].params.FILTER != null) {
-                        params.filter = map.layers[0].params.FILTER;
-                    }
-                    if(map.layers[1].params.FEATUREID) {
-                        params.featureid = map.layers[0].params.FEATUREID;
-                    }
-                    OpenLayers.loadURL("http://ureport.ug:80/geoserver/unicef/wms", params, this, setHTML);
-                    OpenLayers.Event.stop(e);
-                });
+        };
+        map = new OpenLayers.Map('map_{{ poll.pk }}', options);
+
+        // setup tiled layer
+        tiled = new OpenLayers.Layer.WMS(
+                "unicef:pollcategories", "http://ureport.ug:80/geoserver/unicef/wms",
+                {
+                    VIEWPARAMS: 'poll:{{poll.pk}};app:{{deployment_id}}',
+                    LAYERS: 'unicef:pollcategories',
+                    STYLES: '',
+                    format: format,
+                    tiled: true,
+                    transparent:true,
+                    tilesOrigin : map.maxExtent.left + ',' + map.maxExtent.bottom
+                },
+                {
+                    buffer: 0,
+                    displayOutsideMaxExtent: false,
+                    isBaseLayer: false,
+                    'opacity': 1.0,
+                }
+        );
+        var ghyb = new OpenLayers.Layer.Google(
+                "Google RoadMap",
+                {type: google.maps.MapTypeId.ROADMAP, numZoomLevels: 20}
+        );
+
+        map.addLayers([ ghyb,tiled ]);
+
+        // build up all controls
+        map.addControl(new OpenLayers.Control.PanZoomBar({
+            position: new OpenLayers.Pixel(2, 15)
+        }));
+        map.addControl(new OpenLayers.Control.Navigation());
+        map.addControl(new OpenLayers.Control.LayerSwitcher());
+        map.zoomToExtent(bounds);
+
+
+        // support GetFeatureInfo
+        map.events.register('click', map, function (e) {
+            document.getElementById('nodelist').innerHTML = "Loading... please wait...";
+            var params = {
+                REQUEST: "GetFeatureInfo",
+                EXCEPTIONS: "application/vnd.ogc.se_xml",
+                BBOX: map.getExtent().toBBOX(),
+                SERVICE: "WMS",
+                VERSION: "1.1.1",
+                X: e.xy.x,
+                Y: e.xy.y,
+                INFO_FORMAT: 'text/html',
+                QUERY_LAYERS: 'unicef:pollcategories',
+                FEATURE_COUNT: 1,
+                Viewparams: 'poll:{{poll.pk}};app:{{deployment_id}}',
+                Layers: 'unicef:pollcategories',
+                WIDTH: map.size.w,
+                HEIGHT: map.size.h,
+                format: format,
+                styles: '',
+                srs: "EPSG:900913"};
+            if (map.layers[1].params.CQL_FILTER != null) {
+                params.cql_filter = map.layers[0].params.CQL_FILTER;
+            }
+            if (map.layers[1].params.FILTER != null) {
+                params.filter = map.layers[0].params.FILTER;
+            }
+            if (map.layers[1].params.FEATUREID) {
+                params.featureid = map.layers[0].params.FEATUREID;
+            }
+            OpenLayers.loadURL("http://ureport.ug:80/geoserver/unicef/wms", params, create_popup,create_popup);
+            OpenLayers.Event.stop(e);
+        });
+    }
+
+    // sets the HTML provided into the nodelist element
+    function create_popup(response) {
+        var text = response.responseText
+        var render_text = "";
+        var data = jQuery(text).find('td');
+
+
+        var th = [];
+        th = jQuery(text).find('th');
+        jQuery.each(th, function(k, v) {
+
+
+            if (String(jQuery(v).text()) == "district") {
+
+
+                render_text = render_text + "<p>District: " + String(jQuery(data[k]).text()) + "</p>";
+            }
+            else if (String(jQuery(v).text()) == "yes") {
+
+                render_text = render_text + "<p>Yes: " + String(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
+            }
+            else if (jQuery(v).text() == "no") {
+                render_text = render_text + "<p>uncategorized: " + String(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
+            }
+            else if (jQuery(v).text() == "unknown") {
+                render_text = render_text + "<p>unknown: " + String(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
             }
 
-            // sets the HTML provided into the nodelist element
-            function setHTML(response){
-                document.getElementById('nodelist').innerHTML = response.responseText;
 
-            };
+        });
+
+
+        var popupId = EVT.xy.x + "," + EVT.xy.y;
+
+        var popup = popups[popupId];
+        if (!popup || !popup.map) {
+            popup = new OpenLayers.Popup.FramedCloud(
+                    popupId,
+                    map.getLonLatFromPixel(EVT.xy),
+                    new OpenLayers.Size(200, 150),
+                    " ",
+                    null,
+                    true,
+                    function(evt) {
+                        delete popups[this.id];
+                        this.hide();
+                        OpenLayers.Event.stop(evt);
+                    }
+            );
+
+            popup.useInlineStyles = false;
+            popups[popupId] = popup;
+            tiled.map.addPopup(popup, true);
+
+        }
+        popup.setContentHTML(popup.contentHTML + render_text);
+
+        popup.show();
+
+    }
     $(document).ready(function() {
         init_chmap();
     });
