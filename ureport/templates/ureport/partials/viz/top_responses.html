@@ -1,0 +1,16 @@
+
+<h3 class="about_header">Top Responses <img class="ab_img" src="{{ MEDIA_URL }}ureport/images/shout_out.png"/></h3>
+<div style="display: block;line-height: 15px;position: relative;">
+
+
+        {% for r in poll.top_responses.all %}
+            <div style="width:100%;line-height: 19px;padding: 0;word-wrap: break-word;color: #444444;">
+                {{ r.quote }}
+            </div>
+
+                <div style="color: #999999;
+    font-size: 12px;">{{ r.quoted}}</div>
+
+        {% endfor %}
+
+</div>

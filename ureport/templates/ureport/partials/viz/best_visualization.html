@@ -12,6 +12,9 @@ CURRENT POLL
 {% if tags %}
 
     {% include "/ureport/partials/tag_cloud/tag_cloud.html" %}
+    {% if poll.top_responses.exists %}
+    {% include "/ureport/partials/viz/top_responses.html" %}
+        {% endif %}
     {% comment %}
         {% include "/ureport/partials/viz/message_feed.html" %}
     {% endcomment %}

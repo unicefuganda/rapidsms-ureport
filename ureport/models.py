@@ -40,6 +40,11 @@ class QuoteBox(models.Model):
     class Meta:
         get_latest_by = 'creation_date'
 
+class TopResponses(models.Model):
+    poll = models.ForeignKey(Poll, related_name="top_responses")
+    quote = models.TextField()
+    quoted = models.TextField()
+
 
 def autoreg(**kwargs):
     connection = kwargs['connection']
