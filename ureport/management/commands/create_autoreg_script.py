@@ -19,7 +19,7 @@ class Command(BaseCommand):
             start_offset=0,
             giveup_offset=60,
         ))
-        poll = Poll.create_freeform("youthgroup", "First we need 2 know, are you part of a youth group? If yes, send us the NAME of the group. If no, text NO and just wait for the next set of instructions.", "", [], user)
+        poll = Poll.create_freeform("youthgroup", "How did you hear about U REPORT?", "", [], user)
         script.steps.add(ScriptStep.objects.create(
             script=script,
             poll=poll,
