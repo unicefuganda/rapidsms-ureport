@@ -18,6 +18,12 @@
             {% endfor %}
         </ul>
     </td>
+    <td>
+    {{  object.age }}
+    </td>
+    <td>
+    {{ object.gender }}
+    </td>
     <td id="row_{{ object.pk }}">{{ object.reporting_location.name }}</td>
     <td>
         {% if object.groups %}

@@ -12,6 +12,7 @@ from rapidsms_httprouter.models import Message
 from contact.utils import  get_mass_messages, get_messages
 from utils import get_flagged_messages
 from contact.models import MessageFlag
+from .models import Ureporter
 
 urlpatterns = patterns('',
     # dashboard view for viewing all poll reports in one place
@@ -38,7 +39,7 @@ urlpatterns = patterns('',
 
     # ureporters (contact management views)
     url(r'^reporter/$', login_required(generic), {
-        'model':Contact,
+        'model':Ureporter,
         'queryset':get_contacts,
         'results_title':'uReporters',
         'filter_forms':[ FreeSearchForm, DistictFilterForm, FilterGroupsForm, GenderFilterForm, AgeFilterForm],
@@ -48,6 +49,8 @@ urlpatterns = patterns('',
         'base_template':'ureport/ureporters_base.html',
         'columns':[('Name', True, 'name', SimpleSorter()),
                  ('Number', True, 'connection__identity', SimpleSorter(),),
+                  ('Age', False, '', None,),
+                 ('Gender', False, '', None,),
                  ('Location', True, 'reporting_location__name', SimpleSorter(),),
                  ('Group(s)', True, 'groups__name', SimpleSorter()),
                  ('Total Poll Responses', True, 'responses__count', SimpleSorter()),
