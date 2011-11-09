@@ -22,7 +22,9 @@
     {{  object.age }}
     </td>
     <td>
+    {% if object.gender %}
     {{ object.gender }}
+    {% endif %}
     </td>
     <td id="row_{{ object.pk }}">{{ object.reporting_location.name }}</td>
     <td>
