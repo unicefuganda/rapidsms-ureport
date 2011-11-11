@@ -202,4 +202,6 @@ urlpatterns = patterns('',
 #        'map_layers' : [{'name':'A poll','url':'/polls/responses/48/stats/1/'},
 #                       ],
 #    }),
+
+    url(r'signup/$',signup,name="signup"),
 )

@@ -575,3 +575,46 @@ def delete_flag(request, flag_pk):
     else:
         return HttpResponse("Failed")
 
+
+def signup(request):
+    status_message=None
+    if request.method == "POST":
+        signup_form = SignupForm(request.POST)
+        if signup_form.is_valid():
+            mobile = signup_form.cleaned_data['mobile']
+            number, backend = assign_backend(mobile)
+            # create our connection
+            connection, created = Connection.objects.get_or_create(backend=backend, identity=number)
+            connection.contact = Contact.objects.create(
+                name=signup_form.cleaned_data['firstname'] + " " + signup_form.cleaned_data['lastname'])
+            connection.contact.reporting_location = signup_form.cleaned_data['district']
+            connection.birthdate = signup_form.cleaned_data['birthdate']
+            connection.contact.gender = signup_form.cleaned_data['gender']
+            connection.contact.village = find_closest_match(signup_form.cleaned_data['village'], Location.objects)
+            connection.contact.birthdate=signup_form.cleaned_data['birthdate']
+
+            group_to_match = signup_form.cleaned_data['group']
+
+            if Group.objects.filter(name='Other uReporters').count():
+                default_group = Group.objects.get(name='Other uReporters')
+                connection.contact.groups.add(default_group)
+            if group_to_match:
+                for g in re.findall(r'\w+', group_to_match):
+                    if g:
+                        group = find_closest_match(str(g), Group.objects)
+                        if group:
+                            connection.contact.groups.add(group)
+                            break
+
+            connection.save()
+            status_message="You have successfully signed up :)"
+            msg=OutgoingMessage(connection=connection,text="CONGRATULATIONS!!! You are now a registered member of Ureport! With Ureport, you can make a real difference!  Speak Up and Be Heard! from UNICEF")
+            msg.send()
+        else:
+            return render_to_response(
+        "ureport/signup.html", dict(signup_form=signup_form), context_instance=RequestContext(request)
+    )
+    signup_form = SignupForm()
+    return render_to_response(
+        "ureport/signup.html", dict(signup_form=signup_form,status_message=status_message), context_instance=RequestContext(request)
+    )

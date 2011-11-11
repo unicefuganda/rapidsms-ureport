@@ -8,6 +8,9 @@ from generic.forms import ActionForm, FilterForm, ModuleForm
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.forms.widgets import RadioSelect
+from rapidsms.contrib.locations.models import Location
+from django.forms import ValidationError
+import re
 
 class EditReporterForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -140,4 +143,33 @@ class AssignToNewPollForm(ActionForm):
         if start_immediately:
             poll.start()
         return ('%d participants added to  %s poll' % (len(results), poll.name), 'success',)
+DISTRICT_CHOICES=(tuple([(int(d.pk),
+                                 d.name) for d in
+                                 Location.objects.filter(type__slug='district'
+                                 ).order_by('name')]))
+phone_re = re.compile(r'(\d+)')
+class SignupForm(forms.Form):
+    firstname = forms.CharField(max_length=100, label="First Name")
+    lastname = forms.CharField(max_length=100, label="Last Name")
+    district = forms.ChoiceField(choices=DISTRICT_CHOICES, label="District")
+    village = forms.CharField(label="Village",required=False)
+    mobile = forms.CharField(max_length=13,required=True)
+    gender = forms.ChoiceField(choices=(('Male', 'Male'), ('Female', 'Female'),), label="Sex")
+    group = forms.CharField(max_length=100,required=False,label="Organisation")
+    birthdate = forms.DateField(('%d/%m/%Y',), label='Birth Date', required=False,
+                                             widget=forms.DateTimeInput(format='%d/%m/%Y', attrs={
+                                                 'class': 'input',
+                                                 'readonly': 'readonly',
+                                                 'size': '15'
+                                             })
+    )
+    def clean(self):
+
+        cleaned_data=self.cleaned_data
+        cleaned_data['district']=Location.objects.get(pk=int(cleaned_data.get('district','1')))
+        match = re.match(phone_re, cleaned_data.get('mobile',''))
+        if not match:
+            raise ValidationError('invalid Number')
+        return cleaned_data
+    
 

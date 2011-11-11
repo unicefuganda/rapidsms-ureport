@@ -29,12 +29,17 @@ a {
 
 #span_info {
     border-bottom: 1px solid #BBD8E7;
-    float: right;
-    margin-right: 10px;
-    margin-top: 10px;
+
     padding-bottom: 3px;
     width: 120px;
 }
+.signup
+{
+    float: right;
+    margin-right: 10px;
+    margin-top: 10px;
+}
+
 
 #span_total {
     color: #ffffff;
@@ -390,4 +395,42 @@ div.why-placeholder span {
     display: block;
     margin-left: auto;
     margin-right: auto;
+}
+
+
+a.menu:focus {
+  outline: thin dotted;
+}
+a.menu:hover, a:active {
+  outline: 0;
+}
+
+#signup{
+    margin-left:auto;
+    margin-right:auto;
+    width:400px;
+}
+#signup label
+{
+ padding-top: 6px;
+  font-size: 13px;
+  line-height: 18px;
+  float: left;
+  width: 130px;
+  text-align: left;
+  color: #404040;
+}
+#signup input,
+#signup select {
+  font-size: 100%;
+  margin: 0;
+  vertical-align: baseline;
+  *vertical-align: middle;
+
+}
+#signup input{
+  line-height: normal;
+  *overflow: visible;
+  font-size: 13px;
+
 }
