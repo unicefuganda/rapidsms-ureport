@@ -131,11 +131,7 @@ def bulk_blacklist(sender, **kwargs):
             bad_conns = Blacklist.objects.values_list('connection__pk', flat=True).distinct()
             bad_conns = Connection.objects.filter(pk__in=bad_conns)
             poll.messages.filter(status='P').exclude(connection__in=bad_conns).update(status='Q')
-    elif sender == MessageBatch:
-        batch = kwargs['instance']
-        bad_conns = Blacklist.objects.values_list('connection__pk', flat=True).distinct()
-        bad_conns = Connection.objects.filter(pk__in=bad_conns)
-        batch.messages.filter(status='P').exclude(connection__in=bad_conns).update(status='Q')
+
 
 
 script_progress_was_completed.connect(autoreg, weak=False)
