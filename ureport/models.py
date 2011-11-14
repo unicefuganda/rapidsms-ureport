@@ -45,6 +45,14 @@ class TopResponses(models.Model):
     quote = models.TextField()
     quoted = models.TextField()
 
+class Ureporter(Contact):
+    def age(self):
+        if self.birthdate:
+            return (datetime.datetime.now() - self.birthdate).days / 365
+        else:
+            return "N/A"
+    class Meta:
+        proxy = True
 
 def autoreg(**kwargs):
     connection = kwargs['connection']

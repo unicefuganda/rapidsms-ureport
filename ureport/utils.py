@@ -4,13 +4,14 @@ from rapidsms.models import Contact
 from poll.models import Poll
 from script.models import ScriptStep
 from django.db.models import Count
+from .models import Ureporter
 
 def get_contacts(**kwargs):
     request = kwargs.pop('request')
     if request.user.is_authenticated() and hasattr(Contact, 'groups'):
-        return Contact.objects.filter(groups__in=request.user.groups.all()).distinct().annotate(Count('responses'))
+        return Ureporter.objects.filter(groups__in=request.user.groups.all()).distinct().annotate(Count('responses'))
     else:
-        return Contact.objects.annotate(Count('responses'))
+        return Ureporter.objects.annotate(Count('responses'))
 
 def get_polls(**kwargs):
     script_polls = ScriptStep.objects.exclude(poll=None).values_list('poll', flat=True)

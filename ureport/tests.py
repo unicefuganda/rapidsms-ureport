@@ -8,6 +8,7 @@ from django.test import TestCase
 from contact.models import Flag, MessageFlag
 from script.models import Script
 from rapidsms.models import Contact, Connection, Backend
+from unregister.models import Blacklist
 from rapidsms.messages.incoming import IncomingMessage
 from rapidsms_httprouter.models import Message
 from rapidsms_httprouter.router import get_router
@@ -68,6 +69,12 @@ class ModelTest(TestCase): #pragma: no cover
          call_command("syncdb")
          self.assertEquals(Script.objects.count(),1)
          self.assertEquals(Poll.objects.count(), 6)
+
+    def test_quit(self):
+        connection=Connection.objects.all()[0]
+        incomingmessage = self.fakeIncoming('quit',self.connection)
+        self.assertEquals(Blacklist.objects.count(), 1)
+
 
 
 
