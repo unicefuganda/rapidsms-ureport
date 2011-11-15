@@ -242,23 +242,29 @@ def editReporter(request, reporter_pk):
 @login_required
 def view_responses(req, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
-
-    if hasattr(Contact, 'groups'):
-        responses = poll.responses.filter(contact__groups__in=req.user.groups.all()).distinct()
-    else:
-        responses = poll.responses.all()
-    responses = responses.order_by('-date')
+    
+    script_polls = ScriptStep.objects.exclude(poll=None).values_list('poll', flat=True)
     response_rates = {}
-    for group in req.user.groups.all():
-        try:
-            contact_count = poll.contacts.filter(groups__in=[group]).distinct().count()
-            response_count = poll.responses.filter(contact__groups__in=[group]).distinct().count()
-            response_rates[str(group.name)] = [contact_count]
-            response_rates[str(group.name)].append(response_count)
-            response_rates[str(group.name)].append(response_count * 100.0 / contact_count)
+    if poll.pk in script_polls:
+        responses = poll.responses.order_by("-date")
+    else:
 
-        except(ZeroDivisionError):
-            response_rates.pop(group.name)
+        if hasattr(Contact, 'groups'):
+            responses = poll.responses.filter(contact__groups__in=req.user.groups.all()).distinct()
+        else:
+            responses = poll.responses.all()
+        responses = responses.order_by('-date')
+
+        for group in req.user.groups.all():
+            try:
+                contact_count = poll.contacts.filter(groups__in=[group]).distinct().count()
+                response_count = poll.responses.filter(contact__groups__in=[group]).distinct().count()
+                response_rates[str(group.name)] = [contact_count]
+                response_rates[str(group.name)].append(response_count)
+                response_rates[str(group.name)].append(response_count * 100.0 / contact_count)
+
+            except(ZeroDivisionError):
+                response_rates.pop(group.name)
     typedef = Poll.TYPE_CHOICES[poll.type]
     columns = [('Sender', False, 'sender', None)]
     for column, style_class in typedef['report_columns']:
