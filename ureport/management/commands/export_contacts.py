@@ -79,53 +79,55 @@ class Command(BaseCommand):
                 response_data_list=[]
                 excel_file_path = os.path.join(os.path.join(os.path.join(UREPORT_ROOT,'static'),'spreadsheets'),'poll_%d.xls'%poll.pk)
                 for response in responses:
-                    if response.contact:
-                        response_export_data = SortedDict()
 
+                    response_export_data = SortedDict()
+                    if response.contact and response.contact.name:
                         response_export_data['contact_name'] = response.contact.name
-                        if response.contact.gender:
-                            response_export_data['sex'] = response.contact.gender
-                        else:
-                            response_export_data['sex'] = 'N/A'
-                        if response.contact.default_connection:
-                            response_export_data['mobile']=response.contact.default_connection.identity
-                        else:
-                            response_export_data['mobile']="N/A"
-                        if response.contact.birthdate:
+                    else:
+                        response_export_data['contact_name'] = "N/A"
+                    if response.contact and response.contact.gender:
+                        response_export_data['sex'] = response.contact.gender
+                    else:
+                        response_export_data['sex'] = 'N/A'
+                    if response.contact and response.contact.default_connection:
+                        response_export_data['mobile']=response.contact.default_connection.identity
+                    else:
+                        response_export_data['mobile']="N/A"
+                    if response.contact and response.contact.birthdate:
 
-                            response_export_data['age'] = (datetime.datetime.now() - response.contact.birthdate).days/365
+                        response_export_data['age'] = (datetime.datetime.now() - response.contact.birthdate).days/365
 
-                        else:
-                            response_export_data['age'] = 'N/A'
-                        if response.contact.reporting_location:
-                            response_export_data['district'] = response.contact.reporting_location.name
-                        else:
-                            response_export_data['district'] = 'N/A'
-                        if response.contact.village:
-                            response_export_data['village'] = response.contact.village.name
-                        else:
-                            response_export_data['village'] = 'N/A'
-                        if response.contact.groups.count() > 0:
-                            response_export_data['groups'] = ",".join([group.name for group in response.contact.groups.all\
-                                    ()])
-                        else:
-                            response_export_data['groups'] = 'N/A'
-                        if response.message:
-                            response_export_data['response']=response.message.text
-                            response_export_data['date']=response.message.date.date()
-                            response_export_data['time']=response.message.date.time()
+                    else:
+                        response_export_data['age'] = 'N/A'
+                    if response.contact and response.contact.reporting_location:
+                        response_export_data['district'] = response.contact.reporting_location.name
+                    else:
+                        response_export_data['district'] = 'N/A'
+                    if response.contact and response.contact.village:
+                        response_export_data['village'] = response.contact.village.name
+                    else:
+                        response_export_data['village'] = 'N/A'
+                    if response.contact and response.contact.groups.count() > 0:
+                        response_export_data['groups'] = ",".join([group.name for group in response.contact.groups.all\
+                                ()])
+                    else:
+                        response_export_data['groups'] = 'N/A'
+                    if response.message:
+                        response_export_data['response']=response.message.text
+                        response_export_data['date']=response.message.date.date()
+                        response_export_data['time']=response.message.date.time()
 
-                        else:
-                            response_export_data['response']=''
-                            response_export_data['date']=''
-                            response_export_data['time']=''
-                        if response.poll:
-                            response_export_data['question']=response.poll.question
-                        else:
-                            response_export_data['question']=''
+                    else:
+                        response_export_data['response']=''
+                        response_export_data['date']=''
+                        response_export_data['time']=''
+                    if response.poll:
+                        response_export_data['question']=response.poll.question
+                    else:
+                        response_export_data['question']=''
 
 
 
-                        response_data_list.append(response_export_data)
+                    response_data_list.append(response_export_data)
                 ExcelResponse(response_data_list,output_name=excel_file_path,write_to_file=True)
 
