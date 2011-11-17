@@ -1,0 +1,173 @@
+[
+   
+    {
+        "pk": "ureport_autoreg_luo",
+        "model": "script.script",
+        "fields": {
+            "enabled": true,
+            "name": "Ureport Autoreg Luo",
+            "sites": [2]
+        }
+    },
+    {
+        "pk": 79,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_luo",
+            "retry_offset": null,
+            "rule": "w",
+            "email": null,
+            "num_tries": null,
+            "start_offset": 0,
+            "message": "Apwoyo bino I U-report ka ma itwero LOK, ki bene ki roomo WINYI pi gin matye ka time i kabedo ma megi. ME MONO ",
+            "poll": null,
+            "order": 0,
+            "giveup_offset": 60
+        }
+    },
+    {
+        "pk": 80,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_luo",
+            "retry_offset": null,
+            "rule": "w",
+            "email": null,
+            "num_tries": null,
+            "start_offset": 60,
+            "message": "U-report obedo waraga ma ki cwalo i cim me cing kun bedo MI MONO. U-report jo ma gu culu pire en atye UNICEF ki jo makene ma gitiyo kedegi",
+            "poll": null,
+            "order": 2,
+            "giveup_offset": 60
+        }
+    },
+    {
+        "pk": 81,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_luo",
+            "retry_offset": null,
+            "rule": "w",
+            "email": null,
+            "num_tries": null,
+            "start_offset": 60,
+            "message": "Ureport mini kare me lok ikum jami matime i kama in ibedo iyee.  Lagam mabejo kibiketo ne I karatac me ngec.",
+            "poll": null,
+            "order": 4,
+            "giveup_offset": 60
+        }
+    },
+    {
+        "pk": 82,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_luo",
+            "retry_offset": null,
+            "rule": "w",
+            "email": null,
+            "num_tries": null,
+            "start_offset": 60,
+            "message": "Apwoyo indong itye ikim joo me u-report. Iromo kelo aloka loka.  Lok dogi pire tek",
+            "poll": null,
+            "order": 9,
+            "giveup_offset": 0
+        }
+    },
+    {
+        "pk": 83,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_luo",
+            "retry_offset": 86400,
+            "rule": "R",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 0,
+            "message": "",
+            "poll": 121,
+            "order": 1,
+            "giveup_offset": 86400
+        }
+    },
+    {
+        "pk": 84,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_luo",
+            "retry_offset": 86400,
+            "rule": "M",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 0,
+            "message": "",
+            "poll": 122,
+            "order": 3,
+            "giveup_offset": 86400
+        }
+    },
+    {
+        "pk": 85,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_luo",
+            "retry_offset": 86400,
+            "rule": "R",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 60,
+            "message": "",
+            "poll": 123,
+            "order": 5,
+            "giveup_offset": 86400
+        }
+    },
+    {
+        "pk": 86,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_luo",
+            "retry_offset": 86400,
+            "rule": "M",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 60,
+            "message": "",
+            "poll": 124,
+            "order": 6,
+            "giveup_offset": 86400
+        }
+    },
+    {
+        "pk": 87,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_luo",
+            "retry_offset": 86400,
+            "rule": "R",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 60,
+            "message": "",
+            "poll": 125,
+            "order": 7,
+            "giveup_offset": 86400
+        }
+    },
+    {
+        "pk": 88,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_luo",
+            "retry_offset": 86400,
+            "rule": "R",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 0,
+            "message": "",
+            "poll": 126,
+            "order": 8,
+            "giveup_offset": 86400
+        }
+    }
+
+]

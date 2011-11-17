@@ -17,6 +17,8 @@ from rapidsms_xforms.models import XForm
 from poll.models import Poll
 from script.utils.handling import find_closest_match
 import re
+from script.models import *
+from django.core import management
 
 class ModelTest(TestCase): #pragma: no cover
 
@@ -38,6 +40,9 @@ class ModelTest(TestCase): #pragma: no cover
             flag=Flag.objects.create(name=word)
         #create test group
         self.gem_group=Group.objects.create(name="GEM")
+       
+
+        
 
 
     def fakeIncoming(self, message, connection):
@@ -72,8 +77,24 @@ class ModelTest(TestCase): #pragma: no cover
 
     def test_quit(self):
         connection=Connection.objects.all()[0]
-        incomingmessage = self.fakeIncoming('quit',self.connection)
+        incomingmessage = self.fakeIncoming('quit',connection)
         self.assertEquals(Blacklist.objects.count(), 1)
+
+    def test_join(self):
+
+        connection1=Connection.objects.all()[0]
+        incomingmsg1=self.fake_incoming('join',connection1)
+        self.assertEquals(ScriptProgress.objects.count(), 1)
+        script_prog = ScriptProgress.objects.all().order_by('pk')[0]
+        self.assertEquals(script_prog.script.slug, 'ureport_autoreg')
+        connection2=Connection.objects.all()[1]
+        self.fake_incoming('Donyo',connection2)
+
+        self.assertEquals(ScriptProgress.objects.count(), 2)
+        script_prog = ScriptProgress.objects.order_by('pk')[1]
+        self.assertEquals(script_prog.script.slug, 'ureport_autoreg_luo')
+    def test_autoreg(self):
+        pass
 
 
 

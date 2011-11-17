@@ -95,6 +95,8 @@ def autoreg(**kwargs):
 
     group_to_match = find_best_response(session, youthgrouppoll)
     default_group = None
+    if progress.language:
+        contact.language=progress.language
     if Group.objects.filter(name='Other uReporters').count():
         default_group = Group.objects.get(name='Other uReporters')
     if group_to_match:

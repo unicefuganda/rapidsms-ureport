@@ -1,0 +1,128 @@
+[
+    {
+        "pk": 7,
+        "model": "poll.translation",
+        "fields": {
+            "field": "What is your age?",
+            "value": "Mwaka ni tye adii?",
+            "language": "ach"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "poll.translation",
+        "fields": {
+            "field": "Are you male or female? Type F for female, and M for male",
+            "value": "In lacoo onyo dakoo? Coo D ka in dakoo. Coo in lacoo.",
+            "language": "ach"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "poll.translation",
+        "fields": {
+            "field": "Which village in the district will you be reporting from? Please respond ONLY with the name of your village",
+            "value": "Waci wa kama in ibedo iyee?  Timiwa be icoo nying ka in iyaa ici iyee.",
+            "language": "ach"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "poll.translation",
+        "fields": {
+            "field": "Congratulations!!!! You are now a registered member of Ureport! With Ureport you can make a real difference.  Your Voice Matters.  From UNICEF.",
+            "value": "Apwoyo indong itye ikim joo me u-report. Iromo kelo aloka loka.  Lok dogi pire tek",
+            "language": "ach"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "poll.translation",
+        "fields": {
+            "field": "Yes",
+            "value": "Ada",
+            "language": "ach"
+        }
+    },
+    {
+        "pk": 12,
+        "model": "poll.translation",
+        "fields": {
+            "field": "No",
+            "value": "Ku",
+            "language": "ach"
+        }
+    },
+    {
+        "pk": 13,
+        "model": "poll.translation",
+        "fields": {
+            "field": "Join",
+            "value": "Donyo ",
+            "language": "ach"
+        }
+    },
+    {
+        "pk": 14,
+        "model": "poll.translation",
+        "fields": {
+            "field": "Welcome to Ureport where you can SPEAK UP and BE HEARD on what is happening in your community \u2013 it is FREE",
+            "value": "Apwoyo bino I U-report ka ma itwero LOK, ki bene ki roomo WINYI pi gin matye ka time i kabedo ma megi. ME MONO",
+            "language": "ach"
+        }
+    },
+    {
+        "pk": 15,
+        "model": "poll.translation",
+        "fields": {
+            "field": "Ureport is a FREE SMS text message service that is sent to your phone.  Ureport is sponsored by UNICEF and partners",
+            "value": "U-report obedo waraga ma ki cwalo i cim me cing kun bedo MI MONO. U-report jo ma gu culu pire en atye UNICEF ki jo makene ma gitiyo kedegi",
+            "language": "ach"
+        }
+    },
+    {
+        "pk": 16,
+        "model": "poll.translation",
+        "fields": {
+            "field": " Welcome to Ureport! Ureport is a community of Ugandan youth that are dedicated to working for positive change in their communities.  Stay tuned for more information.",
+            "value": "Obedo dul pa joo ma tino ma gimito loko ka bedo ma megi wek obedo maber.",
+            "language": "ach"
+        }
+    },
+    {
+        "pk": 17,
+        "model": "poll.translation",
+        "fields": {
+            "field": "How did you hear about Ureport?",
+            "value": "I winyo pi U-report ki kwene?",
+            "language": "ach"
+        }
+    },
+    {
+        "pk": 18,
+        "model": "poll.translation",
+        "fields": {
+            "field": "It is important to know which District you will be reporting from so we can work together to try and resolve the issues in your community.  Reply ONLY with the name of your district.",
+            "value": "Bedo ber me ngeno ka ma ibibedo ka cwalo ngec man ki iiye weki wati karacel kun wateme me tyeko lok ma tye I kin gang ma magi. Dwong ki nying ka ma in iaa ki iyee KENE..",
+            "language": "ach"
+        }
+    },
+    {
+        "pk": 19,
+        "model": "poll.translation",
+        "fields": {
+            "field": "Ureport gives you a chance to speak out on issues in your community & share opinions with youth around Uganda! Best responses & results shared through the media!",
+            "value": "Ureport mini kare me lok ikum jami matime i kama in ibedo iyee.  Lagam mabejo kibiketo ne I karatac me ngec.",
+            "language": "ach"
+        }
+    },
+    {
+        "pk": 20,
+        "model": "poll.translation",
+        "fields": {
+            "field": "Best responses may be shared! Send us your name, or if you prefer a nickname so we can give you recognition for good replies in the media",
+            "value": "Lagam ma bejo ki biketo ne i karatac me ngec cwali wa nyingionyo nying pak mamegi.",
+            "language": "ach"
+        }
+    }
+]
