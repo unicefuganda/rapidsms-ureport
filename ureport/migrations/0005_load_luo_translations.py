@@ -6,7 +6,7 @@ from django.db import models
 from django.core import management
 
 class Migration(DataMigration):
-
+    
     def forwards(self, orm):
         "load luo translations"
         management.call_command('loaddata', 'luo_translation.json')
