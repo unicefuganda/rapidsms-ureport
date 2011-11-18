@@ -6,7 +6,8 @@ from django.db import models
 from django.core import management
 
 class Migration(DataMigration):
-    
+    depends_on = (
+        ("poll", "0004_auto__add_translation__add_unique_translation_field_language"),)
     def forwards(self, orm):
         "load luo translations"
         management.call_command('loaddata', 'luo_translation.json')
