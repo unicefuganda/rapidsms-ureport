@@ -14,21 +14,21 @@ class App (AppBase):
 
     def handle (self, message):
         one_template = r"(.*\b(%s)\b.*)"
-        OPT_IN_WORDS = getattr(settings,'OPT_IN_WORDS',None)
+        OPT_IN_WORDS = getattr(settings,'OPT_IN_WORDS_LUO',None)
         if OPT_IN_WORDS:
             opt_reg = re.compile(r"|".join(OPT_IN_WORDS),re.IGNORECASE)
 
 
-        if not message.connection.contact and not ScriptProgress.objects.filter(script__slug='ureport_autoreg', connection=message.connection).exists():
+        if not message.connection.contact and not ScriptProgress.objects.filter(script__slug='ureport_autoreg', connection=message.connection).exists() and not ScriptProgress.objects.filter(script__slug='ureport_autoreg', connection=message.connection).exists():
 
             match = opt_reg.search(message.text)
             if match:
-                prog=ScriptProgress.objects.create(script=Script.objects.get(slug="ureport_autoreg_luo"), \
+                prog=ScriptProgress.objects.create(script=Script.objects.get(pk="ureport_autoreg_luo"), \
                                           connection=message.connection)
                 prog.language="ach"
                 prog.save()
             else:
-                prog=ScriptProgress.objects.create(script=Script.objects.get(slug="ureport_autoreg"), \
+                prog=ScriptProgress.objects.create(script=Script.objects.get(pk="ureport_autoreg"), \
                                           connection=message.connection)
                 prog.language="en"
                 prog.save()
