@@ -1,13 +1,14 @@
 [
-        {
+    {
         "pk": 1,
         "model": "auth.user",
         "fields": {
             "username": "admin"
 
-    }},
+        }
+    },
 
-        {
+    {
         "pk": 122,
         "model": "poll.poll",
         "fields": {
@@ -109,7 +110,7 @@
             "response_type": "a"
         }
     },
-        {
+    {
         "pk": 179,
         "model": "poll.category",
         "fields": {
@@ -133,8 +134,52 @@
             "default": false,
             "poll": 125,
             "response": null
-        }},
-        {
+        }
+    },
+    {
+        "pk": 130,
+        "model": "poll.rule",
+        "fields": {
+            "regex": "^\\\\s*(m|mal|male|ma)(\\\\s|[^a-zA-Z]|$)",
+            "category": 178,
+            "rule_string": "^\\\\s*(m|mal|male|ma)(\\\\s|[^a-zA-Z]|$)",
+            "rule_type": "r"
+        }
+    },
+    {
+        "pk": 174,
+        "model": "poll.rule",
+        "fields": {
+            "regex": "^\\\\s*(l|laco|lacoo|lac)(\\\\s|[^a-zA-Z]|$)",
+            "category": 178,
+            "rule_string": "^\\\\s*(l|laco|lacoo|lac)(\\\\s|[^a-zA-Z]|$)",
+            "rule_type": "r"
+        }
+    },
+
+    {
+        "pk": 131,
+        "model": "poll.rule",
+        "fields": {
+            "regex": "^\\\\s*(f|fem|female|fe)(\\\\s|[^a-zA-Z]|$)",
+            "category": 179,
+            "rule_string": "^\\\\s*(f|fem|female|fe)(\\\\s|[^a-zA-Z]|$)",
+            "rule_type": "r"
+        }
+    },
+    {
+        "pk": 175,
+        "model": "poll.rule",
+        "fields": {
+            "regex": "^\\\\s*(d|dak|dakoo|dako)(\\\\s|[^a-zA-Z]|$)",
+            "category": 179,
+            "rule_string": "^\\\\s*(d|dak|dakoo|dako)(\\\\s|[^a-zA-Z]|$)",
+            "rule_type": "r"
+        }
+    },
+
+
+    {
         "pk": 2,
         "model": "sites.site",
         "fields": {
