@@ -221,7 +221,7 @@
         "model": "script.scriptstep",
         "fields": {
             "script": "ureport_autoreg",
-            "retry_offset": 86400,
+            "retry_offset": 3600,
             "rule": "R",
             "email": null,
             "num_tries": 1,
@@ -229,7 +229,7 @@
             "message": "",
             "poll": 121,
             "order": 1,
-            "giveup_offset": 86400
+            "giveup_offset": 3600
         }
     },
     {
@@ -237,7 +237,7 @@
         "model": "script.scriptstep",
         "fields": {
             "script": "ureport_autoreg",
-            "retry_offset": 86400,
+            "retry_offset": 3600,
             "rule": "M",
             "email": null,
             "num_tries": 1,
@@ -245,7 +245,7 @@
             "message": "",
             "poll": 122,
             "order": 3,
-            "giveup_offset": 86400
+            "giveup_offset": 3600
         }
     },
     {
@@ -253,7 +253,7 @@
         "model": "script.scriptstep",
         "fields": {
             "script": "ureport_autoreg",
-            "retry_offset": 86400,
+            "retry_offset": 3600,
             "rule": "R",
             "email": null,
             "num_tries": 1,
@@ -261,7 +261,7 @@
             "message": "",
             "poll": 123,
             "order": 5,
-            "giveup_offset": 86400
+            "giveup_offset": 3600
         }
     },
     {
@@ -269,7 +269,7 @@
         "model": "script.scriptstep",
         "fields": {
             "script": "ureport_autoreg",
-            "retry_offset": 86400,
+            "retry_offset": 3600,
             "rule": "M",
             "email": null,
             "num_tries": 1,
@@ -277,7 +277,7 @@
             "message": "",
             "poll": 124,
             "order": 6,
-            "giveup_offset": 86400
+            "giveup_offset": 3600
         }
     },
     {
@@ -285,7 +285,7 @@
         "model": "script.scriptstep",
         "fields": {
             "script": "ureport_autoreg",
-            "retry_offset": 86400,
+            "retry_offset": 3600,
             "rule": "R",
             "email": null,
             "num_tries": 1,
@@ -293,7 +293,7 @@
             "message": "",
             "poll": 125,
             "order": 7,
-            "giveup_offset": 86400
+            "giveup_offset": 3600
         }
     },
     {
@@ -301,7 +301,7 @@
         "model": "script.scriptstep",
         "fields": {
             "script": "ureport_autoreg",
-            "retry_offset": 86400,
+            "retry_offset": 3600,
             "rule": "R",
             "email": null,
             "num_tries": 1,
@@ -309,7 +309,7 @@
             "message": "",
             "poll": 126,
             "order": 8,
-            "giveup_offset": 86400
+            "giveup_offset": 3600
         }
     }
 ]
