@@ -57,7 +57,7 @@ class Ureporter(Contact):
 def autoreg(**kwargs):
     connection = kwargs['connection']
     progress = kwargs['sender']
-    if not progress.script.slug == 'ureport_autoreg':
+    if not progress.script.slug in ['ureport_autoreg','ureport_autoreg_luo']:
         return
 
     connection.contact = Contact.objects.create(name='Anonymous User')
