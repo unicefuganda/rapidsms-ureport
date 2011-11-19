@@ -12,7 +12,7 @@
         "pk": 8,
         "model": "poll.translation",
         "fields": {
-            "field": "Are you male or female? Type F for female, and M for male",
+            "field": "Are you male or female?  Type F for female, and M for Male",
             "value": "In lacoo onyo dakoo? Coo D ka in dakoo. Coo in lacoo.",
             "language": "ach"
         }
@@ -21,7 +21,7 @@
         "pk": 9,
         "model": "poll.translation",
         "fields": {
-            "field": "Which village in the district will you be reporting from? Please respond ONLY with the name of your village",
+            "field": "Which village in the district will you be reporting from? Please respond ONLY with the name of your village.",
             "value": "Waci wa kama in ibedo iyee?  Timiwa be icoo nying ka in iyaa ici iyee.",
             "language": "ach"
         }
@@ -93,7 +93,7 @@
         "pk": 17,
         "model": "poll.translation",
         "fields": {
-            "field": "How did you hear about Ureport?",
+            "field": "How did you hear about U REPORT?",
             "value": "I winyo pi U-report ki kwene?",
             "language": "ach"
         }
@@ -102,7 +102,7 @@
         "pk": 18,
         "model": "poll.translation",
         "fields": {
-            "field": "It is important to know which District you will be reporting from so we can work together to try and resolve the issues in your community.  Reply ONLY with the name of your district.",
+            "field": "Its important to know which District you'll be reporting on so we can work together to try & resolve issues in your community!Reply ONLY with your district.",
             "value": "Bedo ber me ngeno ka ma ibibedo ka cwalo ngec man ki iiye weki wati karacel kun wateme me tyeko lok ma tye I kin gang ma magi. Dwong ki nying ka ma in iaa ki iyee KENE..",
             "language": "ach"
         }
