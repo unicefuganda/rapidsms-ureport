@@ -19,7 +19,7 @@ class App (AppBase):
             opt_reg = re.compile(r"|".join(OPT_IN_WORDS),re.IGNORECASE)
 
 
-        if not message.connection.contact and not ScriptProgress.objects.filter(script__slug='ureport_autoreg', connection=message.connection).exists() and not ScriptProgress.objects.filter(script__slug='ureport_autoreg', connection=message.connection).exists():
+        if not message.connection.contact and not ScriptProgress.objects.filter(script__slug__in=['ureport_autoreg','ureport_autoreg_luo'], connection=message.connection).exists() and not ScriptProgress.objects.filter(script__slug='ureport_autoreg', connection=message.connection).exists():
 
             match = opt_reg.search(message.text)
             if match:
