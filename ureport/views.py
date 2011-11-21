@@ -616,6 +616,7 @@ def signup(request):
             status_message="You have successfully signed up :)"
             Message.objects.create(
             date=datetime.datetime.now(),
+            connection=connection,
             direction="O",
             status='Q',
             text="CONGRATULATIONS!!! You are now a registered member of Ureport! With Ureport, you can make a real difference!  Speak Up and Be Heard! from UNICEF")
