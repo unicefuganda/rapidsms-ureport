@@ -26,6 +26,13 @@
     {{ object.gender }}
     {% endif %}
     </td>
+    <td>
+    {% if contact.language %}
+        {{ contact.language }}
+        {% else %}
+        en
+    {% endif %}
+    </td>
     <td id="row_{{ object.pk }}">{{ object.reporting_location.name }}</td>
     <td>
         {% if object.groups %}
