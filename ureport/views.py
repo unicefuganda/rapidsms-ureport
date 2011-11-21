@@ -31,6 +31,7 @@ from xlrd import open_workbook
 from uganda_common.utils import assign_backend
 from script.utils.handling import find_closest_match
 from django.views.decorators.cache import cache_control
+from rapidsms.messages.outgoing import OutgoingMessage
 
 from contact.forms import FlaggedMessageForm
 
@@ -594,10 +595,9 @@ def signup(request):
             connection.contact = Contact.objects.create(
                 name=signup_form.cleaned_data['firstname'] + " " + signup_form.cleaned_data['lastname'])
             connection.contact.reporting_location = signup_form.cleaned_data['district']
-            connection.birthdate = signup_form.cleaned_data['birthdate']
             connection.contact.gender = signup_form.cleaned_data['gender']
             connection.contact.village = find_closest_match(signup_form.cleaned_data['village'], Location.objects)
-            connection.contact.birthdate=signup_form.cleaned_data['birthdate']
+            connection.contact.birthdate=datetime.datetime.now() - datetime.timedelta(days=(365 * int(signup_form.cleaned_data['age'])))
 
             group_to_match = signup_form.cleaned_data['group']
 

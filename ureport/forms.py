@@ -153,16 +153,11 @@ class SignupForm(forms.Form):
     lastname = forms.CharField(max_length=100, label="Last Name")
     district = forms.ChoiceField(choices=DISTRICT_CHOICES, label="District")
     village = forms.CharField(label="Village",required=False)
-    mobile = forms.CharField(max_length=13,required=True)
+    mobile = forms.CharField(label="Mobile Number",max_length=13,required=True)
     gender = forms.ChoiceField(choices=(('Male', 'Male'), ('Female', 'Female'),), label="Sex")
-    group = forms.CharField(max_length=100,required=False,label="Organisation")
-    birthdate = forms.DateField(('%d/%m/%Y',), label='Birth Date', required=False,
-                                             widget=forms.DateTimeInput(format='%d/%m/%Y', attrs={
-                                                 'class': 'input',
-                                                 'readonly': 'readonly',
-                                                 'size': '15'
-                                             })
-    )
+    group = forms.CharField(max_length=100,required=False,label="How did you hear about U-report?")
+    age = forms.IntegerField(max_value=100,min_value=10,required=False)
+
     def clean(self):
 
         cleaned_data=self.cleaned_data
