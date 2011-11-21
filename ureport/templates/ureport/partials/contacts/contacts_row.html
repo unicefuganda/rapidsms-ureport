@@ -27,10 +27,10 @@
     {% endif %}
     </td>
     <td>
-    {% if contact.language %}
-        {{ contact.language }}
+    {% if object.language == '' %}
+        'en'
         {% else %}
-        en
+        {{ object.language }}
     {% endif %}
     </td>
     <td id="row_{{ object.pk }}">{{ object.reporting_location.name }}</td>
