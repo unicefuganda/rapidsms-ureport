@@ -614,8 +614,12 @@ def signup(request):
 
             connection.save()
             status_message="You have successfully signed up :)"
-            msg=OutgoingMessage(connection=connection,text="CONGRATULATIONS!!! You are now a registered member of Ureport! With Ureport, you can make a real difference!  Speak Up and Be Heard! from UNICEF")
-            msg.send()
+            Message.objects.create(
+            date=datetime.datetime.now(),
+            direction="O",
+            status='Q',
+            text="CONGRATULATIONS!!! You are now a registered member of Ureport! With Ureport, you can make a real difference!  Speak Up and Be Heard! from UNICEF")
+
         else:
             return render_to_response(
         "ureport/signup.html", dict(signup_form=signup_form), context_instance=RequestContext(request)
