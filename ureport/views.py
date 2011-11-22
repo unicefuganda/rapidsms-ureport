@@ -11,6 +11,9 @@ from ureport.settings import drop_words, tag_cloud_size
 from ureport.models import IgnoredTags
 from poll.models import *
 from script.models import ScriptStep
+from contact.models import MessageFlag
+from .utils import get_flagged_messages
+from uganda_common.utils import ExcelResponse
 
 from rapidsms_httprouter.views import receive
 
@@ -542,6 +545,35 @@ def clickatell_wrapper(request):
     request.GET.update({'backend':'clickatell', 'sender':request.GET['from'], 'message':request.GET['text']})
     return receive(request)
 
+def flagged_messages(request,export=False):
+    if request.GET.get('export',None):
+        data=[]
+        for mf in MessageFlag.objects.all():
+            rep={}
+            rep['Message']=mf.message.text
+            rep['Mobile Number']=mf.message.connection.identity
+            rep['flag']=mf.flag.name
+            data.append(rep)
+            
+        return ExcelResponse(data=data)
+    return generic(request,
+        model=MessageFlag,
+      queryset=get_flagged_messages,
+      objects_per_page=10,
+      results_title='Flagged Messages',
+      selectable=False,
+      partial_row='ureport/partials/messages/flagged_message_row.html',
+      base_template='ureport/flagged_message_base.html',
+      columns=[('Message', True, 'message__text', SimpleSorter()),
+                 ('Sender Information', True, 'message__connection__contact__name', SimpleSorter(),),
+                 ('Date', True, 'message__date', SimpleSorter(),),
+                 ('Flags', False, 'message__flagged', None,),
+
+                 ],
+      sort_column='date',
+      sort_ascending=False
+    )
+
 def view_flagged_with(request, pk):
     flag = get_object_or_404(Flag, pk=pk)
     messages = flag.get_messages()
@@ -629,3 +661,5 @@ def signup(request):
     return render_to_response(
         "ureport/signup.html", dict(signup_form=signup_form,status_message=status_message), context_instance=RequestContext(request)
     )
+
+

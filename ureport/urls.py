@@ -133,23 +133,7 @@ urlpatterns = patterns('',
     }),
 
     #flagged messages
-    url(r'^flaggedmessages/$', login_required(generic), {
-      'model':MessageFlag,
-      'queryset':get_flagged_messages,
-      'objects_per_page':10,
-      'results_title':'Flagged Messages',
-      'selectable':False,
-      'partial_row':'ureport/partials/messages/flagged_message_row.html',
-      'base_template':'ureport/flagged_message_base.html',
-      'columns':[('Message', True, 'message__text', SimpleSorter()),
-                 ('Sender Information', True, 'message__connection__contact__name', SimpleSorter(),),
-                 ('Date', True, 'message__date', SimpleSorter(),),
-                 ('Flags', False, 'message__flagged', None,),
-
-                 ],
-      'sort_column':'date',
-      'sort_ascending':False,
-    }, name="flaggedmessages"),
+    url(r'^flaggedmessages/$', login_required(flagged_messages),name="flaggedmessages"),
 
     url(r"^flags/(\d+)/messages/$", view_flagged_with, name="flagged_with"),
      url(r"^flags/new/$", create_flags , name="flags_new"),
