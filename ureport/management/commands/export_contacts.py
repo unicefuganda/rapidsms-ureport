@@ -7,6 +7,9 @@ from rapidsms.models import Contact
 from django.utils.datastructures import SortedDict
 from poll.models import Poll
 import datetime
+from unregister.models import Blacklist
+from django.conf import settings
+from rapidsms_httprouter.models import Message
 
 
 import optparse
@@ -57,12 +60,24 @@ class Command(BaseCommand):
                     else:
                         export_data['group'] = 'N/A'
                     if ScriptSession.objects.filter(connection__contact=contact).exists():
-                         export_data["join date"]=ScriptSession.objects.filter(connection__contact=contact)[0].start_time
+                         export_data["join date"]=ScriptSession.objects.filter(connection__contact=contact)[0].start_time.date()
 
                     elif contact.default_connection and contact.default_connection.messages.exists():
-                        export_data["join date"]= contact.default_connection.messages.order_by('date')[0].date
+                        export_data["join date"]= contact.default_connection.messages.order_by('date')[0].date.date()
+                        export_data["join month"]= contact.default_connection.messages.order_by('date')[0].date.month
                     else:
                         export_data["join date"]="N/A"
+                        export_data["join month"]="N/A"
+
+                    if Blacklist.objects.filter(connection__contact=contact).exists():
+                        for quit_word in settings.OPT_OUT_WORDS:
+                            if Message.objects.filter(text__icontains=quit_word).exists():
+                                export_data['Quit Date']=Message.objects.filter(text__icontains=quit_word).latest('date').date.date()
+                                export_data['Quit Month']=Message.objects.filter(text__icontains=quit_word).latest('date').date.month
+
+                    else:
+                        export_data['Quit Date']=''
+                        export_data['Quit Month']=''
 
                     export_data["Total Poll Responses"]=contact.responses.count()
 
@@ -115,7 +130,7 @@ class Command(BaseCommand):
                     if response.message:
                         response_export_data['response']=response.message.text
                         response_export_data['date']=response.message.date.date()
-                        response_export_data['time']=response.message.date.time()
+                        response_export_data['time']=response.message.date.time
 
                     else:
                         response_export_data['response']=''
