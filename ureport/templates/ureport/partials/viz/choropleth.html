@@ -187,7 +187,7 @@
                 render_text = render_text + "<p>Yes: " + Math.round(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
             }
             else if (jQuery(v).text() == "no") {
-                render_text = render_text + "<p>uncategorized: " + Math.round(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
+                render_text = render_text + "<p>No: " + Math.round(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
             }
             else if (jQuery(v).text() == "unknown") {
                 render_text = render_text + "<p>unknown: " + Math.round(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
@@ -204,7 +204,7 @@
             popup = new OpenLayers.Popup.FramedCloud(
                     popupId,
                     map.getLonLatFromPixel(EVT.xy),
-                    new OpenLayers.Size(200, 150),
+                    new OpenLayers.Size(200, 160),
                     " ",
                     null,
                     true,
