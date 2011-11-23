@@ -11,6 +11,7 @@ from django.forms.widgets import RadioSelect
 from rapidsms.contrib.locations.models import Location
 from django.forms import ValidationError
 import re
+from poll.forms import NewPollForm
 
 class EditReporterForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -124,6 +125,8 @@ class AssignToNewPollForm(ActionForm):
             return ("No contacts selected", "error")
         name = self.cleaned_data['poll_name']
         poll_type = self.cleaned_data['poll_type']
+        poll_type = Poll.TYPE_TEXT if self.cleaned_data['poll_type'] == NewPollForm.TYPE_YES_NO else type
+
         question = self.cleaned_data.get('question').replace('%', u'\u0025')
         default_response = self.cleaned_data['default_response']
         start_immediately = self.cleaned_data['start_immediately']
@@ -135,8 +138,12 @@ class AssignToNewPollForm(ActionForm):
                                  default_response=default_response,
                                  contacts=results,
                                  user=request.user)
+
         poll.response_type=response_type
+        if self.cleaned_data['poll_type'] == NewPollForm.TYPE_YES_NO:
+            poll.add_yesno_categories()
         poll.save()
+
 
         if settings.SITE_ID:
             poll.sites.add(Site.objects.get_current())
