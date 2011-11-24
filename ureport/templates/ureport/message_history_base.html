@@ -27,6 +27,7 @@ $('#div_action_0').find('a').html("Send Message");
 
 <table style="font-size: 16px;">
     <tr><td>Name: </td> <td>{{ contact.name }}</td></tr>
+    <tr><td>Mobile: </td> <td>{{ contact.default_connection.identity }}</td></tr>
     <tr><td>Gender: </td> <td>{{ contact.gender }}</td></tr>
     <tr><td>age: </td> <td>{{ contact.age }}</td></tr>
     <tr><td>District: </td> <td>{{ contact.reporting_location.name }}</td></tr>
