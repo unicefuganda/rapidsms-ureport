@@ -50,7 +50,31 @@ class Ureporter(Contact):
         if self.birthdate:
             return (datetime.datetime.now() - self.birthdate).days / 365
         else:
-            return "N/A"
+            return ""
+    def is_active(self):
+        return not Blacklist.objects.filter(connection=self.default_connection).exists()
+
+    def join_date(self):
+        ss=ScriptSession.objects.filter(connection__contact=self)
+        if ss.exists():
+            return ScriptSession.objects.filter(connection__contact=self)[0].start_time.date()
+        else:
+            messages=Message.objects.filter(connection=self.default_connection).order_by('date')
+            if messages.exists():
+                return messages[0].date
+            else:
+                return None
+            
+    def quit_date(self):
+        bl=Blacklist.objects.filter(connection__contact=self)
+        if bl.exists():
+            for quit_word in settings.OPT_OUT_WORDS:
+                q_message=Message.objects.filter(text__icontains=quit_word)
+                if q_message.exists():
+                    return q_message.latest('date').date.date()
+                
+
+
     class Meta:
         proxy = True
 

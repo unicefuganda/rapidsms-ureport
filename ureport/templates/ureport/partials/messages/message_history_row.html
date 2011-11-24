@@ -1,0 +1,31 @@
+{% extends 'generic/partials/partial_row.html' %}
+{% block remaining_row_content %}
+{% load extra_tags %}
+<td>
+    <span class="textmessage">
+        {% if object.direction == "O" %}
+        >>
+        {% else %}
+<<
+        {% endif %}
+    {{ object.text }}
+
+    </span>
+</td>
+
+    <td>{{ object.connection.identity }}</td>
+
+<td>
+    <span class="small">
+        {{ object.date|date:"m/d/Y H:i:s" }}
+    </span>
+</td>
+
+<td>
+
+
+ {{ object.direction }}
+
+
+</td>
+{% endblock %}

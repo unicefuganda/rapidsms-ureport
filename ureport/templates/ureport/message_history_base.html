@@ -1,0 +1,44 @@
+{% extends "generic/base.html" %}
+{% block title %}
+    Messages - {{ block.super }}
+{% endblock %}
+{% block stylesheets %}
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/ureport.css" />
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/splits.css" />
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/modules.css" />
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/icons.css" />
+    <link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}generic/stylesheets/generic.css"/>
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}contact/stylesheets/messages.css" />
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/message_log.css" />
+{% endblock %}
+{% block javascripts %}
+    {{ block.super }}
+   <script type="text/javascript">
+   $(function() {
+ $('#actions').append('<input type="checkbox" checked="checked" style="display:none;" name="results" value="{{contact.pk}}">');
+$('#div_action_0').find('a').html("Send Message");
+   });
+
+   </script>
+{% endblock %}
+{% block content %}
+<div class="module">
+<h2>Profile for {{ contact.name }}</h2>
+
+<table style="font-size: 16px;">
+    <tr><td>Name:</td> <td>{{ contact.name }}</td></tr>
+    <tr><td>Gender:</td> <td>{{ contact.gender }}</td></tr>
+    <tr><td>age:</td> <td>{{ contact.age }}</td></tr>
+    <tr><td>District:</td> <td>{{ contact.reporting_location.name }}</td></tr>
+    <tr><td>Village</td> <td>{{ contact.village }}</td></tr>
+    <tr><td>Join Date:</td> <td>{{ contact.join_date }}</td></tr>
+    {% if not contact.is_active %}
+        <tr><td>Quit Date:</td> <td>{{ contact.quit_date }}</td></tr>
+    {% endif %}
+
+    <tr><td>Language</td> <td>{{ contact.language }}</td></tr>
+</table>
+
+    </div>
+{{ block.super }}
+{% endblock %}

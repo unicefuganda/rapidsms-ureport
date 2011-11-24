@@ -14,6 +14,7 @@ from script.models import ScriptStep
 from contact.models import MessageFlag
 from .utils import get_flagged_messages
 from uganda_common.utils import ExcelResponse
+from django.core.urlresolvers import reverse
 
 from rapidsms_httprouter.views import receive
 
@@ -36,6 +37,7 @@ from script.utils.handling import find_closest_match
 from django.views.decorators.cache import cache_control
 from rapidsms.messages.outgoing import OutgoingMessage
 from contact.forms import ReplyTextForm
+from .models import Ureporter
 
 from contact.forms import FlaggedMessageForm
 
@@ -73,10 +75,12 @@ def generate_tag_cloud(words, counts_dict, tag_classes, max_count):
 
     return tags
 
+
 @login_required
 def add_drop_word(request, tag_name=None, poll_pk=None):
     IgnoredTags.objects.create(name=tag_name, poll=get_object_or_404(Poll, pk=int(poll_pk)))
     return HttpResponse(simplejson.dumps("success"))
+
 
 @login_required
 def delete_drop_word(request, tag_pk):
@@ -84,11 +88,14 @@ def delete_drop_word(request, tag_pk):
     tag.delete()
     return HttpResponse(simplejson.dumps("success"))
 
+
 @login_required
 @cache_control(no_cache=True, max_age=0)
 def show_ignored_tags(request, poll_id):
     tags = IgnoredTags.objects.filter(poll__pk=poll_id)
-    return render_to_response("ureport/partials/tag_cloud/ignored_tags.html", {'tags':tags, 'poll_id':poll_id}, context_instance=RequestContext(request))
+    return render_to_response("ureport/partials/tag_cloud/ignored_tags.html", {'tags': tags, 'poll_id': poll_id},
+                              context_instance=RequestContext(request))
+
 
 def _get_tags(polls):
     responses = Response.objects.filter(poll__in=polls)
@@ -99,7 +106,8 @@ def _get_tags(polls):
     max_count = 0
     reg_words = re.compile('[^a-zA-Z]')
     dropwords = list(IgnoredTags.objects.filter(poll__in=polls).values_list('name', flat=True)) + drop_words
-    all_words = ' '.join(Value.objects.filter(entity_ct=ContentType.objects.get_for_model(Response), entity_id__in=responses).values_list('value_text', flat=True)).lower()
+    all_words = ' '.join(Value.objects.filter(entity_ct=ContentType.objects.get_for_model(Response),
+                                              entity_id__in=responses).values_list('value_text', flat=True)).lower()
     all_words = reg_words.split(all_words)
     #poll question
     poll_qn = ['Qn:' + ' '.join(textwrap.wrap(poll.question.rsplit('?')[0])) + '?' for poll in polls]
@@ -126,6 +134,7 @@ def _get_tags(polls):
     random.shuffle(tags)
     return tags
 
+
 @cache_control(no_cache=True, max_age=0)
 def tag_cloud(request, pks):
     """
@@ -136,7 +145,10 @@ def tag_cloud(request, pks):
     poll_qn = ['Qn:' + ' '.join(textwrap.wrap(poll.question.rsplit('?')[0])) + '?' for poll in polls]
 
     tags = _get_tags(polls)
-    return render_to_response("ureport/partials/tag_cloud/tag_cloud.html", {'poll':polls[0], 'tags':tags, 'poll_qn':poll_qn[0], 'poll_id':pks}, context_instance=RequestContext(request))
+    return render_to_response("ureport/partials/tag_cloud/tag_cloud.html",
+            {'poll': polls[0], 'tags': tags, 'poll_qn': poll_qn[0], 'poll_id': pks},
+                              context_instance=RequestContext(request))
+
 
 def histogram(request, pks=None):
     """
@@ -193,7 +205,7 @@ def histogram(request, pks=None):
             plottable_data['median'] = vals_list[len(vals_list) / 2]
         return HttpResponse(mark_safe(simplejson.dumps(plottable_data)))
 
-    return render_to_response("ureport/histogram.html", {'polls':all_polls}, context_instance=RequestContext(request))
+    return render_to_response("ureport/histogram.html", {'polls': all_polls}, context_instance=RequestContext(request))
 
 
 def show_timeseries(request, pks):
@@ -211,7 +223,10 @@ def show_timeseries(request, pks):
         message_count_list.append(count)
         current_date += interval
 
-    return render_to_response("ureport/partials/viz/timeseries.html", {'counts':mark_safe(message_count_list), 'start':start_date, 'end':end_date, 'poll':mark_safe(poll)}, context_instance=RequestContext(request))
+    return render_to_response("ureport/partials/viz/timeseries.html",
+            {'counts': mark_safe(message_count_list), 'start': start_date, 'end': end_date, 'poll': mark_safe(poll)},
+                              context_instance=RequestContext(request))
+
 
 @login_required
 def deleteReporter(request, reporter_pk):
@@ -220,40 +235,41 @@ def deleteReporter(request, reporter_pk):
         reporter.delete()
     return HttpResponse(status=200)
 
+
 @login_required
 def editReporter(request, reporter_pk):
     reporter = get_object_or_404(Contact, pk=reporter_pk)
     reporter_form = EditReporterForm(instance=reporter)
     if request.method == 'POST':
         reporter_form = EditReporterForm(instance=reporter,
-                data=request.POST)
+                                         data=request.POST)
         if reporter_form.is_valid():
             reporter_form.save()
         else:
             return render_to_response('ureport/partials/contacts/edit_reporter.html'
-                    , {'reporter_form': reporter_form, 'reporter'
-                    : reporter},
-                    context_instance=RequestContext(request))
+                                      , {'reporter_form': reporter_form, 'reporter'
+                : reporter},
+                                      context_instance=RequestContext(request))
         return render_to_response('/ureport/partials/contacts/contacts_row.html',
-                                  {'object':Contact.objects.get(pk=reporter_pk),
-                                   'selectable':True},
+                {'object': Contact.objects.get(pk=reporter_pk),
+                 'selectable': True},
                                   context_instance=RequestContext(request))
     else:
         return render_to_response('ureport/partials/contacts/edit_reporter.html',
-                                  {'reporter_form': reporter_form,
-                                  'reporter': reporter},
+                {'reporter_form': reporter_form,
+                 'reporter': reporter},
                                   context_instance=RequestContext(request))
+
 
 @login_required
 def view_responses(req, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
-    
+
     script_polls = ScriptStep.objects.exclude(poll=None).values_list('poll', flat=True)
     response_rates = {}
     if poll.pk in script_polls:
         responses = poll.responses.order_by("-date")
     else:
-
         if hasattr(Contact, 'groups'):
             responses = poll.responses.filter(contact__groups__in=req.user.groups.all()).distinct()
         else:
@@ -276,28 +292,31 @@ def view_responses(req, poll_id):
         columns.append((column, False, style_class, None))
 
     return generic(req,
-        model=Response,
-        response_rates=response_rates,
-        queryset=responses,
-        objects_per_page=25,
-        selectable=True,
-        partial_base='ureport/partials/polls/poll_partial_base.html',
-        base_template='ureport/responses_base.html',
-        row_base=typedef['view_template'],
-        action_forms=[AssignToPollForm,ReplyTextForm],
-        filter_forms=[SearchResponsesForm],
-        columns=columns,
-        partial_row='ureport/partials/polls/response_row.html'
+                   model=Response,
+                   response_rates=response_rates,
+                   queryset=responses,
+                   objects_per_page=25,
+                   selectable=True,
+                   partial_base='ureport/partials/polls/poll_partial_base.html',
+                   base_template='ureport/responses_base.html',
+                   row_base=typedef['view_template'],
+                   action_forms=[AssignToPollForm, ReplyTextForm],
+                   filter_forms=[SearchResponsesForm],
+                   columns=columns,
+                   partial_row='ureport/partials/polls/response_row.html'
     )
+
 
 def _get_responses(poll):
     bad_words = getattr(settings, 'BAD_WORDS', [])
     responses = Response.objects.filter(poll=poll)
     for helldamn in bad_words:
-        responses = responses.exclude(message__text__icontains=(" %s " % helldamn)).exclude(message__text__istartswith=("%s " % helldamn))
+        responses = responses.exclude(message__text__icontains=(" %s " % helldamn)).exclude(
+            message__text__istartswith=("%s " % helldamn))
     paginator = Paginator(responses, 8)
     responses = paginator.page(1).object_list
     return responses
+
 
 def best_visualization(request, poll_id=None):
     module = False
@@ -305,36 +324,39 @@ def best_visualization(request, poll_id=None):
         module = True
     polls = retrieve_poll(request, poll_id)
     poll = polls[0]
-#    if poll_id:
-#        poll = Poll.objects.get(pk=poll_id)
-#    else:
-#        poll = Poll.objects.latest('start_date')
-    dict = { 'poll':poll, 'polls':[poll], 'unlabeled':True, 'module':module }
+    #    if poll_id:
+    #        poll = Poll.objects.get(pk=poll_id)
+    #    else:
+    #        poll = Poll.objects.latest('start_date')
+    dict = {'poll': poll, 'polls': [poll], 'unlabeled': True, 'module': module}
     if poll.type == Poll.TYPE_TEXT and ResponseCategory.objects.filter(response__poll=poll).count() == 0:
-        dict.update({'tags':_get_tags(polls), 'responses':_get_responses(poll), 'poll_id':poll.pk})
+        dict.update({'tags': _get_tags(polls), 'responses': _get_responses(poll), 'poll_id': poll.pk})
     return render_to_response(\
         "/ureport/partials/viz/best_visualization.html",
         dict,
         context_instance=RequestContext(request))
+
 
 def ureport_content(request, slug, base_template='ureport/two-column.html', **kwargs):
     createpage = kwargs.setdefault('create', False)
     if not createpage:
         reporter = get_object_or_404(Dashboard, slug=slug, user=None)
     return generic_dashboard(request,
-        slug=slug,
-        module_types=[('ureport', PollModuleForm, 'uReport Visualizations',),
-                       ('static', StaticModuleForm, 'Static Content',), ],
-        base_template=base_template,
-        title=None, **kwargs)
+                             slug=slug,
+                             module_types=[('ureport', PollModuleForm, 'uReport Visualizations',),
+                                 ('static', StaticModuleForm, 'Static Content',), ],
+                             base_template=base_template,
+                             title=None, **kwargs)
+
 
 def message_feed(request, pks):
     polls = retrieve_poll(request, pks)
     poll = polls[0]
     return render_to_response(
         '/ureport/partials/viz/message_feed.html',
-        {'poll':poll, 'responses':_get_responses(poll)},
+            {'poll': poll, 'responses': _get_responses(poll)},
         context_instance=RequestContext(request))
+
 
 @cache_control(no_cache=True, max_age=0)
 def poll_summary(request):
@@ -342,12 +364,14 @@ def poll_summary(request):
     polls = Poll.objects.exclude(pk__in=script_polls).order_by('-start_date')
     return render_to_response(
         '/ureport/poll_summary.html',
-        {'polls':polls,
-         'poll':polls[0]},
+            {'polls': polls,
+             'poll': polls[0]},
         context_instance=RequestContext(request))
+
 
 def get_all_contacts(request):
     from uganda_common.utils import ExcelResponse
+
     contacts = Contact.objects.all()
     export_data_list = []
     for contact in contacts:
@@ -384,6 +408,7 @@ def get_all_contacts(request):
     response = ExcelResponse(export_data_list)
     return response
 
+
 def bulk_upload_contacts(request):
     """
     bulk upload contacts from an excel file
@@ -393,16 +418,18 @@ def bulk_upload_contacts(request):
         if contactsform.is_valid():
             if contactsform.is_valid() and request.FILES.get('excel_file', None):
                 fields = ['telephone number', 'name', 'district', 'county', 'village', 'age', 'gender']
-                message = handle_excel_file(request.FILES['excel_file'], contactsform.cleaned_data['assign_to_group'], fields)
+                message = handle_excel_file(request.FILES['excel_file'], contactsform.cleaned_data['assign_to_group'],
+                                            fields)
             return render_to_response('ureport/bulk_contact_upload.html',
-                                      {'contactsform':contactsform,
-                                       'message':message
-                                       }, context_instance=RequestContext(request))
+                    {'contactsform': contactsform,
+                     'message': message
+                }, context_instance=RequestContext(request))
 
     contactsform = ExcelUploadForm()
     return render_to_response('ureport/bulk_contact_upload.html',
-                              {'contactsform':contactsform
-                               }, context_instance=RequestContext(request))
+            {'contactsform': contactsform
+        }, context_instance=RequestContext(request))
+
 
 def handle_excel_file(file, group, fields):
     if file:
@@ -442,7 +469,8 @@ def handle_excel_file(file, group, fields):
                     birthdate = parse_birthdate(row, worksheet, cols) if 'age' in fields else None
                     gender = parse_gender(row, worksheet, cols) if 'gender' in fields else None
                     if district:
-                        contact['reporting_location'] = find_closest_match(district, Area.objects.filter(kind__name='district'))
+                        contact['reporting_location'] = find_closest_match(district,
+                                                                           Area.objects.filter(kind__name='district'))
                     if village:
                         contact['village'] = find_closest_match(village, Area.objects)
                     if birthdate:
@@ -478,14 +506,17 @@ def handle_excel_file(file, group, fields):
             if len(contacts) > 0:
                 info = 'Contacts with numbers... ' + ' ,'.join(contacts) + " have been uploaded !\n\n"
             if len(duplicates) > 0:
-                info = info + 'The following numbers already exist in the system and thus have not been uploaded: ' + ' ,'.join(duplicates) + '\n\n'
+                info = info + 'The following numbers already exist in the system and thus have not been uploaded: ' + ' ,'.join(
+                    duplicates) + '\n\n'
             if len(invalid) > 0:
-                info = info + 'The following numbers may be invalid and thus have not been added to the system: ' + ' ,'.join(invalid) + '\n\n'
+                info = info + 'The following numbers may be invalid and thus have not been added to the system: ' + ' ,'.join(
+                    invalid) + '\n\n'
         else:
             info = "You seem to have uploaded an empty excel file, please fill the excel Contacts Template with contacts and upload again..."
     else:
         info = "Invalid file"
     return info
+
 
 def parse_header_row(worksheet, fields):
 #    fields=['telephone number','name', 'district', 'county', 'village', 'age', 'gender']
@@ -504,34 +535,41 @@ def parse_telephone(row, worksheet, cols):
         number = str(worksheet.cell(row, cols['telephone']).value)
     return number.replace('-', '').strip().replace(' ', '')
 
+
 def parse_name(row, worksheet, cols):
     try:
         name = str(worksheet.cell(row, cols['company name']).value).strip()
     except KeyError:
         name = str(worksheet.cell(row, cols['name']).value).strip()
     if name.__len__() > 0:
-#        name = str(worksheet.cell(row, cols['name']).value)
+    #        name = str(worksheet.cell(row, cols['name']).value)
         return ' '.join([t.capitalize() for t in name.lower().split()])
     else:
         return 'Anonymous User'
 
+
 def parse_district(row, worksheet, cols):
     return str(worksheet.cell(row, cols['district']).value)
+
 
 def parse_village(row, worksheet, cols):
     return str(worksheet.cell(row, cols['village']).value)
 
+
 def parse_birthdate(row, worksheet, cols):
     try:
         age = int(worksheet.cell(row, cols['age']).value)
-        birthdate = '%d/%d/%d' % (datetime.datetime.now().day, datetime.datetime.now().month, datetime.datetime.now().year - age)
+        birthdate = '%d/%d/%d' % (
+        datetime.datetime.now().day, datetime.datetime.now().month, datetime.datetime.now().year - age)
         return datetime.datetime.strptime(birthdate.strip(), '%d/%m/%Y')
     except ValueError:
         return None
 
+
 def parse_gender(row, worksheet, cols):
     gender = str(worksheet.cell(row, cols['gender']).value)
     return gender.upper()[:1] if gender else None
+
 
 def download_contacts_template(request, f):
     path = getattr(settings, 'DOWNLOADS_FOLDER', None)
@@ -541,61 +579,66 @@ def download_contacts_template(request, f):
     response['Content-Disposition'] = 'attachment; filename=' + f
     return response
 
+
 def clickatell_wrapper(request):
     request.GET = request.GET.copy()
-    request.GET.update({'backend':'clickatell', 'sender':request.GET['from'], 'message':request.GET['text']})
+    request.GET.update({'backend': 'clickatell', 'sender': request.GET['from'], 'message': request.GET['text']})
     return receive(request)
 
-def flagged_messages(request,export=False):
-    if request.GET.get('export',None):
-        data=[]
+
+def flagged_messages(request, export=False):
+    if request.GET.get('export', None):
+        data = []
         for mf in MessageFlag.objects.all():
-            rep={}
-            rep['Message']=mf.message.text
-            rep['Mobile Number']=mf.message.connection.identity
-            rep['flag']=mf.flag.name
+            rep = {}
+            rep['Message'] = mf.message.text
+            rep['Mobile Number'] = mf.message.connection.identity
+            rep['flag'] = mf.flag.name
             data.append(rep)
-            
+
         return ExcelResponse(data=data)
     return generic(request,
-        model=MessageFlag,
-      queryset=get_flagged_messages,
-      objects_per_page=10,
-      results_title='Flagged Messages',
-      selectable=False,
-      partial_row='ureport/partials/messages/flagged_message_row.html',
-      base_template='ureport/flagged_message_base.html',
-      columns=[('Message', True, 'message__text', SimpleSorter()),
-                 ('Sender Information', True, 'message__connection__contact__name', SimpleSorter(),),
-                 ('Date', True, 'message__date', SimpleSorter(),),
-                 ('Flags', False, 'message__flagged', None,),
+                   model=MessageFlag,
+                   queryset=get_flagged_messages,
+                   objects_per_page=10,
+                   results_title='Flagged Messages',
+                   selectable=False,
+                   partial_row='ureport/partials/messages/flagged_message_row.html',
+                   base_template='ureport/flagged_message_base.html',
+                   columns=[('Message', True, 'message__text', SimpleSorter()),
+                       ('Sender Information', True, 'message__connection__contact__name', SimpleSorter(),),
+                       ('Date', True, 'message__date', SimpleSorter(),),
+                       ('Flags', False, 'message__flagged', None,),
 
-                 ],
-      sort_column='date',
-      sort_ascending=False
+                   ],
+                   sort_column='date',
+                   sort_ascending=False
     )
+
 
 def view_flagged_with(request, pk):
     flag = get_object_or_404(Flag, pk=pk)
     messages = flag.get_messages()
     return generic(request,
-        model=Message,
-        queryset=messages,
+                   model=Message,
+                   queryset=messages,
 
-        objects_per_page=25,
-        partial_row="contact/partials/message_row.html",
-        base_template='ureport/contact_message_base.html',
-        results_title="Messages Flagged With %s" % flag.name,
-        columns=[('Message', True, 'text', SimpleSorter()),
-            ('Sender Information', True, 'connection__contact__name', SimpleSorter(),),
-            ('Date', True, 'date', SimpleSorter(),),
-            ('Type', True, 'application', SimpleSorter(),),
+                   objects_per_page=25,
+                   partial_row="contact/partials/message_row.html",
+                   base_template='ureport/contact_message_base.html',
+                   results_title="Messages Flagged With %s" % flag.name,
+                   columns=[('Message', True, 'text', SimpleSorter()),
+                       ('Sender Information', True, 'connection__contact__name', SimpleSorter(),),
+                       ('Date', True, 'date', SimpleSorter(),),
+                       ('Type', True, 'application', SimpleSorter(),),
 
-        ],
-        sort_column='date',
-        sort_ascending=False,
+                   ],
+                   sort_column='date',
+                   sort_ascending=False,
 
-        )
+                   )
+
+
 def create_flags(request):
     flags_form = FlaggedMessageForm()
     all_flags = Flag.objects.all()
@@ -605,7 +648,8 @@ def create_flags(request):
             flags_form.save()
             return HttpResponseRedirect("/flaggedmessages")
     return render_to_response('ureport/new_flag.html', dict(flags_form=flags_form, all_flags=all_flags),
-            context_instance=RequestContext(request))
+                              context_instance=RequestContext(request))
+
 
 def delete_flag(request, flag_pk):
     flag = get_object_or_404(Flag, pk=flag_pk)
@@ -617,7 +661,7 @@ def delete_flag(request, flag_pk):
 
 
 def signup(request):
-    status_message=None
+    status_message = None
     if request.method == "POST":
         signup_form = SignupForm(request.POST)
         if signup_form.is_valid():
@@ -630,7 +674,8 @@ def signup(request):
             connection.contact.reporting_location = signup_form.cleaned_data['district']
             connection.contact.gender = signup_form.cleaned_data['gender']
             connection.contact.village = find_closest_match(signup_form.cleaned_data['village'], Location.objects)
-            connection.contact.birthdate=datetime.datetime.now() - datetime.timedelta(days=(365 * int(signup_form.cleaned_data['age'])))
+            connection.contact.birthdate = datetime.datetime.now() - datetime.timedelta(
+                days=(365 * int(signup_form.cleaned_data['age'])))
 
             group_to_match = signup_form.cleaned_data['group']
 
@@ -646,21 +691,76 @@ def signup(request):
                             break
 
             connection.save()
-            status_message="You have successfully signed up :)"
+            status_message = "You have successfully signed up :)"
             Message.objects.create(
-            date=datetime.datetime.now(),
-            connection=connection,
-            direction="O",
-            status='Q',
-            text="CONGRATULATIONS!!! You are now a registered member of Ureport! With Ureport, you can make a real difference!  Speak Up and Be Heard! from UNICEF")
+                date=datetime.datetime.now(),
+                connection=connection,
+                direction="O",
+                status='Q',
+                text="CONGRATULATIONS!!! You are now a registered member of Ureport! With Ureport, you can make a real difference!  Speak Up and Be Heard! from UNICEF")
 
         else:
             return render_to_response(
-        "ureport/signup.html", dict(signup_form=signup_form), context_instance=RequestContext(request)
-    )
+                "ureport/signup.html", dict(signup_form=signup_form), context_instance=RequestContext(request)
+            )
     signup_form = SignupForm()
     return render_to_response(
-        "ureport/signup.html", dict(signup_form=signup_form,status_message=status_message), context_instance=RequestContext(request)
+        "ureport/signup.html", dict(signup_form=signup_form, status_message=status_message),
+        context_instance=RequestContext(request)
     )
+
+
+def ureporter_profile(request, connection_pk):
+    connection = get_object_or_404(Connection, pk=connection_pk)
+
+    messages = Message.objects.filter(connection=connection).order_by('-date')
+    contact = get_object_or_404(Ureporter, pk=connection_pk)
+    columns=[('Message', True, 'text', SimpleSorter()),
+                                ('connection', True, 'connection', SimpleSorter(),),
+                                ('Date', True, 'date', SimpleSorter(),),
+                                ('Direction', True, 'direction', SimpleSorter(),),
+
+                            ]
+    #hack hack send the reply message by hacking the sendmessage form
+    if request.method == "POST":
+        if not request.POST.get('text', None) == u'':
+            Message.objects.create(
+                date=datetime.datetime.now(),
+                connection=connection,
+                direction="O",
+                status='Q',
+                text=request.POST.get('text'))
+            return  generic(request,
+                            model=Message,
+                            queryset=messages,
+                            contact=contact,
+                            objects_per_page=20,
+                            status_message="Message sent",
+                            status_message_type="success",
+                            results_title='Message History',
+                            selectable=False,
+                            partial_row='ureport/partials/messages/message_history_row.html',
+                            base_template='ureport/message_history_base.html',
+                            action_forms=[ReplyTextForm],
+                            columns=columns,
+                            sort_column='date',
+                            sort_ascending=False
+            )
+
+    return generic(request,
+                   model=Message,
+                   queryset=messages,
+                   contact=contact,
+                   objects_per_page=20,
+                   results_title='Message History',
+                   selectable=False,
+                   partial_row='ureport/partials/messages/message_history_row.html',
+                   base_template='ureport/message_history_base.html',
+                   action_forms=[ReplyTextForm],
+                   columns=columns,
+                   sort_column='date',
+                   sort_ascending=False
+    )
+
 
 
