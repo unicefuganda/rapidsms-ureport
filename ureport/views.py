@@ -35,6 +35,7 @@ from uganda_common.utils import assign_backend
 from script.utils.handling import find_closest_match
 from django.views.decorators.cache import cache_control
 from rapidsms.messages.outgoing import OutgoingMessage
+from contact.forms import ReplyTextForm
 
 from contact.forms import FlaggedMessageForm
 
@@ -283,7 +284,7 @@ def view_responses(req, poll_id):
         partial_base='ureport/partials/polls/poll_partial_base.html',
         base_template='ureport/responses_base.html',
         row_base=typedef['view_template'],
-        action_forms=[AssignToPollForm],
+        action_forms=[AssignToPollForm,ReplyTextForm],
         filter_forms=[SearchResponsesForm],
         columns=columns,
         partial_row='ureport/partials/polls/response_row.html'
