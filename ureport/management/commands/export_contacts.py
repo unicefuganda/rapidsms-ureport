@@ -10,6 +10,7 @@ import datetime
 from unregister.models import Blacklist
 from django.conf import settings
 from rapidsms_httprouter.models import Message
+from django.db import connection 
 
 
 import optparse
@@ -22,8 +23,13 @@ class Command(BaseCommand):
             from uganda_common.utils import ExcelResponse
 
             excel_file_path = os.path.join(os.path.join(os.path.join(UREPORT_ROOT,'static'),'spreadsheets'),'ureporters.xls')
-            contacts = Contact.objects.all()
+            contacts = Contact.objects.select_related(depth=4)
             export_data_list = []
+            messages=Message.objects.select_related(depth=1)
+            black_listed=Blacklist.objects.values_list('connection__contact__pk',flat=True)
+            print  black_listed
+            black_list_messages=messages.filter(connection__contact__in=black_listed)
+            opt_words=settings.OPT_OUT_WORDS
             for contact in contacts:
                 if contact.name:
                     print "adding " + contact.name
@@ -69,12 +75,10 @@ class Command(BaseCommand):
                         export_data["join date"]="N/A"
                         export_data["join month"]="N/A"
 
-                    if Blacklist.objects.filter(connection__contact=contact).exists():
-                        for quit_word in settings.OPT_OUT_WORDS:
-                            if Message.objects.filter(text__icontains=quit_word).exists():
-                                export_data['Quit Date']=Message.objects.filter(text__icontains=quit_word).latest('date').date.date()
-                                export_data['Quit Month']=Message.objects.filter(text__icontains=quit_word).latest('date').date.month
-
+                    if contact.pk in black_listed:
+                                quit_msg=messages.filter(application="unregister",direction="I",connection__contact=contact).latest('date')
+                                export_data['Quit Date']=quit_msg.date.date()
+                                export_data['Quit Month']=quit_msg.date.month
                     else:
                         export_data['Quit Date']=''
                         export_data['Quit Month']=''
