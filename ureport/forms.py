@@ -125,7 +125,9 @@ class AssignToNewPollForm(ActionForm):
             return ("No contacts selected", "error")
         name = self.cleaned_data['poll_name']
         poll_type = self.cleaned_data['poll_type']
-        poll_type = Poll.TYPE_TEXT if self.cleaned_data['poll_type'] == NewPollForm.TYPE_YES_NO else type
+        poll_type=self.cleaned_data['poll_type']
+        if poll_type == NewPollForm.TYPE_YES_NO:
+            poll_type = Poll.TYPE_TEXT 
 
         question = self.cleaned_data.get('question').replace('%', u'\u0025')
         default_response = self.cleaned_data['default_response']
