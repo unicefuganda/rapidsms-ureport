@@ -76,9 +76,14 @@ class Command(BaseCommand):
                         export_data["join month"]="N/A"
 
                     if contact.pk in black_listed:
-                                quit_msg=messages.filter(application="unregister",direction="I",connection__contact=contact).latest('date')
-                                export_data['Quit Date']=quit_msg.date.date()
-                                export_data['Quit Month']=quit_msg.date.month
+                                try:
+                                    quit_msg=messages.filter(application="unregister",direction="I",connection__contact=contact).latest('date')
+                                    export_data['Quit Date']=quit_msg.date.date()
+                                    export_data['Quit Month']=quit_msg.date.month
+                                except Message.DoesNotExist:
+                                    export_data['Quit Date']="N/A"
+                                    export_data['Quit Month']="N/A"
+
                     else:
                         export_data['Quit Date']=''
                         export_data['Quit Month']=''
