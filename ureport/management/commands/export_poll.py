@@ -66,7 +66,7 @@ class Command(BaseCommand):
                 if response.message:
                     response_export_data['response']=response.message.text
                     response_export_data['date']=response.message.date.date()
-                    response_export_data['time']=response.message.date.time
+                    response_export_data['time']=response.message.date.time()
 
                 else:
                     response_export_data['response']=''
