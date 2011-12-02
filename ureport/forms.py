@@ -99,7 +99,7 @@ class SearchResponsesForm(FilterForm):
 
 class AssignToPollForm(ActionForm):
     """ assigns responses to poll  """
-    poll = forms.ModelChoiceField(queryset=Poll.objects.all().order_by('name'))
+    poll = forms.ModelChoiceField(queryset=Poll.objects.all().order_by('-pk'))
     action_label = 'Assign selected to poll'
     def perform(self, request, results):
         poll = self.cleaned_data['poll']
