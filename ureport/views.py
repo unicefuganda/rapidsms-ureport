@@ -711,10 +711,27 @@ def signup(request):
 
 
 def ureporter_profile(request, connection_pk):
+    from script.models import ScriptSession,ScriptResponse
     connection = get_object_or_404(Connection, pk=connection_pk)
+    session = get_object_or_404(ScriptSession, pk=connection_pk)
 
     messages = Message.objects.filter(connection=connection).order_by('-date')
+
     contact = get_object_or_404(Ureporter, pk=connection_pk)
+    total_outgoing = messages.filter(direction="O",connection__pk=connection_pk).count()
+    total_incoming = messages.filter(direction="I",connection__pk=connection_pk).count()
+    try:
+        response_rate=contact.responses.count()*100/float(Poll.objects.filter(contacts__in=[contact]).count())
+    except (ZeroDivisionError,ValueError):
+        response_rate=None
+    gr_poll=Poll.objects.get(pk=121)
+    if session:
+        try:
+            how_did_u_hear= session.responses.filter(response__poll=gr_poll, response__has_errors=False).latest('response__date')
+        except ScriptResponse.DoesNotExist:
+            how_did_u_hear="N/A"
+
+
     columns=[('Message', True, 'text', SimpleSorter()),
                                 ('connection', True, 'connection', SimpleSorter(),),
                                 ('Date', True, 'date', SimpleSorter(),),
@@ -723,7 +740,8 @@ def ureporter_profile(request, connection_pk):
                             ]
     #hack hack send the reply message by hacking the sendmessage form
     if request.method == "POST":
-        if not request.POST.get('text', None) == u'':
+        if not request.POST.get('text', None) == u'' and not request.POST.get('page_action') == u'true':
+            print request.POST
             Message.objects.create(
                 date=datetime.datetime.now(),
                 connection=connection,
@@ -733,6 +751,10 @@ def ureporter_profile(request, connection_pk):
             return  generic(request,
                             model=Message,
                             queryset=messages,
+                            total_outgoing=total_outgoing,
+                            total_incoming=total_incoming,
+                            response_rate=response_rate,
+                            how_did_u_hear=how_did_u_hear,
                             contact=contact,
                             objects_per_page=20,
                             status_message="Message sent",
@@ -751,7 +773,11 @@ def ureporter_profile(request, connection_pk):
                    model=Message,
                    queryset=messages,
                    contact=contact,
+                   total_outgoing=total_outgoing,
+                   total_incoming=total_incoming,
+                   response_rate=response_rate,
                    objects_per_page=20,
+                   how_did_u_hear=how_did_u_hear,
                    results_title='Message History',
                    selectable=False,
                    partial_row='ureport/partials/messages/message_history_row.html',
