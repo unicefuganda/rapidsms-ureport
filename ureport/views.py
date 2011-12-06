@@ -740,7 +740,7 @@ def ureporter_profile(request, connection_pk):
                             ]
     #hack hack send the reply message by hacking the sendmessage form
     if request.method == "POST":
-        if not request.POST.get('text', None) == u'' and not request.POST.get('page_action') == u'true':
+        if not request.POST.get('text', None) == u'' and request.POST.get('action') == u'contact.forms.ReplyTextForm':
             print request.POST
             Message.objects.create(
                 date=datetime.datetime.now(),
