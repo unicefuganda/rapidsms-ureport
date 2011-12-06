@@ -727,7 +727,7 @@ def ureporter_profile(request, connection_pk):
     gr_poll=Poll.objects.get(pk=121)
     if session.exists():
         try:
-            how_did_u_hear= session[0].responses.filter(response__poll=gr_poll, response__has_errors=False).latest('response__date')
+            how_did_u_hear= session[0].responses.filter(response__poll=gr_poll, response__has_errors=False)
         except ScriptResponse.DoesNotExist:
             how_did_u_hear="N/A"
 
