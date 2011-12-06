@@ -21,7 +21,7 @@ class App (AppBase):
 
         if not message.connection.contact and not ScriptProgress.objects.filter(script__slug__in=['ureport_autoreg','ureport_autoreg_luo'], connection=message.connection).exists() and not ScriptProgress.objects.filter(script__slug__in=['ureport_autoreg','ureport_autoreg_luo'], connection=message.connection).exists():
 
-            match = opt_reg.search(message.text)
+            match = opt_reg.search(message.text.lower())
             if match:
                 prog=ScriptProgress.objects.create(script=Script.objects.get(pk="ureport_autoreg_luo"), \
                                           connection=message.connection)
