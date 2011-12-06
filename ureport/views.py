@@ -721,7 +721,7 @@ def ureporter_profile(request, connection_pk):
     total_outgoing = messages.filter(direction="O",connection__pk=connection_pk).count()
     total_incoming = messages.filter(direction="I",connection__pk=connection_pk).count()
     try:
-        response_rate=contact.responses.count()*100/float(Poll.objects.filter(contacts__in=[contact]).count())
+        response_rate=contact.responses.values_list('poll').distinct().count()*100/float(Poll.objects.filter(contacts=contact).distinct().count())
     except (ZeroDivisionError,ValueError):
         response_rate=None
     gr_poll=Poll.objects.get(pk=121)
