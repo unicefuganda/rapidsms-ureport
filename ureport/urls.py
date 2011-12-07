@@ -3,7 +3,7 @@ from django.conf.urls.defaults import *
 from ureport.views import *
 from ureport.utils import get_contacts, get_polls , get_script_polls
 from django.contrib.auth.decorators import login_required
-from contact.forms import FreeSearchTextForm, FreeSearchForm, HandledByForm, ReplyTextForm, FlaggedForm, FlagMessageForm, DistictFilterMessageForm, GenderFilterForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm, AgeFilterForm
+from contact.forms import FreeSearchTextForm, FreeSearchForm, MultipleDistictFilterForm, HandledByForm, ReplyTextForm, FlaggedForm, FlagMessageForm, DistictFilterMessageForm, GenderFilterForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm, AgeFilterForm
 from generic.views import generic, generic_row, generic_dashboard, generic_map
 from generic.sorters import SimpleSorter, TupleSorter
 from unregister.forms import BlacklistForm
@@ -42,7 +42,7 @@ urlpatterns = patterns('',
         'model':Ureporter,
         'queryset':get_contacts,
         'results_title':'uReporters',
-        'filter_forms':[ FreeSearchForm, DistictFilterForm, FilterGroupsForm, GenderFilterForm, AgeFilterForm],
+        'filter_forms':[ FreeSearchForm,   MultipleDistictFilterForm,FilterGroupsForm, GenderFilterForm, AgeFilterForm],
         'action_forms':[MassTextForm, AssignGroupForm, BlacklistForm, AssignToNewPollForm],
         'objects_per_page':25,
         'partial_row':'ureport/partials/contacts/contacts_row.html',

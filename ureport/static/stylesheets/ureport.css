@@ -201,6 +201,7 @@ div.module h3 {
 
 #div_filter_1 {
    position:absolute;
+   margin-top:-30px;
    left:0;
    top:5.5em;
 }
