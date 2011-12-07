@@ -34,7 +34,7 @@ $('#div_action_0').find('a').html("Send Message");
     <tr><td>Village: </td> <td>{{ contact.village }}</td></tr>
     <tr><td>Join Date: </td> <td>{{ contact.join_date }}</td></tr>
     <tr><td>Group: </td><td>{{ contact.groups.all.0 }}</td></tr>
-    <tr><td>How Did You Hear About Ureport? </td><td>{{ how_did_you_hear.0 }}</td></tr>
+    <tr><td>How Did You Hear About Ureport? </td><td>{{ how_did_u_hear }}</td></tr>
     <tr><td>Total Responses and Response rate :</td><td>{{  contact.responses.count}} responses, {{ response_rate|floatformat }}%</td></tr>
     <tr><td>Total Outgoing & Incoming :</td> <td>Outgoing {{ total_outgoing }} , Incoming {{ total_incoming }}</td></tr>
     {% if not contact.is_active %}
