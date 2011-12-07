@@ -110,7 +110,7 @@ def autoreg(**kwargs):
         gender = gresps[0].response
         if gender.categories.filter(category__name='male').count():
             contact.gender = 'M'
-        else:
+        elif gender.categories.filter(category__name='female').exists():
             contact.gender = 'F'
 
     village = find_best_response(session, villagepoll)
