@@ -470,9 +470,9 @@ def handle_excel_file(file, group, fields):
                     gender = parse_gender(row, worksheet, cols) if 'gender' in fields else None
                     if district:
                         contact['reporting_location'] = find_closest_match(district,
-                                                                           Area.objects.filter(kind__name='district'))
+                                                                           Location.objects.filter(type__slug='district'))
                     if village:
-                        contact['village'] = find_closest_match(village, Area.objects)
+                        contact['village'] = find_closest_match(village, Location.objects)
                     if birthdate:
                         contact['birthdate'] = birthdate
                     if gender:
@@ -725,6 +725,7 @@ def ureporter_profile(request, connection_pk):
     except (ZeroDivisionError,ValueError):
         response_rate=None
     gr_poll=Poll.objects.get(pk=121)
+    how_did_u_hear=None
     if session.exists():
         try:
             how_did_u_hear= session[0].responses.filter(response__poll=gr_poll)
