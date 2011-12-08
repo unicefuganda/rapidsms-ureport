@@ -55,24 +55,24 @@ class Ureporter(Contact):
         return not Blacklist.objects.filter(connection=self.default_connection).exists()
 
     def join_date(self):
-        ss=ScriptSession.objects.filter(connection__contact=self)
+        ss = ScriptSession.objects.filter(connection__contact=self)
         if ss.exists():
             return ScriptSession.objects.filter(connection__contact=self)[0].start_time.date()
         else:
-            messages=Message.objects.filter(connection=self.default_connection).order_by('date')
+            messages = Message.objects.filter(connection=self.default_connection).order_by('date')
             if messages.exists():
                 return messages[0].date
             else:
                 return None
-            
+
     def quit_date(self):
-        bl=Blacklist.objects.filter(connection__contact=self)
+        bl = Blacklist.objects.filter(connection__contact=self)
         if bl.exists():
             for quit_word in settings.OPT_OUT_WORDS:
-                q_message=Message.objects.filter(text__icontains=quit_word)
+                q_message = Message.objects.filter(text__icontains=quit_word)
                 if q_message.exists():
                     return q_message.latest('date').date.date()
-                
+
 
 
     class Meta:
@@ -81,7 +81,7 @@ class Ureporter(Contact):
 def autoreg(**kwargs):
     connection = kwargs['connection']
     progress = kwargs['sender']
-    if not progress.script.slug in ['ureport_autoreg','ureport_autoreg_luo']:
+    if not progress.script.slug in ['ureport_autoreg', 'ureport_autoreg_luo']:
         return
 
     connection.contact = Contact.objects.create(name='Anonymous User')
@@ -120,7 +120,7 @@ def autoreg(**kwargs):
     group_to_match = find_best_response(session, youthgrouppoll)
     default_group = None
     if progress.language:
-        contact.language=progress.language
+        contact.language = progress.language
     if Group.objects.filter(name='Other uReporters').count():
         default_group = Group.objects.get(name='Other uReporters')
     if group_to_match:
@@ -165,8 +165,11 @@ def bulk_blacklist(sender, **kwargs):
             bad_conns = Blacklist.objects.values_list('connection__pk', flat=True).distinct()
             bad_conns = Connection.objects.filter(pk__in=bad_conns)
             poll.messages.filter(status='P').exclude(connection__in=bad_conns).update(status='Q')
-
-
+    if sender == Message:
+        bad_conns = Blacklist.objects.values_list('connection__pk', flat=True).distinct()
+        bad_conns = Connection.objects.filter(pk__in=bad_conns)
+        Message.objects.filter(status='P').exclude(connection__in=bad_conns).update(status='Q')
+        Message.objects.filter(status='P').filter(connection__in=bad_conns).update(status='C')
 
 script_progress_was_completed.connect(autoreg, weak=False)
 post_save.connect(bulk_blacklist, weak=False)
