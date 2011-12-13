@@ -292,7 +292,6 @@ def view_responses(req, poll_id):
     for column, style_class,sortable,db_field,sorter in typedef['report_columns']:
         columns.append((column, sortable, db_field, sorter))
 
-    print columns
     return generic(req,
                    model=Response,
                    response_rates=response_rates,
@@ -301,6 +300,7 @@ def view_responses(req, poll_id):
                    selectable=True,
                    partial_base='ureport/partials/polls/poll_partial_base.html',
                    base_template='ureport/responses_base.html',
+                   paginator_template='ureport/partials/pagination.html',
                    row_base=typedef['view_template'],
                    action_forms=[AssignToPollForm, ReplyTextForm],
                    filter_forms=[SearchResponsesForm],
