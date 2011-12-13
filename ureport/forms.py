@@ -96,11 +96,18 @@ class SearchResponsesForm(FilterForm):
         search = self.cleaned_data['search'].strip()
         if search == "":
            return queryset
-        elif search[0] in ["'",'"'] and search[-1] in ["'",'"']:
+        elif search[0] == '"' and search[-1] == '"':
            search=search[1:-1]
            return queryset.filter(Q(message__text__iregex=".*\m(%s)\y.*"%search)
                                   | Q(message__connection__contact__reporting_location__name__iregex=".*\m(%s)\y.*"%search)
                                   | Q(message__connection__identity__iregex=".*\m(%s)\y.*"%search))
+
+        elif search[0] == "'" and search[-1] == "'":
+            search=search[1:-1]
+            return queryset.filter(Q(message__text__iexact=search)
+                                  | Q(message__connection__contact__reporting_location__name__iexact=search)
+                                  | Q(message__connection__identity__iexact=search))
+
 
         else:
             
@@ -125,6 +132,15 @@ class AssignToPollForm(ActionForm):
             c.poll = poll
             c.save()
         return ('%d responses assigned to  %s poll' % (len(results), poll.name), 'success',)
+
+class DeleteSelectedForm(ActionForm):
+    """ Deletes selected stuff  """
+
+    action_label = 'Delete Selected '
+    def perform(self, request, results):
+        count=len(results)
+        results.delete()
+        return ('count  objects successfuly deleted ' , 'success',)
 
 class AssignToNewPollForm(ActionForm):
     """ assigns contacts to poll"""
