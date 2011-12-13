@@ -10,6 +10,7 @@ from django.contrib.sites.models import Site
 from django.forms.widgets import RadioSelect
 from rapidsms.contrib.locations.models import Location
 from django.forms import ValidationError
+from django.db.models import Q
 import re
 from poll.forms import NewPollForm
 
@@ -91,10 +92,26 @@ class SearchResponsesForm(FilterForm):
     """
 
     search = forms.CharField(max_length=100, required=True, label="search Responses")
-
     def filter(self, request, queryset):
-        search = self.cleaned_data['search']
-        return queryset.filter(message__text__icontains=search)
+        search = self.cleaned_data['search'].strip()
+        if search == "":
+           return queryset
+        elif search[0] in ["'",'"'] and search[-1] in ["'",'"']:
+           search=search[1:-1]
+           return queryset.filter(Q(message__text__iregex=".*\m(%s)\y.*"%search)
+                                  | Q(message__connection__contact__reporting_location__name__iregex=".*\m(%s)\y.*"%search)
+                                  | Q(message__connection__identity__iregex=".*\m(%s)\y.*"%search))
+
+        else:
+            
+
+            return queryset.filter(Q(message__text__icontains=search)
+                                  | Q(message__connection__contact__reporting_location__name__icontains=search)
+                                  | Q(message__connection__identity__icontains=search))
+
+
+
+
 
 
 class AssignToPollForm(ActionForm):
