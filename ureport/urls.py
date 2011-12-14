@@ -3,7 +3,7 @@ from django.conf.urls.defaults import *
 from ureport.views import *
 from ureport.utils import get_contacts, get_polls , get_script_polls
 from django.contrib.auth.decorators import login_required
-from contact.forms import FreeSearchTextForm, FreeSearchForm, MultipleDistictFilterForm, HandledByForm, ReplyTextForm, FlaggedForm, FlagMessageForm, DistictFilterMessageForm, GenderFilterForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm, AgeFilterForm
+from contact.forms import FreeSearchTextForm, FreeSearchForm, MultipleDistictFilterForm, HandledByForm, FlaggedForm, FlagMessageForm, DistictFilterMessageForm, GenderFilterForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm, AgeFilterForm
 from generic.views import generic, generic_row, generic_dashboard, generic_map
 from generic.sorters import SimpleSorter, TupleSorter
 from unregister.forms import BlacklistForm
@@ -13,6 +13,7 @@ from contact.utils import  get_mass_messages, get_messages
 from utils import get_flagged_messages
 from contact.models import MessageFlag
 from .models import Ureporter
+from .forms import *
 
 urlpatterns = patterns('',
     # dashboard view for viewing all poll reports in one place

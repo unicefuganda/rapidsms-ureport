@@ -36,7 +36,6 @@ from uganda_common.utils import assign_backend
 from script.utils.handling import find_closest_match
 from django.views.decorators.cache import cache_control
 from rapidsms.messages.outgoing import OutgoingMessage
-from contact.forms import ReplyTextForm
 from .models import Ureporter
 
 from contact.forms import FlaggedMessageForm

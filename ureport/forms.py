@@ -2,7 +2,7 @@
 from django import forms
 from rapidsms.models import Contact
 from django.contrib.auth.models import Group
-from poll.models import Poll
+from poll.models import Poll,Response
 from mptt.forms import TreeNodeChoiceField
 from generic.forms import ActionForm, FilterForm, ModuleForm
 from django.conf import settings
@@ -13,6 +13,9 @@ from django.forms import ValidationError
 from django.db.models import Q
 import re
 from poll.forms import NewPollForm
+from rapidsms_httprouter.models import Message,Connection
+from uganda_common.forms import SMSInput
+
 
 class EditReporterForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -208,5 +211,28 @@ class SignupForm(forms.Form):
         if not match:
             raise ValidationError('invalid Number')
         return cleaned_data
+
+class ReplyTextForm(ActionForm):
+
+    text = forms.CharField(required=True, widget=SMSInput())
+    action_label = 'Reply to selected'
+
+    def perform(self, request, results):
+        if results is None or len(results) == 0:
+            return ('A message must have one or more recipients!', 'error')
+
+        if request.user and request.user.has_perm('contact.can_message'):
+            text = self.cleaned_data['text']
+            if isinstance(results[0],Message):
+                connections=results.values_list('connection',flat=True)
+            elif isinstance(results[0],Response):
+                connections=results.values_list('message__connection',flat=True)
+
+            Message.mass_text(text,Connection.objects.filter(pk__in=connections).distinct(), status='P')
+
+
+            return ('%d messages sent successfully' % results.count(), 'success',)
+        else:
+            return ("You don't have permission to send messages!", 'error',)
     
 
