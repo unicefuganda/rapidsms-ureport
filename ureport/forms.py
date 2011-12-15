@@ -1,8 +1,10 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 from django import forms
 from rapidsms.models import Contact
 from django.contrib.auth.models import Group
-from poll.models import Poll,Response
+from poll.models import Poll, Response
 from mptt.forms import TreeNodeChoiceField
 from generic.forms import ActionForm, FilterForm, ModuleForm
 from django.conf import settings
@@ -13,21 +15,28 @@ from django.forms import ValidationError
 from django.db.models import Q
 import re
 from poll.forms import NewPollForm
-from rapidsms_httprouter.models import Message,Connection
+from rapidsms_httprouter.models import Message, Connection
 from uganda_common.forms import SMSInput
+from django.db.models.query import QuerySet
 
 
 class EditReporterForm(forms.ModelForm):
+
     def __init__(self, *args, **kwargs):
-           super(EditReporterForm, self).__init__(*args, **kwargs)
-           self.fields['reporting_location'] = TreeNodeChoiceField(queryset=self.fields['reporting_location'].queryset, level_indicator=u'.')
+        super(EditReporterForm, self).__init__(*args, **kwargs)
+        self.fields['reporting_location'] = \
+            TreeNodeChoiceField(queryset=self.fields['reporting_location'
+                                ].queryset, level_indicator=u'.')
+
 
     class Meta:
+
         model = Contact
         fields = ('name', 'reporting_location', 'groups')
 
 
 class PollModuleForm(ModuleForm):
+
     viz_type = forms.ChoiceField(choices=(
         ('ureport.views.show_timeseries', 'Poll responses vs time'),
         ('ureport.views.mapmodule', 'Map'),
@@ -38,37 +47,54 @@ class PollModuleForm(ModuleForm):
         ('poll-report-module', 'Tabular report'),
         ('best-viz', 'Results'),
         ('ureport.views.message_feed', 'Message Feed'),
-    ), label="Poll visualization")
-    poll = forms.ChoiceField(choices=(('l', 'Latest Poll'),) + tuple([(int(p.pk), str(p)) for p in Poll.objects.all().order_by('-start_date')]), required=True)
+        ), label='Poll visualization')
+    poll = forms.ChoiceField(choices=(('l', 'Latest Poll'), )
+                             + tuple([(int(p.pk), str(p)) for p in
+                             Poll.objects.all().order_by('-start_date'
+                             )]), required=True)
 
-    def setModuleParams(self, dashboard, module=None, title=None):
+    def setModuleParams(
+        self,
+        dashboard,
+        module=None,
+        title=None,
+        ):
         title_dict = {
-            'ureport.views.show_timeseries':'Poll responses vs time',
-            'ureport.views.mapmodule':'Map',
-            'histogram':'Histogram',
-            'ureport.views.piegraph_module':'Pie chart',
-            'ureport.views.tag_cloud':'Tag cloud',
-            'poll-responses-module':'Responses list',
-            'poll-report-module':'Tabular report',
-            'best-viz':'Results',
-            'ureport.views.message_feed':'Message Feed',
-        }
+            'ureport.views.show_timeseries': 'Poll responses vs time',
+            'ureport.views.mapmodule': 'Map',
+            'histogram': 'Histogram',
+            'ureport.views.piegraph_module': 'Pie chart',
+            'ureport.views.tag_cloud': 'Tag cloud',
+            'poll-responses-module': 'Responses list',
+            'poll-report-module': 'Tabular report',
+            'best-viz': 'Results',
+            'ureport.views.message_feed': 'Message Feed',
+            }
         viz_type = self.cleaned_data['viz_type']
         title = title_dict[viz_type]
-        module = module or self.createModule(dashboard, viz_type, title=title)
-        is_url_param = viz_type in ['poll-responses-module', 'poll-report-module']
+        module = module or self.createModule(dashboard, viz_type,
+                title=title)
+        is_url_param = viz_type in ['poll-responses-module',
+                                    'poll-report-module']
         if is_url_param:
             param_name = 'poll_id'
         else:
             param_name = 'pks'
         param_value = str(self.cleaned_data['poll'])
-        module.params.create(module=module, param_name=param_name, param_value=param_value, is_url_param=is_url_param)
+        module.params.create(module=module, param_name=param_name,
+                             param_value=param_value,
+                             is_url_param=is_url_param)
         return module
+
 
 class ExcelUploadForm(forms.Form):
 
-    excel_file = forms.FileField(label="Contacts Excel File", required=False)
-    assign_to_group = forms.ModelChoiceField(queryset=Group.objects.all(), required=False)
+    excel_file = forms.FileField(label='Contacts Excel File',
+                                 required=False)
+    assign_to_group = \
+        forms.ModelChoiceField(queryset=Group.objects.all(),
+                               required=False)
+
 #    def __init__(self, data=None, **kwargs):
 #        self.request=kwargs.pop('request')
 #        if data:
@@ -84,73 +110,96 @@ class ExcelUploadForm(forms.Form):
     def clean(self):
         excel = self.cleaned_data.get('excel_file', None)
         if excel and excel.name.rsplit('.')[1] != 'xls':
-                msg = u'Upload valid excel file !!!'
-                self._errors["excel_file"] = ErrorList([msg])
-                return ''
+            msg = u'Upload valid excel file !!!'
+            self._errors['excel_file'] = ErrorList([msg])
+            return ''
         return self.cleaned_data
+
 
 class SearchResponsesForm(FilterForm):
 
     """ search responses 
     """
 
-    search = forms.CharField(max_length=100, required=True, label="search Responses")
+    search = forms.CharField(max_length=100, required=True,
+                             label='search Responses')
+
     def filter(self, request, queryset):
         search = self.cleaned_data['search'].strip()
-        if search == "":
-           return queryset
+        if search == '':
+            return queryset
         elif search[0] == '"' and search[-1] == '"':
-           search=search[1:-1]
-           return queryset.filter(Q(message__text__iregex=".*\m(%s)\y.*"%search)
-                                  | Q(message__connection__contact__reporting_location__name__iregex=".*\m(%s)\y.*"%search)
-                                  | Q(message__connection__identity__iregex=".*\m(%s)\y.*"%search))
-
+            search = search[1:-1]
+            return queryset.filter(Q(message__text__iregex=".*\m(%s)\y.*"
+                                    % search)
+                                   | Q(message__connection__contact__reporting_location__name__iregex=".*\m(%s)\y.*"
+                                    % search)
+                                   | Q(message__connection__identity__iregex=".*\m(%s)\y.*"
+                                    % search))
         elif search[0] == "'" and search[-1] == "'":
-            search=search[1:-1]
+
+            search = search[1:-1]
             return queryset.filter(Q(message__text__iexact=search)
-                                  | Q(message__connection__contact__reporting_location__name__iexact=search)
-                                  | Q(message__connection__identity__iexact=search))
-
-
+                                   | Q(message__connection__contact__reporting_location__name__iexact=search)
+                                   | Q(message__connection__identity__iexact=search))
         else:
-            
 
             return queryset.filter(Q(message__text__icontains=search)
-                                  | Q(message__connection__contact__reporting_location__name__icontains=search)
-                                  | Q(message__connection__identity__icontains=search))
-
-
-
-
+                                   | Q(message__connection__contact__reporting_location__name__icontains=search)
+                                   | Q(message__connection__identity__icontains=search))
 
 
 class AssignToPollForm(ActionForm):
+
     """ assigns responses to poll  """
-    poll = forms.ModelChoiceField(queryset=Poll.objects.all().order_by('-pk'))
+
+    poll = \
+        forms.ModelChoiceField(queryset=Poll.objects.all().order_by('-pk'
+                               ))
     action_label = 'Assign selected to poll'
+
     def perform(self, request, results):
         poll = self.cleaned_data['poll']
         for c in results:
             c.categories.all().delete()
             c.poll = poll
             c.save()
-        return ('%d responses assigned to  %s poll' % (len(results), poll.name), 'success',)
+        return ('%d responses assigned to  %s poll' % (len(results),
+                poll.name), 'success')
+
 
 class DeleteSelectedForm(ActionForm):
+
     """ Deletes selected stuff  """
 
     action_label = 'Delete Selected '
+    action_class = 'delete'
+
     def perform(self, request, results):
-        count=len(results)
-        results.delete()
-        return ('count  objects successfuly deleted ' , 'success',)
+        count = len(results)
+        if not count:
+            return ('No contacts selected', 'error')
+
+        if isinstance(results[0], QuerySet):
+            results.delete()
+        else:
+            for object in results:
+                object.delete()
+
+        return ('%d  objects successfuly deleted ' % count, 'success')
+
 
 class AssignToNewPollForm(ActionForm):
+
     """ assigns contacts to poll"""
+
     action_label = 'Assign to New poll'
-    poll_name = forms.CharField(label="Poll Name", max_length="100")
-    POLL_TYPES = [('yn', 'Yes/No Question')] + [(c['type'], c['label']) for c in Poll.TYPE_CHOICES.values()]
-    response_type=forms.ChoiceField(choices=Poll.RESPONSE_TYPE_CHOICES,widget=RadioSelect)
+    poll_name = forms.CharField(label='Poll Name', max_length='100')
+    POLL_TYPES = [('yn', 'Yes/No Question')] + [(c['type'], c['label'])
+            for c in Poll.TYPE_CHOICES.values()]
+    response_type = \
+        forms.ChoiceField(choices=Poll.RESPONSE_TYPE_CHOICES,
+                          widget=RadioSelect)
     poll_type = forms.ChoiceField(choices=POLL_TYPES)
     question = forms.CharField(max_length=160, required=True)
     default_response = forms.CharField(max_length=160, required=False)
@@ -158,59 +207,73 @@ class AssignToNewPollForm(ActionForm):
 
     def perform(self, request, results):
         if not len(results):
-            return ("No contacts selected", "error")
+            return ('No contacts selected', 'error')
         name = self.cleaned_data['poll_name']
         poll_type = self.cleaned_data['poll_type']
-        poll_type=self.cleaned_data['poll_type']
+        poll_type = self.cleaned_data['poll_type']
         if poll_type == NewPollForm.TYPE_YES_NO:
-            poll_type = Poll.TYPE_TEXT 
+            poll_type = Poll.TYPE_TEXT
 
-        question = self.cleaned_data.get('question').replace('%', u'\u0025')
+        question = self.cleaned_data.get('question').replace('%',
+                u'\u0025')
         default_response = self.cleaned_data['default_response']
         start_immediately = self.cleaned_data['start_immediately']
         response_type = self.cleaned_data['response_type']
-        poll = Poll.create_with_bulk(\
-                                 name=name,
-                                 type=poll_type,
-                                question=question,
-                                 default_response=default_response,
-                                 contacts=results,
-                                 user=request.user)
+        poll = Poll.create_with_bulk(
+            name=name,
+            type=poll_type,
+            question=question,
+            default_response=default_response,
+            contacts=results,
+            user=request.user,
+            )
 
-        poll.response_type=response_type
+        poll.response_type = response_type
         if self.cleaned_data['poll_type'] == NewPollForm.TYPE_YES_NO:
             poll.add_yesno_categories()
         poll.save()
-
 
         if settings.SITE_ID:
             poll.sites.add(Site.objects.get_current())
         if start_immediately:
             poll.start()
-        return ('%d participants added to  %s poll' % (len(results), poll.name), 'success',)
-DISTRICT_CHOICES=(tuple([(int(d.pk),
-                                 d.name) for d in
-                                 Location.objects.filter(type__slug='district'
-                                 ).order_by('name')]))
+        return ('%d participants added to  %s poll' % (len(results),
+                poll.name), 'success')
+
+
+DISTRICT_CHOICES = tuple([(int(d.pk), d.name) for d in
+                         Location.objects.filter(type__slug='district'
+                         ).order_by('name')])
 phone_re = re.compile(r'(\d+)')
+
+
 class SignupForm(forms.Form):
-    firstname = forms.CharField(max_length=100, label="First Name")
-    lastname = forms.CharField(max_length=100, label="Last Name")
-    district = forms.ChoiceField(choices=DISTRICT_CHOICES, label="District")
-    village = forms.CharField(label="Village",required=False)
-    mobile = forms.CharField(label="Mobile Number",max_length=13,required=True)
-    gender = forms.ChoiceField(choices=(('Male', 'Male'), ('Female', 'Female'),), label="Sex")
-    group = forms.CharField(max_length=100,required=False,label="How did you hear about U-report?")
-    age = forms.IntegerField(max_value=100,min_value=10,required=False)
+
+    firstname = forms.CharField(max_length=100, label='First Name')
+    lastname = forms.CharField(max_length=100, label='Last Name')
+    district = forms.ChoiceField(choices=DISTRICT_CHOICES,
+                                 label='District')
+    village = forms.CharField(label='Village', required=False)
+    mobile = forms.CharField(label='Mobile Number', max_length=13,
+                             required=True)
+    gender = forms.ChoiceField(choices=(('Male', 'Male'), ('Female',
+                               'Female')), label='Sex')
+    group = forms.CharField(max_length=100, required=False,
+                            label='How did you hear about U-report?')
+    age = forms.IntegerField(max_value=100, min_value=10,
+                             required=False)
 
     def clean(self):
 
-        cleaned_data=self.cleaned_data
-        cleaned_data['district']=Location.objects.get(pk=int(cleaned_data.get('district','1')))
-        match = re.match(phone_re, cleaned_data.get('mobile',''))
+        cleaned_data = self.cleaned_data
+        cleaned_data['district'] = \
+            Location.objects.get(pk=int(cleaned_data.get('district', '1'
+                                 )))
+        match = re.match(phone_re, cleaned_data.get('mobile', ''))
         if not match:
             raise ValidationError('invalid Number')
         return cleaned_data
+
 
 class ReplyTextForm(ActionForm):
 
@@ -219,20 +282,27 @@ class ReplyTextForm(ActionForm):
 
     def perform(self, request, results):
         if results is None or len(results) == 0:
-            return ('A message must have one or more recipients!', 'error')
+            return ('A message must have one or more recipients!',
+                    'error')
 
-        if request.user and request.user.has_perm('contact.can_message'):
+        if request.user and request.user.has_perm('contact.can_message'
+                ):
             text = self.cleaned_data['text']
-            if isinstance(results[0],Message):
-                connections=results.values_list('connection',flat=True)
-            elif isinstance(results[0],Response):
-                connections=results.values_list('message__connection',flat=True)
+            if isinstance(results[0], Message):
+                connections = results.values_list('connection',
+                        flat=True)
+            elif isinstance(results[0], Response):
+                connections = results.values_list('message__connection'
+                        , flat=True)
 
-            Message.mass_text(text,Connection.objects.filter(pk__in=connections).distinct(), status='P')
+            Message.mass_text(text,
+                              Connection.objects.filter(pk__in=connections).distinct(),
+                              status='P')
 
-
-            return ('%d messages sent successfully' % results.count(), 'success',)
+            return ('%d messages sent successfully' % results.count(),
+                    'success')
         else:
-            return ("You don't have permission to send messages!", 'error',)
-    
+            return ("You don't have permission to send messages!",
+                    'error')
+
 
