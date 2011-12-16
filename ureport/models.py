@@ -15,7 +15,6 @@ from script.utils.handling import find_closest_match, find_best_response
 from rapidsms_httprouter.managers import BulkInsertManager
 from rapidsms_httprouter.models import Message, MessageBatch
 from unregister.models import Blacklist
-from django.db.models.signals import post_save
 from django.conf import settings
 from django.core.mail import send_mail
 
@@ -152,24 +151,5 @@ def autoreg(**kwargs):
         send_mail("UReport now %d voices strong!" % total_ureporters, "%s (%s) was the %dth member to finish the sign-up.  Let's welcome them!" % (contact.name, connection.identity, total_ureporters), 'root@uganda.rapidsms.org', recipients, fail_silently=True)
 
 
-def bulk_blacklist(sender, **kwargs):
-    """
-    This method optimizes the handling of blacklisted numbers.  Normally,
-    messages would have to be checked one by one, using the outgoing() methods
-    of all SMS_APPS.  However, with UReport, the only app that actually uses outgoing()
-    is unregister, and this method handles doing this process for all messages at once
-    """
-    if sender == Poll:
-        poll = kwargs['instance']
-        if poll.start_date:
-            bad_conns = Blacklist.objects.values_list('connection__pk', flat=True).distinct()
-            bad_conns = Connection.objects.filter(pk__in=bad_conns)
-            poll.messages.filter(status='P').exclude(connection__in=bad_conns).update(status='Q')
-    if sender == Message:
-        bad_conns = Blacklist.objects.values_list('connection__pk', flat=True).distinct()
-        bad_conns = Connection.objects.filter(pk__in=bad_conns)
-        Message.objects.filter(status='P').exclude(connection__in=bad_conns).update(status='Q')
-        Message.objects.filter(status='P').filter(connection__in=bad_conns).update(status='C')
-
 script_progress_was_completed.connect(autoreg, weak=False)
-post_save.connect(bulk_blacklist, weak=False)
+
