@@ -11,7 +11,7 @@ from poll.models import *
 from rapidsms_httprouter.models import Message
 from contact.utils import  get_mass_messages, get_messages
 from utils import get_flagged_messages
-from contact.models import MessageFlag
+from contact.models import MassText
 from .models import Ureporter
 from .forms import *
 
