@@ -12,7 +12,6 @@ from django.core.exceptions import ValidationError
 from script.signals import *
 from script.models import *
 from script.utils.handling import find_closest_match, find_best_response
-from rapidsms_httprouter.managers import BulkInsertManager
 from rapidsms_httprouter.models import Message, MessageBatch
 from unregister.models import Blacklist
 from django.conf import settings
