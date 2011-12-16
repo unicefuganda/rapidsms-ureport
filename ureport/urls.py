@@ -3,7 +3,7 @@ from django.conf.urls.defaults import *
 from ureport.views import *
 from ureport.utils import get_contacts, get_polls , get_script_polls
 from django.contrib.auth.decorators import login_required
-from contact.forms import FreeSearchTextForm, FreeSearchForm, MultipleDistictFilterForm, HandledByForm, ReplyTextForm, FlaggedForm, FlagMessageForm, DistictFilterMessageForm, GenderFilterForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm, AgeFilterForm
+from contact.forms import FreeSearchTextForm, FreeSearchForm, MultipleDistictFilterForm, HandledByForm, FlaggedForm, FlagMessageForm, DistictFilterMessageForm, GenderFilterForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm, AgeFilterForm
 from generic.views import generic, generic_row, generic_dashboard, generic_map
 from generic.sorters import SimpleSorter, TupleSorter
 from unregister.forms import BlacklistForm
@@ -13,6 +13,7 @@ from contact.utils import  get_mass_messages, get_messages
 from utils import get_flagged_messages
 from contact.models import MessageFlag
 from .models import Ureporter
+from .forms import *
 
 urlpatterns = patterns('',
     # dashboard view for viewing all poll reports in one place
@@ -26,6 +27,7 @@ urlpatterns = patterns('',
         'partial_row':'ureport/partials/dashboard/poll_row.html',
         'partial_header':'ureport/partials/dashboard/partial_header_dashboard.html',
         'base_template':'ureport/dashboard.html',
+        'paginator_template':'ureport/partials/pagination.html',
         'selectable':False,
         'columns':[('Name', True, 'name', SimpleSorter()),
                  ('Question', True, 'question', SimpleSorter(),),
@@ -47,6 +49,7 @@ urlpatterns = patterns('',
         'objects_per_page':25,
         'partial_row':'ureport/partials/contacts/contacts_row.html',
         'base_template':'ureport/ureporters_base.html',
+        'paginator_template':'ureport/partials/pagination.html',
         'columns':[('Name', True, 'name', SimpleSorter()),
                  ('Number', True, 'connection__identity', SimpleSorter(),),
                   ('Age', False, '', None,),
@@ -68,6 +71,7 @@ urlpatterns = patterns('',
         'selectable':False,
         'partial_row':'ureport/partials/polls/poll_admin_row.html',
         'base_template':'ureport/poll_admin_base.html',
+        'paginator_template':'ureport/partials/pagination.html',
         'results_title':'Polls',
         'sort_column':'start_date',
         'sort_ascending':False,
@@ -86,6 +90,7 @@ urlpatterns = patterns('',
         'selectable':False,
         'partial_row':'ureport/partials/polls/poll_admin_row.html',
         'base_template':'ureport/poll_admin_base.html',
+        'paginator_template':'ureport/partials/pagination.html',
         'results_title':'Polls',
         'sort_column':'start_date',
         'sort_ascending':False,
@@ -104,6 +109,7 @@ urlpatterns = patterns('',
       'objects_per_page':25,
       'partial_row':'ureport/partials/messages/message_row.html',
       'base_template':'ureport/contact_message_base.html',
+      'paginator_template':'ureport/partials/pagination.html',
       'columns':[('Text', True, 'text', SimpleSorter()),
                  ('Contact Information', True, 'connection__contact__name', SimpleSorter(),),
                  ('Date', True, 'date', SimpleSorter(),),
@@ -120,6 +126,7 @@ urlpatterns = patterns('',
       'queryset':get_mass_messages,
       'objects_per_page':10,
       'partial_row':'contact/partials/mass_message_row.html',
+      'paginator_template':'ureport/partials/pagination.html',
       'base_template':'ureport/contacts_base.html',
       'columns':[('Message', True, 'text', TupleSorter(0)),
                  ('Time', True, 'date', TupleSorter(1),),
