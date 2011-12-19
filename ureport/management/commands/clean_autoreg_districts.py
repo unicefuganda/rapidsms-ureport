@@ -13,7 +13,7 @@ class Command(BaseCommand):
         no_district_connections=Connection.objects.filter(contact__reporting_location=None).filter(pk__in=auto_reg_conns).values_list('pk',flat=True)
         sic="|".join(Location.objects.filter(type__name='district').values_list('name',flat=True))
 
-        messages=Message.objects.filter(connection__pk__in=no_district_connections,direction="I").filter(text__iregex=".*\m(%s)\y.*"%sic)
+        messages=Message.objects.filter(connection__pk__in=no_district_connections,direction="I").filter(text__iregex=".*\m(%s)\y.*"%sic).order_by('date')
         try:
             for message in messages:
                 if message.connection.contact:
@@ -22,8 +22,9 @@ class Command(BaseCommand):
                         district=find_closest_match(m, Location.objects.filter(type__name='district'))
                         if district:
                             conn=message.connection
-                            conn.contact.reporting_location=district
-                            conn.save()
+                            if not conn.reporting_location:
+                                conn.contact.reporting_location=district
+                                conn.contact.save()
 
         except Exception, exc:
             print traceback.format_exc(exc)
