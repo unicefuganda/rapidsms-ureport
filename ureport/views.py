@@ -711,7 +711,7 @@ def clickatell_wrapper(request):
 def flagged_messages(request, export=False):
     if request.GET.get('export', None):
         data = []
-        for mf in MessageFlag.objects.all():
+        for mf in MessageFlag.objects.exclude(flag=None):
             rep = {}
             rep['Message'] = mf.message.text
             rep['Mobile Number'] = mf.message.connection.identity

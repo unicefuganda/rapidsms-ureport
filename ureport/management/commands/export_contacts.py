@@ -22,7 +22,7 @@ class Command(BaseCommand):
             excel_file_path = \
                 os.path.join(os.path.join(os.path.join(UREPORT_ROOT,
                              'static'), 'spreadsheets'),
-                             'ureporters.xls')
+                             'ureporters.zip')
             export_data_list = []
 
             # messages=Message.objects.select_related(depth=1)
@@ -130,6 +130,7 @@ class Command(BaseCommand):
         # export the last 2 polls
 
         polls = Poll.objects.order_by('-pk')[0:3]
+        print "doxing"
         for poll in polls:
             if poll.responses.exists():
                 responses = poll.responses.all()
