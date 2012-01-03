@@ -64,14 +64,11 @@ class Ureporter(Contact):
                 return None
 
     def quit_date(self):
-        bl = Blacklist.objects.filter(connection__contact=self)
-        if bl.exists():
-            for quit_word in settings.OPT_OUT_WORDS:
-                q_message = Message.objects.filter(text__icontains=quit_word)
-                if q_message.exists():
-                    return q_message.latest('date').date.date()
-
-
+        quit_msg = Message.objects.filter(connection__contact=self,application="unregister")
+        if quit_msg.exists():
+            return quit_msg.latest('date').date
+    def messages_count(self):
+        return Message.objects.filter(connection__contact=self,direction="I").count()
 
     class Meta:
         proxy = True

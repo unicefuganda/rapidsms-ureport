@@ -1,0 +1,16 @@
+{% extends 'generic/partials/partial_row.html' %}
+{% block remaining_row_content %}
+    <td>
+         {% if object.default_connection %}
+            <a href="{% url ureport.views.ureporter_profile object.default_connection.pk %}">
+        {% endif %}
+        {{ object.name }}
+
+     {% if object.default_connection %}
+            </a>
+        {% endif %}
+    </td>
+    <td>{{ object.join_date|date:"m/d/Y H:i:s" }}</td>
+    <td>{{ object.quit_date|date:"m/d/Y H:i:s" }}</td>
+    <td>{{ object.messages_count}}</td>
+{% endblock %}

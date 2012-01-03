@@ -18,6 +18,8 @@ from poll.forms import NewPollForm
 from rapidsms_httprouter.models import Message, Connection
 from uganda_common.forms import SMSInput
 from django.db.models.query import QuerySet
+from contact.models import MassText
+from poll.models import Poll, Translation
 
 
 class EditReporterForm(forms.ModelForm):
@@ -305,4 +307,39 @@ class ReplyTextForm(ActionForm):
             return ("You don't have permission to send messages!",
                     'error')
 
+class MassTextForm(ActionForm):
 
+    text = forms.CharField(max_length=160, required=True, widget=SMSInput())
+    text_luo = forms.CharField(max_length=160, required=True, widget=SMSInput())
+    action_label = 'Send Message'
+
+    def perform(self, request, results):
+        if results is None or len(results) == 0:
+            return ('A message must have one or more recipients!', 'error')
+
+        if request.user and request.user.has_perm('contact.can_message'):
+            connections = \
+                list(Connection.objects.filter(contact__in=results).distinct())
+
+            text = self.cleaned_data.get('text', "")
+            text = text.replace('%', u'\u0025')
+
+            messages = Message.mass_text(text, connections)
+            if not self.cleaned_data['text_luo'] == '':
+                (translation, created) = \
+                    Translation.objects.get_or_create(language='ach',
+                        field=self.cleaned_data['text'],
+                        value=self.cleaned_data['text_luo'])
+
+            MassText.bulk.bulk_insert(send_pre_save=False,
+                    user=request.user,
+                    text=text,
+                    contacts=list(results))
+            masstexts = MassText.bulk.bulk_insert_commit(send_post_save=False, autoclobber=True)
+            masstext = masstexts[0]
+            if settings.SITE_ID:
+                masstext.sites.add(Site.objects.get_current())
+
+            return ('Message successfully sent to %d numbers' % len(connections), 'success',)
+        else:
+            return ("You don't have permission to send messages!", 'error',)

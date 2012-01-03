@@ -5,6 +5,7 @@ from poll.models import Poll
 from script.models import ScriptStep
 from django.db.models import Count
 from .models import Ureporter
+from unregister.models import Blacklist
 
 def get_contacts(**kwargs):
     request = kwargs.pop('request')
@@ -41,4 +42,8 @@ def retrieve_poll(request, pks=None):
 def get_flagged_messages(**kwargs):
 
     return MessageFlag.objects.all()
+
+def get_quit_messages(**kwargs):
+    bl=Blacklist.objects.values_list('connection',flat=True).distinct()
+    return Ureporter.objects.filter(connection__in=bl)
 

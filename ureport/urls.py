@@ -3,14 +3,14 @@ from django.conf.urls.defaults import *
 from ureport.views import *
 from ureport.utils import get_contacts, get_polls , get_script_polls
 from django.contrib.auth.decorators import login_required
-from contact.forms import FreeSearchTextForm, FreeSearchForm, MultipleDistictFilterForm, HandledByForm, FlaggedForm, FlagMessageForm, DistictFilterMessageForm, GenderFilterForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, MassTextForm, AgeFilterForm
+from contact.forms import FreeSearchTextForm, FreeSearchForm, MultipleDistictFilterForm, HandledByForm, FlaggedForm, FlagMessageForm, DistictFilterMessageForm, GenderFilterForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, AgeFilterForm
 from generic.views import generic, generic_row, generic_dashboard, generic_map
 from generic.sorters import SimpleSorter, TupleSorter
 from unregister.forms import BlacklistForm
 from poll.models import *
 from rapidsms_httprouter.models import Message
 from contact.utils import  get_mass_messages, get_messages
-from utils import get_flagged_messages
+from utils import get_quit_messages
 from contact.models import MassText
 from .models import Ureporter
 from .forms import *
@@ -137,6 +137,25 @@ urlpatterns = patterns('',
       'sort_column':'date',
       'sort_ascending':False,
       'selectable':False,
+    }),
+
+
+    
+    #Quit Messages View
+
+    url(r'^quitmessages/$', login_required(generic), {
+      'model':Ureporter,
+      'queryset':get_quit_messages,
+      'objects_per_page':25,
+      'partial_row':'ureport/partials/contacts/quit_message_row.html',
+      'paginator_template':'ureport/partials/pagination.html',
+      'base_template':'ureport/contacts_base.html',
+      'columns':[('Name', True, 'name', TupleSorter(0)),
+                 ('JoinDate', False, '', None,),
+                 ('QuitDate', False, '', None,),
+                 ('Messages sent', False, '', None,),
+                 
+                 ]
     }),
 
     #flagged messages
