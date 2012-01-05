@@ -713,9 +713,16 @@ def flagged_messages(request, export=False):
         data = []
         for mf in MessageFlag.objects.exclude(flag=None):
             rep = {}
+
             rep['Message'] = mf.message.text
             rep['Mobile Number'] = mf.message.connection.identity
             rep['flag'] = mf.flag.name
+            if mf.message.connection.contact:
+                rep['name'] = mf.message.connection.contact.name
+                rep['district'] = mf.message.connection.contact.reporting_location
+            else:
+                rep['name']=''
+                rep['district']=''
             data.append(rep)
 
         return ExcelResponse(data=data)
