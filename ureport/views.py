@@ -859,7 +859,7 @@ def ureporter_profile(request, connection_pk):
     messages = \
         Message.objects.filter(connection=connection).order_by('-date')
 
-    contact = get_object_or_404(Ureporter, pk=connection_pk)
+    contact = connection.contact
     total_outgoing = messages.filter(direction='O',
             connection__pk=connection_pk).count()
     total_incoming = messages.filter(direction='I',
