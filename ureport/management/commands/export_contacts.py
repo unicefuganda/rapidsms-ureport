@@ -34,6 +34,7 @@ class Command(BaseCommand):
             year_now = datetime.datetime.now().year
             sql = \
                 """    SELECT
+      "rapidsms_contact"."id",
       "rapidsms_contact"."name",
       (SELECT
          "rapidsms_connection"."identity"
@@ -106,6 +107,7 @@ class Command(BaseCommand):
             cursor = connection.cursor()
             cursor.execute(sql)
             row_0 = [(
+                'Id',
                 'Name',
                 'Mobile',
                 'Language',
