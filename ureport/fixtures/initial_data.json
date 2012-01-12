@@ -1,6 +1,5 @@
 [
-    
-
+  
     {
         "pk": 122,
         "model": "poll.poll",
@@ -200,7 +199,7 @@
             "email": null,
             "num_tries": null,
             "start_offset": 0,
-            "message": "Welcome to Ureport, where you can SPEAK UP and BE HEARD on what is happening in your community-it's FREE! ",
+            "message": "Welcome to U-report, where you can SPEAK UP and BE HEARD on what is happening in your community-it's FREE! ",
             "poll": null,
             "order": 0,
             "giveup_offset": 60
@@ -216,7 +215,7 @@
             "email": null,
             "num_tries": null,
             "start_offset": 60,
-            "message": "Ureport is a FREE SMS text message system that is sent to your phone.  Ureport is sponsored by UNICEF and other partners.",
+            "message": "U-report is a FREE SMS text message system that is sent to your phone.  U-report is sponsored by UNICEF and other partners.",
             "poll": null,
             "order": 2,
             "giveup_offset": 60
@@ -232,7 +231,7 @@
             "email": null,
             "num_tries": null,
             "start_offset": 60,
-            "message": "Ureport gives you a chance to speak out on issues in your community & share opinions with youth around Uganda!Best responses&results shared through the media!",
+            "message": "U-report gives you a chance to speak out on issues in your community & share opinions with youth around Uganda!Best responses&results shared through the media!",
             "poll": null,
             "order": 4,
             "giveup_offset": 60
@@ -248,7 +247,7 @@
             "email": null,
             "num_tries": null,
             "start_offset": 60,
-            "message": "CONGRATULATIONS!!! You are now a registered member of Ureport! With Ureport, you can make a real difference!  Speak Up and Be Heard! from UNICEF",
+            "message": "CONGRATULATIONS!!! You are now a registered member of U-report! With U-report, you can make a real difference!  Speak Up and Be Heard! from UNICEF",
             "poll": null,
             "order": 9,
             "giveup_offset": 0
@@ -401,7 +400,7 @@
             "email": null,
             "num_tries": null,
             "start_offset": 60,
-            "message": "Ureport mini kare me lok ikum jami matime i kama in ibedo iyee.  Lagam mabejo kibiketo ne I karatac me ngec.",
+            "message": "U-report mini kare me lok ikum jami matime i kama in ibedo iyee.  Lagam mabejo kibiketo ne I karatac me ngec.",
             "poll": null,
             "order": 4,
             "giveup_offset": 60

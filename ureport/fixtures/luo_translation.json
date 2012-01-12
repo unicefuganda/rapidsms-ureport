@@ -30,7 +30,7 @@
         "pk": 10,
         "model": "poll.translation",
         "fields": {
-            "field": "Congratulations!!!! You are now a registered member of Ureport! With Ureport you can make a real difference.  Your Voice Matters.  From UNICEF.",
+            "field": "Congratulations!!!! You are now a registered member of U-report! With U-report you can make a real difference.  Your Voice Matters.  From UNICEF.",
             "value": "Apwoyo indong itye ikin joo me u-report. Iromo kelo aloka loka.  Lok dogi pire tek",
             "language": "ach"
         }
@@ -66,7 +66,7 @@
         "pk": 14,
         "model": "poll.translation",
         "fields": {
-            "field": "Welcome to Ureport where you can SPEAK UP and BE HEARD on what is happening in your community . it is FREE",
+            "field": "Welcome to U-report where you can SPEAK UP and BE HEARD on what is happening in your community . it is FREE",
             "value": "Apwoyo bino I U-report ka ma itwero LOK, ki bene ki roomo WINYI pi gin matye ka time i kabedo ma megi. Obedu ME MONONO",
             "language": "ach"
         }
@@ -75,7 +75,7 @@
         "pk": 15,
         "model": "poll.translation",
         "fields": {
-            "field": "Ureport is a FREE SMS text message service that is sent to your phone.  Ureport is sponsored by UNICEF and partners",
+            "field": "U-report is a FREE SMS text message service that is sent to your phone.  U-report is sponsored by UNICEF and partners",
             "value": "U-report obedo waraga ma ki cwalo i cim me cing kun bedo MI MONONO. U-report jo ma gu culu pire en atye UNICEF ki jo makene ma gitiyo kedegi",
             "language": "ach"
         }
@@ -84,7 +84,7 @@
         "pk": 16,
         "model": "poll.translation",
         "fields": {
-            "field": " Welcome to Ureport! Ureport is a community of Ugandan youth that are dedicated to working for positive change in their communities.  Stay tuned for more information.",
+            "field": " Welcome to U-report! U-report is a community of Ugandan youth that are dedicated to working for positive change in their communities.  Stay tuned for more information.",
             "value": "Obedo dul pa joo ma tino ma gimito loko ka bedo ma megi wek obedo maber.",
             "language": "ach"
         }
@@ -111,8 +111,8 @@
         "pk": 19,
         "model": "poll.translation",
         "fields": {
-            "field": "Ureport gives you a chance to speak out on issues in your community & share opinions with youth around Uganda! Best responses & results shared through the media!",
-            "value": "Ureport mini kare me lok ikum jami matime i kama in ibedo iyee.  Lagam mabejo kibiketo ne I karatac me ngec.",
+            "field": "U-report gives you a chance to speak out on issues in your community & share opinions with youth around Uganda! Best responses & results shared through the media!",
+            "value": "U-report mini kare me lok ikum jami matime i kama in ibedo iyee.  Lagam mabejo kibiketo ne I karatac me ngec.",
             "language": "ach"
         }
     },
