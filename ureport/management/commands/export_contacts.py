@@ -144,11 +144,18 @@ class Command(BaseCommand):
                 for response in responses:
 
                     response_export_data = SortedDict()
+
                     if response.contact and response.contact.name:
                         response_export_data['contact_name'] = \
                             response.contact.name
                     else:
                         response_export_data['contact_name'] = 'N/A'
+
+                    if response.contact and response.contact.language:
+                        response_export_data['language']=response.contact.language
+                    else:
+                        response_export_data['language']="en"
+                           
                     if response.contact and response.contact.gender:
                         response_export_data['sex'] = \
                             response.contact.gender
