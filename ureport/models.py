@@ -110,7 +110,7 @@ def autoreg(**kwargs):
 
     village = find_best_response(session, villagepoll)
     if village:
-        contact.village = find_closest_match(village, Location.objects)
+        contact.village = find_closest_match(village, Location.objects.filter(type__slug="village"))
 
     group_to_match = find_best_response(session, youthgrouppoll)
     default_group = None

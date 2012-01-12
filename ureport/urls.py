@@ -216,4 +216,5 @@ urlpatterns = patterns('',
 
     url(r'signup/$',signup,name="signup"),
     url(r'messagehistory/(?P<connection_pk>\d+)/$',ureporter_profile,name="profile"),
+     url(r'createpoll/$',new_poll,name="new_poll"),
 )

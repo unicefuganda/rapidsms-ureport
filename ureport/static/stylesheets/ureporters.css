@@ -49,5 +49,8 @@ margin-top:-60px;
 
 #actions
 {
-    min-height:130px;
+    min-height:250px;
+}
+.export_link{
+   clear:both;
 }

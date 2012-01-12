@@ -21,6 +21,8 @@ from django.db.models.query import QuerySet
 from contact.models import MassText
 from poll.models import Poll, Translation
 
+import subprocess
+
 
 class EditReporterForm(forms.ModelForm):
 
@@ -323,13 +325,17 @@ class MassTextForm(ActionForm):
 
             text = self.cleaned_data.get('text', "")
             text = text.replace('%', u'\u0025')
+            conns=list(connections.values_list('pk', flat=True))
 
-            messages = Message.mass_text(text, connections)
             if not self.cleaned_data['text_luo'] == '':
                 (translation, created) = \
                     Translation.objects.get_or_create(language='ach',
                         field=self.cleaned_data['text'],
                         value=self.cleaned_data['text_luo'])
+
+
+
+            messages = Message.mass_text(text, connections)
 
             MassText.bulk.bulk_insert(send_pre_save=False,
                     user=request.user,
@@ -343,3 +349,50 @@ class MassTextForm(ActionForm):
             return ('Message successfully sent to %d numbers' % len(connections), 'success',)
         else:
             return ("You don't have permission to send messages!", 'error',)
+
+class NewPollForm(forms.Form): # pragma: no cover
+
+    TYPE_YES_NO = 'yn'
+
+    type = forms.ChoiceField(
+               required=True,
+               choices=(
+                    (TYPE_YES_NO, 'Yes/No Question'),
+                ))
+    response_type=forms.ChoiceField(choices=Poll.RESPONSE_TYPE_CHOICES,widget=RadioSelect,initial=Poll.RESPONSE_TYPE_ALL)
+
+    def updateTypes(self):
+        self.fields['type'].widget.choices += [(choice['type'], choice['label']) for choice in Poll.TYPE_CHOICES.values()]
+
+    name = forms.CharField(max_length=32, required=True)
+    question = forms.CharField(max_length=160, required=True, widget=forms.Textarea())
+    question_luo = forms.CharField(max_length=160, required=False, widget=forms.Textarea())
+    default_response = forms.CharField(max_length=160, required=False, widget=forms.Textarea())
+    default_response_luo = forms.CharField(max_length=160, required=False, widget=forms.Textarea())
+    start_immediately = forms.BooleanField(required=False)
+    districts = forms.ModelMultipleChoiceField(queryset=
+                                 Location.objects.filter(type__slug='district'
+                                 ).order_by('name'), required=False)
+
+    # This may seem like a hack, but this allows time for the Contact model
+    # to optionally have groups (i.e., poll doesn't explicitly depend on the rapidsms-auth
+    # app.
+    def __init__(self, data=None, **kwargs):
+        if data:
+            forms.Form.__init__(self, data, **kwargs)
+        else:
+            forms.Form.__init__(self, **kwargs)
+        if hasattr(Contact, 'groups'):
+            self.fields['groups'] = forms.ModelMultipleChoiceField(queryset=Group.objects.all(), required=False)
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        groups = cleaned_data.get('groups')
+        cleaned_data['question'] = cleaned_data.get('question').replace('%', u'\u0025')
+        if 'default_response' in cleaned_data:
+            cleaned_data['default_response'] = cleaned_data['default_response'].replace('%', u'\u0025')
+
+        if  not groups:
+            raise forms.ValidationError("You must provide a set of recipients (a group or groups)")
+
+        return cleaned_data

@@ -22,7 +22,7 @@ class Command(BaseCommand):
                         district=find_closest_match(m, Location.objects.filter(type__name='district'))
                         if district:
                             conn=message.connection
-                            if not conn.reporting_location:
+                            if not conn.contact.reporting_location:
                                 conn.contact.reporting_location=district
                                 conn.contact.save()
 

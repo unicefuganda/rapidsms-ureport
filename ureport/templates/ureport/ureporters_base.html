@@ -17,6 +17,7 @@
 {% endblock %}
 
  {% block action_forms %}
+
                     {% for cname, form in action_forms %}
 
                         {% if form.action_label == 'Assign to New poll' %}
@@ -66,5 +67,5 @@
                             </div>
                         {% endif %}
                     {% endfor %}
-     <a href="{{ MEDIA_URL }}ureport/spreadsheets/ureporters.zip">Export All To Excel</a>
+     <a class="export_link" href="{{ MEDIA_URL }}ureport/spreadsheets/ureporters.zip">Export All To Excel</a>
                 {% endblock %}

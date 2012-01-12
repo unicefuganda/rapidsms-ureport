@@ -19,7 +19,7 @@
 {% block content %}
 {{ block.super }}
 <div class="buttons"> 
-    <a href="{% url poll.views.new_poll %}" style="float:left"> 
+    <a href="{% url ureport.views.new_poll %}" style="float:left">
       <img border="0" src="/static/rapidsms/icons/silk/add.png" alt=""/>Add New Poll
     </a>
     {% if request.path == "/mypolls/" %}

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404,redirect
 from django.template import RequestContext
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
@@ -34,8 +34,12 @@ from uganda_common.utils import assign_backend
 from script.utils.handling import find_closest_match
 from django.views.decorators.cache import cache_control
 from models import Ureporter
+from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required, \
+    permission_required
 
 from contact.forms import FlaggedMessageForm
+from.utils import create_poll
 
 import re
 import bisect
@@ -708,10 +712,13 @@ def clickatell_wrapper(request):
     return receive(request)
 
 
-def flagged_messages(request, export=False):
+def flagged_messages(request):
     if request.GET.get('export', None):
+        flaggedmessages=MessageFlag.objects.exclude(flag=None)
+
+
         data = []
-        for mf in MessageFlag.objects.exclude(flag=None):
+        for mf in flaggedmessages:
             rep = {}
 
             rep['Message'] = mf.message.text
@@ -749,13 +756,30 @@ def flagged_messages(request, export=False):
 def view_flagged_with(request, pk):
     flag = get_object_or_404(Flag, pk=pk)
     messages = flag.get_messages()
+    if request.GET.get('export', None):
+        data = []
+        for message in messages:
+            rep = {}
+
+            rep['Message'] = message.text
+            rep['Mobile Number'] = message.connection.identity
+            rep['flag'] = flag.name
+            if message.connection.contact:
+                rep['name'] = message.connection.contact.name
+                rep['district'] = message.connection.contact.reporting_location
+            else:
+                rep['name']=''
+                rep['district']=''
+            data.append(rep)
+
+        return ExcelResponse(data=data)
     return generic(
         request,
         model=Message,
         queryset=messages,
         objects_per_page=25,
         partial_row='contact/partials/message_row.html',
-        base_template='ureport/contact_message_base.html',
+        base_template='ureport/view_flagged_with_base.html',
         results_title='Messages Flagged With %s' % flag.name,
         columns=[('Message', True, 'text', SimpleSorter()),
                  ('Sender Information', True,
@@ -885,12 +909,10 @@ def ureporter_profile(request, connection_pk):
                , SimpleSorter())]
 
     # hack hack send the reply message by hacking the sendmessage form
-
     if request.method == 'POST':
         if not request.POST.get('text', None) == u'' \
             and request.POST.get('action') \
-            == u'contact.forms.ReplyTextForm':
-            print request.POST
+            == u'ureport.forms.ReplyTextForm':
             Message.objects.create(date=datetime.datetime.now(),
                                    connection=connection, direction='O'
                                    , status='Q',
@@ -939,4 +961,68 @@ def ureporter_profile(request, connection_pk):
         sort_ascending=False,
         )
 
+@permission_required('poll.can_poll')
+def new_poll(req):
+    if req.method == 'POST':
+        form = NewPollForm(req.POST)
+        form.updateTypes()
+        if form.is_valid():
 
+            # create our XForm
+
+            question = form.cleaned_data['question']
+            default_response = form.cleaned_data['default_response']
+            districts = form.cleaned_data['districts']
+            if hasattr(Contact, 'groups'):
+                groups = form.cleaned_data['groups']
+
+            districts = form.cleaned_data['districts']
+            if len(districts):
+                contacts = Contact.objects.filter(Q(reporting_location__in=districts) | Q(groups__in=groups)).distinct()
+            else:
+                contacts = Contact.objects.filter(groups__in=groups).distinct()
+
+            name = form.cleaned_data['name']
+            p_type = form.cleaned_data['type']
+            response_type = form.cleaned_data['response_type']
+            if not form.cleaned_data['default_response_luo'] == '' \
+                and not form.cleaned_data['default_response'] == '':
+                (translation, created) = \
+                    Translation.objects.get_or_create(language='ach',
+                        field=form.cleaned_data['default_response'],
+                        value=form.cleaned_data['default_response_luo'])
+
+            if not form.cleaned_data['question_luo'] == '':
+                (translation, created) = \
+                    Translation.objects.get_or_create(language='ach',
+                        field=form.cleaned_data['question'],
+                        value=form.cleaned_data['question_luo'])
+
+            poll_type = (Poll.TYPE_TEXT if p_type
+                         == NewPollForm.TYPE_YES_NO else p_type)
+
+            start_immediately = form.cleaned_data['start_immediately']
+
+            poll = create_poll(\
+                                 name,
+                                 poll_type,
+                                 question,
+                                 default_response,
+                                 contacts,
+                                 req.user,start_immediately=start_immediately)
+
+            if type == NewPollForm.TYPE_YES_NO:
+                poll.add_yesno_categories()
+
+            if settings.SITE_ID:
+                poll.sites.add(Site.objects.get_current())
+           
+
+            return redirect(reverse('poll.views.view_poll', args=[poll.pk]))
+
+    else:
+        form = NewPollForm()
+        form.updateTypes()
+
+    return render_to_response('ureport/new_poll.html', {'form': form},
+                              context_instance=RequestContext(req))
