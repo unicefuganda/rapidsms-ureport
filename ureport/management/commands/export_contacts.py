@@ -93,6 +93,11 @@ class Command(BaseCommand):
             "rapidsms_contact_groups"."contact_id" = "rapidsms_contact"."id" LIMIT 1) as
       group,
       (SELECT
+      "rapidsms_httprouter_message"."text"
+      FROM "rapidsms_httprouter_message"
+        JOIN "poll_response"
+            ON "poll_response"."message_id"= "rapidsms_httprouter_message"."id"  where poll_id=121 and contact_id="rapidsms_contact"."id" and has_errors='f' limit 1) as source,
+      (SELECT
          COUNT(*) FROM
             "poll_response"
          WHERE
@@ -118,6 +123,7 @@ class Command(BaseCommand):
                 'Gender',
                 'Village',
                 'Group',
+                'How did you hear about ureport?',
                 'Number Of Responses',
                 )]
 
