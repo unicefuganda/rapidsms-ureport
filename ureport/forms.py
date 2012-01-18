@@ -312,7 +312,7 @@ class ReplyTextForm(ActionForm):
 class MassTextForm(ActionForm):
 
     text = forms.CharField(max_length=160, required=True, widget=SMSInput())
-    text_luo = forms.CharField(max_length=160, required=True, widget=SMSInput())
+    text_luo = forms.CharField(max_length=160, required=False, widget=SMSInput())
     action_label = 'Send Message'
 
     def perform(self, request, results):
@@ -321,11 +321,11 @@ class MassTextForm(ActionForm):
 
         if request.user and request.user.has_perm('contact.can_message'):
             connections = \
-                list(Connection.objects.filter(contact__in=results).distinct())
+                Connection.objects.filter(contact__in=results).distinct()
 
             text = self.cleaned_data.get('text', "")
             text = text.replace('%', u'\u0025')
-            conns=list(connections.values_list('pk', flat=True))
+            conns=connections.values_list('pk', flat=True)
 
             if not self.cleaned_data['text_luo'] == '':
                 (translation, created) = \
@@ -343,9 +343,7 @@ class MassTextForm(ActionForm):
                     contacts=list(results))
             masstexts = MassText.bulk.bulk_insert_commit(send_post_save=False, autoclobber=True)
             masstext = masstexts[0]
-            if settings.SITE_ID:
-                masstext.sites.add(Site.objects.get_current())
-
+            
             return ('Message successfully sent to %d numbers' % len(connections), 'success',)
         else:
             return ("You don't have permission to send messages!", 'error',)
