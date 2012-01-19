@@ -46,6 +46,7 @@ import bisect
 import textwrap
 import random
 import datetime
+import types
 
 TAG_CLASSES = [
     'tag1',
@@ -127,8 +128,12 @@ def _get_tags(polls):
     word_count = {}
     counts_dict = {}
     used_words_list = []
-    drops=c="'"+"','".join(drop_words)+"'"
-    poll_pks= str(polls.values_list('pk',flat=True))[1:-1]
+    drops="'"+"','".join(drop_words)+"'"
+    if type(polls) == types.ListType:
+        p_list=[poll.pk for poll in polls]
+        poll_pks= str(Poll.objects.filter(pk__in=p_list).values_list('pk',flat=True))[1:-1]
+    else:
+        poll_pks= str(polls.values_list('pk',flat=True))[1:-1]
     sql = """  SELECT
            word,
            count(*) as c
