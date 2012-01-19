@@ -48,15 +48,7 @@ import random
 import datetime
 import types
 
-TAG_CLASSES = [
-    'tag1',
-    'tag2',
-    'tag3',
-    'tag4',
-    'tag5',
-    'tag6',
-    'tag7',
-    ]
+TAG_CLASSES = ['tag14', 'tag13', 'tag12', 'tag11', 'tag10', 'tag9', 'tag8', 'tag7', 'tag6', 'tag5', 'tag4', 'tag3', 'tag2', 'tag1']
 
 
 def generate_tag_cloud(
@@ -71,15 +63,18 @@ def generate_tag_cloud(
              counts_dict: a dictionary of counts and their associated words
              tag_classes: a list of tag classes sorted minumum to max
             """
-
     tags = []
     used_words_list = []
     divisor = tag_cloud_size / len(tag_classes) + 1
-    for count  in counts_dict.keys():
+    c_keys=counts_dict.keys()
+    c_keys.sort()
+    c_keys.reverse()
+    for count  in c_keys:
         for word in counts_dict[count]:
             if not word in used_words_list:
                 k = {}
                 klass = tag_classes[len(tags) / divisor]
+                
                 #url reverse hates single quotes. turn to double quotes
                 k['tag'] = "%s"%word
                 k['class'] = klass
@@ -178,8 +173,7 @@ def _get_tags(polls):
 
     #gen inverted dictionary
     counts_dict=dictinvert(word_count)
-    counts_dict.keys().sort()
-
+    
     tags = generate_tag_cloud(word_count, counts_dict, TAG_CLASSES)
 
     # randomly shuffle tags
