@@ -135,7 +135,7 @@ def _get_tags(polls):
     else:
         poll_pks= str(polls.values_list('pk',flat=True))[1:-1]
     sql = """  SELECT
-           word,
+           lower(word),
            count(*) as c
         FROM
            (SELECT
@@ -178,13 +178,14 @@ def _get_tags(polls):
 
     #gen inverted dictionary
     counts_dict=dictinvert(word_count)
+    counts_dict.keys().sort()
 
     tags = generate_tag_cloud(word_count, counts_dict, TAG_CLASSES)
 
     # randomly shuffle tags
 
     random.shuffle(tags)
-    print word_count
+    print counts_dict
     return tags
 
 @cache_control(no_cache=True, max_age=0)
