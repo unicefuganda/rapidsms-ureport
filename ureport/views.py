@@ -130,7 +130,7 @@ def _get_tags(polls):
     else:
         poll_pks= str(polls.values_list('pk',flat=True))[1:-1]
     sql = """  SELECT
-           lower(word),
+           (regexp_matches(lower(word),E'[a-zA-Z]+'))[1] as wo,
            count(*) as c
         FROM
            (SELECT
@@ -153,7 +153,7 @@ def _get_tags(polls):
               "ureport_ignoredtags"."poll_id" in (%(polls)s)))
            AND NOT (word in (%(drops)s))
         GROUP BY
-           word
+           wo
         order by
            c DESC limit 200;   """%{'polls':poll_pks,'drops':drops}
     # poll question
