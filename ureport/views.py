@@ -61,8 +61,7 @@ TAG_CLASSES = [
 def generate_tag_cloud(
     words,
     counts_dict,
-    tag_classes,
-    max_count,
+    tag_classes
     ):
     """
         returns tag words with assosiated tag classes depending on their frequency
@@ -70,26 +69,33 @@ def generate_tag_cloud(
              words: a dictionary of words and their associated counts
              counts_dict: a dictionary of counts and their associated words
              tag_classes: a list of tag classes sorted minumum to max
-            max_count:the maximum frequency of the tag words
             """
 
     tags = []
     used_words_list = []
     divisor = tag_cloud_size / len(tag_classes) + 1
-    for i in range(max_count, 0, -1):
-        for word in counts_dict[i]:
+    for count  in counts_dict.keys():
+        for word in counts_dict[count]:
             if not word in used_words_list:
                 k = {}
                 klass = tag_classes[len(tags) / divisor]
-                k['tag'] = word
+                #url reverse hates single quotes. turn to double quotes
+                k['tag'] = "%s"%word
                 k['class'] = klass
                 tags.append(k)
                 used_words_list.append(word)
                 if len(used_words_list) == tag_cloud_size:
                     return tags
 
+
     return tags
 
+def dictinvert(dict):
+    inv = {}
+    for k, v in dict.iteritems():
+        keys = inv.setdefault(v, [])
+        keys.append(k)
+    return inv
 
 @login_required
 def add_drop_word(request, tag_name=None, poll_pk=None):
@@ -116,52 +122,65 @@ def show_ignored_tags(request, poll_id):
 
 
 def _get_tags(polls):
-    responses = Response.objects.filter(poll__in=polls)
+
     words = ''
     word_count = {}
     counts_dict = {}
     used_words_list = []
-    max_count = 0
-    reg_words = re.compile('[^a-zA-Z]')
-    dropwords = \
-        list(IgnoredTags.objects.filter(poll__in=polls).values_list('name'
-             , flat=True)) + drop_words
-    all_words = \
-        ' '.join(Value.objects.filter(entity_ct=ContentType.objects.get_for_model(Response),
-                 entity_id__in=responses).values_list('value_text',
-                 flat=True)).lower()
-    all_words = reg_words.split(all_words)
-
+    drops=c="'"+"','".join(drop_words)+"'"
+    poll_pks= str(polls.values_list('pk',flat=True))[1:-1]
+    sql = """  SELECT
+           word,
+           count(*) as c
+        FROM
+           (SELECT
+              regexp_split_to_table("rapidsms_httprouter_message"."text",
+              E'\\\\s+') as word
+           from
+              "rapidsms_httprouter_message"
+           JOIN
+              "poll_response"
+                 ON "poll_response"."message_id"= "rapidsms_httprouter_message"."id"
+           where
+              poll_id in (%(polls)s)
+              and has_errors='f')t
+        WHERE
+           NOT (word in (SELECT
+              "ureport_ignoredtags"."name"
+           FROM
+              "ureport_ignoredtags"
+           WHERE
+              "ureport_ignoredtags"."poll_id" in (%(polls)s)))
+           AND NOT (word in (%(drops)s))
+        GROUP BY
+           word
+        order by
+           c DESC limit 200;   """%{'polls':poll_pks,'drops':drops}
     # poll question
 
-    poll_qn = ['Qn:' + ' '.join(textwrap.wrap(poll.question.rsplit('?'
-               )[0])) + '?' for poll in polls]
-    for d in dropwords:
-        drop_word = d.lower()
-        while True:
-            try:
-                all_words.remove(drop_word)
-            except ValueError:
-                break
+    poll_qn = 'Qn:' + ' '.join(textwrap.wrap(polls[0].question.rsplit('?'
+               )[0])) + '?'
 
-    for word in all_words:
-        if len(word) > 2:
-            word_count.setdefault(word, 0)
-            word_count[word] += 1
-            counts_dict.setdefault(word_count[word], [])
-            counts_dict[word_count[word]].append(word)
 
-            if word_count[word] > max_count:
-                max_count = word_count[word]
+    cursor=connection.cursor()
+    cursor.execute(sql)
+    rows=cursor.fetchall()
+    rows_dict=dict(rows)
 
-    tags = generate_tag_cloud(word_count, counts_dict, TAG_CLASSES,
-                              max_count)
+    for key in rows_dict.keys():
+        if len(key) > 2:
+            word_count[str(key)]=int(rows_dict[key])
+
+    #gen inverted dictionary
+    counts_dict=dictinvert(word_count)
+
+    tags = generate_tag_cloud(word_count, counts_dict, TAG_CLASSES)
 
     # randomly shuffle tags
 
     random.shuffle(tags)
+    print word_count
     return tags
-
 
 @cache_control(no_cache=True, max_age=0)
 def tag_cloud(request, pks):
