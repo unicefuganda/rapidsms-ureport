@@ -77,7 +77,7 @@ class Command(BaseCommand):
                 else:
                     response_export_data['question']=''
 
-
+                
 
                 response_data_list.append(response_export_data)
             ExcelResponse(response_data_list,output_name=excel_file_path,write_to_file=True)
