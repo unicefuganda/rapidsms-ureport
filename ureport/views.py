@@ -116,7 +116,7 @@ def show_ignored_tags(request, poll_id):
                               , {'tags': tags, 'poll_id': poll_id},
                               context_instance=RequestContext(request))
 
-
+@cache_control(no_cache=True, max_age=0)
 def _get_tags(polls):
 
     words = ''
@@ -161,7 +161,7 @@ def _get_tags(polls):
     poll_qn = 'Qn:' + ' '.join(textwrap.wrap(polls[0].question.rsplit('?'
                )[0])) + '?'
 
-
+    print sql
     cursor=connection.cursor()
     cursor.execute(sql)
     rows=cursor.fetchall()
@@ -1030,7 +1030,7 @@ def new_poll(req):
                                  contacts,
                                  req.user,start_immediately=start_immediately)
 
-            if type == NewPollForm.TYPE_YES_NO:
+            if p_type == NewPollForm.TYPE_YES_NO:
                 poll.add_yesno_categories()
 
             if settings.SITE_ID:

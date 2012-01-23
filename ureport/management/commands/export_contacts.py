@@ -90,7 +90,7 @@ class Command(BaseCommand):
                   "auth_group"."id" = "rapidsms_contact_groups"."group_id"
                )
          WHERE
-            "rapidsms_contact_groups"."contact_id" = "rapidsms_contact"."id" LIMIT 1) as
+            "rapidsms_contact_groups"."contact_id" = "rapidsms_contact"."id" order by "auth_group"."id" desc  LIMIT 1) as
       group,
       (SELECT
       "rapidsms_httprouter_message"."text"
