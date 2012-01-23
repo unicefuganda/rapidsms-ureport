@@ -116,7 +116,6 @@ def show_ignored_tags(request, poll_id):
                               , {'tags': tags, 'poll_id': poll_id},
                               context_instance=RequestContext(request))
 
-@cache_control(no_cache=True, max_age=0)
 def _get_tags(polls):
 
     words = ''
