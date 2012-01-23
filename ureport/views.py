@@ -150,11 +150,11 @@ def _get_tags(polls):
               "ureport_ignoredtags"
            WHERE
               "ureport_ignoredtags"."poll_id" in (%(polls)s)))
-           AND NOT (word in (%(drops)s))
+
         GROUP BY
            wo
         order by
-           c DESC limit 200;   """%{'polls':poll_pks,'drops':drops}
+           c DESC limit 200;   """%{'polls':poll_pks}
     # poll question
 
     poll_qn = 'Qn:' + ' '.join(textwrap.wrap(polls[0].question.rsplit('?'
@@ -167,7 +167,7 @@ def _get_tags(polls):
     rows_dict=dict(rows)
 
     for key in rows_dict.keys():
-        if len(key) > 2:
+        if len(key) > 2 and not key in drop_words:
             word_count[str(key)]=int(rows_dict[key])
 
     #gen inverted dictionary
