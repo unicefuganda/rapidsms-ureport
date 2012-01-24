@@ -165,7 +165,7 @@ def _get_tags(polls):
     cursor.execute(sql)
     rows=cursor.fetchall()
     rows_dict=dict(rows)
-    bl=list(IgnoredTags.objects.filter(pk__in=poll_pks).values_list("name",flat=True))
+    bl=list(IgnoredTags.objects.filter(poll__in=polls).values_list("name",flat=True))
     for key in rows_dict.keys():
         if len(key) > 2 and not key in drop_words+bl:
             word_count[str(key)]=int(rows_dict[key])
