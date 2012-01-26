@@ -35,7 +35,7 @@ class Command(BaseCommand):
                
        #create poll
        client = Client(enforce_csrf_checks=True)
-       log_response=client.login(username='test1', password='testpass')
+       log_response=client.login(username='test', password='testpass')
        print log_response
        import datetime
 
