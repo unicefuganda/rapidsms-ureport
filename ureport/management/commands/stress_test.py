@@ -41,7 +41,7 @@ class Command(BaseCommand):
 
 
        #simulate 1000 requests and create poll
-       print "participants in poll" + Contact.objects.count()
+       print "participants in poll" + str(Contact.objects.count())
        poll_dict = {
            'groups': [1, 2, 5, 7, 54, 55, 97, 98, 99, 100, 104, 116, 121, 122, 125, 126, 127, 128, 129, 130, 131, 132,
                       133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143], 'default_response': 'poll test response',
