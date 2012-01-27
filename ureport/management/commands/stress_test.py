@@ -5,6 +5,7 @@ from optparse import OptionParser, make_option
 import random
 from django.test.client import Client
 from django.db import transaction
+from django.contrib.auth.models import Group
 import subprocess
 
 from uganda_common.utils import ExcelResponse
@@ -21,14 +22,16 @@ class Command(BaseCommand):
        for i in range(0,int(options['n'])):
 
            backend=Backend.objects.get(name="dmark")
-           identity="259772%s"%str(random.randint(0000,1000))
-           print identity
+           identity="259%s%s%s"%(str(random.randint(0000,1000)),str(random.randint(0000,1000)),str(random.randint(0000,1000)))
+           g=Group.objects.get(pk=54)
            try:
                conn,created=Connection.objects.get_or_create(backend=backend,identity=identity)
                if created:
-                   contact=Contact.objects.create(name="Anonymous User")
+                   contact=Contact.objects.create(name="irobot")
+                   contact.groups.add(g)
                    conn.contact=contact
                    conn.save()
+                   print conn.identity
            except:
                #transaction.rollback()
                continue
@@ -52,6 +55,7 @@ class Command(BaseCommand):
        args='["nohup","sh","%s","&"]'%options['f']
        subprocess.Popen(eval(args))
        response = client.post('http://test.ureport.unicefuganda.org/createpoll/', poll_dict)
+       print response.status_code
        print datetime.datetime.now()-now
 
 
