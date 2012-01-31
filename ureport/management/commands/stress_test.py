@@ -13,6 +13,7 @@ class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option("-n", "--n", dest="n"),
         make_option("-f", "--f", dest="f"),
+        make_option("-u", "--u", dest="u"),
 
     )
 
@@ -38,7 +39,7 @@ class Command(BaseCommand):
                
        #create poll
        client = Client(enforce_csrf_checks=True)
-       log_response=client.login(username='test', password='testpass')
+       log_response=client.login(username='test1', password='testpass')
        print log_response
        import datetime
 
@@ -54,7 +55,7 @@ class Command(BaseCommand):
        print now
        args='["nohup","sh","%s","&"]'%options['f']
        subprocess.Popen(eval(args))
-       response = client.post('http://test.ureport.unicefuganda.org/createpoll/', poll_dict)
+       response = client.post('%screatepoll/'%options['u'], poll_dict)
        print response.status_code
        print datetime.datetime.now()-now
 
