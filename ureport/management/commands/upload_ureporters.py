@@ -5,7 +5,6 @@ from optparse import OptionParser, make_option
 import datetime
 
 from django.core.management.base import BaseCommand
-from code_generator.code_generator import generate_tracking_tag
 from rapidsms.contrib.locations.models import Location
 from django.template.defaultfilters import slugify
 from django.db import IntegrityError
@@ -20,17 +19,7 @@ from rapidsms.models import Backend, Connection, Contact
 from poll.models import *
 from script.utils.handling import find_closest_match
 
-PREFIXES = [('70', 'warid'), ('75', 'zain'), ('71', 'utl'), ('', 'dmark')]
-
-def assign_backend(number):
-    if number.startswith('0') or len(number) == 9:
-        number = '256%s' % number[1:]
-    backendobj = None
-    for prefix, backend in PREFIXES:
-        if number[3:].startswith(prefix):
-            backendobj, created = Backend.objects.get_or_create(name=backend)
-            break
-    return (number, backendobj)
+from uganda_common.utils import assign_backend
 
 class Command(BaseCommand):
 
@@ -43,36 +32,43 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         path = options["path"]
-        group = options["group"]
-        if group:
-            group = find_closest_match(group, Group.objects)
-        csv_rows = csv.reader(open(path), delimiter="\t")
+        gr = options["group"]
+
+        group = find_closest_match(gr, Group.objects)
+        print group
+        csv_rows = csv.reader(open(path), delimiter=",")
         rnum = 0
         for row in csv_rows:
-            if len(row) > 6:
-                row = row[:6]
-            district, village, name, phones, birthdate, gender = tuple(row)
-            connections = []
-            for raw_num in phones.split(','):
-                number, backend = assign_backend(raw_num.replace('-', '').strip())
-                connection, created = Connection.objects.get_or_create(identity=number, backend=backend)
-                connections.append(connection)
 
-            name = ' '.join([n.capitalize() for n in name.lower().split(' ')])
-            contact = Contact.objects.create(name=name)
+            name,mobile,sex,birthdate,district,village,sub_county,gr = tuple(row)
+            if name=="name":
+                continue
+
+            number, backend = assign_backend(mobile.replace('-', '').strip())
+            connection, created = Connection.objects.get_or_create(identity=number, backend=backend)
+            if not created:
+                contact = connection.contact
+            if not contact:
+                contact = Contact.objects.create(name=name)
             if group:
                 contact.groups.add(group)
             if district:
-                contact.reporting_location = find_closest_match(district, Location.objects.filter(type__name='district'))
+                try:
+                    contact.reporting_location = find_closest_match(district, Location.objects.filter(type__name='district'))
+                except:
+                    contact.reporting_location = Location.objects.filter(type__name="district",name=district)[0]
+
             if village:
-                contact.village = find_closest_match(village, Location.objects)
+                contact.village = find_closest_match(village, Location.objects.filter(type__name='village'))
             if birthdate:
-                print "%d: %s" % (rnum, birthdate)
+
                 contact.birthdate = datetime.datetime.strptime(birthdate.strip(), '%d/%m/%Y')
-            if gender:
-                contact.gender = gender
+            if sex == "Male":
+                contact.gender = "M"
+            elif sex == "Female":
+                contact.gender ="F"
             contact.save()
-            for c in connections:
-                c.contact = contact
-                c.save()
-            rnum = rnum + 1
+
+            connection.contact = contact
+            connection.save()
+            
