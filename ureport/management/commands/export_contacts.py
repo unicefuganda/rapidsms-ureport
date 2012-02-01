@@ -101,7 +101,28 @@ class Command(BaseCommand):
          COUNT(*) FROM
             "poll_response"
          WHERE
-            "poll_response"."contact_id"="rapidsms_contact"."id") as responses
+            "poll_response"."contact_id"="rapidsms_contact"."id") as responses,
+            (SELECT DISTINCT
+         COUNT(*) FROM
+            "poll_poll_contacts"
+         WHERE
+            "poll_poll_contacts"."contact_id"="rapidsms_contact"."id" GROUP BY "poll_poll_contacts"."contact_id") as questions,
+
+            (SELECT DISTINCT count(*)
+
+      FROM "rapidsms_httprouter_message"
+
+   WHERE  "rapidsms_httprouter_message"."application" ='ureport'  and
+
+     "rapidsms_httprouter_message"."connection_id" = (
+            SELECT
+               "rapidsms_connection"."id"
+            FROM
+               "rapidsms_connection"
+            WHERE
+               "rapidsms_connection"."contact_id" = "rapidsms_contact"."id"  LIMIT 1
+         ) ) as unsolic
+
       FROM
          "rapidsms_contact"
       LEFT JOIN
@@ -125,6 +146,8 @@ class Command(BaseCommand):
                 'Group',
                 'How did you hear about ureport?',
                 'Number Of Responses',
+                'Number Of Questions Asked',
+                'Number of Unsolicitized',
                 )]
 
             rows = row_0 + cursor.fetchall()
