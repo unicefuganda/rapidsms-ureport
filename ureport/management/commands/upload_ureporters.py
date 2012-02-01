@@ -48,8 +48,8 @@ class Command(BaseCommand):
             connection, created = Connection.objects.get_or_create(identity=number, backend=backend)
             if not created:
                 contact = connection.contact
-            if not contact:
-                contact = Contact.objects.create(name=name)
+                if not contact:
+                    contact = Contact.objects.create(name=name)
             if group:
                 contact.groups.add(group)
             if district:
