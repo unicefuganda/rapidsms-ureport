@@ -146,7 +146,7 @@ class SearchResponsesForm(FilterForm):
             return queryset.filter(Q(message__text__iexact=search)
                                    | Q(message__connection__contact__reporting_location__name__iexact=search)
                                    | Q(message__connection__identity__iexact=search))
-        elif search == "=numberical value()":
+        elif search == "=numerical value()":
             return queryset.filter(message__text__iregex="(-?\d+(\.\d+)?)")
         else:
 
