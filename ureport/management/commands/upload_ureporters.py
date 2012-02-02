@@ -50,6 +50,9 @@ class Command(BaseCommand):
                 contact = connection.contact
                 if not contact:
                     contact = Contact.objects.create(name=name)
+            else:
+                contact = Contact.objects.create(name=name)
+
             if group:
                 contact.groups.add(group)
             if district:
