@@ -27,17 +27,15 @@ class Command(BaseCommand):
                 contact = connection.contact
                 name = find_best_response(session, namepoll)
                 district = find_best_response(session, districtpoll)
-                print contact.name
+                
                 if name:
                     contact.name = name[:100]
                     print "original name" +contact.name
                     print name
 
-                if district:
-                    print "original district"
-                    print contact.reporting_location
-                    print district
-                    contact.reporting_location = find_closest_match(district, Location.objects.filter(type__slug="district"))
+
+                contact.reporting_location = district
+
 
                 age = find_best_response(session, agepoll)
                 if age and age < 100:
