@@ -57,7 +57,7 @@ class Command(BaseCommand):
                 village = find_best_response(session, villagepoll)
                 if village:
                     print str(contact.village) + "->" +str(village)
-                    contact.village = find_closest_match(village, Location.objects.filter(type__slug="village"))
+                    contact.village = village
 
 
                 contact.save()
