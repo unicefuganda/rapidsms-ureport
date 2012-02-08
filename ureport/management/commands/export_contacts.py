@@ -112,7 +112,7 @@ class Command(BaseCommand):
 
       FROM "rapidsms_httprouter_message"
 
-   WHERE  "rapidsms_httprouter_message"."application" ='ureport'  and
+   WHERE  "rapidsms_httprouter_message"."direction" ='I'  and
 
      "rapidsms_httprouter_message"."connection_id" = (
             SELECT
@@ -121,7 +121,7 @@ class Command(BaseCommand):
                "rapidsms_connection"
             WHERE
                "rapidsms_connection"."contact_id" = "rapidsms_contact"."id"  LIMIT 1
-         ) ) as unsolic
+         ) ) as incoming
 
       FROM
          "rapidsms_contact"
@@ -147,7 +147,7 @@ class Command(BaseCommand):
                 'How did you hear about ureport?',
                 'Number Of Responses',
                 'Number Of Questions Asked',
-                'Number of Unsolicitized',
+                'Number of Incoming',
                 )]
 
             rows = row_0 + cursor.fetchall()
@@ -160,7 +160,7 @@ class Command(BaseCommand):
 
         # export the last 2 polls
 
-        polls = Poll.objects.order_by('-pk')[0:3]
+        polls = Poll.objects.order_by('-pk')
         print "doxing"
         for poll in polls:
             if poll.responses.exists():
@@ -239,6 +239,13 @@ class Command(BaseCommand):
                             response.poll.question
                     else:
                         response_export_data['question'] = ''
+
+                    if response.categories.all().exists():
+                        response_export_data['category'] = response.categories.all()[0].category.name
+                    else:
+                        response_export_data['category'] ="uncategorized"
+
+
 
                     response_data_list.append(response_export_data)
                 ExcelResponse(response_data_list,
