@@ -987,7 +987,6 @@ def new_poll(req):
         if form.is_valid():
 
             # create our XForm
-
             question = form.cleaned_data['question']
             default_response = form.cleaned_data['default_response']
             districts = form.cleaned_data['districts']
@@ -995,7 +994,7 @@ def new_poll(req):
                 groups = form.cleaned_data['groups']
 
             if len(districts):
-                contacts = Contact.objects.filter(Q(reporting_location__in=districts) | Q(groups__in=groups)).distinct()
+                contacts = Contact.objects.filter(reporting_location__in=districts).filter(groups__in=groups).distinct()
             else:
                 contacts = Contact.objects.filter(groups__in=groups).distinct()
 
