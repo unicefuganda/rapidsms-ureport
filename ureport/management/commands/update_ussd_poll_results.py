@@ -14,34 +14,31 @@ def get_results(poll):
 
     
 class Command(BaseCommand):
-    polls=Poll.objects.order_by('-pk')
-    res1=Menu.objects.get(slug='res1')
-    res1.label="1"+polls[0].name
-    res1.save()
 
-    res2=Menu.objects.get(slug='res2')
-    res2.label="2"+polls[1].name
-    res2.save()
-
-    res3=Menu.objects.get(slug='res3')
-    res2.label="3"+polls[2].name
-    res3.save()
-
-
-
-
-    res11=Menu.objects.get(slug='res11')
-    res11.label=get_results(polls[0])
-    res11.save()
-    res21=Menu.objects.get(slug='res21')
-    res21.label=get_results(polls[1])
-    res21.save()
-    res31=Menu.objects.get(slug='res31')
-    res31.label=get_results(polls[2])
-    res31.save()
 
     def handle(self, **options):
-        pass
+        polls=Poll.objects.order_by('-pk')
+        res1=Menu.objects.get(slug='res1')
+        res1.label="1"+polls[0].name
+        res1.save()
+
+        res2=Menu.objects.get(slug='res2')
+        res2.label="2"+polls[1].name
+        res2.save()
+
+        res3=Menu.objects.get(slug='res3')
+        res2.label="3"+polls[2].name
+        res3.save()
+
+        res11=Menu.objects.get(slug='res11')
+        res11.label=get_results(polls[0])
+        res11.save()
+        res21=Menu.objects.get(slug='res21')
+        res21.label=get_results(polls[1])
+        res21.save()
+        res31=Menu.objects.get(slug='res31')
+        res31.label=get_results(polls[2])
+        res31.save()
 
 
 
