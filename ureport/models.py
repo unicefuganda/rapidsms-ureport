@@ -16,6 +16,8 @@ from rapidsms_httprouter.models import Message, MessageBatch
 from unregister.models import Blacklist
 from django.conf import settings
 from django.core.mail import send_mail
+from django.db.models.signals import post_save
+from rapidsms_xforms.models import  XFormField
 
 import datetime
 import re
@@ -146,6 +148,20 @@ def autoreg(**kwargs):
                 recipients.append(email)
         send_mail("UReport now %d voices strong!" % total_ureporters, "%s (%s) was the %dth member to finish the sign-up.  Let's welcome them!" % (contact.name, connection.identity, total_ureporters), 'root@uganda.rapidsms.org', recipients, fail_silently=True)
 
+def check_conn(sender, **kwargs):
+    #delete bad connections
+    c = kwargs['instance']
+    if not c.identity.isdigit():
+        c.delete()
+def update_latest_poll(sender, **kwargs):
+    poll=kwargs['instance']
+    xf=XFormField.objects.get(name='latest_poll')
+    xf.question=poll.question
+    xf.save()
+
+
 
 script_progress_was_completed.connect(autoreg, weak=False)
+post_save.connect(check_conn, sender=Connection, weak=False)
+post_save.connect(update_latest_poll, sender=Poll, weak=False)
 
