@@ -34,10 +34,10 @@ class Command(BaseCommand):
     res11.label=get_results(polls[0])
     res11.save()
     res21=Menu.objects.get(slug='res21')
-    res21.label=get_results(polls[0])
+    res21.label=get_results(polls[1])
     res21.save()
     res31=Menu.objects.get(slug='res31')
-    res31.label=get_results(polls[0])
+    res31.label=get_results(polls[2])
     res31.save()
 
     def handle(self, **options):
