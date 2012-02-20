@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from poll.models import Poll, LocationResponseForm, STARTSWITH_PATTERN_TEMPLATE
+from poll.models import Poll, LocationResponseForm, STARTSWITH_PATTERN_TEMPLATE,ResponseCategory
 from rapidsms.models import Contact, Connection
 from django.contrib.auth.models import User, Group
 from django.contrib.sites.models import Site
@@ -18,6 +18,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models.signals import post_save
 from rapidsms_xforms.models import  XFormField
+from ussd.models import ussd_pre_transition, ussd_complete, Navigation, TransitionException, Field, Question,StubScreen
 
 import datetime
 import re
@@ -157,11 +158,42 @@ def update_latest_poll(sender, **kwargs):
     poll=kwargs['instance']
     xf=XFormField.objects.get(name='latest_poll')
     xf.question=poll.question
+    xf.command=poll.pk
     xf.save()
+    ss=StubScreen.objects.get(slug='question_response')
+    if ss.default_response:
+        ss.text=poll.default_response
+    else:
+        ss.text="Thanks For Your Response."
+
+def ussd_poll(sender, **kwargs):
+
+    if not  sender.connection.contact:
+        sender.connection.contact = Contact.objects.create(name='Anonymous User')
+        sender.connection.save()
+
+    if sender.navigations.filter(screen__slug='weekly_poll').exists():
+        field=Field.objects.get(slug="weekly_poll")
+        nav=sender.navigations.filter(screen__slug='weekly_poll').latest('date')
+        poll=Poll.objects.get(pk=int(field.command))
+        msg=Message.objects.create(connection=sender.connection,text=nav.response,direction="I")
+        resp = Response.objects.create(poll=poll, message=nav.response, contact=sender.connection.contact, date=nav.date)
+        for category in poll.categories.all():
+            for rule in category.rules.all():
+                regex = re.compile(rule.regex, re.IGNORECASE)
+                if resp.eav.poll_text_value:
+                    if regex.search(nav.response):
+                        if category.error_category:
+                            resp.has_errors = True
+                        rc = ResponseCategory.objects.create(response=resp, category=category)
+                        break
+    if sender.navigations.filter(screen__slug='send_report'):
+        Message.objects.create(connection=sender.connection,text=sender.navigations.filter(screen__slug='send_report').latest('date').response,direction="I")
 
 
 
 script_progress_was_completed.connect(autoreg, weak=False)
 post_save.connect(check_conn, sender=Connection, weak=False)
 post_save.connect(update_latest_poll, sender=Poll, weak=False)
+ussd_complete.connect(ussd_poll, weak=False)
 
