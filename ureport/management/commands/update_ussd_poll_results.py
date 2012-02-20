@@ -9,7 +9,7 @@ def get_results(poll):
     res_count=poll.responses.count()
     if poll.categories.all().exists():
         for cat in res:
-            txt=txt+cat['category__name']+":"+int(cat['value'])/float(res_count)+"% "
+            txt=txt+cat['category__name']+":"+float(int(cat['value'])/float(res_count))+"% "
     return txt
 
     
