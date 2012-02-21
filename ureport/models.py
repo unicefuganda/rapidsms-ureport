@@ -79,7 +79,7 @@ class Ureporter(Contact):
 def autoreg(**kwargs):
     connection = kwargs['connection']
     progress = kwargs['sender']
-    if not progress.script.slug in ['ureport_autoreg', 'ureport_autoreg_luo']:
+    if not progress.script.slug in ['ureport_autoreg', 'ureport_autoreg_luo','ureport_autoreg2', 'ureport_autoreg_luo2']:
         return
 
     connection.contact = Contact.objects.create(name='Anonymous User')
@@ -173,9 +173,9 @@ def ussd_poll(sender, **kwargs):
         sender.connection.save()
 
     if sender.navigations.filter(screen__slug='weekly_poll').exists():
-        field=Field.objects.get(slug="weekly_poll")
+        field=XFormField.objects.get(slug="weekly_poll")
         nav=sender.navigations.filter(screen__slug='weekly_poll').latest('date')
-        poll=Poll.objects.get(pk=int(field.command))
+        poll=Poll.objects.get(pk=int(field.command.rsplit('_'[0])))
         msg=Message.objects.create(connection=sender.connection,text=nav.response,direction="I")
         resp = Response.objects.create(poll=poll, message=nav.response, contact=sender.connection.contact, date=nav.date)
         for category in poll.categories.all():
