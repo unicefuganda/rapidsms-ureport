@@ -173,7 +173,7 @@ def ussd_poll(sender, **kwargs):
         sender.connection.save()
 
     if sender.navigations.filter(screen__slug='weekly_poll').exists():
-        field=XFormField.objects.get(slug="latest_poll")
+        field=XFormField.objects.get(name="latest_poll")
         nav=sender.navigations.filter(screen__slug='weekly_poll').latest('date')
         poll=Poll.objects.get(pk=int(field.command.rsplit('_'[0])))
         msg=Message.objects.create(connection=sender.connection,text=nav.response,direction="I")
