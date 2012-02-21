@@ -177,7 +177,7 @@ def ussd_poll(sender, **kwargs):
         nav=sender.navigations.filter(screen__slug='weekly_poll').latest('date')
         poll=Poll.objects.get(pk=int(field.command.rsplit('_')[1]))
         msg=Message.objects.create(connection=sender.connection,text=nav.response,direction="I")
-        resp = Response.objects.create(poll=poll, message=nav.response, contact=sender.connection.contact, date=nav.date)
+        resp = Response.objects.create(poll=poll, message=msg, contact=sender.connection.contact, date=nav.date)
         for category in poll.categories.all():
             for rule in category.rules.all():
                 regex = re.compile(rule.regex, re.IGNORECASE)
