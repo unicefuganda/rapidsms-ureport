@@ -1,0 +1,283 @@
+[
+
+
+    {
+        "pk": "ureport_autoreg2",
+        "model": "script.script",
+        "fields": {
+            "enabled": true,
+            "name": "uReport autoregistration script2",
+            "sites": [2]
+        }
+    },
+
+    {
+        "pk": 90,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg2",
+            "retry_offset": null,
+            "rule": "w",
+            "email": null,
+            "num_tries": null,
+            "start_offset": 0,
+            "message": "Welcome to U-report where you can SPEAK UP and BE HEARD. U-report is a FREE SMS text message system where you can speak out on issues in your community. IT IS FREE",
+            "poll": null,
+            "order": 0,
+            "giveup_offset": 60
+        }
+    },
+
+    {
+        "pk": 93,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg2",
+            "retry_offset": null,
+            "rule": "w",
+            "email": null,
+            "num_tries": null,
+            "start_offset": 60,
+            "message": "CONGRATULATIONS!!! You are now a registered member of U-report! With U-report, you can make a real difference!  Speak Up and Be Heard! from UNICEF",
+            "poll": null,
+            "order": 7,
+            "giveup_offset": 0
+        }
+    },
+    {
+        "pk": 94,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg2",
+            "retry_offset": 3600,
+            "rule": "R",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 0,
+            "message": "",
+            "poll": 121,
+            "order": 1,
+            "giveup_offset": 3600
+        }
+    },
+    {
+        "pk": 95,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg2",
+            "retry_offset": 3600,
+            "rule": "M",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 0,
+            "message": "",
+            "poll": 122,
+            "order": 2,
+            "giveup_offset": 3600
+        }
+    },
+    {
+        "pk": 96,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg2",
+            "retry_offset": 3600,
+            "rule": "R",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 60,
+            "message": "",
+            "poll": 123,
+            "order": 3,
+            "giveup_offset": 3600
+        }
+    },
+    {
+        "pk": 97,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg2",
+            "retry_offset": 3600,
+            "rule": "M",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 60,
+            "message": "",
+            "poll": 124,
+            "order": 4,
+            "giveup_offset": 3600
+        }
+    },
+    {
+        "pk": 98,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg2",
+            "retry_offset": 3600,
+            "rule": "R",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 60,
+            "message": "",
+            "poll": 125,
+            "order": 5,
+            "giveup_offset": 3600
+        }
+    },
+    {
+        "pk": 99,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg2",
+            "retry_offset": 3600,
+            "rule": "R",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 0,
+            "message": "",
+            "poll": 126,
+            "order": 6,
+            "giveup_offset": 3600
+        }
+    },
+        {
+        "pk": "ureport_autoreg_luo2",
+        "model": "script.script",
+        "fields": {
+            "enabled": true,
+            "name": "Ureport Autoreg Luo2",
+            "sites": [2]
+        }
+    },
+    {
+        "pk": 100,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_luo2",
+            "retry_offset": null,
+            "rule": "w",
+            "email": null,
+            "num_tries": null,
+            "start_offset": 0,
+            "message": "Apwoyo donyo i U-report kama in iromo LOOK iye bene daki dwoni WINYE iye,U-report obedo waraga ma ki cwalo i cim me cing kun bedo MI NONO",
+            "poll": null,
+            "order": 0,
+            "giveup_offset": 60
+        }
+    },
+    
+   
+    {
+        "pk": 103,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_luo2",
+            "retry_offset": null,
+            "rule": "w",
+            "email": null,
+            "num_tries": null,
+            "start_offset": 60,
+            "message": "Apwoyo indong itye ikim joo me u-report. Iromo kelo aloka loka.  Lok dogi pire tek",
+            "poll": null,
+            "order": 7,
+            "giveup_offset": 0
+        }
+    },
+    {
+        "pk": 104,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_luo2",
+            "retry_offset": 3600,
+            "rule": "R",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 0,
+            "message": "",
+            "poll": 121,
+            "order": 1,
+            "giveup_offset": 3600
+        }
+    },
+    {
+        "pk": 105,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_luo2",
+            "retry_offset": 3600,
+            "rule": "M",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 0,
+            "message": "",
+            "poll": 122,
+            "order": 2,
+            "giveup_offset": 3600
+        }
+    },
+    {
+        "pk": 106,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_luo2",
+            "retry_offset": 3600,
+            "rule": "R",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 60,
+            "message": "",
+            "poll": 123,
+            "order": 3,
+            "giveup_offset": 3600
+        }
+    },
+    {
+        "pk": 107,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_luo2",
+            "retry_offset": 3600,
+            "rule": "M",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 60,
+            "message": "",
+            "poll": 124,
+            "order": 4,
+            "giveup_offset": 3600
+        }
+    },
+    {
+        "pk": 108,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_luo2",
+            "retry_offset": 3600,
+            "rule": "R",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 60,
+            "message": "",
+            "poll": 125,
+            "order": 5,
+            "giveup_offset": 3600
+        }
+    },
+    {
+        "pk": 109,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_luo2",
+            "retry_offset": 3600,
+            "rule": "R",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 0,
+            "message": "",
+            "poll": 126,
+            "order": 6,
+            "giveup_offset": 3600
+        }
+    }
+
+]

@@ -20,16 +20,16 @@ class App(AppBase):
 
         #dump new connections in Autoreg
         if not message.connection.contact and not ScriptProgress.objects.filter(
-            script__slug__in=['ureport_autoreg', 'ureport_autoreg_luo'],
+            script__slug__in=['ureport_autoreg', 'ureport_autoreg_luo','ureport_autoreg2', 'ureport_autoreg_luo2'],
             connection=message.connection).exists():
             match = opt_reg.search(message.text.lower())
             if match:
-                prog = ScriptProgress.objects.create(script=Script.objects.get(pk="ureport_autoreg_luo"),\
+                prog = ScriptProgress.objects.create(script=Script.objects.get(pk="ureport_autoreg_luo2"),\
                                                      connection=message.connection)
                 prog.language = "ach"
                 prog.save()
             else:
-                prog = ScriptProgress.objects.create(script=Script.objects.get(pk="ureport_autoreg"),\
+                prog = ScriptProgress.objects.create(script=Script.objects.get(pk="ureport_autoreg2"),\
                                                      connection=message.connection)
                 prog.language = "en"
                 prog.save()
