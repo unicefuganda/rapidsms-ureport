@@ -41,6 +41,12 @@ class App(AppBase):
 
             #message flagging sfuff
         else:
+            if message.connection.contact.language == "ach" and message.text.lower() == "english":
+                contact=message.connection.contact
+                contact.language="en"
+                contact.save()
+                return True
+
             flags = Flag.objects.values_list('name', flat=True).distinct()
 
             w_regex = []
