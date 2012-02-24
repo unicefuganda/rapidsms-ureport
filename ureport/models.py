@@ -81,73 +81,73 @@ def autoreg(**kwargs):
     progress = kwargs['sender']
     if not progress.script.slug in ['ureport_autoreg', 'ureport_autoreg_luo','ureport_autoreg2', 'ureport_autoreg_luo2']:
         return
+    if progress.slug in progress.script.slug in ['ureport_autoreg', 'ureport_autoreg_luo']:
+        connection.contact = Contact.objects.create(name='Anonymous User')
+        connection.save()
+        session = ScriptSession.objects.filter(script=progress.script, connection=connection).order_by('-end_time')[0]
+        script = progress.script
+        youthgrouppoll = script.steps.get(order=1).poll
+        districtpoll = script.steps.get(order=3).poll
+        namepoll = script.steps.get(order=5).poll
+        agepoll = script.steps.get(order=6).poll
+        genderpoll = script.steps.get(order=7).poll
+        villagepoll = script.steps.get(order=8).poll
+        contact = connection.contact
+        name = find_best_response(session, namepoll)
+        if name:
+            contact.name = name[:100]
 
-    connection.contact = Contact.objects.create(name='Anonymous User')
-    connection.save()
-    session = ScriptSession.objects.filter(script=progress.script, connection=connection).order_by('-end_time')[0]
-    script = progress.script
-    youthgrouppoll = script.steps.get(order=1).poll
-    districtpoll = script.steps.get(order=3).poll
-    namepoll = script.steps.get(order=5).poll
-    agepoll = script.steps.get(order=6).poll
-    genderpoll = script.steps.get(order=7).poll
-    villagepoll = script.steps.get(order=8).poll
-    contact = connection.contact
-    name = find_best_response(session, namepoll)
-    if name:
-        contact.name = name[:100]
+        contact.reporting_location = find_best_response(session, districtpoll)
 
-    contact.reporting_location = find_best_response(session, districtpoll)
+        age = find_best_response(session, agepoll)
+        if age and age < 100:
+            contact.birthdate = datetime.datetime.now() - datetime.timedelta(days=(365 * int(age)))
 
-    age = find_best_response(session, agepoll)
-    if age and age < 100:
-        contact.birthdate = datetime.datetime.now() - datetime.timedelta(days=(365 * int(age)))
+        gresps = session.responses.filter(response__poll=genderpoll, response__has_errors=False).order_by('-response__date')
+        if gresps.count():
+            gender = gresps[0].response
+            if gender.categories.filter(category__name='male').count():
+                contact.gender = 'M'
+            elif gender.categories.filter(category__name='female').exists():
+                contact.gender = 'F'
 
-    gresps = session.responses.filter(response__poll=genderpoll, response__has_errors=False).order_by('-response__date')
-    if gresps.count():
-        gender = gresps[0].response
-        if gender.categories.filter(category__name='male').count():
-            contact.gender = 'M'
-        elif gender.categories.filter(category__name='female').exists():
-            contact.gender = 'F'
+        village = find_best_response(session, villagepoll)
+        if village:
+            contact.village = village
 
-    village = find_best_response(session, villagepoll)
-    if village:
-        contact.village = village
+        group_to_match = find_best_response(session, youthgrouppoll)
+        default_group = None
+        if progress.language:
+            contact.language = progress.language
+        if Group.objects.filter(name='Other uReporters').count():
+            default_group = Group.objects.get(name='Other uReporters')
+        if group_to_match:
+            for g in re.findall(r'\w+', group_to_match):
+                if g:
+                    group = find_closest_match(str(g), Group.objects)
+                    if group:
+                        contact.groups.add(group)
+                        break
 
-    group_to_match = find_best_response(session, youthgrouppoll)
-    default_group = None
-    if progress.language:
-        contact.language = progress.language
-    if Group.objects.filter(name='Other uReporters').count():
-        default_group = Group.objects.get(name='Other uReporters')
-    if group_to_match:
-        for g in re.findall(r'\w+', group_to_match):
-            if g:
-                group = find_closest_match(str(g), Group.objects)
-                if group:
-                    contact.groups.add(group)
-                    break
-
-        if default_group:
+            if default_group:
+                contact.groups.add(default_group)
+        elif default_group:
             contact.groups.add(default_group)
-    elif default_group:
-        contact.groups.add(default_group)
 
-    if not contact.name:
-        contact.name = 'Anonymous User'
-    contact.save()
+        if not contact.name:
+            contact.name = 'Anonymous User'
+        contact.save()
 
-    total_ureporters = Contact.objects.exclude(connection__identity__in=Blacklist.objects.values_list('connection__identity')).count()
-    if total_ureporters % getattr(settings, 'USER_MILESTONE', 500) == 0:
-        recipients = getattr(settings, 'ADMINS', None)
-        if recipients:
-            recipients = [email for name, email in recipients]
-        mgr = getattr(settings, 'MANAGERS', None)
-        if mgr:
-            for email in mgr:
-                recipients.append(email)
-        send_mail("UReport now %d voices strong!" % total_ureporters, "%s (%s) was the %dth member to finish the sign-up.  Let's welcome them!" % (contact.name, connection.identity, total_ureporters), 'root@uganda.rapidsms.org', recipients, fail_silently=True)
+        total_ureporters = Contact.objects.exclude(connection__identity__in=Blacklist.objects.values_list('connection__identity')).count()
+        if total_ureporters % getattr(settings, 'USER_MILESTONE', 500) == 0:
+            recipients = getattr(settings, 'ADMINS', None)
+            if recipients:
+                recipients = [email for name, email in recipients]
+            mgr = getattr(settings, 'MANAGERS', None)
+            if mgr:
+                for email in mgr:
+                    recipients.append(email)
+            send_mail("UReport now %d voices strong!" % total_ureporters, "%s (%s) was the %dth member to finish the sign-up.  Let's welcome them!" % (contact.name, connection.identity, total_ureporters), 'root@uganda.rapidsms.org', recipients, fail_silently=True)
 
 def check_conn(sender, **kwargs):
     #delete bad connections
