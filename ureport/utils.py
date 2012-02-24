@@ -93,3 +93,36 @@ def create_poll(name, type, question, default_response, contacts, user,start_imm
         poll.save()
     return poll
 
+def add_to_poll(poll,contacts):
+    localized_messages = {}
+    bad_conns = Blacklist.objects.values_list('connection__pk', flat=True).distinct()
+    contacts=contacts.exclude(connection__in=bad_conns)
+    for language in dict(settings.LANGUAGES).keys():
+        if language == "en":
+            """default to English for contacts with no language preference"""
+            localized_contacts = contacts.filter(language__in=["en", ''])
+        else:
+
+            localized_contacts = contacts.filter(language=language)
+        if localized_contacts.exists():
+            messages = Message.mass_text(gettext_db(field=poll.question, language=language), Connection.objects.filter(contact__in=localized_contacts).distinct(), status='Q', batch_status='Q')
+
+            localized_messages[language] = [messages, localized_contacts]
+
+
+
+    # This is the fastest (pretty much only) was to get contacts and messages M2M into the
+    # DB fast enough at scale
+    cursor = connection.cursor()
+    for language in localized_messages.keys():
+        raw_sql = "insert into poll_poll_contacts (poll_id, contact_id) values %s" % ','.join(\
+            ["(%d, %d)" % (poll.pk, c.pk) for c in localized_messages.get(language)[1].iterator()])
+        cursor.execute(raw_sql)
+
+        raw_sql = "insert into poll_poll_messages (poll_id, message_id) values %s" % ','.join(\
+            ["(%d, %d)" % (poll.pk, m.pk) for m in localized_messages.get(language)[0].iterator()])
+        cursor.execute(raw_sql)
+
+
+    return poll
+
