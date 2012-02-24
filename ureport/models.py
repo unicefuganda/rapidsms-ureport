@@ -158,13 +158,15 @@ def update_latest_poll(sender, **kwargs):
     poll=kwargs['instance']
     xf=XFormField.objects.get(name='latest_poll')
     xf.question=poll.question
-    xf.command=poll.pk
+    xf.command="poll_"+str(poll.pk)
     xf.save()
-    ss=StubScreen.objects.get(slug='question_response')
-    if ss.default_response:
-        ss.text=poll.default_response
+    stub_screen=StubScreen.objects.get(slug='question_response')
+    if poll.default_response:
+        stub_screen.text=poll.default_response
+        stub_screen.save()
     else:
-        ss.text="Thanks For Your Response."
+        stub_screen.text="Thanks For Your Response."
+        stub_screen.save()
 
 def ussd_poll(sender, **kwargs):
 
