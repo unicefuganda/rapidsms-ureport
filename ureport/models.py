@@ -81,7 +81,7 @@ def autoreg(**kwargs):
     progress = kwargs['sender']
     if not progress.script.slug in ['ureport_autoreg', 'ureport_autoreg_luo','ureport_autoreg2', 'ureport_autoreg_luo2']:
         return
-    if progress.slug in progress.script.slug in ['ureport_autoreg', 'ureport_autoreg_luo']:
+    if progress.script.slug in progress.script.slug in ['ureport_autoreg', 'ureport_autoreg_luo']:
         connection.contact = Contact.objects.create(name='Anonymous User')
         connection.save()
         session = ScriptSession.objects.filter(script=progress.script, connection=connection).order_by('-end_time')[0]
