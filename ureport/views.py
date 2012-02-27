@@ -1026,6 +1026,8 @@ def new_poll(req):
                                  default_response,
                                  contacts,
                                  req.user,start_immediately=start_immediately)
+            #create batch for the responses
+            MessageBatch.objects.create(name=str(poll.pk))
 
             if p_type == NewPollForm.TYPE_YES_NO:
                 poll.add_yesno_categories()
@@ -1043,29 +1045,3 @@ def new_poll(req):
     return render_to_response('ureport/new_poll.html', {'form': form},
                               context_instance=RequestContext(req))
 
-from ussd.forms import YoForm
-from django.forms import ValidationError
-from django.http import HttpResponse
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-import urllib
-
-
-def ussd(req, input_form=YoForm, request_method='POST', output_template='ussd/yo.txt'):
-    form = None
-    if request_method == 'GET' and req.GET:
-        form = input_form(req.GET)
-    elif request_method == 'POST' and req.POST:
-        form = input_form(req.POST)
-    if form and form.is_valid():
-        session = form.cleaned_data['transactionId']
-        request_string = form.cleaned_data['ussdRequestString']
-
-        response_screen = session.advance_progress(request_string)
-        action = 'end' if response_screen.is_terminal() else 'request'
-        return render_to_response(output_template, {
-            'response_content':urllib.quote(str(response_screen)),
-            'action':action,
-        }, context_instance=RequestContext(req))
-
-    return HttpResponse(status=404)
