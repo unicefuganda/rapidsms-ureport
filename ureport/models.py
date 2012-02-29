@@ -79,19 +79,17 @@ class Ureporter(Contact):
 def autoreg(**kwargs):
     connection = kwargs['connection']
     progress = kwargs['sender']
-    if not progress.script.slug in ['ureport_autoreg', 'ureport_autoreg_luo','ureport_autoreg2', 'ureport_autoreg_luo2']:
-        return
-    if progress.script.slug in progress.script.slug in ['ureport_autoreg', 'ureport_autoreg_luo']:
+    if progress.script.slug in progress.script.slug in ['ureport_autoreg2', 'ureport_autoreg_luo2']:
         connection.contact = Contact.objects.create(name='Anonymous User')
         connection.save()
         session = ScriptSession.objects.filter(script=progress.script, connection=connection).order_by('-end_time')[0]
         script = progress.script
         youthgrouppoll = script.steps.get(order=1).poll
-        districtpoll = script.steps.get(order=3).poll
-        namepoll = script.steps.get(order=5).poll
-        agepoll = script.steps.get(order=6).poll
-        genderpoll = script.steps.get(order=7).poll
-        villagepoll = script.steps.get(order=8).poll
+        districtpoll = script.steps.get(order=2).poll
+        namepoll = script.steps.get(order=3).poll
+        agepoll = script.steps.get(order=4).poll
+        genderpoll = script.steps.get(order=5).poll
+        villagepoll = script.steps.get(order=6).poll
         contact = connection.contact
         name = find_best_response(session, namepoll)
         if name:
@@ -196,6 +194,6 @@ def ussd_poll(sender, **kwargs):
 
 script_progress_was_completed.connect(autoreg, weak=False)
 post_save.connect(check_conn, sender=Connection, weak=False)
-post_save.connect(update_latest_poll, sender=Poll, weak=False)
+#post_save.connect(update_latest_poll, sender=Poll, weak=False)
 ussd_complete.connect(ussd_poll, weak=False)
 
