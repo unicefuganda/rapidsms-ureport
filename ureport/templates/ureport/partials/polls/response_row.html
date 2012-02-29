@@ -1,7 +1,7 @@
 {% extends row_base %}
 {% block message_information %}
     <td class="response_sender_col">
-      <a href="{% url contact.views.view_message_history response.message.connection.pk %}">
+      <a href="{% url ureport.views.ureporter_profile  response.message.connection.pk %}">
           {% if response.message.connection.contact %}
             {{ response.message.connection.contact }} (
           {% endif %}
