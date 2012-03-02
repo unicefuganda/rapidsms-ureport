@@ -74,6 +74,10 @@ class Ureporter(Contact):
         return Message.objects.filter(connection__contact=self,direction="I").count()
 
     class Meta:
+        permissions = (
+                ("view_numbers", "can view private info"),
+            )
+
         proxy = True
 
 def autoreg(**kwargs):

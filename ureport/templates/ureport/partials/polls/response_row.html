@@ -1,8 +1,10 @@
 {% extends row_base %}
 {% block message_information %}
+     {%if  perms.ureport.view_numbers %}
     <td class="response_sender_col">
-      <a href="{% url ureport.views.ureporter_profile  response.message.connection.pk %}">
+      <a href="{% url contact.views.view_message_history response.message.connection.pk %}">
           {% if response.message.connection.contact %}
+              
             {{ response.message.connection.contact }} (
           {% endif %}
           <span style="font-size:8px">{{ response.message.connection.identity }}</span>
@@ -12,8 +14,10 @@
       </a>
        at {{ response.message.date|date:"d/m/Y H:i" }}
     </td>
+    {% endif %}
 {% endblock %}
 {% block actions_cell %}
+    {%if  perms.ureport.view_numbers %}
     <td class="response_options_col" >
     {% block actions_content %}
       <div class="buttons">
@@ -30,4 +34,5 @@
 
     {% endblock %}
     </td>
+   {% endif %}
 {% endblock %}
