@@ -75,7 +75,7 @@ class Command(BaseCommand):
          "rapidsms_contact"."birthdate")) as age,
 
          "rapidsms_contact"."gender",
-          "rapidsms_contact"."healthfacility" as facility,
+          "rapidsms_contact"."health_facility" as facility,
          (SELECT
             "locations_location"."name"
          FROM
