@@ -73,7 +73,9 @@ class Command(BaseCommand):
          %d-EXTRACT('year'
       FROM
          "rapidsms_contact"."birthdate")) as age,
+
          "rapidsms_contact"."gender",
+          "rapidsms_contact"."healthfacility" as facility,
          (SELECT
             "locations_location"."name"
          FROM
