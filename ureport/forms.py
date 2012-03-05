@@ -20,6 +20,7 @@ from uganda_common.forms import SMSInput
 from django.db.models.query import QuerySet
 from contact.models import MassText
 from poll.models import Poll, Translation
+from unregister.models import Blacklist
 
 import subprocess
 
@@ -322,12 +323,13 @@ class MassTextForm(ActionForm):
             return ('A message must have one or more recipients!', 'error')
 
         if request.user and request.user.has_perm('contact.can_message'):
+            blacklists = Blacklist.objects.values_list('connection')
             connections = \
-                Connection.objects.filter(contact__in=results).distinct()
+                Connection.objects.filter(contact__in=results).exclude(pk__in=blacklists).distinct()
 
             text = self.cleaned_data.get('text', "")
             text = text.replace('%', u'\u0025')
-            conns=connections.values_list('pk', flat=True)
+
 
             if not self.cleaned_data['text_luo'] == '':
                 (translation, created) = \
