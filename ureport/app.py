@@ -41,7 +41,7 @@ class App(AppBase):
 
             #message flagging sfuff
         else:
-            if message.connection.contact.language == "ach" and message.text.lower() == "english":
+            if message.connection.contact and message.connection.contact.language == "ach" and message.text.lower() == "english":
                 contact=message.connection.contact
                 contact.language="en"
                 contact.save()

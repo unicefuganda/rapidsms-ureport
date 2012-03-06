@@ -1017,15 +1017,14 @@ def new_poll(req):
             poll_type = (Poll.TYPE_TEXT if p_type
                          == NewPollForm.TYPE_YES_NO else p_type)
 
-            start_immediately = form.cleaned_data['start_immediately']
 
-            poll = create_poll(\
+            poll = Poll.create_with_bulk(\
                                  name,
                                  poll_type,
                                  question,
                                  default_response,
                                  contacts,
-                                 req.user,start_immediately=start_immediately)
+                                 req.user)
             #create batch for the responses
             MessageBatch.objects.create(name=str(poll.pk),status="Q")
 

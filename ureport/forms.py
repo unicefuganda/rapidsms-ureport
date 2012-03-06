@@ -210,7 +210,7 @@ class AssignToNewPollForm(ActionForm):
     poll_type = forms.ChoiceField(choices=POLL_TYPES)
     question = forms.CharField(max_length=160, required=True)
     default_response = forms.CharField(max_length=160, required=False)
-    start_immediately = forms.BooleanField(required=False)
+
 
     def perform(self, request, results):
         if not len(results):
@@ -224,7 +224,6 @@ class AssignToNewPollForm(ActionForm):
         question = self.cleaned_data.get('question').replace('%',
                 u'\u0025')
         default_response = self.cleaned_data['default_response']
-        start_immediately = self.cleaned_data['start_immediately']
         response_type = self.cleaned_data['response_type']
         poll = Poll.create_with_bulk(
             name=name,
@@ -232,7 +231,7 @@ class AssignToNewPollForm(ActionForm):
             question=question,
             default_response=default_response,
             contacts=results,
-            user=request.user,
+            user=request.user
             )
 
         poll.response_type = response_type
@@ -242,8 +241,7 @@ class AssignToNewPollForm(ActionForm):
 
         if settings.SITE_ID:
             poll.sites.add(Site.objects.get_current())
-        if start_immediately:
-            poll.start()
+
         return ('%d participants added to  %s poll' % (len(results),
                 poll.name), 'success')
 
@@ -371,7 +369,6 @@ class NewPollForm(forms.Form): # pragma: no cover
     question_luo = forms.CharField(max_length=160, required=False, widget=forms.Textarea())
     default_response = forms.CharField(max_length=160, required=False, widget=forms.Textarea())
     default_response_luo = forms.CharField(max_length=160, required=False, widget=forms.Textarea())
-    start_immediately = forms.BooleanField(required=False)
     districts = forms.ModelMultipleChoiceField(queryset=
                                  Location.objects.filter(type__slug='district'
                                  ).order_by('name'), required=False)
