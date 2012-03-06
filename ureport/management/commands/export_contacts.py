@@ -144,6 +144,7 @@ class Command(BaseCommand):
                 'District',
                 'Age',
                 'Gender',
+                'Health Facility',
                 'Village',
                 'Group',
                 'How did you hear about ureport?',
