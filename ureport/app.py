@@ -47,20 +47,29 @@ class App(AppBase):
                 contact.save()
                 return True
 
-            flags = Flag.objects.values_list('name', flat=True).distinct()
-
-            w_regex = []
-            for word in flags:
-                w_regex.append(one_template % re.escape(str(word).strip()))
-            reg = re.compile(r"|".join(w_regex),re.IGNORECASE)
-            match = reg.search(message.text)
+        flags=Flag.objects.exclude(rule=None)
+        pattern_list=[[re.compile(flag.rule, re.IGNORECASE),flag] for flag in flags if flag.rule ]
+        for reg in pattern_list:
+            match= reg[0].search(message.text)
             if match:
-                #we assume ureport is not the first sms app in the list so there is no need to create db_message
-                if hasattr(message, 'db_message'):
-                    db_message = message.db_message
-                    try:
-                        flag = Flag.objects.get(name=[d for d in list(match.groups()) if d][1])
-                    except (Flag.DoesNotExist, IndexError):
-                        flag = None
-                    MessageFlag.objects.create(message=db_message, flag=flag)
+                MessageFlag.objects.create(message=message.db_message,flag=reg[1])
+
+        #if no rule_regex default to name this is just for backward compatibility ... it will soon die an unnatural death
+
+        flags = Flag.objects.filter(rule=None).values_list('name', flat=True).distinct()
+
+        w_regex = []
+        for word in flags:
+            w_regex.append(one_template % re.escape(str(word).strip()))
+        reg = re.compile(r"|".join(w_regex),re.IGNORECASE)
+        match = reg.search(message.text)
+        if match:
+            #we assume ureport is not the first sms app in the list so there is no need to create db_message
+            if hasattr(message, 'db_message'):
+                db_message = message.db_message
+                try:
+                    flag = Flag.objects.get(name=[d for d in list(match.groups()) if d][1])
+                except (Flag.DoesNotExist, IndexError):
+                    flag = None
+                MessageFlag.objects.create(message=db_message, flag=flag)
         return False

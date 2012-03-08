@@ -43,6 +43,8 @@ class ModelTest(TestCase): #pragma: no cover
         word_list=['zombies','inferi','waves','living dead','monsters']
         for word in word_list:
             flag=Flag.objects.create(name=word)
+
+        Flag.objects.create(name="jedi",words="luke,sky,walker,jedi",rule=2)
         #create test group
         self.gem_group=Group.objects.create(name="GEM")
         Location.objects.create(name="kampala",type=LocationType.objects.create(name="district",slug="district"))
@@ -100,6 +102,8 @@ class ModelTest(TestCase): #pragma: no cover
         connection=Connection.objects.all()[0]
         incomingmessage = self.fakeIncoming('My village is being invaded by an army of zombies',self.connection)
         self.assertEquals(MessageFlag.objects.count(), 1)
+        incomingmessage = self.fakeIncoming('Luke skywalker is a Jedi',self.connection)
+        self.assertEquals(MessageFlag.objects.count(), 2)
 
     def testyouthgrouppoll(self):
         groups=[u"GEM",u"gem",u"GEM group",u"it is GEM",u"yes GEM masaka group",u"yes GEM",u"Gem masaka",u"Girls Education Movement(GEM)",u"GEM-Uganda",u"YES GEM?§U",u"Yes Gem's chapter"]

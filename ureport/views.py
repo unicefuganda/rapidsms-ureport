@@ -731,6 +731,7 @@ def clickatell_wrapper(request):
 
 
 def flagged_messages(request):
+    all_flags = Flag.objects.all()
     if request.GET.get('export', None):
         flaggedmessages=MessageFlag.objects.exclude(flag=None)
 
@@ -768,6 +769,8 @@ def flagged_messages(request):
                  ('Flags', False, 'message__flagged', None)],
         sort_column='date',
         sort_ascending=False,
+        all_flags=all_flags
+
         )
 
 
@@ -809,14 +812,27 @@ def view_flagged_with(request, pk):
         )
 
 
-def create_flags(request):
-    flags_form = FlaggedMessageForm()
+def create_flags(request,pk=None):
+
     all_flags = Flag.objects.all()
+    flag = Flag()
+    if pk:
+        try:
+            flag=Flag.objects.get(pk=int(pk))
+        except Flag.DoesNotExist:
+            flag=Flag()
+
+
+        
     if request.method == 'POST':
-        flags_form = FlaggedMessageForm(request.POST)
+        flags_form = FlaggedMessageForm(request.POST,instance=flag)
         if flags_form.is_valid():
             flags_form.save()
             return HttpResponseRedirect('/flaggedmessages')
+    else:
+        flags_form = FlaggedMessageForm(instance=flag)
+
+
     return render_to_response('ureport/new_flag.html',
                               dict(flags_form=flags_form,
                               all_flags=all_flags),

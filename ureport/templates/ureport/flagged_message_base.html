@@ -1,6 +1,6 @@
 {% extends "generic/base.html" %}
 {% block title %}
-    Messages - {{ block.super }}
+    Flagged Messages - Ureport
 {% endblock %}
 {% block stylesheets %}
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/ureport.css" />
@@ -16,12 +16,28 @@
     <script src="{{MEDIA_URL}}contact/javascripts/messages.js" type="text/javascript"></script>
 {% endblock %}
 {% block content %}
-{{ block.super }}
+    <div class="module">
+    <h2>All Flags</h2>
+    <table width="100%" class="results">
+    <thead><tr><td>name</td> <td>messages</td> <td></td></tr></thead>
+    {% for flag in all_flags %}
 
+<tr><td>{{flag.name}}</td>  <td><a href="/flags/{{ flag.pk }}/messages/">messages</a></td>
+    <td><a href="/flags/{{ flag.pk }}/edit/">edit</a> </td>
+    <td><a href="/flags/{{ flag.pk }}/delete/">delete</a> </td>
+
+
+</tr>
+    {% endfor %}
+    </table>
     <div class="buttons">
     <a href="{% url ureport.views.create_flags %}" style="float:left">
       <img border="0" src="/static/rapidsms/icons/silk/add.png" alt=""/>Add New Flag
     </a>
     <a style="float:right;" href="?export=true">Export To Excel</a>
     </div>
+    </div>
+{{ block.super }}
+
+
 {% endblock %}
