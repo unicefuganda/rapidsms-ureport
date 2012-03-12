@@ -1041,9 +1041,7 @@ def new_poll(req):
                                  default_response,
                                  contacts,
                                  req.user)
-            #create batch for the responses
-            MessageBatch.objects.create(name=str(poll.pk),status="Q")
-
+           
             if p_type == NewPollForm.TYPE_YES_NO:
                 poll.add_yesno_categories()
 
