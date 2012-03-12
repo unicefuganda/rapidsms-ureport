@@ -47,8 +47,10 @@ class App(AppBase):
                 contact.save()
                 return True
 
-        flags=Flag.objects.exclude(rule=None)
-        pattern_list=[[re.compile(flag.rule, re.IGNORECASE),flag] for flag in flags if flag.rule ]
+        flags=Flag.objects.exclude(rule=None).exclude(rule_regex=None)
+        for flag in flags:
+            print flag.rule_regex
+        pattern_list=[[re.compile(flag.rule_regex, re.IGNORECASE),flag] for flag in flags if flag.rule ]
         for reg in pattern_list:
             match= reg[0].search(message.text)
             if match:
