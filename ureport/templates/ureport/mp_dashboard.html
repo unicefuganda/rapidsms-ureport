@@ -1,0 +1,120 @@
+{% extends "layout.html" %}
+
+{% block javascripts %}
+{{ block.super }}
+  <script src="{{MEDIA_URL}}ureport/javascripts/mp_dashboard.js" type="text/javascript"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="module">
+        <h2>Filter Poll Contacts</h2>
+        
+            <form action="/mp_dashboard/?filtered=true" method="GET" class="form-inline">
+                {% for form in filter_forms %}
+                    <table class="inline" >
+                    {% for field in form.visible_fields %}
+                        <tr>
+                            <td>
+                                {% if forloop.first %}
+                                    {% for hidden in form.hidden_fields %}
+                                        {{ hidden }}
+                                    {% endfor %}
+                                {% endif %}
+                                {{ field.label_tag }}
+                                {% if field.help_text %}
+                                    <span class="action_form_help">{{ field.help_text }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ field }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </table>
+                   
+                {% endfor %}
+
+                </br>
+            <table class="inline">
+                <tr>
+                    
+                    <td><a  class="btn-primary btn btn-large" href="javascript:void(0)" onclick="filter(this,'./?filter=true')"> Update</a></td>
+                </tr>
+            </table>
+            </form>
+
+<div class="results" style="margin-top:210px;margin-left:100px;padding: 7px 15px;color: #333333;background-color: #f7f7f7;border:1px solid #ccc;">
+   
+
+</div>
+
+    </div>
+
+</br>
+    <div class="module" style="margin-top:40px;">
+        <h2>Poll</h2>
+        <table border="0" class="form">
+            <form action="./?poll=true" method="post" >
+                <tr><td>{{ poll_form.errors }}</td></tr>
+
+                <tr><td>Name:</td><td>{{ poll_form.name}}</td><td>Question:</td><td>{{ poll_form.question}}</td> <td><input type="submit" class="btn-primary btn btn-large" value="Send Poll"></td></tr>
+                <tr><td>Type:</td><td>{{ poll_form.type}}</td><td>Luo Question:</td><td>{{ poll_form.question_luo}}</td><td></td></tr>
+                <tr><td></td><td></td><td>Auto Response:</td><td>{{ poll_form.default_response}}</td><td></td></tr>
+                <tr><td></td><td></td><td>Auto Response Luo:</td><td>{{ poll_form.default_response_luo}}</td><td></td></tr>
+
+
+
+            </form>
+        </table>
+
+    </div>
+
+    <div class="module">
+        <h2>
+            Messages
+        </h2>
+        <table class="zebra-striped bordered fc" width="100%">
+            <thead>
+            <tr>
+                <th>Text</th>
+                <th>Name</th>
+                <th>Number</th>
+                <th>District</th>
+                <th>Group</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for msg in messages.object_list %}
+                <tr>
+                    <td>{{ msg.text }}</td>
+                    <td>{{ msg.connection.contact.name }}</td>
+                    <td>{{ msg.connection.identity }}</td>
+                    <td>{{ msg.connection.contact.reporting_location }}</td>
+                    <td>{{ msg.connection.contact.groups.all.0.name }}</td>
+
+                </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            <span class="step-links">
+                {% if messages.has_previous %}
+                    <a href="?page={{ messages.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+            Page {{ messages.number }} of {{ messages.paginator.num_pages }}.
+        </span>
+
+                {% if messages.has_next %}
+                    <a href="?page={{ messages.next_page_number }}">next</a>
+                {% endif %}
+            </span>
+        </div>
+
+
+    </div>
+
+{% endblock %}

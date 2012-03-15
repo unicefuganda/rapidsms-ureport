@@ -1058,3 +1058,81 @@ def new_poll(req):
     return render_to_response('ureport/new_poll.html', {'form': form},
                               context_instance=RequestContext(req))
 
+
+def mp_dashboard(request):
+    from contact.forms import FilterGroupsForm, MultipleDistictFilterForm, GenderFilterForm, AgeFilterForm
+    from django.core.paginator import Paginator,EmptyPage, PageNotAnInteger
+
+    
+    mp_contacts = Contact.objects.filter(groups__name__in=['MP'])
+    forms=[MultipleDistictFilterForm,FilterGroupsForm,GenderFilterForm,AgeFilterForm]
+    filter_forms=[]
+    mp_conns=Connection.objects.filter(contact__groups__name="MP")
+    contacts=Contact.objects.exclude(connection__in=Blacklist.objects.all())
+    message_list = \
+        Message.objects.filter(connection__in=mp_conns).order_by('-date')[0:20]
+
+    if request.POST and request.GET.get("filter",None):
+        for form_class in forms:
+            form_instance = form_class(request.GET, request=request)
+            if form_instance.is_valid():
+                contacts = form_instance.filter(request, contacts)
+        request.session['filtered']=contacts
+
+        return HttpResponse(str(contacts.count()))
+    for form in forms:
+        filter_forms.append(form(**{'request':request}))
+    paginator = Paginator(message_list, 15)
+    page = request.GET.get('page',1)
+    try:
+        messages = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        messages = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        messages = paginator.page(paginator.num_pages)
+    poll_form=NewPollForm()
+    poll_form.updateTypes()
+
+    if request.method == "POST" and request.GET.get("poll",None):
+        poll_form = NewPollForm(request.POST)
+        poll_form.updateTypes()
+        #create poll
+        if request.session.get("filtered",None) and poll_form.is_valid():
+            name = poll_form.cleaned_data['name']
+            p_type = poll_form.cleaned_data['type']
+            response_type = poll_form.cleaned_data['response_type']
+            if not poll_form.cleaned_data['default_response_luo'] == '' \
+                and not poll_form.cleaned_data['default_response'] == '':
+                (translation, created) = \
+                    Translation.objects.get_or_create(language='ach',
+                        field=poll_form.cleaned_data['default_response'],
+                        value=poll_form.cleaned_data['default_response_luo'])
+
+            if not poll_form.cleaned_data['question_luo'] == '':
+                (translation, created) = \
+                    Translation.objects.get_or_create(language='ach',
+                        field=poll_form.cleaned_data['question'],
+                        value=poll_form.cleaned_data['question_luo'])
+
+            poll_type = (Poll.TYPE_TEXT if p_type
+                         == NewPollForm.TYPE_YES_NO else p_type)
+
+            poll = Poll.create_with_bulk(\
+                                 name,
+                                 poll_type,
+                                 question,
+                                 default_response,
+                                 request.session.get("filtered"),
+                                 request.user)
+
+
+
+    context_dict = {"poll_form": poll_form,
+                    "filter_forms": filter_forms,
+                    'messages': messages}
+    
+    
+    return render_to_response('ureport/mp_dashboard.html', context_dict,
+                              context_instance=RequestContext(request))

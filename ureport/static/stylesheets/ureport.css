@@ -77,10 +77,10 @@ a:visited {
 #span_info {
     position:relative;
     color:white;
-    font-size:9pt;
+    font-size:12pt;
     font-weight:bold;
     font-variant:small-caps;
-    top: 72px;
+    top: 7px;
     float:right;
     padding-right:60px;
 }
@@ -330,7 +330,7 @@ div#visual{
     margin-top:10px;
 }
 
-.ajax_loading{
+.ajax_loading,#div_panel_loading{
     background-image:url("../images/ajax-loader.gif");
     background-repeat:no-repeat;
     background-position: center center;
@@ -452,20 +452,6 @@ select {
   margin:0.5em 0;
 }
 
-.topbar .custom_fill
-{
-   background-color: #0098d1;
-  background-color: #0098d1;
-  background-repeat: repeat-x;
-  background-image: -khtml-gradient(linear, left top, left bottom, from(#0098d1), to(#0098d1));
-  background-image: -moz-linear-gradient(top, #0098d1, #0098d1);
-  background-image: -ms-linear-gradient(top, #0098d1, #0098d1);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #333333), color-stop(100%, #222222));
-  background-image: -webkit-linear-gradient(top, #0098d1, #0098d1);
-  background-image: -o-linear-gradient(top, #0098d1, #0098d1);
-  background-image: linear-gradient(top, #0098d1, #0098d1);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0098d1', endColorstr='#0098d1', GradientType=0);
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-  -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+.nav-pills {
+  *zoom: 1;
 }
