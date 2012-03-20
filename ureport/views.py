@@ -908,7 +908,7 @@ def signup(request):
                               status_message=status_message),
                               context_instance=RequestContext(request))
 
-
+@login_required
 def ureporter_profile(request, connection_pk):
     from script.models import ScriptSession, ScriptResponse
     connection = get_object_or_404(Connection, pk=connection_pk)
@@ -1058,7 +1058,7 @@ def new_poll(req):
     return render_to_response('ureport/new_poll.html', {'form': form},
                               context_instance=RequestContext(req))
 
-
+@login_required
 def mp_dashboard(request):
     from contact.forms import FilterGroupsForm, MultipleDistictFilterForm, GenderFilterForm, AgeFilterForm
     from django.core.paginator import Paginator,EmptyPage, PageNotAnInteger
@@ -1071,15 +1071,17 @@ def mp_dashboard(request):
     contacts=Contact.objects.exclude(connection__in=Blacklist.objects.all())
     message_list = \
         Message.objects.filter(connection__in=mp_conns).order_by('-date')[0:20]
-
+    old_contacts=contacts
     if request.POST and request.GET.get("filter",None):
         for form_class in forms:
-            form_instance = form_class(request.GET, request=request)
+            form_instance = form_class(request.POST, request=request)
             if form_instance.is_valid():
                 contacts = form_instance.filter(request, contacts)
-        request.session['filtered']=contacts
-
-        return HttpResponse(str(contacts.count()))
+        if old_contacts.count() == contacts.count():
+            return HttpResponse("No Contacts Selected")
+        else:
+            request.session['filtered']=contacts
+            return HttpResponse(str(contacts.count()))
     for form in forms:
         filter_forms.append(form(**{'request':request}))
     paginator = Paginator(message_list, 15)
@@ -1096,13 +1098,18 @@ def mp_dashboard(request):
     poll_form.updateTypes()
 
     if request.method == "POST" and request.GET.get("poll",None):
-        poll_form = NewPollForm(request.POST)
+        res_dict=request.POST.copy()
+        res_dict.update({'groups':u'2'})
+        poll_form = NewPollForm(res_dict)
         poll_form.updateTypes()
         #create poll
         if request.session.get("filtered",None) and poll_form.is_valid():
             name = poll_form.cleaned_data['name']
             p_type = poll_form.cleaned_data['type']
             response_type = poll_form.cleaned_data['response_type']
+            question= poll_form.cleaned_data['question']
+            default_response = poll_form.cleaned_data['default_response']
+            
             if not poll_form.cleaned_data['default_response_luo'] == '' \
                 and not poll_form.cleaned_data['default_response'] == '':
                 (translation, created) = \
@@ -1118,6 +1125,7 @@ def mp_dashboard(request):
 
             poll_type = (Poll.TYPE_TEXT if p_type
                          == NewPollForm.TYPE_YES_NO else p_type)
+        
 
             poll = Poll.create_with_bulk(\
                                  name,
@@ -1126,6 +1134,7 @@ def mp_dashboard(request):
                                  default_response,
                                  request.session.get("filtered"),
                                  request.user)
+            return redirect(reverse('poll.views.view_poll', args=[poll.pk]))
 
 
 

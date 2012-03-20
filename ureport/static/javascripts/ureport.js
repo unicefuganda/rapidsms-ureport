@@ -14,24 +14,25 @@ function remove_selection() {
 }
 
 
-function ajax_loading(element)
-{
-    var t=$(element);
-    var offset = t.offset();
-                var dim = {
-                    left:    offset.left,
-                    top:    offset.top,
-                    width:    t.outerWidth(),
-                    height:    t.outerHeight()
-                };
-    $('<div class="ajax_loading"></div>').css({
-                    position:    'absolute',
-                    left:        dim.left + 'px',
-                    top:        dim.top + 'px',
-                    width:        dim.width + 'px',
-                    height:        dim.height + 'px'
-                }).appendTo(document.body).show();
-}
+function ajax_loading(element) {
+          var t = $(element);
+          var offset = t.offset();
+          var dim = {
+              left: offset.left,
+              top: offset.top,
+              width: t.outerWidth(),
+              height: t.outerHeight()
+          };
+          $('<div class="ajax_loading"></div>').css({
+              position: 'absolute',
+              left: dim.left + 'px',
+              top: dim.top + 'px',
+              width: dim.width + 'px',
+              height: dim.height + 'px'
+          }).appendTo(document.body).show();
+
+
+      }
 
 
 var bar_opts = {
