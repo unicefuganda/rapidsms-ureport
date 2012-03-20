@@ -1068,7 +1068,7 @@ def mp_dashboard(request):
     forms=[MultipleDistictFilterForm,FilterGroupsForm,GenderFilterForm,AgeFilterForm]
     filter_forms=[]
     mp_conns=Connection.objects.filter(contact__groups__name="MP")
-    contacts=Contact.objects.exclude(connection__in=Blacklist.objects.all())
+    contacts=Contact.objects.exclude(connection__in=Blacklist.objects.all()).distinct()
     message_list = \
         Message.objects.filter(connection__in=mp_conns).order_by('-date')[0:20]
     old_contacts=contacts
