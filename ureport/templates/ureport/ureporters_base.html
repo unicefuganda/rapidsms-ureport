@@ -29,14 +29,14 @@
                 <tr>  <td>Filter By Age :</td> <td>{{ filter_forms.2.flag }}</td> <td>{{ filter_forms.2.age }}</td>          </tr>
       
                 <tr><td></td><td></td>
-                    <td> <div class="filterform" id="div_filter_update">
+                    <td>
                     <a href="javascript:void(0)" onclick="filter(this)" class="btn-primary btn btn-large">Update</a>
-                </div>
+                
                    </td>
                     <td>
-                <div class="filterform" id="div_filter_clear">
+
                     <a href="./" class="btn-primary btn btn-large">Clear</a>
-                </div>
+            
                     </td>
                 </tr>
             </table>
@@ -60,7 +60,7 @@
 
 
 
-<tr><a class="export_link" href="{{ MEDIA_URL }}ureport/spreadsheets/ureporters.zip">Export All To Excel</a></tr>
+<tr><td><a class="export_link" href="{{ MEDIA_URL }}ureport/spreadsheets/ureporters.zip">Export All To Excel</a></td></tr>
 </table>
 
      <table>
