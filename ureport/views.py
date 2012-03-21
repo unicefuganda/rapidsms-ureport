@@ -1070,7 +1070,7 @@ def mp_dashboard(request):
     mp_conns=Connection.objects.filter(contact__groups__name="MP")
     contacts=Contact.objects.exclude(connection__in=Blacklist.objects.all()).distinct()
     message_list = \
-        Message.objects.filter(connection__in=mp_conns).order_by('-date')[0:20]
+        Message.objects.filter(connection__in=mp_conns,direction="I").order_by('-date')[0:20]
     old_contacts=contacts
     if request.POST and request.GET.get("filter",None):
         for form_class in forms:
