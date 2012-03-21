@@ -208,8 +208,8 @@ class AssignToNewPollForm(ActionForm):
         forms.ChoiceField(choices=Poll.RESPONSE_TYPE_CHOICES,
                           widget=RadioSelect)
     poll_type = forms.ChoiceField(choices=POLL_TYPES)
-    question = forms.CharField(max_length=160, required=True)
-    default_response = forms.CharField(max_length=160, required=False)
+    question = forms.CharField(max_length=160, required=True,widget=SMSInput())
+    default_response = forms.CharField(max_length=160, required=False,widget=SMSInput())
 
 
     def perform(self, request, results):

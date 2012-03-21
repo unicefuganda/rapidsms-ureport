@@ -7,65 +7,72 @@
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/splits.css" />
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/modules.css" />
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/icons.css" />
-    <link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}generic/stylesheets/generic.css"/>
     <link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}ureport/stylesheets/ureporters.css"/>
 {% endblock %}
 {% block javascripts %}
     {{ block.super }}
     <script src="{{MEDIA_URL}}ureport/javascripts/ureport.js" type="text/javascript"></script>
     <script src="{{MEDIA_URL}}ureport/javascripts/jquery-ui.js" type="text/javascript"></script>
+   
 {% endblock %}
 
+
+{% block filters %}
+
+            <div style="height:540px;" class="module">
+                <h2>Filters</h2>
+
+            <table class="fc">
+
+                <tr>  <td>Search Ureporters :</td> <td>{{ filter_forms.0.searchx }}</td>  <td>Filter By Group :</td> <td>{{ filter_forms.4.visible_fields.0 }}</td>        </tr>
+                <tr>  <td>Filter By Gender :</td> <td>{{ filter_forms.1.gender }}</td> <td>Filter By District :</td> <td>{{ filter_forms.3.visible_fields.0}}</td>         </tr>
+                <tr>  <td>Filter By Age :</td> <td>{{ filter_forms.2.flag }}</td> <td>{{ filter_forms.2.age }}</td>          </tr>
+      
+                <tr><td></td><td></td>
+                    <td> <div class="filterform" id="div_filter_update">
+                    <a href="javascript:void(0)" onclick="filter(this)" class="btn-primary btn btn-large">Update</a>
+                </div>
+                   </td>
+                    <td>
+                <div class="filterform" id="div_filter_clear">
+                    <a href="./" class="btn-primary btn btn-large">Clear</a>
+                </div>
+                    </td>
+                </tr>
+            </table>
+
+
+
+           
+            </div>
+            <br/>
+
+        {% endblock %}
+
  {% block action_forms %}
+<table >
+<tr><td>{{ action_forms.0.1.errors }}{{ action_forms.1.1.errors }}{{ action_forms.2.1.errors }}{{ action_forms.3.1.errors }}</td></tr>
 
-                    {% for cname, form in action_forms %}
+<tr><td>English SMS:</td><td>{{action_forms.0.1.text}}</td><td>Select Group(s):</td><td>{{action_forms.1.1.groups}}</td></tr>
 
-                        {% if form.action_label == 'Assign to New poll' %}
-                            <div id="show_poll_form" style="padding-bottom:5px;margin-right:200px;margin-top:-19px;padding-top:10px;float:right;">
+ <tr><td>Luo SMS:</td><td>{{action_forms.0.1.text}}</td><td></td><td><a class="{{ action_forms.1.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onclick="actionx(this, '{{ action_forms.1.0 }}',{{ page }})">Assign Group </a></td></tr>
+  <tr><td><a class="{{ action_forms.0.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onclick="actionx(this, '{{ action_forms.0.0 }}',{{ page }})">Send Message </a></td><td></td><td></td><td><a class="{{ action_forms.2.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onclick="actionx(this, '{{ action_forms.2.0 }}',{{ page }})">Blacklist Selected </a></td></tr>
 
-                            <a  onclick="$(this).parents('#show_poll_form').next('.poll_form').slideToggle(0);$('#collapse_img').toggle();$('#expand_img').toggle();"
-                               href="javascript:void(0)">
-                                New Poll Form
-                                <img id="collapse_img" style=""
-                                     src="{{ MEDIA_URL }}rapidsms/icons/silk/section_expanded--bright.png"/>
-                                <img id="expand_img" style="display:none"
-                                     src="{{ MEDIA_URL }}rapidsms/icons/silk/section_collapsed--bright.png"/>
-                            </a>
 
-                            </div>
-    <div class="poll_form " style="display:none; width:auto;">
-                            {% endif %}
-                        <div class="actionform" id="div_action_{{ forloop.counter0 }}">
-                            <table>
-                                {% for field in form.visible_fields %}
 
-                                    <tr>
-                                        <td>
-                                            {% if forloop.first %}
-                                                {% for hidden in form.hidden_fields %}
-                                                    {{ hidden }}
-                                                {% endfor %}
-                                            {% endif %}
-                                            {{ field.label_tag }}
-                                            {% if field.help_text %}
-                                                <span class="action_form_help">{{ field.help_text }}</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            {{ field }}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                                <tr>
-                                    <td colspan="2">
-                                        <a href="javascript:void(0)" onclick="action(this, '{{ cname }}')">{{ form.action_label }}</a>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        {% if form.action_label == 'Assign to New poll' %}
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-     <a class="export_link" href="{{ MEDIA_URL }}ureport/spreadsheets/ureporters.zip">Export All To Excel</a>
+<tr><a class="export_link" href="{{ MEDIA_URL }}ureport/spreadsheets/ureporters.zip">Export All To Excel</a></tr>
+</table>
+
+     <table>
+
+         <tr><td>Name:</td><td>{{ action_forms.3.1.poll_name}}</td><td>Question:</td><td>{{ action_forms.3.1.question}}</td> </tr>
+             <tr><td>Type:</td><td>{{ action_forms.3.1.poll_type}}</td><td>Auto Response:</td><td>{{ action_forms.3.1.default_response}}</td></tr>
+             <tr><td>Response Type:</td><td>{{ action_forms.3.1.response_type}}</td><td></td><td><input type="submit" class="btn-primary btn btn-large" value="Send Poll"></td></tr>
+
+
+
+     </table>
+
+
+
                 {% endblock %}

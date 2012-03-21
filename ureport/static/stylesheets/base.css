@@ -583,7 +583,7 @@ table.fc {
   border-spacing: 0;
 }
 
-table.fc {
+table.fc,table.results {
   width: 100%;
   margin-bottom: 14px;
   padding: 0;
@@ -600,11 +600,11 @@ table th {
   font-weight: bold;
   vertical-align: middle;
 }
-table.bordered td {
+table.bordered td,table.results td {
   vertical-align: top;
   border-top: 1px solid #ddd;
 }
-table.bordered tbody th {
+table.bordered tbody th,table.results tbody th {
   border-top: 1px solid #ddd;
   vertical-align: top;
 }
@@ -613,6 +613,12 @@ table.bordered tbody th {
   background-color: #f9f9f9;
 }
 .zebra-striped tbody tr:hover td, .zebra-striped tbody tr:hover th {
+  background-color: #f2f2f2;
+}
+.results tbody tr:nth-child(odd) td, .results tbody tr:nth-child(odd) th {
+  background-color: #f9f9f9;
+}
+.results tbody tr:hover td, .results tbody tr:hover th {
   background-color: #f2f2f2;
 }
 
@@ -747,4 +753,77 @@ table.inline{
 }
 .btn-large [class^="icon-"] {
   margin-top: 1px;
+}
+
+select[multiple] {
+  height: inherit;
+  background-color: #ffffff;
+    width:210px;
+    height:150px;
+
+
+}
+
+select{
+   width: 210px;
+
+  padding: 4px;
+  font-size: 13px;
+  line-height: 14px;
+  color: #666666;
+  border: 1px solid #d4dae8;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+
+}
+#span_select_everything {
+    float:right;
+    background-color:black;
+    color:white;
+    font-weight:bold;
+    padding:2px;
+}
+
+.status_success {
+    padding: 5px;
+    margin: 5px;
+    color: green;
+    font-size: 10px;
+    font-weight: bold;
+    border: solid 1px #352;
+    background-color: #9f7;
+}
+
+.status_error {
+    padding: 5px;
+    margin: 5px;
+    color: red;
+    font-size: 10px;
+    font-weight: bold;
+    border: solid 1px #532;
+    background-color: #f97;
+}
+fieldset{
+
+}
+
+#div_results_loading {
+    position: absolute;
+    display: none;
+    width: 100%;
+    height: 100%;
+    background-image:url("../images/ajax-loader.gif");
+    background-repeat:no-repeat;
+    background-position: center center;
+}
+
+#div_panel_loading {
+    position: absolute;
+    display: none;
+    width: 100%;
+    height: 100%;
+    background-image:url("../images/ajax-loader.gif");
+    background-repeat:no-repeat;
+    background-position: center center;
 }

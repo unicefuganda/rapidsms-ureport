@@ -183,75 +183,10 @@ div.module h3 {
 /*
  *  CONTACT MANAGEMENT VIEW
  */
-#id_groups {
-   height: 5em;
-   width: 7em;
-   fonts-size:6pt;
-}
 
-#filters {
-    height: 7em;
-}
 
-#div_filter_0 {
-   position:absolute;
-   left:0;
-   top: 3em;
-}
 
-#div_filter_1 {
-   position:absolute;
-   margin-top:-30px;
-   left:0;
-   top:5.5em;
-}
 
-#div_filter_2 {
-   position:absolute;
-   left:50%;
-   top:3em;
-}
-
-#div_filter_update {
-    float:right;
-    position:absolute;
-    right: 0;
-    bottom: 0;
-}
-
-#div_filter_clear {
-    float:right;
-    position:absolute;
-    right: 0;
-    top: 3em;
-}
-
-#actions {
-    min-height: 10em;
-}
-
-#div_action_0 {
-    position:absolute;
-    left:0;
-    top: 3em;
-}
-
-#div_action_1 {
-    position:absolute;
-    left: 33%;
-    top: 3em;
-}
-
-#div_action_2 {
-    position:absolute;
-    right: 0;
-    top: 9em;
-}
-
-#div_action_3{
-    padding-top:20px;
-    z-index: 800;
-}
 
 .results ul {
     list-style-type:none;

@@ -7,7 +7,6 @@
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/splits.css" />
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/modules.css" />
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/icons.css" />
-    <link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}generic/stylesheets/generic.css"/>
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}contact/stylesheets/messages.css" />
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/message_log.css" />
 {% endblock %}
@@ -15,6 +14,35 @@
     {{ block.super }}
     <script src="{{MEDIA_URL}}contact/javascripts/messages.js" type="text/javascript"></script>
 {% endblock %}
+{% block filters %}
+
+            <div style="height:130px;" class="module">
+                <h2>Filters</h2>
+
+            <table class="fc">
+
+                <tr>  <td>Search Messages :</td> <td>{{ filter_forms.0.search }}</td>  <td>Filter By District :</td> <td>{{ filter_forms.1.district }}</td>        </tr>
+
+                <tr>
+                    <td> 
+                    <a href="javascript:void(0)" onclick="filter(this)" class="btn-primary btn btn-large">Update</a>
+
+                   </td>
+                    <td>
+
+                    <a href="./" class="btn-primary btn btn-large">Clear</a>
+
+                    </td>
+                </tr>
+            </table>
+
+
+
+
+            </div>
+            <br/>
+
+        {% endblock %}
 {% block content %}
 <a href="/massmessages/" style="font-size:12pt">Show Mass Messages &gt;&gt;</a>
 {{ block.super }}
