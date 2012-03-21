@@ -11,8 +11,8 @@
 {% endblock %}
 {% block javascripts %}
     {{ block.super }}
-    <script src="{{MEDIA_URL}}ureport/javascripts/ureport.js" type="text/javascript"></script>
-    <script src="{{MEDIA_URL}}ureport/javascripts/jquery-ui.js" type="text/javascript"></script>
+   
+    
    
 {% endblock %}
 
@@ -55,8 +55,8 @@
 
 <tr><td>English SMS:</td><td>{{action_forms.0.1.text}}</td><td>Select Group(s):</td><td>{{action_forms.1.1.groups}}</td></tr>
 
- <tr><td>Luo SMS:</td><td>{{action_forms.0.1.text}}</td><td></td><td><a class="{{ action_forms.1.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onclick="actionx(this, '{{ action_forms.1.0 }}',{{ page }})">Assign Group </a></td></tr>
-  <tr><td><a class="{{ action_forms.0.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onclick="actionx(this, '{{ action_forms.0.0 }}',{{ page }})">Send Message </a></td><td></td><td></td><td><a class="{{ action_forms.2.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onclick="actionx(this, '{{ action_forms.2.0 }}',{{ page }})">Blacklist Selected </a></td></tr>
+ <tr><td>Luo SMS:</td><td>{{action_forms.0.1.text}}</td><td></td><td><a class="{{ action_forms.1.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onclick="action(this, '{{ action_forms.1.0 }}',{{ page }})">Assign Group </a></td></tr>
+  <tr><td><a class="{{ action_forms.0.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onclick="action(this, '{{ action_forms.0.0 }}',{{ page }})">Send Message </a></td><td></td><td></td><td><a class="{{ action_forms.2.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onclick="action(this, '{{ action_forms.2.0 }}',{{ page }})">Blacklist Selected </a></td></tr>
 
 
 
@@ -67,7 +67,7 @@
 
          <tr><td>Name:</td><td>{{ action_forms.3.1.poll_name}}</td><td>Question:</td><td>{{ action_forms.3.1.question}}</td> </tr>
              <tr><td>Type:</td><td>{{ action_forms.3.1.poll_type}}</td><td>Auto Response:</td><td>{{ action_forms.3.1.default_response}}</td></tr>
-             <tr><td>Response Type:</td><td>{{ action_forms.3.1.response_type}}</td><td></td><td><a class="{{ action_forms.3.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onclick="actionx(this, '{{ action_forms.3.0 }}',{{ page }})">Assign To Poll </a></td></tr>
+             <tr><td>Response Type:</td><td>{{ action_forms.3.1.response_type}}</td><td></td><td><a class="{{ action_forms.3.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onclick="action(this, '{{ action_forms.3.0 }}',{{ page }})">Assign To Poll </a></td></tr>
 
 
 
