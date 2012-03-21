@@ -123,7 +123,7 @@ def autoreg(**kwargs):
             contact.language = progress.language
         if Group.objects.filter(name='Other uReporters').count():
             default_group = Group.objects.get(name='Other uReporters')
-        if group_to_match:
+        if group_to_match and not group_to_match.name=="MP":
             for g in re.findall(r'\w+', group_to_match):
                 if g:
                     group = find_closest_match(str(g), Group.objects)
