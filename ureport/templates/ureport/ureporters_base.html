@@ -67,7 +67,7 @@
 
          <tr><td>Name:</td><td>{{ action_forms.3.1.poll_name}}</td><td>Question:</td><td>{{ action_forms.3.1.question}}</td> </tr>
              <tr><td>Type:</td><td>{{ action_forms.3.1.poll_type}}</td><td>Auto Response:</td><td>{{ action_forms.3.1.default_response}}</td></tr>
-             <tr><td>Response Type:</td><td>{{ action_forms.3.1.response_type}}</td><td></td><td><input type="submit" class="btn-primary btn btn-large" value="Send Poll"></td></tr>
+             <tr><td>Response Type:</td><td>{{ action_forms.3.1.response_type}}</td><td></td><td><a class="{{ action_forms.3.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onclick="actionx(this, '{{ action_forms.3.0 }}',{{ page }})">Assign To Poll </a></td></tr>
 
 
 
