@@ -1070,10 +1070,9 @@ def mp_dashboard(request):
     contacts=Contact.objects.exclude(connection__in=Blacklist.objects.all()).distinct()
     message_list = \
         Message.objects.filter(connection__in=mp_conns,direction="I").order_by('-date')
-    request.session["last_date"]=datetime.datetime.now()
     if request.GET.get("ajax",None):
-        request.session["last_date"]=datetime.datetime.now()
-        msgs=Message.objects.filter(connection__in=mp_conns,direction="I").filter(date__gte=request.session.get("last_date"))
+        date=datetime.datetime.now()-datetime.timedelta(seconds=40)
+        msgs=Message.objects.filter(connection__in=mp_conns,direction="I").filter(date__gte=date)
         msgs_list=[]
         if msgs.exists():
             for msg in msgs:
@@ -1088,7 +1087,6 @@ def mp_dashboard(request):
 
                 m["group"]=msg.connection.contact.groups.all()[0].name
                 msgs_list.append(m)
-        
             return HttpResponse(mark_safe(simplejson.dumps(msgs_list)))
         else:
             return HttpResponse("success")
