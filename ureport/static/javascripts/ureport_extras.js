@@ -40,7 +40,7 @@ jQuery.fn.addHover = function() {
         // set some initial values, then begin
         var prevContent;
         var timerInterval = settings.minTimeout;
-        
+        getdata();
 
         function getdata()
         {
