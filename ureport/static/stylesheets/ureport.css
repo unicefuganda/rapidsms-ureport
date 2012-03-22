@@ -85,9 +85,7 @@ a:visited {
     padding-right:60px;
 }
 
-#span_total {
-    font-size:12pt;
-}
+
 
 #auth {
     position:absolute;
@@ -265,7 +263,7 @@ div#visual{
     margin-top:10px;
 }
 
-.ajax_loading,#div_panel_loading{
+#div_panel_loading{
     background-image:url("../images/ajax-loader.gif");
     background-repeat:no-repeat;
     background-position: center center;
