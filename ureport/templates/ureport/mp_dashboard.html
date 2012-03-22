@@ -5,6 +5,39 @@
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/ureport_extras.css"/>
   <script src="{{MEDIA_URL}}ureport/javascripts/mp_dashboard.js" type="text/javascript"></script>
   <script src="{{MEDIA_URL}}ureport/javascripts/ureport_extras.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+
+    $(document).ready(function(){
+   $.PeriodicalUpdater({
+      url : "./?ajax=true"
+   },
+   function(data){
+       if (data =="success")
+       {
+
+       }
+       else{
+        d=eval(data);
+       $.each(d,function(k,v)
+       {
+           console.log(v);
+           foo="<tr><td>"+v.text+"</td><td>"+v.name+"</td><td>"+v.number+"</td><td>"+v.district+"</td><td>"+v.group+"</td></tr>";
+
+            $("#mp_bd").prepend(foo);
+
+
+
+       }
+
+       );
+       }
+       
+   });
+})
+
+
+    </script>
 
 {% endblock %}
 
@@ -77,7 +110,7 @@
         <h2>
             Messages
         </h2>
-        <table class="zebra-striped bordered fc" width="100%">
+        <table class="zebra-striped bordered fc" width="100%" id="mps">
             <thead>
             <tr>
                 <th>Text</th>
@@ -87,7 +120,7 @@
                 <th>Group</th>
             </tr>
             </thead>
-            <tbody>
+            <tbody id="mp_bd">
             {% for msg in messages.object_list %}
                 <tr>
                     <td>{{ msg.text }}</td>

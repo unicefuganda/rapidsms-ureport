@@ -1059,18 +1059,41 @@ def new_poll(req):
                               context_instance=RequestContext(req))
 
 @login_required
+@cache_control(no_cache=True, max_age=0)
 def mp_dashboard(request):
     from contact.forms import FilterGroupsForm, MultipleDistictFilterForm, GenderFilterForm, AgeFilterForm
     from django.core.paginator import Paginator,EmptyPage, PageNotAnInteger
 
-    
     mp_contacts = Contact.objects.filter(groups__name__in=['MP'])
     forms=[MultipleDistictFilterForm,FilterGroupsForm,GenderFilterForm,AgeFilterForm]
     filter_forms=[]
-    mp_conns=Connection.objects.filter(contact__groups__name="MP")
+    mp_conns=Connection.objects.filter(contact__in=mp_contacts)
     contacts=Contact.objects.exclude(connection__in=Blacklist.objects.all()).distinct()
     message_list = \
-        Message.objects.filter(connection__in=mp_conns,direction="I").order_by('-date')[0:20]
+        Message.objects.filter(connection__in=mp_conns,direction="I").order_by('-date')
+    request.session["last_date"]=datetime.datetime.now()
+    if request.GET.get("ajax",None):
+        request.session["last_date"]=datetime.datetime.now()
+        msgs=Message.objects.filter(connection__in=mp_conns,direction="I").filter(date__gte=request.session.get("last_date"))
+        msgs_list=[]
+        if msgs.exists():
+            for msg in msgs:
+                m={}
+                m["text"]=msg.text
+                m["name"]=msg.connection.contact.name
+                m["number"]=msg.connection.identity
+                if msg.connection.contact.reporting_location:
+                    m["district"]=msg.connection.contact.reporting_location.name
+                else:
+                    m["district"]="N/A"
+
+                m["group"]=msg.connection.contact.groups.all()[0].name
+                msgs_list.append(m)
+        
+            return HttpResponse(mark_safe(simplejson.dumps(msgs_list)))
+        else:
+            return HttpResponse("success")
+
     old_contacts=contacts
     if request.POST and request.GET.get("filter",None):
         for form_class in forms:
