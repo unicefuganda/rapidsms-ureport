@@ -1059,7 +1059,6 @@ def new_poll(req):
                               context_instance=RequestContext(req))
 
 @login_required
-@cache_control(no_cache=True, max_age=0)
 def mp_dashboard(request):
     from contact.forms import FilterGroupsForm, MultipleDistictFilterForm, GenderFilterForm, AgeFilterForm
     from django.core.paginator import Paginator,EmptyPage, PageNotAnInteger
