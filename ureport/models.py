@@ -23,6 +23,7 @@ from ussd.models import ussd_pre_transition, ussd_complete, Navigation, Transiti
 import datetime
 import re
 import difflib
+import urllib2
 
 
 class IgnoredTags(models.Model):
@@ -123,10 +124,10 @@ def autoreg(**kwargs):
             contact.language = progress.language
         if Group.objects.filter(name='Other uReporters').count():
             default_group = Group.objects.get(name='Other uReporters')
-        if group_to_match and not group_to_match=="MP":
+        if group_to_match :
             for g in re.findall(r'\w+', group_to_match):
                 if g:
-                    group = find_closest_match(str(g), Group.objects)
+                    group = find_closest_match(str(g), Group.objects.exclude(name="MP"))
                     if group:
                         contact.groups.add(group)
                         break
@@ -196,8 +197,8 @@ def ussd_poll(sender, **kwargs):
 
 
 
+
 script_progress_was_completed.connect(autoreg, weak=False)
 post_save.connect(check_conn, sender=Connection, weak=False)
 #post_save.connect(update_latest_poll, sender=Poll, weak=False)
 ussd_complete.connect(ussd_poll, weak=False)
-
