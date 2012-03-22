@@ -25,8 +25,8 @@ jQuery.fn.addHover = function() {
             url: '',                // URL of ajax request
             method: 'get',          // method; get or post
             sendData: '',           // array of values to be passed to the page - e.g. {name: "John", greeting: "hello"}
-            minTimeout: 40000,       // starting value for the timeout in milliseconds
-            maxTimeout: 40000,       // maximum length of time between requests
+            minTimeout: 15000,       // starting value for the timeout in milliseconds
+            maxTimeout: 15000,       // maximum length of time between requests
             multiplier: 1,          // if set to 2, timerInterval will double each time the response hasn't changed (up to maxTimeout)
             type: 'text'            // response type - text, xml, json etc - as with $.get or $.post
         }, options);

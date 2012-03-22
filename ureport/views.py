@@ -1071,7 +1071,7 @@ def mp_dashboard(request):
     message_list = \
         Message.objects.filter(connection__in=mp_conns,direction="I").order_by('-date')
     if request.GET.get("ajax",None):
-        date=datetime.datetime.now()-datetime.timedelta(seconds=40)
+        date=datetime.datetime.now()-datetime.timedelta(seconds=15)
         msgs=Message.objects.filter(connection__in=mp_conns,direction="I").filter(date__gte=date)
         msgs_list=[]
         if msgs.exists():
