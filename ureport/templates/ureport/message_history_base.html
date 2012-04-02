@@ -10,8 +10,8 @@
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}contact/stylesheets/messages.css" />
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/message_log.css" />
 {% endblock %}
-{% block javascripts %}
-    {{ block.super }}
+{% block extra_js %}
+   
    <script type="text/javascript">
    $(function() {
  $('#actions').append('<input type="checkbox" checked="checked" style="display:none;" name="results" value="{{contact.pk}}">');

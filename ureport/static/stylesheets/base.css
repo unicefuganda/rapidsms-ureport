@@ -8,6 +8,7 @@ body{
 
 a {
 	color:#00638a;
+    text-decoration: none;
 }
 
 .container {
@@ -401,12 +402,7 @@ div.why-placeholder span {
 }
 
 
-a.menu:focus {
-  outline: thin dotted;
-}
-a.menu:hover, a:active {
-  outline: 0;
-}
+
 
 #signup{
     margin-left:auto;
