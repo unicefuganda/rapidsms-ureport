@@ -47,6 +47,13 @@ class TopResponses(models.Model):
     quote = models.TextField()
     quoted = models.TextField()
 
+class EquatelLocation(models.Model):
+    serial=models.CharField(max_length=50)
+    segment=models.CharField(max_length=50,null=True)
+    location=models.ForeignKey(Location)
+    name=models.CharField(max_length=50,null=True)
+
+
 class Ureporter(Contact):
     def age(self):
         if self.birthdate:
@@ -175,7 +182,14 @@ def ussd_poll(sender, **kwargs):
 
     if not  sender.connection.contact:
         sender.connection.contact = Contact.objects.create(name='Anonymous User')
+        try:
+            serial=sender.navigations.order_by('date')[1].response.rsplit("_")[0]
+            sender.reporting_location=EquatelLocation.objects.get(serial=serial).location
+        except EquatelLocation.DoesNotExist:
+            pass
         sender.connection.save()
+        equatel,created=Group.objects.get_or_create(name="equatel")
+        sender.contact.groups.add(equatel)
 
     if sender.navigations.filter(screen__slug='weekly_poll').exists():
         field=XFormField.objects.get(name="latest_poll")
@@ -200,5 +214,5 @@ def ussd_poll(sender, **kwargs):
 
 script_progress_was_completed.connect(autoreg, weak=False)
 post_save.connect(check_conn, sender=Connection, weak=False)
-#post_save.connect(update_latest_poll, sender=Poll, weak=False)
+post_save.connect(update_latest_poll, sender=Poll, weak=False)
 ussd_complete.connect(ussd_poll, weak=False)
