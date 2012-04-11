@@ -375,7 +375,7 @@ def view_responses(req, poll_id):
         base_template='ureport/responses_base.html',
         paginator_template='ureport/partials/pagination.html',
         row_base=typedef['view_template'],
-        action_forms=[AssignToPollForm, ReplyTextForm,
+        action_forms=[AssignToPollForm,AssignResponseGroupForm, ReplyTextForm,
                       DeleteSelectedForm],
         filter_forms=[SearchResponsesForm],
         columns=columns,

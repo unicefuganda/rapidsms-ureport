@@ -397,3 +397,32 @@ class NewPollForm(forms.Form): # pragma: no cover
             raise forms.ValidationError("You must provide a set of recipients (a group or groups)")
 
         return cleaned_data
+
+
+class AssignResponseGroupForm(ActionForm):
+
+    action_label = 'Assign to group(s)'
+
+    # This may seem like a hack, but this allows time for the Contact model's
+    # default manage to be replaced at run-time.  There are many applications
+    # for that, such as filtering contacts by site_id (as is done in the
+    # authsites app, see github.com/daveycrockett/authsites).
+    # This does, however, also make the polling app independent of authsites.
+    def __init__(self, data=None, **kwargs):
+        self.request = kwargs.pop('request')
+        if data:
+            forms.Form.__init__(self, data, **kwargs)
+        else:
+            forms.Form.__init__(self, **kwargs)
+        if hasattr(Contact, 'groups'):
+            if self.request.user.is_authenticated():
+                self.fields['groups'] = forms.ModelMultipleChoiceField(queryset=Group.objects.filter(pk__in=self.request.user.groups.values_list('pk', flat=True)), required=False)
+            else:
+                self.fields['groups'] = forms.ModelMultipleChoiceField(queryset=Group.objects.all(), required=False)
+
+    def perform(self, request, results):
+        groups = self.cleaned_data['groups']
+        for response in results:
+            for g in groups:
+                response.contact.groups.add(g)
+        return ('%d Contacts assigned to %d groups.' % (len(results), len(groups)), 'success',)

@@ -30,9 +30,12 @@
 }
 
 #div_action_2{
-   margin-left:400px;
- 
+
+   margin-top:-200px;
+   
+
 }
+
 #div_filter_3{
     margin-left:600px;
 
@@ -59,7 +62,7 @@ margin-top:-60px;
 
 #actions
 {
-    min-height:350px;
+    min-height:400px;
 }
 .export_link{
    clear:both;
