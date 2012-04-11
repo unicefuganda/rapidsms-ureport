@@ -24,7 +24,7 @@ import datetime
 import re
 import difflib
 import urllib2
-from ureport_project.rapidsms_script.script.signals import script_progress_was_completed
+from script.signals import script_progress_was_completed
 
 
 class IgnoredTags(models.Model):
