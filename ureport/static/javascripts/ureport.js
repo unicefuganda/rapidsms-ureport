@@ -16,6 +16,7 @@ function remove_selection() {
 
 function ajax_loading(element) {
           var t = $(element);
+          
           var offset = t.offset();
           var dim = {
               left: offset.left,
@@ -45,7 +46,7 @@ var bar_opts = {
     credits:false,
     tooltip: {formatter: function() {return '' + this.x + ': ' + this.y;}},
     plotOptions: {column: {pointPadding: 0.2,borderWidth: 0}},
-    series: [{data:[]}],
+    series: [{data:[]}]
     
 };
 

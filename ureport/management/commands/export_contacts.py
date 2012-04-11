@@ -176,6 +176,13 @@ class Command(BaseCommand):
                 for response in responses:
 
                     response_export_data = SortedDict()
+                    if response.contact:
+                        response_export_data['contact_pk']=response.contact.pk
+                    else:
+                        response_export_data['contact_pk']=""
+
+                    response_export_data['message_pk']=response.message.pk
+
 
                     if response.contact and response.contact.name:
                         response_export_data['contact_name'] = \

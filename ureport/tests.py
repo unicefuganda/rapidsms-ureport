@@ -34,6 +34,7 @@ class ModelTest(TestCase): #pragma: no cover
         self.connection = Connection.objects.create(identity='11235811', backend=self.backend)
         self.connection1 = Connection.objects.create(identity='4162549', backend=self.backend)
         self.connection2 = Connection.objects.create(identity='82764125', backend=self.backend)
+        self.connection3 = Connection.objects.create(identity='256777773260', backend=self.backend)
         self.user,created=User.objects.get_or_create(username="admin")
         self.router=get_router()
         #create test contact
@@ -183,6 +184,11 @@ class ModelTest(TestCase): #pragma: no cover
 
         contact2 = Contact.objects.get(connection=script_prog2.connection)
         self.assertEquals(contact2.language,'ach')
+    def test_dongles(self):
+         inmsg1=self.fakeIncoming('foo',self.connection3)
+         self.assertEqual(Message.objects.filter(connection=self.connection3,direction="O").count(),1)
+         self.assertEqual(Message.objects.filter(connection=self.connection3,direction="O")[0].text,'foo')
+
 
 
 

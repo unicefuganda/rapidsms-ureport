@@ -35,7 +35,7 @@ a {
     padding-bottom: 3px;
     width: 120px;
 
-   
+
 }
 .signup
 {
@@ -156,9 +156,9 @@ div.why-placeholder span {
 
 .quotebox {
     margin-left: 15px;
-    
+
     height: auto;
-    
+
     position: relative;
     padding: 10px;
      border: 1px solid #2b2b2b;
@@ -175,7 +175,7 @@ div.why-placeholder span {
 }
 
 .topquote {
-	
+
 	float:right;
 	width: 90px;
     margin-top:-15px;
@@ -199,10 +199,10 @@ div.why-placeholder span {
     margin-bottom:3px;
 
     width:160px;
-       
-   
+
+
 }
-	
+
 .quoted {
 	margin-left: 2px;
 	color: grey;
@@ -348,7 +348,7 @@ div.why-placeholder span {
 
 .poll_list ul li {
     padding: 5px 5px 5px 10px;
-    border-bottom: solid 1px black;	
+    border-bottom: solid 1px black;
 }
 
 .scrollbottom {
@@ -358,11 +358,11 @@ div.why-placeholder span {
 }
 
 .mapmodule {
-    height: 400px;	
+    height: 400px;
 }
 
 #map_layers {
-    position:relative;  
+    position:relative;
 }
 
 .key {
@@ -372,11 +372,11 @@ div.why-placeholder span {
     padding-left: 0;
     position: absolute;
     left: 0px;
-    z-index: 1;	
+    z-index: 1;
 }
 
 .key li {
-    padding: 2px;	
+    padding: 2px;
 }
 
 .step{
