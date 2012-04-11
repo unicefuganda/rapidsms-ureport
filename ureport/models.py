@@ -18,12 +18,13 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models.signals import post_save
 from rapidsms_xforms.models import  XFormField
-from ussd.models import ussd_pre_transition, ussd_complete, Navigation, TransitionException, Field, Question,StubScreen
+from ussd.models import ussd_pre_transition,Menu, ussd_complete, Navigation, TransitionException, Field, Question,StubScreen
 
 import datetime
 import re
 import difflib
 import urllib2
+from ureport_project.rapidsms_script.script.signals import script_progress_was_completed
 
 
 class IgnoredTags(models.Model):
@@ -166,17 +167,19 @@ def check_conn(sender, **kwargs):
         c.delete()
 def update_latest_poll(sender, **kwargs):
     poll=kwargs['instance']
-    xf=XFormField.objects.get(name='latest_poll')
-    xf.question=poll.question
-    xf.command="poll_"+str(poll.pk)
-    xf.save()
-    stub_screen=StubScreen.objects.get(slug='question_response')
-    if poll.default_response:
-        stub_screen.text=poll.default_response
-        stub_screen.save()
-    else:
-        stub_screen.text="Thanks For Your Response."
-        stub_screen.save()
+    if poll.categories:
+        xf=XFormField.objects.get(name='latest_poll')
+        xf.question=poll.question
+        xf.command="poll_"+str(poll.pk)
+        xf.save()
+        stub_screen=StubScreen.objects.get(slug='question_response')
+        if poll.default_response:
+            stub_screen.text=poll.default_response
+            stub_screen.save()
+        else:
+            stub_screen.text="Thanks For Your Response."
+            stub_screen.save()
+        Menu.tree.rebuild()
 
 def ussd_poll(sender, **kwargs):
 
@@ -214,5 +217,5 @@ def ussd_poll(sender, **kwargs):
 
 script_progress_was_completed.connect(autoreg, weak=False)
 post_save.connect(check_conn, sender=Connection, weak=False)
-post_save.connect(update_latest_poll, sender=Poll, weak=False)
+#post_save.connect(update_latest_poll, sender=Poll, weak=False)
 ussd_complete.connect(ussd_poll, weak=False)
