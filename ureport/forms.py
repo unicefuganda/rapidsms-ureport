@@ -435,7 +435,7 @@ class BlacklistForm2(ActionForm):
     def perform(self, request, results):
         if request.user and request.user.has_perm('unregister.add_blacklist'):
 
-            connections=Connection.objects.filter(pk__in=results.values_list('message__connection')).distinct()
+            connections=Connection.objects.filter(pk__in=results.values_list('connection')).distinct()
             for c in connections:
                 Blacklist.objects.get_or_create(connection=c)
                 Message.objects.create(status="Q",connection=c,text="Your UReport opt out is confirmed.If you made a mistake,or you want your voice to be heard again,text in JOIN and send it to 8500!All SMS messages are free")
