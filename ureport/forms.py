@@ -438,7 +438,7 @@ class BlacklistForm2(ActionForm):
             connections=Connection.objects.filter(pk__in=results.values_list('connection')).distinct()
             for c in connections:
                 Blacklist.objects.get_or_create(connection=c)
-                Message.objects.create(status="Q",connection=c,text="Your UReport opt out is confirmed.If you made a mistake,or you want your voice to be heard again,text in JOIN and send it to 8500!All SMS messages are free")
+                Message.objects.create(status="Q",direction="O",connection=c,text="Your UReport opt out is confirmed.If you made a mistake,or you want your voice to be heard again,text in JOIN and send it to 8500!All SMS messages are free")
             return ('You blacklisted %d numbers' % len(connections), 'success',)
         else:
             return ("You don't have permissions to blacklist numbers", 'error',)
