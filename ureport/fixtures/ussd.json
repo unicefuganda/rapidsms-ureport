@@ -275,7 +275,7 @@
         "pk": "weekly_poll",
         "model": "ussd.question",
         "fields": {
-            "question_text": "6th Feb is day of zero tolerance to female circumcision.We know its illegal but is still practiced so is the culture more important than the law?YES or NO\r\n",
+            "question_text": "6th Feb is day of zero tolerance to female circumcision.We know its illegal but is still practiced so is the culture more important than the law?1.YES or 2.NO\r\n",
             "next": "question_response"
         }
     },
