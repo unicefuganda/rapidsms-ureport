@@ -424,5 +424,21 @@ class AssignResponseGroupForm(ActionForm):
         groups = self.cleaned_data['groups']
         for response in results:
             for g in groups:
-                response.contact.groups.add(g)
+                if response.contact:
+                    response.contact.groups.add(g)
         return ('%d Contacts assigned to %d groups.' % (len(results), len(groups)), 'success',)
+
+
+class BlacklistForm2(ActionForm):
+    """ abstract class for all the filter forms"""
+    action_label = 'Blacklist/Opt-out Users'
+    def perform(self, request, results):
+        if request.user and request.user.has_perm('unregister.add_blacklist'):
+
+            connections=results.values_list('message__connection').distinct()
+            for c in connections:
+                Blacklist.objects.get_or_create(connection=c)
+                Message.objects.create(status="Q",connection=c,text="Your UReport opt out is confirmed.If you made a mistake,or you want your voice to be heard again,text in JOIN and send it to 8500!All SMS messages are free")
+            return ('You blacklisted %d numbers' % len(connections), 'success',)
+        else:
+            return ("You don't have permissions to blacklist numbers", 'error',)
