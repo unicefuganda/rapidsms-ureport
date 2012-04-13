@@ -15,6 +15,8 @@ from utils import get_flagged_messages
 from uganda_common.utils import ExcelResponse
 
 from rapidsms_httprouter.views import receive
+from rapidsms_httprouter.models import Message
+
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
@@ -1169,3 +1171,28 @@ def mp_dashboard(request):
 
     return render_to_response('ureport/mp_dashboard.html', context_dict,
                               context_instance=RequestContext(request))
+
+def ussd_manager(request):
+    ussd_contacts=Contact.objects.filter(groups__name="equatel")
+    ussd_conns=Connection.objects.filter(contact__in=ussd_contacts)
+    messages=Message.objects.filter(connection__in=ussd_conns)
+
+
+
+    return generic(
+        request,
+        model=Message,
+        queryset=messages,
+        objects_per_page=25,
+        partial_row='contact/partials/message_row.html',
+        base_template='ureport/ussd_messages_base.html',
+        results_title='Ussd Messages',
+        columns=[('Message', True, 'text', SimpleSorter()),
+            ('Sender Information', True,
+             'connection__contact__name', SimpleSorter()), ('Date',
+                                                            True, 'date', SimpleSorter()), ('Type', True,
+                                                                                            'application',
+                                                                                            SimpleSorter())],
+        sort_column='date',
+        sort_ascending=False,
+        )

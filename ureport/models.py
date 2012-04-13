@@ -217,5 +217,5 @@ def ussd_poll(sender, **kwargs):
 
 script_progress_was_completed.connect(autoreg, weak=False)
 post_save.connect(check_conn, sender=Connection, weak=False)
-#post_save.connect(update_latest_poll, sender=Poll, weak=False)
+post_save.connect(update_latest_poll, sender=Poll, weak=False)
 ussd_complete.connect(ussd_poll, weak=False)
