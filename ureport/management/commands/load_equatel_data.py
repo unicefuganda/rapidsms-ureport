@@ -20,7 +20,7 @@ from poll.models import *
 from script.utils.handling import find_closest_match
 
 from uganda_common.utils import assign_backend
-
+from ureport.models import EquatelLocation
 class Command(BaseCommand):
 
 
@@ -34,8 +34,15 @@ class Command(BaseCommand):
 
         csv_rows = csv.reader(open(path), delimiter=",")
         rnum = 0
-        for row in csv_rows[1:]:
+        for row in csv_rows:
+
 
             serial ,site_location,location,segment,district ,region  = tuple(row)
+            print district
+            try:
+                l=EquatelLocation.objects.create(serial=serial,segment=segment,location=Location.objects.get(type__slug="district",name__icontains=district.strip()))
+            except Location.DoesNotExist:
+                print district +" not found"
+
           
 
