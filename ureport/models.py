@@ -192,7 +192,7 @@ def ussd_poll(sender, **kwargs):
             pass
         sender.connection.save()
         equatel,created=Group.objects.get_or_create(name="equatel")
-        sender.contact.groups.add(equatel)
+        sender.connection.contact.groups.add(equatel)
 
     if sender.navigations.filter(screen__slug='weekly_poll').exists():
         field=XFormField.objects.get(name="latest_poll")
