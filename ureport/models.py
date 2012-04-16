@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from poll.models import Poll, LocationResponseForm, STARTSWITH_PATTERN_TEMPLATE,ResponseCategory
+from poll.models import Poll, LocationResponseForm,Response, STARTSWITH_PATTERN_TEMPLATE,ResponseCategory
 from rapidsms.models import Contact, Connection
 from django.contrib.auth.models import User, Group
 from django.contrib.sites.models import Site
@@ -19,6 +19,7 @@ from django.core.mail import send_mail
 from django.db.models.signals import post_save
 from rapidsms_xforms.models import  XFormField
 from ussd.models import ussd_pre_transition,Menu, ussd_complete, Navigation, TransitionException, Field, Question,StubScreen
+from celery.contrib import rdb
 
 import datetime
 import re
@@ -166,6 +167,8 @@ def check_conn(sender, **kwargs):
     if not c.identity.isdigit():
         c.delete()
 def update_latest_poll(sender, **kwargs):
+
+    rdb.set_trace()
     poll=kwargs['instance']
     if poll.categories:
         xf=XFormField.objects.get(name='latest_poll')
@@ -182,35 +185,33 @@ def update_latest_poll(sender, **kwargs):
         Menu.tree.rebuild()
 
 def ussd_poll(sender, **kwargs):
-
+    connection=sender.connection
     if not  sender.connection.contact:
-        sender.connection.contact = Contact.objects.create(name='Anonymous User')
+        connection.contact = Contact.objects.create(name='Anonymous User')
+
         try:
             serial=sender.navigations.order_by('date')[1].response.rsplit("_")[0]
-            sender.reporting_location=EquatelLocation.objects.get(serial=serial).location
+            connection.contact.reporting_location=EquatelLocation.objects.get(serial=serial).location
+            connection.contact.save()
         except EquatelLocation.DoesNotExist:
             pass
-        sender.connection.save()
+        connection.save()
         equatel,created=Group.objects.get_or_create(name="equatel")
-        sender.connection.contact.groups.add(equatel)
+        connection.contact.groups.add(equatel)
 
     if sender.navigations.filter(screen__slug='weekly_poll').exists():
         field=XFormField.objects.get(name="latest_poll")
         nav=sender.navigations.filter(screen__slug='weekly_poll').latest('date')
         poll=Poll.objects.get(pk=int(field.command.rsplit('_')[1]))
-        msg=Message.objects.create(connection=sender.connection,text=nav.response,direction="I")
-        resp = Response.objects.create(poll=poll, message=msg, contact=sender.connection.contact, date=nav.date)
-        for category in poll.categories.all():
-            for rule in category.rules.all():
-                regex = re.compile(rule.regex, re.IGNORECASE)
-                if resp.eav.poll_text_value:
-                    if regex.search(nav.response):
-                        if category.error_category:
-                            resp.has_errors = True
-                        rc = ResponseCategory.objects.create(response=resp, category=category)
-                        break
+        yes=poll.categories.filter(name="yes")
+        no=poll.categories.get(name='no')
+        cats={'1':['yes',yes],'2':['no',no]}
+        msg=Message.objects.create(connection=connection,text=cats[nav.response][0],direction="I")
+        resp = Response.objects.create(poll=poll, message=msg, contact=connection.contact, date=nav.date)
+        resp.categories.add(ResponseCategory.objects.create(response=resp, category=cats[nav.response][1]))
+
     if sender.navigations.filter(screen__slug='send_report'):
-        Message.objects.create(connection=sender.connection,text=sender.navigations.filter(screen__slug='send_report').latest('date').response,direction="I")
+        Message.objects.create(connection=connection,text=sender.navigations.filter(screen__slug='send_report').latest('date').response,direction="I")
 
 
 

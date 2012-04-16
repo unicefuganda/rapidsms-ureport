@@ -1175,7 +1175,7 @@ def mp_dashboard(request):
 def ussd_manager(request):
     ussd_contacts=Contact.objects.filter(groups__name="equatel")
     ussd_conns=Connection.objects.filter(contact__in=ussd_contacts)
-    messages=Message.objects.filter(connection__in=ussd_conns)
+    messages=Message.objects.filter(connection__in=ussd_conns).order_by('-date')
 
 
 
