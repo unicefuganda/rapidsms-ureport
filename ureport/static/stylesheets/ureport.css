@@ -264,11 +264,7 @@ div#visual{
     margin-top:10px;
 }
 
-#div_panel_loading{
-    background-image:url("../images/ajax-loader.gif");
-    background-repeat:no-repeat;
-    background-position: center center;
-}
+
 
 
 
