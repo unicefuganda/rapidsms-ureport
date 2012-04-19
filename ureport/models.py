@@ -168,7 +168,6 @@ def check_conn(sender, **kwargs):
         c.delete()
 def update_latest_poll(sender, **kwargs):
 
-    rdb.set_trace()
     poll=kwargs['instance']
     if poll.categories:
         xf=XFormField.objects.get(name='latest_poll')
