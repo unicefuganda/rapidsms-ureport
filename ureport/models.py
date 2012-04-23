@@ -202,12 +202,13 @@ def ussd_poll(sender, **kwargs):
         field=XFormField.objects.get(name="latest_poll")
         nav=sender.navigations.filter(screen__slug='weekly_poll').latest('date')
         poll=Poll.objects.get(pk=int(field.command.rsplit('_')[1]))
-        yes=poll.categories.filter(name="yes")
-        no=poll.categories.get(name='no')
-        cats={'1':['yes',yes],'2':['no',no]}
-        msg=Message.objects.create(connection=connection,text=cats[nav.response][0],direction="I")
-        resp = Response.objects.create(poll=poll, message=msg, contact=connection.contact, date=nav.date)
-        resp.categories.add(ResponseCategory.objects.create(response=resp, category=cats[nav.response][1]))
+        if poll.categories.filter(name__in=["yes","no"]):
+            yes=poll.categories.filter(name="yes")
+            no=poll.categories.filter(name='no')
+            cats={'1':['yes',yes],'2':['no',no]}
+            msg=Message.objects.create(connection=connection,text=cats[nav.response][0],direction="I")
+            resp = Response.objects.create(poll=poll, message=msg, contact=connection.contact, date=nav.date)
+            resp.categories.add(ResponseCategory.objects.create(response=resp, category=cats[nav.response][1]))
 
     if sender.navigations.filter(screen__slug='send_report'):
         Message.objects.create(connection=connection,text=sender.navigations.filter(screen__slug='send_report').latest('date').response,direction="I")
