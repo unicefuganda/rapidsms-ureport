@@ -8,6 +8,7 @@ class ActivatedcContact(models.Model):
     the Location object they're reporting from.
     """
     health_facility = models.CharField(null=True,blank=True,max_length=50)
+    is_caregiver = models.BooleanField(default=False)
 
     class Meta:
         abstract = True

@@ -936,7 +936,24 @@ def ureporter_profile(request, connection_pk):
             session[0].responses.filter(response__poll=gr_poll)[0].response.message.text
         except (ScriptResponse.DoesNotExist, IndexError):
             how_did_u_hear = 'N/A'
+    if request.GET.get('download',None):
 
+        data = []
+        for message in messages:
+            rep = {}
+
+            rep['Message'] = message.text
+            rep['Mobile Number'] = message.connection.identity
+
+            if message.connection.contact:
+                rep['name'] = message.connection.contact.name
+                rep['district'] = message.connection.contact.reporting_location
+            else:
+                rep['name'] = ''
+                rep['district'] = ''
+            data.append(rep)
+
+        return ExcelResponse(data=data)
     columns = [('Message', True, 'text', SimpleSorter()), ('connection'
                                                            , True, 'connection', SimpleSorter()), ('Date', True,
                                                                                                    'date',
@@ -1196,3 +1213,7 @@ def ussd_manager(request):
         sort_column='date',
         sort_ascending=False,
         )
+@login_required
+def blacklist(request):
+    if request.GET.get('blacklist'):
+        pass
