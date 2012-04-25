@@ -943,7 +943,10 @@ def ureporter_profile(request, connection_pk):
             rep = {}
 
             rep['Message'] = message.text
+            rep['direction']=message.direction
+            rep['date']=message.date
             rep['Mobile Number'] = message.connection.identity
+
 
             if message.connection.contact:
                 rep['name'] = message.connection.contact.name
@@ -1214,6 +1217,9 @@ def ussd_manager(request):
         sort_ascending=False,
         )
 @login_required
-def blacklist(request):
-    if request.GET.get('blacklist'):
-        pass
+def blacklist(request,pk):
+    contact=Contact.objects.get(pk=int(pk))
+    if request.user and request.user.has_perm('unregister.add_blacklist'):
+        Blacklist.objects.get_or_create(connection=contact.default_connection)
+        Message.objects.create(status="Q",direction="O",connection=contact.default_connection,text="Your UReport opt out is confirmed.If you made a mistake,or you want your voice to be heard again,text in JOIN and send it to 8500!All SMS messages are free")
+        return HttpResponse(status=200)

@@ -50,7 +50,7 @@ $('#div_action_0').find('a').html("Send Message");
         {% else %}
         {{ contact.language }}
          {% endif %}
-    </td><td><a href="?download=True"</td></tr>
+    </td><td><a href="?download=True" class="btn">Download</a></td><td><a class="btn" href="/contact/{{ contact.pk }}/blacklist/" data-remote=true data-disable-with="blacklisting...">Blacklist</a> </td></tr>
 </table>
 
     </div>

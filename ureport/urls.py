@@ -220,4 +220,6 @@ urlpatterns = patterns('',
      url(r'createpoll/$',new_poll,name="new_poll"),
      url(r'mp_dashboard/$',mp_dashboard,name="mp_dashboard"),
        url(r'ussd_manager/$',ussd_manager,name="ussd_manager"),
+
+       url(r'^contact/(?P<pk>\d+)/blacklist/$', blacklist, name="tag_cloud"),
 )
