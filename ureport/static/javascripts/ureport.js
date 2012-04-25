@@ -176,7 +176,7 @@ var pie_opts = {
     tooltip: {formatter: function() {return '<b>' + this.point.name + '</b>: ' + this.y.toFixed(1) + ' %';}},
     plotOptions: {pie: {allowPointSelect: true,cursor: 'pointer',dataLabels: {
                 enabled: true,
-                formatter: function() {},
+                formatter: function() {return this.point.name;},
                 color: 'white',
                 style: {font: '13px Trebuchet MS, Verdana, sans-serif'}}}},
     legend: {layout: 'horizontal',style: {left: 'auto',bottom: 'auto',right: '10px',top: '525px'}},
