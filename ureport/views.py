@@ -746,12 +746,14 @@ def flagged_messages(request):
             rep['Message'] = mf.message.text
             rep['Mobile Number'] = mf.message.connection.identity
             rep['flag'] = mf.flag.name
+            rep['date']=mf.message.date.date()
             if mf.message.connection.contact:
                 rep['name'] = mf.message.connection.contact.name
                 rep['district'] = mf.message.connection.contact.reporting_location
             else:
                 rep['name'] = ''
                 rep['district'] = ''
+
             data.append(rep)
 
         return ExcelResponse(data=data)
@@ -945,7 +947,7 @@ def ureporter_profile(request, connection_pk):
 
             rep['Message'] = message.text
             rep['direction']=message.direction
-            rep['date']=message.date
+            rep['date']=message.date.date()
             rep['Mobile Number'] = message.connection.identity
 
 

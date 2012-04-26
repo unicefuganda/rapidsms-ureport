@@ -136,7 +136,7 @@ def autoreg(**kwargs):
         if group_to_match :
             for g in re.findall(r'\w+', group_to_match):
                 if g:
-                    group = find_closest_match(str(g), Group.objects.exclude(name="MP"))
+                    group = find_closest_match(str(g), Group.objects.exclude(name__in=["MP","delegate"]))
                     if group:
                         contact.groups.add(group)
                         break
@@ -212,6 +212,7 @@ def ussd_poll(sender, **kwargs):
 
     if sender.navigations.filter(screen__slug='send_report'):
         Message.objects.create(connection=connection,text=sender.navigations.filter(screen__slug='send_report').latest('date').response,direction="I")
+
 
 
 

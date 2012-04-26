@@ -3,56 +3,112 @@
     Messages - {{ block.super }}
 {% endblock %}
 {% block stylesheets %}
-    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/ureport.css" />
-    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/splits.css" />
-    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/modules.css" />
-    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/icons.css" />
-    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}contact/stylesheets/messages.css" />
-    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/message_log.css" />
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/ureport.css"/>
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/splits.css"/>
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/modules.css"/>
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/icons.css"/>
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}contact/stylesheets/messages.css"/>
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/message_log.css"/>
 {% endblock %}
 {% block extra_js %}
-   
-   <script type="text/javascript">
-   $(function() {
- $('#actions').append('<input type="checkbox" checked="checked" style="display:none;" name="results" value="{{contact.pk}}">');
-$('#div_action_0').find('a').html("Send Message");
-   });
 
-   </script>
+    <script type="text/javascript">
+        $(function() {
+            $('#actions').append('<input type="checkbox" checked="checked" style="display:none;" name="results" value="{{contact.pk}}">');
+            $('#div_action_0').find('a').html("Send Message");
+        });
+
+    </script>
 {% endblock %}
 {% block content %}
-<div class="module">
-<h2>Profile for {{ contact.name }}</h2>
+    <div class="module">
+        <h2>Profile for {{ contact.name }}</h2>
 
-<table style="font-size: 16px;">
-    <tr><td>Name: </td> <td>{{ contact.name }}</td></tr>
-    <tr><td>Mobile: </td> <td>{{ contact.default_connection.identity }}</td></tr>
-    <tr><td>Gender: </td> <td>{{ contact.gender }}</td></tr>
-    <tr><td>age: </td> <td>{{ contact.age }}</td></tr>
-    <tr><td>District: </td> <td>{{ contact.reporting_location.name }}</td></tr>
+        <table style="font-size: 16px;">
+            <tr>
+                <td>Name:</td>
+                <td>{{ contact.name }}</td>
+            </tr>
+            <tr>
+                <td>Mobile:</td>
+                <td>{{ contact.default_connection.identity }}</td>
+            </tr>
+            <tr>
+                <td>Gender:</td>
+                <td>{{ contact.gender }}</td>
+            </tr>
+            <tr>
+                <td>age:</td>
+                <td>{{ contact.age }}</td>
+            </tr>
+            <tr>
+                <td>District:</td>
+                <td>{{ contact.reporting_location.name }}</td>
+            </tr>
+            {% if contact.is_caregiver %}
+                <tr>
+                    <td>caregiver:</td>
+                    <td>Yes</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td>caregiver:</td>
+                    <td>No</td>
+                </tr>
+            {% endif %}
 
-    <tr><td>HEALTH FACILITY: </td> <td>{{ contact.health_facility }}</td></tr>
+
+            <tr>
+                <td>Health Facility:</td>
+                <td>{{ contact.health_facility }}</td>
+            </tr>
 
 
-    <tr><td>Village: </td> <td>{{ contact.village }}</td></tr>
-    <tr><td>Join Date: </td> <td>{{ contact.join_date }}</td></tr>
-    <tr><td>Group: </td><td>{{ contact.groups.all.0 }}</td></tr>
-    <tr><td>How Did You Hear About Ureport? </td><td>{{ how_did_u_hear }}</td></tr>
-    <tr><td>Total Responses and Response rate :</td><td>{{  contact.responses.count}} responses, {{ response_rate|floatformat }}%</td></tr>
-    <tr><td>Total Outgoing & Incoming :</td> <td>Outgoing {{ total_outgoing }} , Incoming {{ total_incoming }}</td></tr>
-    {% if not contact.is_active %}
-        <tr><td>Quit Date: </td> <td>{{ contact.quit_date }}</td></tr>
-    {% endif %}
+            <tr>
+                <td>Village:</td>
+                <td>{{ contact.village }}</td>
+            </tr>
+            <tr>
+                <td>Join Date:</td>
+                <td>{{ contact.join_date }}</td>
+            </tr>
+            <tr>
+                <td>Group:</td>
+                <td>{{ contact.groups.all.0 }}</td>
+            </tr>
+            <tr>
+                <td>How Did You Hear About Ureport?</td>
+                <td>{{ how_did_u_hear }}</td>
+            </tr>
+            <tr>
+                <td>Total Responses and Response rate :</td>
+                <td>{{ contact.responses.count }} responses, {{ response_rate|floatformat }}%</td>
+            </tr>
+            <tr>
+                <td>Total Outgoing & Incoming :</td>
+                <td>Outgoing {{ total_outgoing }} , Incoming {{ total_incoming }}</td>
+            </tr>
+            {% if not contact.is_active %}
+                <tr>
+                    <td>Quit Date:</td>
+                    <td>{{ contact.quit_date }}</td>
+                </tr>
+            {% endif %}
 
-    <tr><td>Language: </td> <td>
-        {% if contact.language == "" %}
-        en
-        {% else %}
-        {{ contact.language }}
-         {% endif %}
-    </td><td><a href="?download=True" class="btn">Download</a></td><td><a class="btn" href="/contact/{{ contact.pk }}/blacklist/" data-remote=true data-disable-with="blacklisting...">Blacklist</a> </td></tr>
-</table>
+            <tr>
+                <td>Language:</td>
+                <td>
+                    {% if contact.language == "" %}
+                        en
+                    {% else %}
+                        {{ contact.language }}
+                    {% endif %}
+                </td>
+                <td><a href="?download=True" class="btn">Download</a></td>
+                <td><a class="btn" href="/contact/{{ contact.pk }}/blacklist/" data-remote=true
+                       data-disable-with="blacklisting...">Blacklist</a></td></tr>
+        </table>
 
     </div>
-{{ block.super }}
+    {{ block.super }}
 {% endblock %}
