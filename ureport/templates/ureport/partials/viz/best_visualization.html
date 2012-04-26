@@ -13,7 +13,8 @@ CURRENT POLL
 
     
 </span>
-    <span style="color:#00638A;font-size:16px;">{{ poll.responses.count }}  Responses out of {{ poll.contacts.count }} Participants( {{ rate }}%)</span>
+     {% load humanize %}
+    <span style="color:#00638A;font-size:16px;">{{ poll.responses.count|intcomma }}  Responses out of {{ poll.contacts.count|intcomma }} Participants ({{ rate }}%)</span>
 </h4>
 {% if tags %}
 
