@@ -410,12 +410,13 @@ def best_visualization(request, poll_id=None):
     #        poll = Poll.objects.get(pk=poll_id)
     #    else:
     #        poll = Poll.objects.latest('start_date')
-
+    rate=poll.responses.count()*100/poll.contacts.count()
     dict = {
         'poll': poll,
         'polls': [poll],
         'unlabeled': True,
         'module': module,
+        'rate':int(rate),
         }
     if poll.type == Poll.TYPE_TEXT\
     and ResponseCategory.objects.filter(response__poll=poll).count()\
