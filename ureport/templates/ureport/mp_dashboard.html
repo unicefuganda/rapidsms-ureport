@@ -123,6 +123,7 @@
             <thead>
             <tr>
                 <th>Text</th>
+                <th>Date</th>
                 <th>Name</th>
                 <th>Number</th>
                 <th>District</th>
@@ -133,10 +134,16 @@
             {% for msg in messages.object_list %}
                 <tr>
                     <td>{{ msg.text }}</td>
+                    <td>{{ msg.date|date:"m/d/Y H:i:s" }}</td>
                     <td>{{ msg.connection.contact.name }}</td>
-                    <td>{{ msg.connection.identity }}</td>
+                    <td><a href="/messagehistory/{{ msg.connection.pk }}/">{{ msg.connection.identity }}</a></td>
                     <td>{{ msg.connection.contact.reporting_location }}</td>
-                    <td>{{ msg.connection.contact.groups.all.0.name }}</td>
+                    <td><ul>
+                        {% for gr in msg.connection.contact.groups.all %}
+                        {{ gr.name }}
+                            {% endfor %}
+                            </ul>
+                            </td>
 
                 </tr>
 
