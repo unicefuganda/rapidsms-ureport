@@ -127,7 +127,7 @@
                 <th>Name</th>
                 <th>Number</th>
                 <th>District</th>
-                <th>Group</th>
+                <th>Group(s)</th>
             </tr>
             </thead>
             <tbody id="mp_bd">
@@ -140,7 +140,7 @@
                     <td>{{ msg.connection.contact.reporting_location }}</td>
                     <td><ul>
                         {% for gr in msg.connection.contact.groups.all %}
-                        {{ gr.name }}
+                        {{ gr.name }},
                             {% endfor %}
                             </ul>
                             </td>
