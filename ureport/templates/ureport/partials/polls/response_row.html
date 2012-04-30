@@ -2,7 +2,7 @@
 {% block message_information %}
      {%if  perms.ureport.view_numbers %}
     <td class="response_sender_col">
-      <a href="{% url contact.views.view_message_history response.message.connection.pk %}">
+      <a href="{% url ureport.views.ureporter_profile object.default_connection.pk %}">
           {% if response.message.connection.contact %}
               
             {{ response.message.connection.contact }} (
