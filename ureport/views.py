@@ -1110,7 +1110,7 @@ def mp_dashboard(request):
             for msg in msgs:
                 m = {}
                 m["text"] = msg.text
-                m["date"]=msg.date.date()
+                m["date"]=str(msg.date.date())
                 m["name"] = msg.connection.contact.name
                 m["number"] = msg.connection.identity
                 if msg.connection.contact.reporting_location:
