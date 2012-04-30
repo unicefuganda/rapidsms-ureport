@@ -222,4 +222,5 @@ urlpatterns = patterns('',
        url(r'ussd_manager/$',ussd_manager,name="ussd_manager"),
 
        url(r'^contact/(?P<pk>\d+)/blacklist/$', blacklist, name="tag_cloud"),
+        url(r'^view_poll/(?P<pk>\d+)/$', view_poll, name="view_poll"),
 )

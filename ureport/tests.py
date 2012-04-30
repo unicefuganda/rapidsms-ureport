@@ -22,13 +22,17 @@ from script.models import *
 from django.core import management
 from script.utils.incoming import incoming_progress
 from script.utils.outgoing import check_progress
+from django.core.management import call_command
 
 class ModelTest(TestCase): #pragma: no cover
-
+    fixtures = ['test_fix.json','Initial_data.json','luo_translation.json','script2.json','script_luo.json','ussd.json'] 
     def setUp(self):
         """
         Create a dummy connection
         """
+
+
+
 
         self.backend = Backend.objects.create(name='test')
         self.connection = Connection.objects.create(identity='11235811', backend=self.backend)
@@ -115,12 +119,6 @@ class ModelTest(TestCase): #pragma: no cover
                     self.assertEqual(self.gem_group,group)
 
 
-    def testPost_syncdb_handlers(self):
-         #call syncdb
-         call_command("syncdb")
-         self.assertEquals(Script.objects.count(),2)
-         self.assertEquals(Poll.objects.count(), 6)
-
     def test_quit(self):
         connection=Connection.objects.all()[0]
         incomingmessage = self.fakeIncoming('quit',self.connection)
@@ -138,15 +136,20 @@ class ModelTest(TestCase): #pragma: no cover
         #make sure script progress was assigned the right language
         self.assertEqual(script_prog1.language,"en")
         #make sure the connection was dumped into the right script
-        self.assertEquals(script_prog1.script.slug, 'ureport_autoreg')
+        self.assertEquals(script_prog1.script.slug, 'ureport_autoreg2')
 
+        res_count = Message.objects.filter(direction='O', connection=self.connection1).count()
+        for script in Script.objects.all():
+            check_progress(script)
 
-
-        response1_1 = check_progress(self.connection1)
+        response = Message.objects.filter(direction='O', connection=self.connection1)
+        if response.exists() and not response.count() == res_count:
+            response = response.latest('date').text
+        else:
+            response = None
         # we're ready for the first message to go out
-        for s in script_prog1.script.steps.filter(order=0):
-            print s.pk
-        self.assertEquals(response1_1, script_prog1.script.steps.get(order=0).message)
+
+        self.assertEquals(response, script_prog1.script.steps.get(order=0).message)
 
         self.fake_script_dialog(script_prog1, script_prog1.connection,
                                 [\
@@ -168,9 +171,17 @@ class ModelTest(TestCase): #pragma: no cover
         self.assertEquals(ScriptProgress.objects.count(), 2)
         script_prog2 = ScriptProgress.objects.order_by('pk')[1]
         #make sure the luo guy was dumped into the luo script
-        self.assertEquals(script_prog2.script.slug, 'ureport_autoreg_luo')
-        response2_1 = check_progress(self.connection2)
-        self.assertEquals(response2_1, script_prog2.script.steps.get(order=0).message)
+        self.assertEquals(script_prog2.script.slug, 'ureport_autoreg_luo2')
+        res_count = Message.objects.filter(direction='O', connection=self.connection2).count()
+        for script in Script.objects.all():
+            check_progress(script)
+
+        response = Message.objects.filter(direction='O', connection=self.connection2)
+        if response.exists() and not response.count() == res_count:
+            response = response.latest('date').text
+        else:
+            response = None
+        self.assertEquals(response, script_prog2.script.steps.get(order=0).message)
 
         self.fake_script_dialog(script_prog2, script_prog2.connection,
                                 [\
@@ -184,13 +195,13 @@ class ModelTest(TestCase): #pragma: no cover
 
         contact2 = Contact.objects.get(connection=script_prog2.connection)
         self.assertEquals(contact2.language,'ach')
-    def test_dongles(self):
-         inmsg1=self.fakeIncoming('foo',self.connection3)
-         self.assertEqual(Message.objects.filter(connection=self.connection3,direction="O").count(),1)
-         self.assertEqual(Message.objects.filter(connection=self.connection3,direction="O")[0].text,'foo')
 
-
-
+    def test_blacklist_poll(self):
+        connection=Connection.objects.all()[0]
+        incomingmessage = self.fakeIncoming('quit',self.connection)
+        self.assertEquals(Blacklist.objects.count(), 1)
+        script_prog = ScriptProgress.objects.all().order_by('pk')[0]
+        self.assertEqual(1,Poll.objects.get(name="blacklist").contacts.filter(connection=self.connection).count())
 
 
 

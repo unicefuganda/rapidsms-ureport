@@ -170,18 +170,25 @@ def update_latest_poll(sender, **kwargs):
 
     poll=kwargs['instance']
     if poll.categories:
-        xf=XFormField.objects.get(name='latest_poll')
-        xf.question=poll.question
-        xf.command="poll_"+str(poll.pk)
-        xf.save()
-        stub_screen=StubScreen.objects.get(slug='question_response')
-        if poll.default_response:
-            stub_screen.text=poll.default_response
-            stub_screen.save()
-        else:
-            stub_screen.text="Thanks For Your Response."
-            stub_screen.save()
-        Menu.tree.rebuild()
+        try:
+            xf=XFormField.objects.get(name='latest_poll')
+            xf.question=poll.question
+            xf.command="poll_"+str(poll.pk)
+            xf.save()
+            stub_screen=StubScreen.objects.get(slug='question_response')
+            if poll.default_response:
+                stub_screen.text=poll.default_response
+                stub_screen.save()
+            else:
+                stub_screen.text="Thanks For Your Response."
+                stub_screen.save()
+        except (XFormField.DoesNotExist,StubScreen.DoesNotExist):         
+            pass
+
+        try:
+            Menu.tree.rebuild()
+        except:
+            pass
 
 def ussd_poll(sender, **kwargs):
     connection=sender.connection
@@ -213,6 +220,14 @@ def ussd_poll(sender, **kwargs):
     if sender.navigations.filter(screen__slug='send_report'):
         Message.objects.create(connection=connection,text=sender.navigations.filter(screen__slug='send_report').latest('date').response,direction="I")
 
+def add_to_poll(sender,**kwargs):
+    try:
+        contact=kwargs.get('instance').connection.contact
+        poll=Poll.objects.get(name="blacklist")
+        poll.contacts.add(contact)
+    except:
+        pass
+    
 
 
 
@@ -221,3 +236,4 @@ script_progress_was_completed.connect(autoreg, weak=False)
 post_save.connect(check_conn, sender=Connection, weak=False)
 post_save.connect(update_latest_poll, sender=Poll, weak=False)
 ussd_complete.connect(ussd_poll, weak=False)
+post_save.connect(add_to_poll, sender=Blacklist, weak=False)
