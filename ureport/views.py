@@ -1110,6 +1110,7 @@ def mp_dashboard(request):
             for msg in msgs:
                 m = {}
                 m["text"] = msg.text
+                m["date"]=msg.date.date()
                 m["name"] = msg.connection.contact.name
                 m["number"] = msg.connection.identity
                 if msg.connection.contact.reporting_location:
@@ -1226,3 +1227,4 @@ def blacklist(request,pk):
         Blacklist.objects.get_or_create(connection=contact.default_connection)
         Message.objects.create(status="Q",direction="O",connection=contact.default_connection,text="Your UReport opt out is confirmed.If you made a mistake,or you want your voice to be heard again,text in JOIN and send it to 8500!All SMS messages are free")
         return HttpResponse(status=200)
+
