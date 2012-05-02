@@ -21,6 +21,7 @@ from rapidsms_xforms.models import  XFormField
 from ussd.models import ussd_pre_transition,Menu, ussd_complete, Navigation, TransitionException, Field, Question,StubScreen
 from celery.contrib import rdb
 
+
 import datetime
 import re
 import difflib
@@ -161,6 +162,43 @@ def autoreg(**kwargs):
                     recipients.append(email)
             send_mail("UReport now %d voices strong!" % total_ureporters, "%s (%s) was the %dth member to finish the sign-up.  Let's welcome them!" % (contact.name, connection.identity, total_ureporters), 'root@uganda.rapidsms.org', recipients, fail_silently=True)
 
+
+
+def get_results(poll):
+    cats=[]
+    response_count=poll.responses.count()
+    if poll.categories.all().exists():
+        for category in poll.categories.all():
+            ccount=poll.responses.filter(categories__category=category).count()
+            ccount_p=int(ccount*100/response_count)
+            cats.append(str(category.name)+":"+str(ccount_p)+"%")
+        return " ".join(cats)
+    else:
+        return str(response_count)+" responses"
+
+def update_poll_results():
+    latest_polls=Poll.objects.order_by('-pk')
+    res1=Menu.objects.get(slug="res1")
+
+    res1.label=latest_polls[0].question
+    res1.save()
+    res2=Menu.objects.get(slug="res2")
+    res2.label=latest_polls[1].question
+    res2.save()
+    res3=Menu.objects.get(slug="res3")
+    res3.label=latest_polls[2].question
+    res3.save()
+    res11=Menu.objects.get(slug="res11")
+    res11.label=get_results(latest_polls[0])
+    res11.save()
+    res21=Menu.objects.get(slug="res21")
+    res21.label=get_results(latest_polls[1])
+    res21.save()
+
+    res31=Menu.objects.get(slug="res31")
+    res31.label=get_results(latest_polls[2])
+    res31.save()
+
 def check_conn(sender, **kwargs):
     #delete bad connections
     c = kwargs['instance']
@@ -182,6 +220,7 @@ def update_latest_poll(sender, **kwargs):
             else:
                 stub_screen.text="Thanks For Your Response."
                 stub_screen.save()
+            update_poll_results()
         except (XFormField.DoesNotExist,StubScreen.DoesNotExist):         
             pass
 
@@ -216,9 +255,12 @@ def ussd_poll(sender, **kwargs):
             msg=Message.objects.create(connection=connection,text=cats[nav.response][0],direction="I")
             resp = Response.objects.create(poll=poll, message=msg, contact=connection.contact, date=nav.date)
             resp.categories.add(ResponseCategory.objects.create(response=resp, category=cats[nav.response][1]))
+    #update results
+    update_poll_results()
 
     if sender.navigations.filter(screen__slug='send_report'):
         Message.objects.create(connection=connection,text=sender.navigations.filter(screen__slug='send_report').latest('date').response,direction="I")
+
 
 def add_to_poll(sender,**kwargs):
     try:
