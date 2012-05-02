@@ -520,9 +520,20 @@
     },
 
     {
+        "pk": "blacklist_script",
+        "model": "script.script",
+        "fields": {"enabled": false, "name": "Blacklist script", "sites": []}
+    },
+    {
         "pk": 230,
         "model": "poll.poll",
         "fields": {"default_response": "", "name": "blacklist", "end_date": null, "contacts": [], "messages": [], "question": "Your UReport opt out is confirmed.Please dont forget to tell us the reason for quitting.you can always text join to reactivate.", "sites": [], "user": 1, "type": "t", "start_date": null, "response_type": "a"}
+    },
+
+    {
+        "pk": 111,
+        "model": "script.scriptstep",
+        "fields": {"script": "blacklist_script", "retry_offset": null, "rule": "w", "email": null, "num_tries": 1, "start_offset": 0, "message": "", "poll": 221, "order": 1, "giveup_offset": 86400}
     }
 
 

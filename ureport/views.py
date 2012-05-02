@@ -1227,11 +1227,11 @@ def blacklist(request,pk):
         Blacklist.objects.get_or_create(connection=contact.default_connection)
         Message.objects.create(status="Q",direction="O",connection=contact.default_connection,text="Your UReport opt out is confirmed.If you made a mistake,or you want your voice to be heard again,text in JOIN and send it to 8500!All SMS messages are free")
         return HttpResponse(status=200)
-
-def view_poll(request,poll_pk):
-    poll=Poll.objects.get(pk=poll_pk)
+@login_required
+def view_poll(request,pk):
+    poll=Poll.objects.get(pk=pk)
     categories=poll.categories.all()
-    return render_to_response('polls/poll_view.html', {
+    return render_to_response('ureport/polls/view_poll.html', {
         'poll': poll,
         'categories': categories,
         }, context_instance=RequestContext(request))

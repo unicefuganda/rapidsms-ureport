@@ -14,13 +14,10 @@
          <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/modules.css" />
 
     {% endblock %}
+{% block top_js %}
 
+{% endblock %}
 
-        <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/jquery.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}rapidsms/javascripts/collapse.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}generic/javascripts/jquery-ui-1.8.11.custom.min.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/ureport.js?1"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/ureport_extras.min.js?1"></script>
 
          <script type="text/javascript">
 
@@ -35,11 +32,8 @@
               })();
 
             </script>
- {% block javascripts %}
-    {% endblock %}
-{% block extra_js %}
 
-{% endblock %}
+
 </head>
 <body>
     <div class="container" style="background-color:#ffffff;">
@@ -108,6 +102,17 @@
 	           <p>RapidSMS and Ureport are available under the BSD license.</p>
 	        </div>
 	    </div>
+
+        <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/jquery.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}rapidsms/javascripts/collapse.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}generic/javascripts/jquery-ui-1.8.11.custom.min.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/ureport.min.js?1"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/ureport_extras.min.js?1"></script>
+    {% block javascripts %}
+    {% endblock %}
+    {% block extra_js %}
+
+{% endblock %}
     </div>
 </body>
 </html>
