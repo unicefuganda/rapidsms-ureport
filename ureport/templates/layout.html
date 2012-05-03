@@ -5,10 +5,7 @@
 
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/base.css">
  
- <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
-    <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+
 
     {% block stylesheets %}
          <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/modules.css" />
@@ -110,6 +107,10 @@
         <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/ureport_extras.min.js?1"></script>
     {% block javascripts %}
     {% endblock %}
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
     {% block extra_js %}
 
 {% endblock %}
