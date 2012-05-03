@@ -9,7 +9,7 @@
         <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/ureport_home.css">
     {% endblock %}
 
-    {% block javascripts %}
+    
 
          <script type="text/javascript">
 
@@ -24,7 +24,7 @@
               })();
 
             </script>
-    {% endblock %}
+
 </head>
 <body>
     <div class="container container-fluid" style="background-color:#ffffff;">
@@ -122,5 +122,8 @@
         <script type="text/javascript" src="{{ MEDIA_URL }}rapidsms/javascripts/collapse.js"></script>
         <script type="text/javascript" src="{{ MEDIA_URL }}generic/javascripts/jquery-ui-1.8.11.custom.min.js"></script>
         <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/ureport.min.js?4"></script>
+{% block javascripts %}
+
+{% endblock %}
 </body>
 </html>
