@@ -6,6 +6,13 @@
     <script type="text/javascript" src="{{ MEDIA_URL }}generic/javascripts/map.js"></script>
     {{ block.super }}
 {% endblock %}
+{% block top_js %}
+    <script language="javascript">
+  $(document).ready(function() {
+        $('#viz').load('/bestviz?pks=l');
+    });
+    </script>
+{% endblock %}
 {% block content %}
 <div id="viz">
 </div>
@@ -28,10 +35,6 @@
 <div class="scrollbottom">
 &nbsp;
 </div>
-<script language="javascript">
-    $(document).ready(function() {
-        $('#viz').load('/bestviz?pks=l');
-    });
-</script>
+
 
 {%endblock%}
