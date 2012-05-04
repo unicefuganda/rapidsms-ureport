@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+
+{% block stylesheets %}
+
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/splits.css"/>
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/ureport.min.css?1"/>
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/modules.css"/>
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/icons.css"/>
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}contact/stylesheets/messages.css"/>
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/message_log.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}generic/stylesheets/jquery-ui-1.7.3.custom.css"/>
+{% endblock %}
+ {% block extra_js %}
+  <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/jquery-ui.css"/>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/jquery-ui.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/dropdown.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/tabs.js"></script>
+
+{% endblock %}
+
+{% block content %}
+
+  <div ><h3 style="font-weight: 300;font-size:22px;">{{ poll.name }}({{ poll.contacts.count }} participant{{ poll.contacts.count|pluralize }})</h3>
+</div>
+<div style="color:#666;font-size:16px;"">{{ poll.question }}</div>
+<div style="border: 1px solid #DDD;
+font-size: 12px;
+font-style: italic;
+margin-right: 10px;
+margin-top: 10px;
+padding: 10px;
+color:#666;">Response: {{ poll.default_response }}</div>
+
+<form action="">
+{% csrf_token %}
+<table width="100%" class="poll_table" id="poll_table">
+<thead>
+<tr>
+<th class="category_name_col">Name</th>
+<th class="category_response_col">Response Message</th>
+<th class="category_priority_col">Priority</th>
+<th class="category_color_col">Color</th>
+<th class="category_default_col">Default</th>
+<th class="category_options_col"></th>
+</tr>
+</thead>
+{% for category in categories %}
+    <tr>
+        {% include "polls/category_view.html" %}
+    </tr>
+{% endfor %}
+<tr id="new_category_box">
+</tr>
+</table>
+</form>
+<br/>
+<div class="buttons">
+    <a href="javascript:addNewCategoryBox();" style="float:left">
+      <img border="0" src="{{ MEDIA_URL }}rapidsms/icons/silk/add.png" alt=""/>Add New Category
+    </a>
+</div>
+<br/><br/>
+<div id="error"></div>
+
+{%endblock%}
