@@ -249,8 +249,8 @@ def ussd_poll(sender, **kwargs):
         nav=sender.navigations.filter(screen__slug='weekly_poll').latest('date')
         poll=Poll.objects.get(pk=int(field.command.rsplit('_')[1]))
         if poll.categories.filter(name__in=["yes","no"]):
-            yes=poll.categories.filter(name="yes")
-            no=poll.categories.filter(name='no')
+            yes=poll.categories.get(name="yes")
+            no=poll.categories.get(name='no')
             cats={'1':['yes',yes],'2':['no',no]}
             msg=Message.objects.create(connection=connection,text=cats[nav.response][0],direction="I")
             resp = Response.objects.create(poll=poll, message=msg, contact=connection.contact, date=nav.date)
