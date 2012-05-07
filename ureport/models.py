@@ -177,16 +177,16 @@ def get_results(poll):
         return str(response_count)+" responses"
 
 def update_poll_results():
-    latest_polls=Poll.objects.order_by('-pk')
+    latest_polls=Poll.objects.filter(categories__name__in=['yes','no']).order_by('-pk')
     res1=Menu.objects.get(slug="res1")
 
-    res1.label=latest_polls[0].question
+    res1.label=latest_polls[0].name
     res1.save()
     res2=Menu.objects.get(slug="res2")
-    res2.label=latest_polls[1].question
+    res2.label=latest_polls[1].name
     res2.save()
     res3=Menu.objects.get(slug="res3")
-    res3.label=latest_polls[2].question
+    res3.label=latest_polls[2].name
     res3.save()
     res11=Menu.objects.get(slug="res11")
     res11.label=get_results(latest_polls[0])
@@ -207,7 +207,7 @@ def check_conn(sender, **kwargs):
 def update_latest_poll(sender, **kwargs):
 
     poll=kwargs['instance']
-    if poll.categories:
+    if poll.categories.filter(name__in=['yes','no']):
         try:
             xf=XFormField.objects.get(name='latest_poll')
             xf.question=poll.question
