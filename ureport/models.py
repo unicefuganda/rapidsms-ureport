@@ -177,7 +177,7 @@ def get_results(poll):
         return str(response_count)+" responses"
 
 def update_poll_results():
-    latest_polls=Poll.objects.filter(categories__name__in=['yes','no']).order_by('-pk')
+    latest_polls=Poll.objects.filter(categories__name__in=['yes','no']).distinct().order_by('-pk')
     res1=Menu.objects.get(slug="res1")
 
     res1.label=latest_polls[0].name
