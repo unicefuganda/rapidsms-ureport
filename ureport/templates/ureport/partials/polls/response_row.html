@@ -1,6 +1,6 @@
 {% extends row_base %}
 {% block message_information %}
-     {%if  perms.ureport.view_numbers %}
+     {%if  perms.rapidsms.view_numbers %}
     <td class="response_sender_col">
       <a href="{% url ureport.views.ureporter_profile  response.message.connection.pk %}">
           {% if response.message.connection.contact %}
@@ -17,7 +17,7 @@
     {% endif %}
 {% endblock %}
 {% block actions_cell %}
-    {%if  perms.contact.view_numbers %}
+    {%if  perms.rapidsms.view_numbers %}
     <td class="response_options_col" >
     {% block actions_content %}
       <div class="buttons">
