@@ -42,6 +42,8 @@ from django.contrib.auth.decorators import login_required,\
 
 from contact.forms import FlaggedMessageForm
 from.utils import create_poll
+from rapidsms_xforms.models import  XFormField
+from ussd.models import Menu,  Field, Question,StubScreen
 
 import re
 import bisect
@@ -1231,7 +1233,26 @@ def blacklist(request,pk):
 def view_poll(request,pk):
     poll=Poll.objects.get(pk=pk)
     categories=poll.categories.all()
+    xf=XFormField.objects.get(name='latest_poll')
+    response=StubScreen.objects.get(slug='question_response')
     return render_to_response('ureport/polls/view_poll.html', {
         'poll': poll,
+        'xf':xf,
+        'response':response,
         'categories': categories,
         }, context_instance=RequestContext(request))
+
+def edit_category(request,pk):
+    pass
+
+def add_category(request):
+    pass
+
+def delete_category(request):
+    pass
+
+def edit_ussd(request):
+    pass
+
+def test_rule(request,pk,text):
+    pass

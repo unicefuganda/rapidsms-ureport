@@ -17,6 +17,13 @@
     <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/tabs.js"></script>
 
 {% endblock %}
+        {%block topjs %}
+        <script type="text/javascript">
+
+        </script>
+
+
+        {%endblock %}
 
 {% block content %}
 
@@ -61,5 +68,13 @@ color:#666;">Response: {{ poll.default_response }}</div>
 </div>
 <br/><br/>
 <div id="error"></div>
+        <div style="margin:auto;width:340px;">
+
+        <h1>Ussd Menu</h1>
+
+        <div style="float:left;border: 1px solid #DDD;font-size:24px;width:160px;" class="qn">{{xf.question}}</div>
+
+        <div style="float:left;border: 1px solid #DDD;font-size:24px;width:160px;">{{response.text}}</div>
+        </div>
 
 {%endblock%}

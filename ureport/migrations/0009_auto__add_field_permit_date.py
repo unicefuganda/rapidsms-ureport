@@ -1,19 +1,21 @@
-# encoding: utf-8
+# -*- coding: utf-8 -*-
 import datetime
 from south.db import db
-from south.v2 import DataMigration
+from south.v2 import SchemaMigration
 from django.db import models
 
-class Migration(DataMigration):
+
+class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        "Write your forwards methods here."
-        db.send_create_signal('contact', ['Contact'])
-
+        # Adding field 'Permit.date'
+        db.add_column('ureport_permit', 'date',
+                      self.gf('django.db.models.fields.DateField')(auto_now=True, default=datetime.datetime(2012, 5, 8, 0, 0), blank=True),
+                      keep_default=False)
 
     def backwards(self, orm):
-        "Write your backwards methods here."
-
+        # Deleting field 'Permit.date'
+        db.delete_column('ureport_permit', 'date')
 
     models = {
         'auth.group': {
@@ -71,7 +73,7 @@ class Migration(DataMigration):
         'locations.locationtype': {
             'Meta': {'object_name': 'LocationType'},
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50', 'primary_key': 'True', 'db_index': 'True'})
+            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50', 'primary_key': 'True'})
         },
         'locations.point': {
             'Meta': {'object_name': 'Point'},
@@ -91,7 +93,7 @@ class Migration(DataMigration):
             'response_type': ('django.db.models.fields.CharField', [], {'default': "'a'", 'max_length': '1', 'null': 'True', 'blank': 'True'}),
             'sites': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['sites.Site']", 'symmetrical': 'False'}),
             'start_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
-            'type': ('django.db.models.fields.SlugField', [], {'db_index': 'True', 'max_length': '8', 'null': 'True', 'blank': 'True'}),
+            'type': ('django.db.models.fields.SlugField', [], {'max_length': '8', 'null': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
         },
         'rapidsms.backend': {
@@ -114,6 +116,7 @@ class Migration(DataMigration):
             'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['auth.Group']", 'null': 'True', 'blank': 'True'}),
             'health_facility': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_caregiver': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'language': ('django.db.models.fields.CharField', [], {'max_length': '6', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             'reporting_location': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['locations.Location']", 'null': 'True', 'blank': 'True'}),
@@ -147,11 +150,26 @@ class Migration(DataMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
+        'ureport.equatellocation': {
+            'Meta': {'object_name': 'EquatelLocation'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'location': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['locations.Location']"}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
+            'segment': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
+            'serial': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+        },
         'ureport.ignoredtags': {
             'Meta': {'object_name': 'IgnoredTags'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
             'poll': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['poll.Poll']"})
+        },
+        'ureport.permit': {
+            'Meta': {'object_name': 'Permit'},
+            'allowed': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+            'date': ('django.db.models.fields.DateField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
         },
         'ureport.quotebox': {
             'Meta': {'object_name': 'QuoteBox'},

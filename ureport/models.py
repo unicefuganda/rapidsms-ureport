@@ -56,6 +56,19 @@ class EquatelLocation(models.Model):
     location=models.ForeignKey(Location)
     name=models.CharField(max_length=50,null=True)
 
+class Permit(models.Model):
+    user = models.ForeignKey(User)
+    allowed=models.CharField(max_length=200)
+    date=models.DateField(auto_now=True)
+    def get_patterns(self):
+        pats=[]
+        ropes=self.allowed.split(",")
+        for r in ropes:
+            pats.append(pats.append(re.compile(r+"(.*)")))
+        return pats
+    def __unicode__(self):
+        return self.user.username
+
 
 class Ureporter(Contact):
     def age(self):
@@ -85,11 +98,17 @@ class Ureporter(Contact):
         return Message.objects.filter(connection__contact=self,direction="I").count()
 
     class Meta:
-        permissions = (
+        permissions = [
                 ("view_numbers", "can view private info"),
-            )
+                ("restricted_access", "can view only particular pages"),
+                ("can_filter", "can view filters"),
+                ("can_action", "can view actions"),
+                ("view_number", "can view numbers"),
+
+            ]
 
         proxy = True
+
 
 def autoreg(**kwargs):
     connection = kwargs['connection']
