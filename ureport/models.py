@@ -63,8 +63,9 @@ class Permit(models.Model):
     def get_patterns(self):
         pats=[]
         ropes=self.allowed.split(",")
-        for r in ropes:
-            pats.append(pats.append(re.compile(r+"(.*)")))
+        for rop in ropes:
+            pattern=re.compile(rop+r"(.*)")
+            pats.append(pattern)
         return pats
     def __unicode__(self):
         return self.user.username
@@ -189,7 +190,10 @@ def get_results(poll):
     if poll.categories.all().exists():
         for category in poll.categories.all():
             ccount=poll.responses.filter(categories__category=category).count()
-            ccount_p=int(ccount*100/response_count)
+            try:
+                ccount_p=int(ccount*100/response_count)
+            except ZeroDivisionError:
+                return "0 responses"
             cats.append(str(category.name)+":"+str(ccount_p)+"%")
         return " ".join(cats)
     else:
