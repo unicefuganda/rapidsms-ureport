@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from poll.models import Poll, LocationResponseForm,Response, STARTSWITH_PATTERN_TEMPLATE,ResponseCategory
-from rapidsms.models import Contact, Connection
+from rapidsms.models import Contact, Connection,Backend
 from django.contrib.auth.models import User, Group
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
@@ -20,6 +20,7 @@ from django.db.models.signals import post_save
 from rapidsms_xforms.models import  XFormField
 from ussd.models import ussd_pre_transition,Menu, ussd_complete, Navigation, TransitionException, Field, Question,StubScreen
 from celery.contrib import rdb
+
 
 
 import datetime
@@ -227,6 +228,11 @@ def check_conn(sender, **kwargs):
     c = kwargs['instance']
     if not c.identity.isdigit():
         c.delete()
+        return True
+    if c.identity[0:5]=="25671":
+        utl=Backend.objects.get(name="utl")
+        Connection.objects.filter(pk=c.pk).update(backend=utl)
+        return True
 def update_latest_poll(sender, **kwargs):
 
     poll=kwargs['instance']
@@ -293,7 +299,8 @@ def add_to_poll(sender,**kwargs):
     except:
         pass
     
-
+def normalize_poll_rules(sender,**kwargs):
+    pass
 
 
 
