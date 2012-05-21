@@ -9,6 +9,66 @@
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}contact/stylesheets/messages.css"/>
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/message_log.css"/>
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}generic/stylesheets/jquery-ui-1.7.3.custom.css"/>
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/modal.css"/>
+        <style>
+            input {
+                width: 80%;
+            }
+            input[type=submit] {
+                width: 5em;
+            }
+            input[type=checkbox] {
+                width: 1em;
+            }
+
+            .best_in_place {
+                padding: .1m;
+                cursor: hand;
+                cursor: pointer;
+                -moz-transition: background 0.5s linear;
+                -o-transition: background 0.5s linear;
+                -webkit-transition: background 0.5s linear;
+                -moz-border-radius: 5px;
+                -webkit-border-radius: 5px;
+                -o-border-radius: 5px;
+                -ms-border-radius: 5px;
+                -khtml-border-radius: 5px;
+                border-radius: 5px;
+            }
+            .best_in_place:hover, #user_account .do_hover {
+                padding-right: 1.5em;
+                background: url("/images/red_pen.png") no-repeat right;
+                background-color: #CCC;
+            }
+            .info_edit {
+                float: right;
+                cursor: hand;
+                cursor: pointer;
+            }
+
+                /* Missatges Flotants */
+
+            .purr {
+                position: fixed;
+                width: 324px;
+                top: 20px;
+                right: 15px;
+                padding: 20px;
+                background-color: #000000;
+                color: #FFFFFF;
+                border: 2px solid #FFFFFF;
+            }
+            .purr:hover .close	{
+                position: absolute;
+                top: 5px;
+                right: 3px;
+                display: block;
+                width: 25px;
+                height: 25px;
+                text-indent: -9999px;
+                background: url("/images/close-button.gif") no-repeat;
+            }
+        </style>
 {% endblock %}
  {% block extra_js %}
   <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/jquery-ui.css"/>
@@ -17,8 +77,29 @@
     <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/tabs.js"></script>
 
 {% endblock %}
-        {%block topjs %}
+        {%block top_js %}
+
         <script type="text/javascript">
+            function bind_form(){
+                $("#category_form")
+                        .bind('ajax:success', function(evt, data, status, xhr) {
+                            var $form = $(this);
+
+                            // Insert response partial into page below the form.
+                            console.log(xhr.responseText);
+                            console.log(data);
+                            $('#category').html(xhr.responseText);
+                        })
+                        .bind('ajax:failure', function(evt, data, status, xhr) {
+                            alert("something went wrong!");
+                        });
+            }
+            $(function() {
+
+                bind_form();
+                jQuery(".best_in_place").best_in_place();
+
+            });
 
         </script>
 
@@ -29,31 +110,47 @@
 
   <div ><h3 style="font-weight: 300;font-size:22px;">{{ poll.name }}({{ poll.contacts.count }} participant{{ poll.contacts.count|pluralize }})</h3>
 </div>
-<div style="color:#666;font-size:16px;"">{{ poll.question }}</div>
+<div style="color:#666;font-size:16px;"">
+<span class='best_in_place' id='best_in_place_poll_question' data-url='/view_poll/{{poll.pk}}/?edit=true' data-object='poll'
+      data-attribute='question' data-type='input' >{{ poll.question }}</span>
+
+</div>
 <div style="border: 1px solid #DDD;
 font-size: 12px;
 font-style: italic;
 margin-right: 10px;
 margin-top: 10px;
 padding: 10px;
-color:#666;">Response: {{ poll.default_response }}</div>
+color:#666;">Response:
+
+
+
+
+<span class='best_in_place' id='best_in_place_poll_default_response' data-url='/view_poll/{{poll.pk}}/?edit=true' data-object='poll'
+      data-attribute='default_response' data-type='input' >{{ poll.default_response }}</span>
+
+</div>
+</div>
+{%if not  poll.start_date%}
+<a href="" data-remote=true class="btn">Start Poll</a>
+click on question to edit
+  {%endif%}
 
 <form action="">
 {% csrf_token %}
-<table width="100%" class="poll_table" id="poll_table">
+<table width="100%" class="results">
 <thead>
 <tr>
 <th class="category_name_col">Name</th>
 <th class="category_response_col">Response Message</th>
-<th class="category_priority_col">Priority</th>
-<th class="category_color_col">Color</th>
-<th class="category_default_col">Default</th>
+
+<th class="category_default_col">Is Default</th>
 <th class="category_options_col"></th>
 </tr>
 </thead>
 {% for category in categories %}
     <tr>
-        {% include "polls/category_view.html" %}
+        {% include "ureport/polls/view_category.html" %}
     </tr>
 {% endfor %}
 <tr id="new_category_box">
@@ -61,20 +158,55 @@ color:#666;">Response: {{ poll.default_response }}</div>
 </table>
 </form>
 <br/>
-<div class="buttons">
-    <a href="javascript:addNewCategoryBox();" style="float:left">
-      <img border="0" src="{{ MEDIA_URL }}rapidsms/icons/silk/add.png" alt=""/>Add New Category
-    </a>
+
+
+
+<div  class="modal hide" id="category">
+    <form method="post" id="category_form" action="./?category=true" data-remote=true>
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal" onclick='$(".modal").hide()'>×</a>
+        <h3>Create A new Category</h3>
+    </div>
+    <div class="modal-body" >
+        <table>
+
+        {{category_form.as_table}}
+
+        </table>
+    </div>
+    <div class="modal-footer">
+        <a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>
+        <input type="submit"  class="btn btn-primary" value="Next">
+    </div>
+    </form>
 </div>
+<div  class="modal hide" id="edit_category">
+
+    </div>
+
+<div  class="modal hide" id="view_rules">
+
+</div>
+
+
+<a data-toggle="modal" href="#category" onclick='$("#category").show()' class="btn">Add Category</a>
 <br/><br/>
+
+
+
+
+
 <div id="error"></div>
         <div style="margin:auto;width:340px;">
-
+            <form action="" method="POST" data-remote=true>
         <h1>Ussd Menu</h1>
+            <TEXTAREA NAME="question" COLS=15 ROWS=2 length=150 wrap="soft" >{{xf.question}}</TEXTAREA>
 
-        <div style="float:left;border: 1px solid #DDD;font-size:24px;width:160px;" class="qn">{{xf.question}}</div>
 
-        <div style="float:left;border: 1px solid #DDD;font-size:24px;width:160px;">{{response.text}}</div>
+            <TEXTAREA NAME="response" COLS=15 ROWS=2   length="150" wrap="soft">{{response.text}}</TEXTAREA>
+
+
+        <input value="Save Edits" class="btn" type="submit" >
         </div>
-
+</form>
 {%endblock%}

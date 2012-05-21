@@ -443,3 +443,19 @@ class BlacklistForm2(ActionForm):
             return ('You blacklisted %d numbers' % len(connections), 'success',)
         else:
             return ("You don't have permissions to blacklist numbers", 'error',)
+
+class SelectPoll(forms.Form):
+
+    """ filter responses to poll  """
+
+    poll =\
+    forms.ModelChoiceField(queryset=Poll.objects.exclude(start_date=None).order_by('-pk'))
+
+class SelectCategory(forms.Form):
+    category =\
+    forms.ModelMultipleChoiceField(queryset=QuerySet())
+    def __init__(self, *args, **kwargs):
+        categories = kwargs['categories']
+        del kwargs['categories']
+        super(SelectCategory, self).__init__(*args, **kwargs)
+        self.fields['category'].queryset =categories

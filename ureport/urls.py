@@ -223,6 +223,7 @@ urlpatterns = patterns('',
 
        url(r'^contact/(?P<pk>\d+)/blacklist/$', blacklist, name="tag_cloud"),
         url(r'^view_poll/(?P<pk>\d+)/$', view_poll, name="view_poll"),
-)
-patterns(url(r'^home/$', ureport_content, {'slug':'ureport_home', 'base_template':'ureport/three-square.html', 'num_columns':3}, name="ureport-home"),url(r'^about/$', ureport_content, {'slug':'ureport_about'}, name="ureport-about"),url(r'^stories/$', ureport_content, {'slug':'ureport_stories', 'base_template':'ureport/three-square.html', 'num_columns':3}, name="ureport-stories")
+    url(r'^category/(?P<pk>\d+)/edit/$', edit_category, name="edit_category"),
+    url(r'^category/(?P<pk>\d+)/rules/view/$', view_rules, name="view_rules"),
+    url(r'^j4c/$', j4c, name="j4c"),
 )

@@ -59,8 +59,7 @@ class ModelTest(TestCase): #pragma: no cover
         
 
 
-    def fakeIncoming(self, message, connection):
-        self.router.handle_incoming(connection.backend.name, connection.identity, message)
+    def fakeIncoming(self, message, connection):self.router.handle_incoming(connection.backend.name, connection.identity, message)
 
     def assertInteraction(self, connection, incoming_message, expected_response):
         incoming_obj = self.router.handle_incoming(connection.backend.name, connection.identity, incoming_message)

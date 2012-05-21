@@ -1,0 +1,20 @@
+<td class="category_name_col">
+    {{ category.name }}
+</td>
+<td class="category_response_col">{{ category.response }}</td>
+
+</td>
+<td class="category_default_col">
+    {% if category.default %}
+    <img style="vertical-alignment:bottom;padding-top:7px" src="{{ MEDIA_URL }}rapidsms/icons/silk/accept.png" alt="This category is default"/>
+    {% else %}
+    &nbsp;
+    {% endif %}
+</td>
+        <td>
+            <a href="javascript:void(0)" onclick="$('#view_rules').load('/category/{{category.pk}}/rules/view/');$('#view_rules').show();" class="btn">View Rules</a>
+        </td>
+        <td>
+            <a href="javascript:void(0)" onclick="$('#edit_category').load('/category/{{category.pk}}/edit/');$('#edit_category').show();" class="btn">Edit</a>
+        </td>
+

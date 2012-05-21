@@ -51,6 +51,7 @@ import textwrap
 import random
 import datetime
 import types
+from poll.forms import RuleForm2,CategoryForm
 
 TAG_CLASSES = ['tag14', 'tag13', 'tag12', 'tag11', 'tag10', 'tag9', 'tag8', 'tag7', 'tag6', 'tag5', 'tag4', 'tag3',
                'tag2', 'tag1']
@@ -1231,28 +1232,96 @@ def blacklist(request,pk):
         return HttpResponse(status=200)
 @login_required
 def view_poll(request,pk):
-    poll=Poll.objects.get(pk=pk)
-    categories=poll.categories.all()
+    if request.GET.get('start'):
+        pass
     xf=XFormField.objects.get(name='latest_poll')
     response=StubScreen.objects.get(slug='question_response')
-    return render_to_response('ureport/polls/view_poll.html', {
+    template='ureport/polls/view_poll.html'
+    poll=Poll.objects.get(pk=pk)
+    categories=poll.categories.all()
+    category_form=CategoryForm()
+    rule_form=RuleForm2()
+    if request.method == "POST":
+        if request.GET.get('edit'):
+            if request.POST.get('poll[default_response]'):
+                poll.default_response=request.POST['poll[default_response]']
+                poll.save()
+            if request.POST.get('poll[question]'):
+                poll.default_response=request.POST['poll[question]']
+                poll.save()
+
+        if request.GET.get("ussd",None):
+            question=request.POST.get("question")
+            response=request.POST.get("response")
+            xf.question=question
+            xf.save()
+            response.text=response
+            response.save()
+        if request.GET.get("category",None):
+            if request.GET.get('pk'):
+                category=Category.objects.get(pk=int(pk))
+            else:
+                category=Category()
+                category.poll=poll
+            category_form=CategoryForm(request.POST,instance=category)
+            if category_form.is_valid():
+                template="ureport/polls/rules.html"
+                category_form.save()
+                request.session['category'] =category
+            else:
+                template="ureport/polls/category.html"
+
+        if request.GET.get("rules",None):
+            rule=Rule()
+            rule.category=request.session['category']
+            rule_form=RuleForm2(request.POST,instance=rule)
+            if rule_form.is_valid:
+                rule_form.save()
+            else:
+                template="ureport/polls/rules.html"
+
+
+
+
+
+    return render_to_response(template, {
         'poll': poll,
         'xf':xf,
         'response':response,
         'categories': categories,
+        'category_form':category_form,
+        'rule_form':rule_form,
         }, context_instance=RequestContext(request))
 
 def edit_category(request,pk):
-    pass
+    category=Category.objects.get(pk=int(pk))
+    category_form=CategoryForm(instance=category)
+    return render_to_response("ureport/polls/category.html",{'category':category,'category_form':category_form,'edit':True},context_instance=RequestContext(request))
 
-def add_category(request):
-    pass
+def view_rules(request,pk):
+    category=Category.objects.get(pk=int(pk))
+    rules=category.rules.all()
+    rule=Rule()
+    rule.category=category
+    rule_form=RuleForm2(instance=rule)
+    return render_to_response("ureport/polls/rules.html",{'rules':rules,'rule_form':rule_form,'category':category,"edit":True},context_instance=RequestContext(request))
 
-def delete_category(request):
-    pass
 
-def edit_ussd(request):
-    pass
+def j4c(request):
+    select_poll=SelectPoll()
+    poll_form = NewPollForm()
+    poll_form.updateTypes()
+    template="ureport/polls/j4c.html"
+    if request.method=="POST":
+        if request.get.GET('poll'):
+            select_poll=SelectPoll(request.POST)
+            if select_poll.is_valid():
+                poll=select_poll.cleaned_data['poll']
+                categories=poll.categories.all()
+                category_form=SelectCategory(categories=categories)
+                template="ureport/polls/poll_category.htm"
 
-def test_rule(request,pk,text):
-    pass
+
+
+    return render_to_response(template,{'select_poll':select_poll,'category_form':category_form},context_instance=RequestContext(request))
+

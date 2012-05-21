@@ -1,0 +1,29 @@
+
+<form method="post">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal" onclick='$(".modal").hide()'>×</a>
+        {%if rules%}
+        <h3>Rules</h3>
+        <table>
+            <thead><tr><td>Rule</td><td>Words</td></tr></thead>
+            <tbody>
+            {% for rule in rules %}
+            <tr><td>{{rule.rule}}</td> <td>{{rule.rule_string}}</td></tr>
+            {%endfor%}
+            </tbody>
+        </table>
+        {%endif%}
+        <h3>Add  a rule</h3>
+    </div>
+    <div class="modal-body" style="input">
+        <table>
+
+            {{rule_form.as_table}}
+
+        </table>
+    </div>
+    <div class="modal-footer">
+        {%if edit%}{%else%}<input type="submit" href="./" class="btn btn-primary" value="Save and close"> {%endif%}
+        <input type="submit" href="?category=true{% if edit %}&pk={{category.pk}}{%endif%}" class="btn btn-primary" {% if edit%}value="save edits"{%else%} value="Save and add another"{%endif%}>
+    </div>
+</form>

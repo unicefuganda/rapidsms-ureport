@@ -1,0 +1,22 @@
+<form method="post" id="category_form" action="?category=true" data-remote=true>
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal" onclick='$(".modal").hide()'>×</a>
+        {% if title %}
+
+        <h3>Editing {{category.name}}</h3>
+        {%else%}
+        <h3>Create A new Category</h3>
+        {%endif%}
+    </div>
+    <div class="modal-body" >
+        <table>
+
+            {{category_form.as_table}}
+
+        </table>
+    </div>
+    <div class="modal-footer">
+        <a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>
+        <input type="submit"  onclick="bind_form()" class="btn btn-primary" value="Next">
+    </div>
+</form>
