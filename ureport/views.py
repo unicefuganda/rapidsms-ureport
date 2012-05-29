@@ -7,7 +7,7 @@ from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.http import HttpResponse, HttpResponseRedirect
 from ureport.settings import drop_words, tag_cloud_size
-from ureport.models import IgnoredTags
+from ureport.models import *
 from poll.models import *
 from script.models import ScriptStep
 from contact.models import MessageFlag
@@ -44,6 +44,10 @@ from contact.forms import FlaggedMessageForm
 from.utils import create_poll
 from rapidsms_xforms.models import  XFormField
 from ussd.models import Menu,  Field, Question,StubScreen
+from django.contrib.contenttypes.models import ContentType
+from django.core.serializers.json import DjangoJSONEncoder
+from django.http import Http404, HttpResponse
+from django.db.models import get_model
 
 import re
 import bisect
@@ -1307,21 +1311,104 @@ def view_rules(request,pk):
     return render_to_response("ureport/polls/rules.html",{'rules':rules,'rule_form':rule_form,'category':category,"edit":True},context_instance=RequestContext(request))
 
 
-def j4c(request):
+@login_required
+def alerts(request):
     select_poll=SelectPoll()
     poll_form = NewPollForm()
     poll_form.updateTypes()
-    template="ureport/polls/j4c.html"
-    if request.method=="POST":
-        if request.get.GET('poll'):
-            select_poll=SelectPoll(request.POST)
-            if select_poll.is_valid():
-                poll=select_poll.cleaned_data['poll']
-                categories=poll.categories.all()
-                category_form=SelectCategory(categories=categories)
-                template="ureport/polls/poll_category.htm"
+    template="ureport/polls/alerts.html"
+    #message_list=Message.objects.filter(details__attribute__name="alert")
+    message_list=Message.objects.filter(direction="I",connection__backend__name="utl")
+    capture_status,_=Settings.objects.get_or_create(attribute='alerts')
+    #message_list=[Message.objects.latest('date')]
+    #use more efficient count
+    if request.GET.get('capture',None):
+        s,_=Settings.objects.get_or_create(attribute='alerts')
+        if s.value=='true':
+            s.value='false'
+            s.save
+            reply="Start Capture"
+        else:
+            s.value='true'
+            s.save()
+            reply="Stop Capture"
+        return HttpResponse(reply)
+    if request.GET.get("ajax", None):
+        date = datetime.datetime.now() - datetime.timedelta(seconds=15)
+        #msgs = Message.objects.filter(details__attribute__name="alert", direction="I").filter(date__gte=date)
+        msgs=Message.objects.all()[0:10]
+        msgs_list = []
+        if msgs.exists():
+            for msg in msgs:
+                m = {}
+                m["text"] = msg.text
+                m["date"]=str(msg.date.date())
+                m["name"] = msg.connection.contact.name
+                m["number"] = msg.connection.identity
+                if msg.connection.contact.reporting_location:
+                    m["district"] = msg.connection.contact.reporting_location.name
+                else:
+                    m["district"] = "N/A"
+                rating=msg.details.filter(attribute__name="alerts")
+                if rating.exists():
+                    r=rating[0].value
+                else:
+                    r=0
+                m["rating"] = r
+                m['connection']=msg.connection.pk
+                m['pk']=msg.pk
+                msgs_list.append(m)
+            return HttpResponse(mark_safe(simplejson.dumps(msgs_list)))
+    if request.GET.get('rating',None):
+        rating=request.GET.get('rating')
+        descs={'1':'Requires Attention','2':'Moderate','3':'Important','4':'Urgent','5':'Very Urgent'}
+        msg=Message.objects.get(pk=int(request.GET.get('msg')))
+        rate,_=MessageAttribute.objects.get_or_create(name="rating")
+        det=MessageDetail.objects.create(message=msg,attribute=rate,value=rating,description=descs.get(rating,''))
+        response ="""<li><a href='javascript:void(0)'  class="rate%s"
+
+                            title="%s">%s</a></li>"""%(rating,descs.get(rating,''),descs.get(rating,''))
+
+        return HttpResponse(mark_safe(response))
 
 
 
-    return render_to_response(template,{'select_poll':select_poll,'category_form':category_form},context_instance=RequestContext(request))
+    paginator = Paginator(message_list, 15)
+    page = request.GET.get('page', 1)
+    try:
+        messages = paginator.page(page)
+    except (PageNotAnInteger,EmptyPage):
+        # If page is not an integer, deliver first page.
+        messages = paginator.page(1)
+
+
+    return render_to_response(template,{'messages':messages,'capture_status':capture_status},context_instance=RequestContext(request))
+
+
+@login_required
+def send_message(request):
+    send_message_form=SendMessageForm()
+    if request.GET.get('forward',None):
+        msg=request.GET.get('msg')
+        template="ureport/partials/forward.html"
+        message=Message.objects.get(pk=int(msg))
+        send_message_form=SendMessageForm(data={'text':message.text,'recipients':''})
+    if request.GET.get('reply',None):
+        msg=request.GET.get('msg')
+        message=Message.objects.get(pk=int(msg))
+        send_message_form=SendMessageForm(data={'text':message.text,'recipients':message.connection.identity})
+        template="ureport/partials/reply.html"
+    if request.method =="POST":
+        if send_message_form.is_valid():
+            recs=send_message_form.cleaned_data.get('recipients').split(',')
+            for r in recs:
+                connection=Connection.objects.get(identity=r)
+                Message.objects.create(direction="O",text=send_message_form.cleaned_data.get('text'),status="Q",connection=connection)
+            return HttpResponse('Message Sent :)')
+        else:
+            return HttpResponse("smothing went wrong")
+
+    return render_to_response(template,{'send_message_form':send_message_form},context_instance=RequestContext(request))
+
+
 

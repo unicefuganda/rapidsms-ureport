@@ -9,12 +9,13 @@ from script.models import Script, ScriptProgress
 from rapidsms.models import Contact
 import re
 from django.conf import settings
-
+from ureport.tasks import process_message
 class App(AppBase):
     def handle (self, message):
         one_template = r"(.*\b(%s)\b.*)"
         OPT_IN_WORDS_LUO = getattr(settings, 'OPT_IN_WORDS_LUO', None)
         OPT_IN_WORDS_EN = getattr(settings, 'OPT_IN_WORDS', None)
+        process_message.delay(message)
         if OPT_IN_WORDS_LUO:
             opt_reg = re.compile(r"|".join(OPT_IN_WORDS_LUO), re.IGNORECASE)
 

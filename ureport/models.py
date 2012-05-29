@@ -20,7 +20,9 @@ from django.db.models.signals import post_save
 from rapidsms_xforms.models import  XFormField
 from ussd.models import ussd_pre_transition,Menu, ussd_complete, Navigation, TransitionException, Field, Question,StubScreen
 from celery.contrib import rdb
-
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
+from rapidsms_httprouter.models import Message
 
 
 import datetime
@@ -111,6 +113,46 @@ class Ureporter(Contact):
 
         proxy = True
 
+
+class MessageAttribute(models.Model):
+    '''
+    The 'MessageAttribute' model represents a class of feature found
+    across a set of messages. It does not store any data values
+    related to the attribute, but only describes what kind of a
+    message feature we are trying to capture.
+
+    Possible attributes include things like number of replies,severity,department    etc
+    '''
+    name = models.CharField(max_length=300,db_index=True)
+    description = models.TextField(blank=True,null=True)
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+class MessageDetail(models.Model):
+    '''
+    The 'MessageDetail' model represents information unique to a
+    specific message. This is a generic design that can be used to
+    extend the information contained in the 'Message' model with
+    specific, extra details.
+    '''
+
+    message = models.ForeignKey(Message, related_name='details')
+    attribute = models.ForeignKey('MessageAttribute')
+    value = models.CharField(max_length=500)
+    description = models.TextField(null=True)
+
+    def __unicode__(self):
+        return u'%s: %s' % (self.message, self.attribute)
+
+class Settings(models.Model):
+    """
+    configurable  sitewide settings. Its better to store in db table
+
+    """
+    attribute=models.CharField(max_length=50,null=False)
+    value=models.CharField(default='',max_length=50,null=True)
+    description= models.TextField(null=True)
 
 def autoreg(**kwargs):
     connection = kwargs['connection']
@@ -298,9 +340,7 @@ def add_to_poll(sender,**kwargs):
         poll.contacts.add(contact)
     except:
         pass
-    
-def normalize_poll_rules(sender,**kwargs):
-    pass
+
 
 
 

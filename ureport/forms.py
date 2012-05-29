@@ -459,3 +459,6 @@ class SelectCategory(forms.Form):
         del kwargs['categories']
         super(SelectCategory, self).__init__(*args, **kwargs)
         self.fields['category'].queryset =categories
+class SendMessageForm(forms.Form):
+    recipients=forms.CharField(label="recepient(s)" ,required=True,help_text="enter numbers commas separated")
+    text = forms.CharField(required=True, widget=SMSInput())

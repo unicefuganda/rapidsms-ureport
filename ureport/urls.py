@@ -225,5 +225,7 @@ urlpatterns = patterns('',
         url(r'^view_poll/(?P<pk>\d+)/$', view_poll, name="view_poll"),
     url(r'^category/(?P<pk>\d+)/edit/$', edit_category, name="edit_category"),
     url(r'^category/(?P<pk>\d+)/rules/view/$', view_rules, name="view_rules"),
-    url(r'^j4c/$', j4c, name="j4c"),
+    url(r'^alerts/$', alerts, name="alerts"),
+    url(r"sendmessage/$",send_message,name="send_message"),
+
 )
