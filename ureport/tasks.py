@@ -20,18 +20,16 @@ def reprocess_responses(poll):
     poll.reprocess_responses()
 
 @task
-def process_message(message,**kwargs):
-    if hasattr(message, 'db_message'):
-        message = message.db_message
-    try:
+def process_message(pk,**kwargs):
 
+    try:
+        message=Message.objects.get(pk=pk)
         alert_setting=Settings.objects.get(attribute="alerts")
         if alert_setting.value=="true":
             alert,_=MessageAttribute.objects.get_or_create(name="alert")
             msg_a=MessageDetail.objects.create(message=message,attribute=alert,value='true')
-    except IntegrityError,e:
-        transaction.rollback()
-        process_message.retry(args=[message], exc=e, countdown=30, kwargs=kwargs)
+    except Message.DoesNotExist:
+        process_message.retry(args=[pk], countdown=30, kwargs=kwargs)
 
 
 
