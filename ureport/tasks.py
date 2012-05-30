@@ -21,7 +21,7 @@ def reprocess_responses(poll):
 @task
 def process_message(message):
     try:
-        alert_setting=Setting.objects.get(attribute="alerts")
+        alert_setting=Settings.objects.get(attribute="alerts")
         if alert_setting.value=="true":
             alert,_=MessageAttribute.objects.get_or_create(name="alert")
             msg_a=MessageDetail.objects.create(message=message,attribute=alert,value='true')
