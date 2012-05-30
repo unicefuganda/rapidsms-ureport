@@ -1,0 +1,25 @@
+<ul class='star-rating' id="rate{{msg.pk}}">
+
+    {%if msg.details.all%}
+
+
+    <li><a href='javascript:void(0)' class="rate{{msg.details.all.0.value}}"
+
+           title="{{msg.details.all.0.description}}">{{msg.details.all.0.value}} </a></li>
+
+
+    {%else%}
+
+    <li><a href='./?rating=1&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
+           data-remote=true title='Requires Attention' class='one-star star'>1</a></li>
+    <li><a href='./?rating=2&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
+           data-remote=true title='Moderate' class='two-stars star'>2</a></li>
+    <li><a href='./?rating=3&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
+           data-remote=true title='Important' class='three-stars star'>3</a></li>
+    <li><a href='./?rating=4&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
+           data-remote=true title='Urgent' class='four-stars star star'>4</a></li>
+    <li><a href='./?rating=5&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
+           data-remote=true title='Very Urgent' class='five-stars star'>5</a></li>
+    {%endif%}
+
+</ul>

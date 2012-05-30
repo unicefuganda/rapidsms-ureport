@@ -141,7 +141,8 @@
                     else {
                         d = eval(data);
                         $.each(d, function (k, v) {
-                                    foo = "<tr><td>" + v.text + "</td><td>" + v.date + "</td><td>" + v.name + "</td><td>" + v.number + "</td><td>" + v.district + "</td><td>" + v.group + "</td></tr>";
+
+                                    foo = "<tr><td>" + v.text + "</td><td>" + v.date + "</td><td>" + v.name + "</td><td>" + v.number + "</td><td>" + v.district + "</td><td>" + v.actions + "</td><td>" + v.rating+"</td></tr>";
 
                                     $("#mp_bd").prepend(foo);
 
@@ -201,7 +202,7 @@
                 bind('ajax:success', function (evt, data, status, xhr) {
 
                     // Insert response partial into page below the form.
-                    alert(cont);
+
                     $('#' + cont).html(xhr.responseText);
                     $('.ajax_loading').remove();
 

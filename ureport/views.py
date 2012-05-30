@@ -22,6 +22,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator
 from django.utils.datastructures import SortedDict
+from django.template.loader import render_to_string
 
 from generic.views import generic, generic_dashboard
 
@@ -44,6 +45,7 @@ from contact.forms import FlaggedMessageForm
 from.utils import create_poll
 from rapidsms_xforms.models import  XFormField
 from ussd.models import Menu,  Field, Question,StubScreen
+from django.template import Context, Template
 from django.contrib.contenttypes.models import ContentType
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import Http404, HttpResponse
@@ -1317,8 +1319,7 @@ def alerts(request):
     poll_form = NewPollForm()
     poll_form.updateTypes()
     template="ureport/polls/alerts.html"
-    #message_list=Message.objects.filter(details__attribute__name="alert")
-    message_list=Message.objects.filter(direction="I",connection__backend__name="utl")
+    message_list=Message.objects.filter(details__attribute__name="alert")
     capture_status,_=Settings.objects.get_or_create(attribute='alerts')
     #message_list=[Message.objects.latest('date')]
     #use more efficient count
@@ -1335,11 +1336,14 @@ def alerts(request):
         return HttpResponse(reply)
     if request.GET.get("ajax", None):
         date = datetime.datetime.now() - datetime.timedelta(seconds=15)
-        #msgs = Message.objects.filter(details__attribute__name="alert", direction="I").filter(date__gte=date)
-        msgs=Message.objects.all()[0:10]
+        msgs = Message.objects.filter(details__attribute__name="alert", direction="I").filter(date__gte=date)
         msgs_list = []
         if msgs.exists():
             for msg in msgs:
+                from django.template.loader import render_to_string
+                rating_rendered = render_to_string('ureport/partials/rating.html', { 'msg': msg })
+                actions_rendered=render_to_string('ureport/partials/actions.html', { 'msg': msg })
+
                 m = {}
                 m["text"] = msg.text
                 m["date"]=str(msg.date.date())
@@ -1354,7 +1358,8 @@ def alerts(request):
                     r=rating[0].value
                 else:
                     r=0
-                m["rating"] = r
+                m["rating"] = rating_rendered
+                m["actions"]=actions_rendered
                 m['connection']=msg.connection.pk
                 m['pk']=msg.pk
                 msgs_list.append(m)
