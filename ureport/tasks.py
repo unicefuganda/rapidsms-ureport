@@ -6,7 +6,7 @@ from uganda_common.utils import ExcelResponse
 from ureport.models import *
 from poll.models import ResponseCategory, Poll, Response
 from django.db import transaction
-
+from django.db import IntegrityError
 
 
 
