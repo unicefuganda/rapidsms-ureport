@@ -14,13 +14,15 @@ class RequirePermissionMiddleware(object):
 
         if not request.user.is_staff and request.user.is_authenticated() and request.user.has_perm('rapidsms.restricted_access'):
             #import pdb;pdb.set_trace()
+            try:
+                permit=Permit.objects.filter(user=request.user).order_by('-date')
+                paths=permit[0].get_patterns()
 
-            permit=Permit.objects.filter(user=request.user).order_by('-date')
-            paths=permit[0].get_patterns()
-
-            for path in paths:
-                if path and path.match(request.path)  :
-                    return None
+                for path in paths:
+                    if path and path.match(request.path)  :
+                        return None
+            except:
+                pass
             for p in self.allowed:
                 if p.match(request.path):
                     return None
