@@ -15,7 +15,6 @@ class App(AppBase):
         one_template = r"(.*\b(%s)\b.*)"
         OPT_IN_WORDS_LUO = getattr(settings, 'OPT_IN_WORDS_LUO', None)
         OPT_IN_WORDS_EN = getattr(settings, 'OPT_IN_WORDS', None)
-        process_message.delay(message)
         if OPT_IN_WORDS_LUO:
             opt_reg = re.compile(r"|".join(OPT_IN_WORDS_LUO), re.IGNORECASE)
 
@@ -42,6 +41,7 @@ class App(AppBase):
 
             #message flagging sfuff
         else:
+            process_message.delay(message)
             if message.connection.contact and message.connection.contact.language == "ach" and message.text.lower() == "english":
                 contact=message.connection.contact
                 contact.language="en"

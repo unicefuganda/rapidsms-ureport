@@ -25,7 +25,7 @@ def process_message(message):
         if alert_setting.value=="true":
             alert,_=MessageAttribute.objects.get_or_create(name="alert")
             msg_a=MessageDetail.objects.create(message=message,attribute=alert,value='true')
-    except Setting.DoesNotExist:
+    except Settings.DoesNotExist:
         pass
 
 
