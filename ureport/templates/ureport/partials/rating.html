@@ -1,11 +1,11 @@
 <ul class='star-rating' id="rate{{msg.pk}}">
 
-    {%if msg.details.all%}
+    {%if msg.details.all.1%}
 
 
-    <li><a href='javascript:void(0)' class="rate{{msg.details.all.0.value}}"
+    <li><a href='javascript:void(0)' class="rate{{msg.details.all.1.value}}"
 
-           title="{{msg.details.all.0.description}}">{{msg.details.all.0.value}} </a></li>
+           title="{{msg.details.all.1.description}}">{{msg.details.all.1.value}} </a></li>
 
 
     {%else%}

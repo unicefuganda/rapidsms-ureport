@@ -1322,7 +1322,7 @@ def alerts(request):
     poll_form = NewPollForm()
     poll_form.updateTypes()
     template="ureport/polls/alerts.html"
-    message_list=Message.objects.filter(details__attribute__name="alert")
+    message_list=Message.objects.filter(details__attribute__name="alert").order_by('-date')
     capture_status,_=Settings.objects.get_or_create(attribute='alerts')
     #message_list=[Message.objects.latest('date')]
     #use more efficient count
