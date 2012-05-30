@@ -742,7 +742,7 @@ def clickatell_wrapper(request):
     : request.GET['text']})
     return receive(request)
 
-
+@login_required
 def flagged_messages(request):
     all_flags = Flag.objects.all()
     if request.GET.get('export', None):
@@ -787,7 +787,7 @@ def flagged_messages(request):
 
     )
 
-
+@login_required
 def view_flagged_with(request, pk):
     flag = get_object_or_404(Flag, pk=pk)
     messages = flag.get_messages()
@@ -826,7 +826,7 @@ def view_flagged_with(request, pk):
         sort_ascending=False,
         )
 
-
+@login_required
 def create_flags(request, pk=None):
     all_flags = Flag.objects.all()
     flag = Flag()
@@ -849,7 +849,7 @@ def create_flags(request, pk=None):
                                    all_flags=all_flags),
                               context_instance=RequestContext(request))
 
-
+@login_required
 def delete_flag(request, flag_pk):
     flag = get_object_or_404(Flag, pk=flag_pk)
     if flag:
@@ -1205,6 +1205,7 @@ def mp_dashboard(request):
     return render_to_response('ureport/mp_dashboard.html', context_dict,
                               context_instance=RequestContext(request))
 
+@login_required
 def ussd_manager(request):
     ussd_contacts=Contact.objects.filter(groups__name="equatel")
     ussd_conns=Connection.objects.filter(contact__in=ussd_contacts)
@@ -1299,11 +1300,13 @@ def view_poll(request,pk):
         'rule_form':rule_form,
         }, context_instance=RequestContext(request))
 
+@login_required
 def edit_category(request,pk):
     category=Category.objects.get(pk=int(pk))
     category_form=CategoryForm(instance=category)
     return render_to_response("ureport/polls/category.html",{'category':category,'category_form':category_form,'edit':True},context_instance=RequestContext(request))
 
+@login_required
 def view_rules(request,pk):
     category=Category.objects.get(pk=int(pk))
     rules=category.rules.all()
