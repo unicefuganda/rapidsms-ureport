@@ -1367,6 +1367,8 @@ def alerts(request):
                 m['pk']=msg.pk
                 msgs_list.append(m)
             return HttpResponse(mark_safe(simplejson.dumps(msgs_list)))
+        else:
+            return HttpResponse("success")
     if request.GET.get('rating',None):
         rating=request.GET.get('rating')
         descs={'1':'Requires Attention','2':'Moderate','3':'Important','4':'Urgent','5':'Very Urgent'}
