@@ -20,8 +20,10 @@ def reprocess_responses(poll):
 
 @task
 def process_message(message):
+    if hasattr(message, 'db_message'):
+        message = message.db_message
     try:
-        message=Message.objects.get(pk=message)
+
         alert_setting=Settings.objects.get(attribute="alerts")
         if alert_setting.value=="true":
             alert,_=MessageAttribute.objects.get_or_create(name="alert")
