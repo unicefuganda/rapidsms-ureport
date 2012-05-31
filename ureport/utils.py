@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from contact.models import MessageFlag
 from rapidsms.models import Contact
-from poll.models import Poll
+from poll.models import Poll,ResponseCategory
 from script.models import ScriptStep
 from django.db.models import Count
 from .models import Ureporter
@@ -13,12 +13,15 @@ from rapidsms.models import Contact, Connection
 from django.db import models, transaction, connection
 from poll.models import gettext_db
 import datetime
+import re
+
 def get_contacts(**kwargs):
     request = kwargs.pop('request')
     if request.user.is_authenticated() and hasattr(Contact, 'groups'):
         return Ureporter.objects.filter(groups__in=request.user.groups.all()).distinct().annotate(Count('responses'))
     else:
         return Ureporter.objects.annotate(Count('responses'))
+
 
 def get_polls(**kwargs):
     script_polls = ScriptStep.objects.exclude(poll=None).values_list('poll', flat=True)
@@ -125,4 +128,23 @@ def add_to_poll(poll,contacts):
 
 
     return poll
+
+def reprocess_none(poll):
+    responses=poll.responses.filter(categories__category=None)
+    for resp in responses:
+        resp.has_errors = False
+        for category in poll.categories.all():
+            for rule in category.rules.all():
+                regex = re.compile(rule.regex, re.IGNORECASE)
+                if resp.eav.poll_text_value:
+                    if regex.search(resp.eav.poll_text_value.lower()) and not resp.categories.filter(category=category).count():
+                        if category.error_category:
+                            resp.has_errors = True
+                        rc = ResponseCategory.objects.create(response=resp, category=category)
+                        break
+        if not resp.categories.all().count() and poll.categories.filter(default=True).count():
+            if poll.categories.get(default=True).error_category:
+                resp.has_errors = True
+            resp.categories.add(ResponseCategory.objects.create(response=resp, category=poll.categories.get(default=True)))
+        resp.save()
 
