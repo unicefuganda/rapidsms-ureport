@@ -1330,7 +1330,7 @@ def alerts(request):
         s,_=Settings.objects.get_or_create(attribute='alerts')
         if s.value=='true':
             s.value='false'
-            s.save
+            s.save()
             reply="Start Capture"
         else:
             s.value='true'
@@ -1407,12 +1407,16 @@ def send_message(request):
         msg=request.GET.get('msg')
         message=Message.objects.get(pk=int(msg))
         send_message_form=SendMessageForm(data={'text':message.text,'recipients':message.connection.identity})
+        rate,_=MessageAttribute.objects.get_or_create(name="reply")
+        det,_=MessageDetail.objects.get_or_create(message=message,attribute=rate,value="1",description="replied")
         template="ureport/partials/reply.html"
     if request.method =="POST":
         if send_message_form.is_valid():
             recs=send_message_form.cleaned_data.get('recipients').split(',')
             for r in recs:
                 connection=Connection.objects.get(identity=r)
+#                rate,_=MessageAttribute.objects.get_or_create(name="forwarded")
+#                det,_=MessageDetail.objects.get_or_create(message=message,attribute=rate,value="1",description="forwarded")
                 Message.objects.create(direction="O",text=send_message_form.cleaned_data.get('text'),status="Q",connection=connection)
             return HttpResponse('Message Sent :)')
         else:

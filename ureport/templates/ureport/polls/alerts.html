@@ -240,6 +240,7 @@
         <table class="zebra-striped bordered fc" width="100%">
             <thead>
             <tr>
+                <th>Actioned</th>
                 <th>Text</th>
                 <th>Date</th>
                 <th>Name</th>
@@ -252,6 +253,20 @@
             <tbody id="mp_bd">
             {% for msg in messages.object_list %}
             <tr>
+                <td>
+                    {%for  m  in msg.details.all%}
+
+                    {%if m.attribute.name == "replied"%}
+
+                    {{m.attribute.name}}
+                    {%endif%}
+                    {%if m.attribute.name == "forwarded"%}
+
+                    {{m.attribute.name}}
+                    {%endif%}
+
+                    {%endfor%}
+                </td>
                 <td>{{ msg.text }}</td>
                 <td>{{ msg.date|date:"m/d/Y H:i:s" }}</td>
                 <td>{{ msg.connection.contact.name }}</td>
