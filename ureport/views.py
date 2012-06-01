@@ -1350,9 +1350,12 @@ def alerts(request):
                 m = {}
                 m["text"] = msg.text
                 m["date"]=str(msg.date.date())
-                m["name"] = msg.connection.contact.name
+                if msg.connection.contact:
+                    m["name"] = msg.connection.contact.name
+                else:
+                    m['name']="Anonymous User"
                 m["number"] = msg.connection.identity
-                if msg.connection.contact.reporting_location:
+                if msg.connection.contact and msg.connection.contact.reporting_location:
                     m["district"] = msg.connection.contact.reporting_location.name
                 else:
                     m["district"] = "N/A"
