@@ -1,4 +1,4 @@
-<form method="post" id="message_form" action="/sendmessage/" data-remote=true>
+<form method="post" id="message_reply" action="/sendmessage/?reply=true" data-remote=true>
     <div class="modal-header">
         <a class="close" data-dismiss="modal" onclick='$(".modal").hide()'>×</a>
 
@@ -17,6 +17,6 @@
     </div>
     <div class="modal-footer">
         <a href="javascript:void(0)" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>
-        <input type="submit"   onclick='$(".modal").hide()' class="btn btn-primary" value="Send Message">
+        <input type="submit"   onclick='$(".modal").hide();message_info();' class="btn btn-primary" value="Send Message">
     </div>
 </form>

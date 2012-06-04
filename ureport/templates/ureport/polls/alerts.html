@@ -127,6 +127,9 @@
 
 
 <script src="{{MEDIA_URL}}ureport/javascripts/mp_dashboard.js" type="text/javascript"></script>
+        {%endblock%}
+
+        {%block top_js%}
 <script type="text/javascript">
 
 
@@ -176,6 +179,21 @@
         $('#status').bind('ajax:success', function (evt, data, status, xhr) {
             $('#capty').html(xhr.responseText);
         });
+
+        $('#message_reply').bind('ajax:success', function (evt, data, status, xhr) {
+            console.log("rrrr");
+            $('#mesg_title').html("info");
+            $('#mesg_body').html("Message Successfully sent");
+            $('#mesg_st').show();
+        });
+
+        $('#message_forward').bind('ajax:success', function (evt, data, status, xhr) {
+            $('#mesg_title').html("info");
+            $('#mesg_body').html("Message Successfully forwarded");
+            $('#mesg_st').show();
+        });
+
+
         $('.msg_send').each(function (index, elem) {
 
             $(elem).bind('ajax:before',function (exhr, status, error) {
@@ -213,6 +231,14 @@
                 });
     }
 
+    function message_info()
+    {
+
+        $('#mesg_title').html("info");
+        $('#mesg_body').html("Message Successfully sent");
+        $('#mesg_st').show();
+    }
+
 
 </script>
 
@@ -237,6 +263,8 @@
 
         </a>
 
+        <span><a class="btn" href="?download=true" >Download</a></span>
+
         <table class="zebra-striped bordered fc" width="100%">
             <thead>
             <tr>
@@ -251,7 +279,9 @@
             </tr>
             </thead>
             <tbody id="mp_bd">
+            {% load ureport %}
             {% for msg in messages.object_list %}
+            {% set alert = False %}
             <tr>
                 <td>
                     {%for  m  in msg.details.all%}
@@ -282,15 +312,18 @@
 
                     <ul class='star-rating' id="rate{{msg.pk}}">
 
-                        {%if msg.details.all.1%}
+                        {%for d in  msg.details.all%}
+                        {% if d.attribute.name == "rating" %}
 
 
-                        <li><a href='javascript:void(0)' class="rate{{msg.details.all.1.value}}"
+                        <li><a href='javascript:void(0)' class="rate{{d.value}}"
 
-                               title="{{msg.details.all.1.description}}">{{msg.details.all.1.value}} </a></li>
+                               title="{{d.description}}">{{d.value}} </a></li>
+                        {% set alert = True %}
+{%endif%}
+                        {%endfor%}
 
-
-                        {%else%}
+                        {%if not alert%}
 
                         <li><a href='./?rating=1&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
                                data-remote=true title='Requires Attention' class='one-star star'>1</a></li>
@@ -339,6 +372,27 @@
                     <input type="submit" class="btn btn-primary" value="Send Message">
                 </div>
             </form>
+
+        </div>
+
+        <div class="modal hide" id="mesg_st">
+
+                <div class="modal-header">
+                    <a class="close" data-dismiss="modal" onclick='$(".modal").hide()'>×</a>
+
+
+                    <h3 id="mesg_title"></h3>
+
+
+                </div>
+                <div class="modal-body" id="mesg_body">
+
+                </div>
+                <div class="modal-footer">
+                    <a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>
+
+                </div>
+
 
         </div>
         <div class="pagination">

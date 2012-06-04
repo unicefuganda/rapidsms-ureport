@@ -1324,8 +1324,34 @@ def alerts(request):
     template="ureport/polls/alerts.html"
     message_list=Message.objects.filter(details__attribute__name="alert").order_by('-date')
     capture_status,_=Settings.objects.get_or_create(attribute='alerts')
+    rate,_=MessageAttribute.objects.get_or_create(name="rating")
     #message_list=[Message.objects.latest('date')]
     #use more efficient count
+    if request.GET.get('download',None):
+
+        data = []
+        for message in message_list:
+            rep = {}
+
+            rep['Message'] = message.text
+            rep['direction']=message.direction
+            rep['date']=message.date.date()
+            rep['Mobile Number'] = message.connection.identity
+            rating=message.details.filter(attribute__name='rating')
+            if rating.exists():
+                rep['rating']=rating[0].value
+            else:
+                rep['rating']="N/A"
+
+            if message.connection.contact:
+                rep['name'] = message.connection.contact.name
+                rep['district'] = message.connection.contact.reporting_location
+            else:
+                rep['name'] = ''
+                rep['district'] = ''
+            data.append(rep)
+
+        return ExcelResponse(data=data)
     if request.GET.get('capture',None):
         s,_=Settings.objects.get_or_create(attribute='alerts')
         if s.value=='true':
@@ -1395,37 +1421,51 @@ def alerts(request):
         messages = paginator.page(1)
 
 
-    return render_to_response(template,{'messages':messages,'capture_status':capture_status},context_instance=RequestContext(request))
+    return render_to_response(template,{'messages':messages,'capture_status':capture_status,'rate':rate},context_instance=RequestContext(request))
 
 
 @login_required
 def send_message(request):
-    send_message_form=SendMessageForm()
-    if request.GET.get('forward',None):
-        msg=request.GET.get('msg')
-        template="ureport/partials/forward.html"
-        message=Message.objects.get(pk=int(msg))
-        send_message_form=SendMessageForm(data={'text':message.text,'recipients':''})
-    if request.GET.get('reply',None):
-        msg=request.GET.get('msg')
-        message=Message.objects.get(pk=int(msg))
-        send_message_form=SendMessageForm(data={'text':message.text,'recipients':message.connection.identity})
-        rate,_=MessageAttribute.objects.get_or_create(name="reply")
-        det,_=MessageDetail.objects.get_or_create(message=message,attribute=rate,value="1",description="replied")
-        template="ureport/partials/reply.html"
-    if request.method =="POST":
+    if not request.method =="POST":
+        send_message_form=SendMessageForm()
+
+        if request.GET.get('forward',None):
+            msg=request.GET.get('msg')
+
+            template="ureport/partials/forward.html"
+            message=Message.objects.get(pk=int(msg))
+            send_message_form=SendMessageForm(data={'text':message.text,'recipients':''})
+            request.session['mesg']=message
+        if request.GET.get('reply',None):
+            msg=request.GET.get('msg')
+            message=Message.objects.get(pk=int(msg))
+            send_message_form=SendMessageForm(data={'text':message.text,'recipients':message.connection.identity})
+            template="ureport/partials/reply.html"
+            request.session['mesg']=message
+    else:
+        send_message_form=SendMessageForm(request.POST)
+        if request.GET.get('forward'):
+            status="forwarded"
+        else:
+            status="replied"
         if send_message_form.is_valid():
             recs=send_message_form.cleaned_data.get('recipients').split(',')
+            st,_=MessageAttribute.objects.get_or_create(name=status)
+            det,_=MessageDetail.objects.get_or_create(message=request.session['mesg'],attribute=st,value="1",description="replied")
             for r in recs:
                 connection=Connection.objects.get(identity=r)
 #                rate,_=MessageAttribute.objects.get_or_create(name="forwarded")
 #                det,_=MessageDetail.objects.get_or_create(message=message,attribute=rate,value="1",description="forwarded")
-                Message.objects.create(direction="O",text=send_message_form.cleaned_data.get('text'),status="Q",connection=connection)
+                message=Message.objects.create(direction="O",text=send_message_form.cleaned_data.get('text'),status="Q",connection=connection)
+
             return HttpResponse('Message Sent :)')
         else:
             return HttpResponse("smothing went wrong")
 
     return render_to_response(template,{'send_message_form':send_message_form},context_instance=RequestContext(request))
+
+
+
 
 
 
