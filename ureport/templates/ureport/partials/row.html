@@ -1,0 +1,61 @@
+<tr>
+    <td>
+        {%for  m  in msg.details.all%}
+
+        {%if m.attribute.name == "replied"%}
+
+        {{m.attribute.name}}
+        {%endif%}
+        {%if m.attribute.name == "forwarded"%}
+
+        {{m.attribute.name}}
+        {%endif%}
+
+        {%endfor%}
+    </td>
+    <td>{{ msg.text }}</td>
+    <td>{{ msg.date|date:"m/d/Y H:i:s" }}</td>
+    <td>{{ msg.connection.contact.name }}</td>
+    <td><a href="/messagehistory/{{ msg.connection.pk }}/">{{ msg.connection.identity }}</a></td>
+    <td>{{ msg.connection.contact.reporting_location }}</td>
+    <td><a id="msg_rep_link" href="/sendmessage/?forward=true&msg={{msg.pk}}" class="btn msg_rep"
+           data-remote=true>Foward</a> <a style="margin-top:3px; "
+                                          href="/sendmessage/?reply=true&msg={{msg.pk}}"
+                                          class="btn msg_send" id="msg_send_link" data-remote=true>Reply</a>
+    </td>
+    <td>
+
+
+        <ul class='star-rating' id="rate{{msg.pk}}">
+
+            {%for d in  msg.details.all%}
+            {% if d.attribute.name == "rating" %}
+
+
+            <li><a href='javascript:void(0)' class="rate{{d.value}}"
+
+                   title="{{d.description}}">{{d.value}} </a></li>
+            {% set alert = True %}
+            {%endif%}
+            {%endfor%}
+
+            {%if not alert%}
+
+            <li><a href='./?rating=1&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
+                   data-remote=true title='Requires Attention' class='one-star star'>1</a></li>
+            <li><a href='./?rating=2&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
+                   data-remote=true title='Moderate' class='two-stars star'>2</a></li>
+            <li><a href='./?rating=3&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
+                   data-remote=true title='Important' class='three-stars star'>3</a></li>
+            <li><a href='./?rating=4&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
+                   data-remote=true title='Urgent' class='four-stars star star'>4</a></li>
+            <li><a href='./?rating=5&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
+                   data-remote=true title='Very Urgent' class='five-stars star'>5</a></li>
+            {%endif%}
+
+        </ul>
+
+
+    </td>
+
+</tr>

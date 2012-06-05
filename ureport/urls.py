@@ -226,6 +226,7 @@ urlpatterns = patterns('',
     url(r'^category/(?P<pk>\d+)/edit/$', edit_category, name="edit_category"),
     url(r'^category/(?P<pk>\d+)/rules/view/$', view_rules, name="view_rules"),
     url(r'^alerts/$', alerts, name="alerts"),
+    url(r"remove_captured/$",remove_captured,name="remove captured"),
     url(r"sendmessage/$",send_message,name="send_message"),
 
 )

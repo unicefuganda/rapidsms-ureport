@@ -45,8 +45,8 @@ class App(AppBase):
                 pk = message.db_message.pk
             else:
                 pk=message.pk
-
-            process_message.delay(pk)
+            if message.connection.contact:
+                process_message.delay(pk)
             if message.connection.contact and message.connection.contact.language == "ach" and message.text.lower() == "english":
                 contact=message.connection.contact
                 contact.language="en"

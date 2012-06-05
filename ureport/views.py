@@ -1320,6 +1320,7 @@ def view_rules(request,pk):
 def alerts(request):
     select_poll=SelectPoll()
     poll_form = NewPollForm()
+    range_form=rangeForm()
     poll_form.updateTypes()
     template="ureport/polls/alerts.html"
     message_list=Message.objects.filter(details__attribute__name="alert").order_by('-date')
@@ -1364,14 +1365,13 @@ def alerts(request):
             reply="Stop Capture"
         return HttpResponse(reply)
     if request.GET.get("ajax", None):
-        date = datetime.datetime.now() - datetime.timedelta(seconds=15)
+        date = datetime.datetime.now() - datetime.timedelta(seconds=45)
         msgs = Message.objects.filter(details__attribute__name="alert", direction="I").filter(date__gte=date)
         msgs_list = []
         if msgs.exists():
             for msg in msgs:
                 from django.template.loader import render_to_string
-                rating_rendered = render_to_string('ureport/partials/rating.html', { 'msg': msg })
-                actions_rendered=render_to_string('ureport/partials/actions.html', { 'msg': msg })
+                row_rendered=render_to_string('ureport/partials/row.html', { 'msg': msg })
 
                 m = {}
                 m["text"] = msg.text
@@ -1390,8 +1390,7 @@ def alerts(request):
                     r=rating[0].value
                 else:
                     r=0
-                m["rating"] = rating_rendered
-                m["actions"]=actions_rendered
+                m["row"] = row_rendered
                 m['connection']=msg.connection.pk
                 m['pk']=msg.pk
                 msgs_list.append(m)
@@ -1421,7 +1420,7 @@ def alerts(request):
         messages = paginator.page(1)
 
 
-    return render_to_response(template,{'messages':messages,'capture_status':capture_status,'rate':rate},context_instance=RequestContext(request))
+    return render_to_response(template,{'messages':messages,'capture_status':capture_status,'rate':rate,"range_form":range_form},context_instance=RequestContext(request))
 
 
 @login_required
@@ -1465,7 +1464,20 @@ def send_message(request):
     return render_to_response(template,{'send_message_form':send_message_form},context_instance=RequestContext(request))
 
 
+def remove_captured(request):
+    range_form=rangeForm(request.POST)
+    if range_form.is_valid():
+        start=range_form.cleaned_data['startdate']
+        end=range_form.cleaned_data['enddate']
+        message_list=Message.objects.filter(details__attribute__name="alert").filter(date__range=(start,end))
+        alert=MessageAttribute.objects.get(name="alert")
+        mesg_details=MessageDetail.objects.filter(message__in=message_list,attribute=alert).delete()
+        return HttpResponse("success")
 
+
+
+
+    return HttpResponse("Sucessfully deleted")
 
 
 
