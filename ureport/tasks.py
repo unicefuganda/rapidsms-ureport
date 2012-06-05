@@ -29,7 +29,7 @@ def process_message(pk,**kwargs):
             alert,_=MessageAttribute.objects.get_or_create(name="alert")
             msg_a=MessageDetail.objects.create(message=message,attribute=alert,value='true')
     except Message.DoesNotExist:
-        process_message.retry(args=[pk], countdown=30, kwargs=kwargs)
+        process_message.retry(args=[pk], countdown=15, kwargs=kwargs)
 
 
 

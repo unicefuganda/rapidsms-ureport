@@ -1365,7 +1365,7 @@ def alerts(request):
             reply="Stop Capture"
         return HttpResponse(reply)
     if request.GET.get("ajax", None):
-        date = datetime.datetime.now() - datetime.timedelta(seconds=45)
+        date = datetime.datetime.now() - datetime.timedelta(seconds=30)
         prev=request.session.get('prev',[])
         msgs = Message.objects.filter(details__attribute__name="alert", direction="I").filter(date__gte=date).exclude(pk__in=prev)
         request.session['prev']=msgs.values_list('pk',flat=True)
