@@ -176,8 +176,13 @@
                     });
         });
 
-        $('#status').bind('ajax:success', function (evt, data, status, xhr) {
+        $('#status').bind('ajax:before',function (exhr, status, error) {
+            ajax_loading('#status');
+
+        }).bind('ajax:success', function (evt, data, status, xhr) {
+
             $('#capty').html(xhr.responseText);
+                    $('.ajax_loading').remove();
         });
 
         $('#message_reply').bind('ajax:success', function (evt, data, status, xhr) {
