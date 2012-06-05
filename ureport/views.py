@@ -1366,7 +1366,9 @@ def alerts(request):
         return HttpResponse(reply)
     if request.GET.get("ajax", None):
         date = datetime.datetime.now() - datetime.timedelta(seconds=45)
-        msgs = Message.objects.filter(details__attribute__name="alert", direction="I").filter(date__gte=date)
+        prev=request.session.get('prev',[])
+        msgs = Message.objects.filter(details__attribute__name="alert", direction="I").filter(date__gte=date).exclude(pk__in=prev)
+        request.session['prev']=msgs.values_list('pk',flat=True)
         msgs_list = []
         if msgs.exists():
             for msg in msgs:
