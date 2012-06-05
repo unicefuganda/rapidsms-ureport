@@ -271,10 +271,7 @@ def check_conn(sender, **kwargs):
     if not c.identity.isdigit():
         c.delete()
         return True
-    if c.identity[0:5]=="25671":
-        utl=Backend.objects.get(name="utl")
-        Connection.objects.filter(pk=c.pk).update(backend=utl)
-        return True
+    
 def update_latest_poll(sender, **kwargs):
 
     poll=kwargs['instance']
