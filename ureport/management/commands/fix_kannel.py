@@ -33,7 +33,7 @@ class Command(BaseCommand):
                 message_text=parts[3].rsplit(':')[-1]
                 msg=Message.objects.filter(connection__identity=identity,text=message_text,direction="I")
                 if msg.exists:
-                    continue
+                    pass
                 else:
 
                     msg=Message.objects.create(connection__identity=identity,text=message_text,direction="I")
