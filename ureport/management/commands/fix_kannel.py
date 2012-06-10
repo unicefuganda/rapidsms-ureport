@@ -25,8 +25,8 @@ class Command(BaseCommand):
         file2=open("/home/mossplix/log_9.txt")
         files=[file1,file2]
         num=re.compile('([0-9]+)')
-        for file in files:
-            lines=file.readlines()
+        for f in files:
+            lines=f.readlines()
             for line in lines:
                 parts=line.strip().rsplit('[FID:]')[1].split('] [')
                 identity=num.search(parts[0]).groups()[0]
@@ -41,4 +41,3 @@ class Command(BaseCommand):
                     poll.process_response(msg)
 
 
-        
