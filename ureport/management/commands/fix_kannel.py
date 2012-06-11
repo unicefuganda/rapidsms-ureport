@@ -21,9 +21,9 @@ class Command(BaseCommand):
     def handle(self, **options):
 
         poll =Poll.objects.get(pk=236)
-        file1=open("/home/mossplix/log_8.txt")
-        file2=open("/home/mossplix/log_9.txt")
-        files=[file1,file2]
+        #file1=open("/home/mossplix/log_8.txt")
+        file2=open("/home/mossplix/incoming.log")
+        files=[file2]
         num=re.compile('([0-9]+)')
         for f in files:
             lines=f.readlines()
