@@ -29,15 +29,21 @@ class Command(BaseCommand):
             lines=f.readlines()
             for line in lines:
                 parts=line.strip().rsplit('[FID:]')[1].split('] [')
-                identity=num.search(parts[0]).groups()[0]
-                message_text=parts[3].rsplit(':')[-1]
-                msg=Message.objects.filter(connection__identity=identity,text=message_text,direction="I")
-                if msg.exists:
-                    pass
-                else:
+                identity=num.search(parts[1]).groups()[0]
+                message_text=parts[4].rsplit(':')[-1]
+                try:
+                    connection=Connection.objects.get(identity=identity)
+                    msg=Message.objects.filter(connection__identity=identity,text=message_text,direction="I")
+                    if msg.exists():
+                        pass
+                    else:
 
-                    msg=Message.objects.create(connection__identity=identity,text=message_text,direction="I")
-                    print "created "+msg.text
-                    poll.process_response(msg)
+                        msg=Message.objects.create(connection__identity=identity,text=message_text,direction="I")
+                        print "created "+msg.text
+                        if poll.objects.filter(pk=connection.contact.pk):
+                            poll.process_response(msg)
+                except Connection.DoesNotExist:
+                    pass
+
 
 
