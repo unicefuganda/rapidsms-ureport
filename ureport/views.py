@@ -1368,7 +1368,7 @@ def alerts(request):
         date = datetime.datetime.now() - datetime.timedelta(seconds=30)
         prev=request.session.get('prev',[])
         msgs = Message.objects.filter(details__attribute__name="alert", direction="I").filter(date__gte=date).exclude(pk__in=prev)
-        request.session['prev']=msgs.values_list('pk',flat=True)
+        request.session['prev']=list(msgs.values_list('pk',flat=True))
         msgs_list = []
         if msgs.exists():
             for msg in msgs:
@@ -1476,10 +1476,12 @@ def remove_captured(request):
         mesg_details=MessageDetail.objects.filter(message__in=message_list,attribute=alert).delete()
         return HttpResponse("success")
 
-
-
-
     return HttpResponse("Sucessfully deleted")
 
-
+import httplib2
+@login_required
+def kannel_status(request):
+    conn = httplib2.Http()
+    resp, content = conn.request('http://ureport.ug:13000/status', request.method)
+    return HttpResponse(content,content_type="text/html")
 
