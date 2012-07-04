@@ -54,3 +54,5 @@ def reprocess_groups():
                                 response.contact.groups.add(Group.objects.get(pk=group_pk))
                                 matched=True
                                 break
+    except:
+        pass
