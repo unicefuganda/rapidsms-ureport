@@ -7,6 +7,8 @@ from ureport.models import *
 from poll.models import ResponseCategory, Poll, Response
 from django.db import transaction
 from django.db import IntegrityError
+from script.models import Script
+from django.contrib.auth.models import  Group
 
 
 
@@ -33,4 +35,22 @@ def process_message(pk,**kwargs):
 
 
 
+@task
+def reprocess_groups():
+    try:
+        scripts=Script.objects.filter(pk__in=['ureport_autoreg', 'ureport_autoreg_luo','ureport_autoreg2', 'ureport_autoreg_luo2'])
+        word_dict=dict(AutoregGroupRules.objects.exclude(values=None).values_list('group__name','values'))
+        for script in scripts:
+            responses=script.steps.get(order=1).poll.responses.all()
+            for response in responses:
+                txt=response.message.text.strip().lower()
 
+                matched=False
+
+                for group_pk, word_list in word_dict.items():
+                    for word in word_list.split(","):
+                        if word in txt.split():
+                            if response.contact and group not in response.contact.groups.all():
+                                response.contact.groups.add(Group.objects.get(pk=group_pk))
+                                matched=True
+                                break

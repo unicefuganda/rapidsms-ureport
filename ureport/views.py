@@ -50,6 +50,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import Http404, HttpResponse
 from django.db.models import get_model
+from .forms import GroupRules
 
 import re
 import bisect
@@ -1484,4 +1485,24 @@ def kannel_status(request):
     conn = httplib2.Http()
     resp, content = conn.request('http://ureport.ug:13000/status', request.method)
     return HttpResponse(content,content_type="text/html")
+
+def set_autoreg_rules(request):
+    if request.GET.get('gr',None):
+        g=Group.objects.get(pk=request.GET.get('gr'))
+
+        try:
+            a_g=AutoregGroupRules.objects.get(group=g)
+            return HttpResponse(str(a_g.values))
+        except AutoregGroupRules.DoesNotExist:
+            return HttpResponse("")
+
+    if request.method == "POST":
+
+        group_form=GroupRules(request.POST)
+        if group_form.is_valid():
+            group_form.save()
+    else:
+        group_form=GroupRules()
+    return render_to_response('ureport/partials/groups_form.html',{'group_form':group_form},context_instance=RequestContext(request))
+
 

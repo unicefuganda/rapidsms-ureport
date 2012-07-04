@@ -3,26 +3,38 @@
     Polls - {{ block.super }}
 {% endblock %}
 {% block stylesheets %}
-     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/ureport.css" />
+
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/splits.css" />
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/modules.css" />
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/icons.css" />
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}poll/stylesheets/style.css" />
+<link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/ureport_extras.css"/>
+<link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/ureport.min.css"/>
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/modal.css"/>
 {% endblock %}
 
 {% block extra_js %}
     
     <script src="{{MEDIA_URL}}poll/javascripts/polls.js" type="text/javascript"></script>
+
+
 {% endblock %}
 
 {% block content %}
 {{ block.super }}
+<div class="modal hide" id="mesg_st">
+
+
+
+
+</div>
 <div class="buttons"> 
     <a href="{% url ureport.views.new_poll %}" style="float:left">
       <img border="0" src="/static/rapidsms/icons/silk/add.png" alt=""/>Add New Poll
     </a>
     {% if request.path == "/mypolls/" %}
 <a href="{% url script-polls %}" style="float:right" class="">View AutoReg Polls</a>
+    <a href="javascript:void(0)" onclick="$('#mesg_st').load('{% url set_group_rules %}');$('#mesg_st').show()" style="float:right" class="">Add Autoreg Group Rules</a>
 {% endif %}
 </div>
 {% endblock %}

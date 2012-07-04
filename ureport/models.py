@@ -154,6 +154,10 @@ class Settings(models.Model):
     value=models.CharField(default='',max_length=50,null=True)
     description= models.TextField(null=True)
 
+class AutoregGroupRules(models.Model):
+    group=models.ForeignKey(Group)
+    values=models.TextField(default=None)
+
 def autoreg(**kwargs):
     connection = kwargs['connection']
     progress = kwargs['sender']
@@ -169,6 +173,7 @@ def autoreg(**kwargs):
         genderpoll = script.steps.get(order=5).poll
         villagepoll = script.steps.get(order=6).poll
         contact = connection.contact
+        word_dict=dict(AutoregGroupRules.objects.exclude(values=None).values_list('group__name','values'))
         name = find_best_response(session, namepoll)
         if name:
             contact.name = name[:100]
@@ -192,12 +197,19 @@ def autoreg(**kwargs):
             contact.village = village
 
         group_to_match = find_best_response(session, youthgrouppoll)
+        gr_matched=False
+        for group_pk, word_list in word_dict.items():
+            for word in word_list.split(","):
+                if word in group_to_match.split():
+                    contact.groups.add(Group.objects.get(pk=group_pk))
+                    gr_matched=True
         default_group = None
         if progress.language:
             contact.language = progress.language
         if Group.objects.filter(name='Other uReporters').count():
             default_group = Group.objects.get(name='Other uReporters')
-        if group_to_match :
+        if group_to_match and not gr_matched:
+
             for g in re.findall(r'\w+', group_to_match):
                 if g:
                     group = find_closest_match(str(g), Group.objects.exclude(name__in=["MP","delegate"]))
@@ -271,7 +283,7 @@ def check_conn(sender, **kwargs):
     if not c.identity.isdigit():
         c.delete()
         return True
-    
+
 def update_latest_poll(sender, **kwargs):
 
     poll=kwargs['instance']

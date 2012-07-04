@@ -22,6 +22,7 @@ from django.db.models.query import QuerySet
 from contact.models import MassText
 from poll.models import Poll, Translation
 from unregister.models import Blacklist
+from .models import AutoregGroupRules
 
 import subprocess
 
@@ -459,6 +460,7 @@ class SelectCategory(forms.Form):
         del kwargs['categories']
         super(SelectCategory, self).__init__(*args, **kwargs)
         self.fields['category'].queryset =categories
+
 class SendMessageForm(forms.Form):
     recipients=forms.CharField(label="recepient(s)" ,required=True,help_text="enter numbers commas separated")
     text = forms.CharField(required=True, widget=SMSInput())
@@ -474,3 +476,8 @@ class rangeForm(forms.Form):
         'readonly': 'readonly',
         'size': '15'
     }))
+
+class GroupRules(forms.ModelForm):
+
+    class Meta:
+        model=AutoregGroupRules
