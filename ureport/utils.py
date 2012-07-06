@@ -148,3 +148,50 @@ def reprocess_none(poll):
             resp.categories.add(ResponseCategory.objects.create(response=resp, category=poll.categories.get(default=True)))
         resp.save()
 
+def fb(req, poll):
+    import urllib2
+    import urllib
+    import json
+    from ureport.models import Settings
+    fb_settings = ['fb_page_id, fb_app_id, fb_app_secret, fb_url']
+    setting = []
+    for fbs in fb_settings:
+        try:
+            setting[fbs] = Settings.objects.get(attribute=fbs)
+        except:
+            setting[fbs] = None
+            
+    question = poll.question
+    if poll.category_poll:
+        options = json.dumps(poll.categories.all().values_list('name', flat=True))
+        
+    code = req.POST.get("code")
+
+    if not code:
+        # manage_pages permissions is required for accounts the user
+        # has access to, and posting to the Page
+        dialog_url = "http://www.facebook.com/dialog/oauth?client_id=%s&redirect_uri=%s&scope=manage_pages" % (setting['fb_app_id'], urllib.urlencode(setting['fb_url']))
+        toret = '<script>top.location.href="%s";</script>' % dialog_url
+    else:
+        token_url = "https://graph.facebook.com/oauth/access_token?client_id=%s&redirect_uri=%s&client_secret=%s&code=%s" % (setting['fb_app_id'], urllib.urlencode(setting['fb_url']), setting['fb_app_secret'], code)
+        access_token = urllib2.urlopen(token_url)
+        accounts_url = "https://graph.facebook.com/me/accounts?%s" % access_token
+        response = urllib2.urlopen(accounts_url)
+
+        #Parse the return value and get the array of accounts - this is
+        #returned in the data[] array.
+        resp_obj = json.loads(response)
+        accounts = resp_obj['data']
+
+        #Find the access token for the Page
+        page_access_token = None
+        for account in accounts:
+            if account['id'] == setting['fb_page_id']:
+                page_access_token = 'access_token=%s' % account['access_token']
+                break
+            
+        #Post the question to the Page
+        post_question_url = "https://graph.facebook.com/%s/questions?question=%s&options=%s&allow_new_options=false&method=post&%s" % (setting['fb_page_id'], urllib.urlencode(question), urllib.urlencode(options), page_access_token)
+
+        toret = urllib2.urlopen(post_question_url)
+        return toret
