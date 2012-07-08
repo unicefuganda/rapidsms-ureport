@@ -1331,28 +1331,8 @@ def alerts(request):
     #use more efficient count
     if request.GET.get('download',None):
 
-        data = []
-        for message in message_list:
-            rep = {}
 
-            rep['Message'] = message.text
-            rep['direction']=message.direction
-            rep['date']=message.date.date()
-            rep['Mobile Number'] = message.connection.identity
-            rating=message.details.filter(attribute__name='rating')
-            if rating.exists():
-                rep['rating']=rating[0].value
-            else:
-                rep['rating']="N/A"
-
-            if message.connection.contact:
-                rep['name'] = message.connection.contact.name
-                rep['district'] = message.connection.contact.reporting_location
-            else:
-                rep['name'] = ''
-                rep['district'] = ''
-            data.append(rep)
-
+        data=list(AlertsExport.objects.all().values())
         return ExcelResponse(data=data)
     if request.GET.get('capture',None):
         s,_=Settings.objects.get_or_create(attribute='alerts')
