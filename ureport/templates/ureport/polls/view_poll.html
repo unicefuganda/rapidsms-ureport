@@ -86,9 +86,9 @@
                             var $form = $(this);
 
                             // Insert response partial into page below the form.
-                            console.log(xhr.responseText);
-                            console.log(data);
+
                             $('#category').html(xhr.responseText);
+
                         })
                         .bind('ajax:failure', function(evt, data, status, xhr) {
                             alert("something went wrong!");
@@ -138,7 +138,7 @@ click on question to edit
 
 <form action="">
 {% csrf_token %}
-    <span>crappp</span>crappp
+
 
 <table width="100%" class="results">
 <thead>

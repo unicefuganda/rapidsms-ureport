@@ -1,4 +1,4 @@
-<form method="post" id="category_form" action="?category=true" data-remote=true>
+<form method="post" id="category_form" action="./?category=true" data-remote=true>
     <div class="modal-header">
         <a class="close" data-dismiss="modal" onclick='$(".modal").hide()'>×</a>
         {% if title %}
@@ -17,6 +17,6 @@
     </div>
     <div class="modal-footer">
         <a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>
-        <input type="submit"  onclick="bind_form()" class="btn btn-primary" value="Next">
+        <input type="submit"  onclick="bind_form();" class="btn btn-primary" value="Next">
     </div>
 </form>

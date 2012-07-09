@@ -23,7 +23,7 @@
         </table>
     </div>
     <div class="modal-footer">
-        {%if edit%}{%else%}<input type="submit" href="./" class="btn btn-primary" value="Save and close"> {%endif%}
-        <input type="submit" href="?category=true{% if edit %}&pk={{category.pk}}{%endif%}" class="btn btn-primary" {% if edit%}value="save edits"{%else%} value="Save and add another"{%endif%}>
+        {%if edit%}<a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>{%else%}<input type="submit" href="./" style="width:100px;" class="btn btn-primary" value="Save and close"> {%endif%}
+        <input type="submit" href="?category=true{% if edit %}&pk={{category.pk}}{%endif%}" class="btn btn-primary" width="100px;" {% if edit%}value="save edits"{%else%} value="Save and add another"{%endif%}>
     </div>
 </form>
