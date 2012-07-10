@@ -181,6 +181,8 @@ class AlertsExport(models.Model):
     date = models.DateTimeField()
     mobile = models.CharField(max_length=100)
     rating = models.CharField(max_length=500)
+    replied = models.CharField(max_length=50)
+    forwarded = models.CharField(max_length=50)
     class Meta:
         db_table="alerts_export"
 class AutoregGroupRules(models.Model):
