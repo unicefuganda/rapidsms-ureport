@@ -59,7 +59,8 @@ class ModelTest(TestCase): #pragma: no cover
         
 
 
-    def fakeIncoming(self, message, connection):self.router.handle_incoming(connection.backend.name, connection.identity, message)
+    def fakeIncoming(self, message, connection):
+        self.router.handle_incoming(connection.backend.name, connection.identity, message)
 
     def assertInteraction(self, connection, incoming_message, expected_response):
         incoming_obj = self.router.handle_incoming(connection.backend.name, connection.identity, incoming_message)
@@ -122,6 +123,7 @@ class ModelTest(TestCase): #pragma: no cover
         connection=Connection.objects.all()[0]
         incomingmessage = self.fakeIncoming('quit',self.connection)
         self.assertEquals(Blacklist.objects.count(), 1)
+        self.assertEquals(Message.objects.order_by('-pk')[0].status, u'Q')
 
     def test_autoreg(self):
         
@@ -129,7 +131,6 @@ class ModelTest(TestCase): #pragma: no cover
         inmsg1=self.fakeIncoming('join',self.connection1)
         #make sure a scrpt progress was created
         #get a response
-        
         self.assertEquals(ScriptProgress.objects.count(), 1)
         script_prog1 = ScriptProgress.objects.all().order_by('pk')[0]
         #make sure script progress was assigned the right language
