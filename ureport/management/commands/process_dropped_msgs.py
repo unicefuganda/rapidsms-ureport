@@ -50,27 +50,30 @@ class Command(BaseCommand):
             query_parts = query_string.split('=')
             try:
                 count = 0
+                backend_name = query_parts[2][:-7]
                 connection = query_parts[3]
                 message = query_parts[4]
+#                print backend_name
                 if connection.endswith('&message'):
                     if not http_status in ['200', '400']:
-                        identity = connection[3:15] if connection.startswith('%') else connection[:12]
-                        if not identity == 'Warid&messag':
-                            try:
-                                conn=Connection.objects.get(identity=identity)
-                                msg=Message.objects.filter(connection__identity=identity, text=message, direction="I")
-                                if msg.exists():
-                                    print msg, ' --- exists!'
-                                else:
-                                    if not dry_run:
-                                        msg=Message.objects.create(connection__identity=identity, text=message, direction="I")
-                                        print "created: "+msg.text
-                                        if poll.objects.filter(pk=connection.contact.pk):
-                                            poll.process_response(msg)
+                        if backend_name in ['dmark', 'zain']:
+                            identity = connection[3:15] if connection.startswith('%') else connection[:12]
+                            if not identity == 'Warid&messag':
+                                try:
+                                    conn=Connection.objects.get(identity=identity, backend__name=backend_name)
+                                    msg=Message.objects.filter(connection=conn, text=message, direction="I")
+                                    if msg.exists():
+                                        print msg, ' --- exists!'
                                     else:
-                                        print message, ' --- to be created'
-                            except Connection.DoesNotExist:
-                                print identity, ' --- connection does not exists'
+                                        if not dry_run:
+                                            msg=Message.objects.create(connection=conn, text=message, direction="I")
+                                            print "created: "+msg.text
+                                            if poll.objects.filter(pk=conn.contact.pk):
+                                                poll.process_response(msg)
+                                        else:
+                                            print message, ' --- to be created'
+                                except Connection.DoesNotExist:
+                                    print identity, ' --- connection does not exists'
             except IndexError:
                 pass
 
