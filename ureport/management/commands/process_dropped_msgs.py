@@ -68,8 +68,11 @@ class Command(BaseCommand):
                                         if not dry_run:
                                             msg=Message.objects.create(connection=conn, text=message, direction="I")
                                             print "created: "+msg.text
-                                            if poll.contacts.filter(pk=conn.contact.pk):
-                                                poll.process_response(msg)
+                                            try:
+                                                if poll.contacts.filter(pk=conn.contact.pk):
+                                                    poll.process_response(msg)
+                                            except AttributeError:
+                                                pass
                                         else:
                                             print message, ' --- to be created'
                                 except Connection.DoesNotExist:
