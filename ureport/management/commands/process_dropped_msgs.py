@@ -1,0 +1,76 @@
+from django.core.management.base import BaseCommand
+import traceback
+import os
+from script.models import ScriptSession
+from ureport.settings import UREPORT_ROOT
+from rapidsms.models import Contact, Connection
+from django.utils.datastructures import SortedDict
+from poll.models import Poll
+import datetime
+from unregister.models import Blacklist
+from django.conf import settings
+from rapidsms_httprouter.models import Message
+from django.db import connection
+from optparse import OptionParser, make_option
+import re
+
+
+class Command(BaseCommand):
+
+    option_list = BaseCommand.option_list + (
+            make_option("-d", "--dry_run", dest="dry_run"),
+            make_option("-f", "--file", dest="file"),
+            make_option("-p", "--poll", dest="poll"),
+        )
+    
+    def handle(self, **options):
+        
+        dry_run = options['dry_run']
+        
+        if not options['poll']:
+            poll_pk = raw_input('Poll ID:')
+            
+        if not options['file']:
+            log_file = raw_input('Access log to be processed:')
+        if not log_file:
+            log_file = "/Users/asseym/Public/rapidsms/ureport/ureport_project/rapidsms_ureport/ureport/ureport_prod.access.log.1"
+        
+        try:
+            poll =Poll.objects.get(pk=poll_pk)
+        except Poll.DoesNotExist:
+            pass
+        file_handle=open(log_file)
+        lines=file_handle.readlines()
+        for line in lines:
+            parts = line.strip().rsplit(' ')
+            http_status = parts[6]
+            query_string = parts[4]
+            query_parts = query_string.split('=')
+            try:
+                count = 0
+                connection = query_parts[3]
+                message = query_parts[4]
+                if connection.endswith('&message'):
+                    if not http_status in ['200', '400']:
+                        identity = connection[3:15] if connection.startswith('%') else connection[:12]
+                        if not identity == 'Warid&messag':
+                            try:
+                                conn=Connection.objects.get(identity=identity)
+                                msg=Message.objects.filter(connection__identity=identity, text=message, direction="I")
+                                if msg.exists():
+                                    print msg, ' --- exists!'
+                                else:
+                                    if not dry_run:
+                                        msg=Message.objects.create(connection__identity=identity, text=message, direction="I")
+                                        print "created: "+msg.text
+                                        if poll.objects.filter(pk=connection.contact.pk):
+                                            poll.process_response(msg)
+                                    else:
+                                        print message, ' --- to be created'
+                            except Connection.DoesNotExist:
+                                print identity, ' --- connection does not exists'
+            except IndexError:
+                pass
+
+
+
