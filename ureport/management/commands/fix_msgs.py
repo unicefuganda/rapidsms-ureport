@@ -55,8 +55,10 @@ class Command(BaseCommand):
                                     if dry_run:
                                         print msg, message
                                     else:
-                                        msg[0].text = message
-                                        msg[0].save()
+                                        m = msg[0]
+                                        m.text = message
+                                        m.save()
+                                        print m.text
                             except Connection.DoesNotExist:
                                 print identity, ' --- connection does not exists'
             except IndexError:
