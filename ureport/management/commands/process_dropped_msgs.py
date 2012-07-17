@@ -12,6 +12,7 @@ from django.conf import settings
 from rapidsms_httprouter.models import Message
 from django.db import connection
 from optparse import OptionParser, make_option
+import urllib2
 import re
 
 
@@ -52,8 +53,7 @@ class Command(BaseCommand):
                 count = 0
                 backend_name = query_parts[2][:-7]
                 connection = query_parts[3]
-                message = query_parts[4]
-#                print backend_name
+                message = urllib2.unquote(query_parts[4]).replace('+', ' ')
                 if connection.endswith('&message'):
                     if not http_status in ['200', '400']:
                         if backend_name in ['dmark', 'zain']:
