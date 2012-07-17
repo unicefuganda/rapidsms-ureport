@@ -38,7 +38,7 @@ class Command(BaseCommand):
             log_file = "/Users/asseym/Public/rapidsms/ureport/ureport_project/rapidsms_ureport/ureport/ureport_prod.access.log.1"
         
         try:
-            poll =Poll.objects.get(pk=poll_pk)
+            poll = Poll.objects.get(pk=poll_pk)
         except Poll.DoesNotExist:
             pass
         file_handle=open(log_file)
@@ -68,7 +68,7 @@ class Command(BaseCommand):
                                         if not dry_run:
                                             msg=Message.objects.create(connection=conn, text=message, direction="I")
                                             print "created: "+msg.text
-                                            if poll.objects.filter(pk=conn.contact.pk):
+                                            if poll.contacts.filter(pk=conn.contact.pk):
                                                 poll.process_response(msg)
                                         else:
                                             print message, ' --- to be created'
