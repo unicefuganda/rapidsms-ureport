@@ -28,9 +28,6 @@ class Command(BaseCommand):
         dry_run = options['dry_run']
         log_file = options['file']
         
-        if not poll_pk:
-            poll_pk = raw_input('Poll ID:')
-            
         if not log_file:
             log_file = raw_input('Access log to be processed:')
         if not log_file:
