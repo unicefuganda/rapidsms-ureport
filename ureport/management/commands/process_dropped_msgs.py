@@ -26,11 +26,13 @@ class Command(BaseCommand):
     def handle(self, **options):
         
         dry_run = options['dry_run']
+        log_file = options['file']
+        poll_pk = options['poll']
         
-        if not options['poll']:
+        if not poll_pk:
             poll_pk = raw_input('Poll ID:')
             
-        if not options['file']:
+        if not log_file:
             log_file = raw_input('Access log to be processed:')
         if not log_file:
             log_file = "/Users/asseym/Public/rapidsms/ureport/ureport_project/rapidsms_ureport/ureport/ureport_prod.access.log.1"
