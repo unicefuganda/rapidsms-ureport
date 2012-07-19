@@ -19,9 +19,9 @@ class App(AppBase):
             opt_reg = re.compile(r"|".join(OPT_IN_WORDS_LUO), re.IGNORECASE)
 
         #dump new connections in Autoreg
-        if not message.connection.contact and not ScriptProgress.objects.filter(
-            script__slug__in=['ureport_autoreg', 'ureport_autoreg_luo','ureport_autoreg2', 'ureport_autoreg_luo2'],
-            connection=message.connection).exists():
+        if not message.connection.contact and not \
+                            ScriptProgress.objects.filter(script__slug__in=['ureport_autoreg', 'ureport_autoreg_luo','ureport_autoreg2', 'ureport_autoreg_luo2'],\
+                            connection=message.connection).exists():
             match = opt_reg.search(message.text.lower())
             if match:
                 prog = ScriptProgress.objects.create(script=Script.objects.get(pk="ureport_autoreg_luo2"),\
@@ -38,7 +38,7 @@ class App(AppBase):
          #ignore subsequent join messages
         elif message.text.lower().strip() in OPT_IN_WORDS_LUO+OPT_IN_WORDS_EN:
             return True
-        else
+        else:
             return False
         return False
             #suspected to be delaying message processing and causing nginx to drop http requests to ureport
