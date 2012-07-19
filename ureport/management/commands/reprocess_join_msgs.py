@@ -62,8 +62,7 @@ class Command(BaseCommand):
 #                    params = urllib.urlencode({'password':'p73xvyqi','backend': backend_str,'sender': identity_str,'message': msg_str})
 #                    res = urllib.urlopen('http://localhost:8000/router/receive/?', params)
 #                    res = urllib.urlopen('http://test.ureport.unicefuganda.org/router/receive/?', params)
-                    params = {'backend': backend_str,'sender': identity_str,'message': msg_str}
-                    params.update{'password':password}
+                    params = {'password':password, 'backend': backend_str,'sender': identity_str,'message': msg_str}
                     res = client.get('http://ureport.ug/router/receive/', params)
                     if ScriptProgress.objects.filter(connection__identity=identity_str, connection__backend__name=backend_str, script__slug__in=['ureport_autoreg2', 'ureport_autoreg_luo2']):
                         print 'Added %s to autoreg...' % identity_str
