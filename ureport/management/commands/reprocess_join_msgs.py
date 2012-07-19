@@ -26,14 +26,16 @@ class Command(BaseCommand):
             make_option("-d", "--dry_run", dest="dry_run"),
             make_option("-f", "--file", dest="file"),
             make_option("-c", "--code", dest="code"),
+            make_option("-p", "--password", dest="password")
         )
-    
+
     def handle(self, **options):
-        
+
         dry_run = options['dry_run']
         log_file = options['file']
         code = options['code']
-        
+        password = options['password']
+
         if not log_file:
             log_file = raw_input('Access log to be processed:')
         if not log_file:
@@ -41,7 +43,7 @@ class Command(BaseCommand):
             log_file = "/Users/asseym/test_assey.txt"
         if not code:
             code = '8500'
-        
+
         file_handle=open(log_file)
         lines=file_handle.readlines()
         client = Client()
@@ -60,10 +62,11 @@ class Command(BaseCommand):
 #                    params = urllib.urlencode({'password':'p73xvyqi','backend': backend_str,'sender': identity_str,'message': msg_str})
 #                    res = urllib.urlopen('http://localhost:8000/router/receive/?', params)
 #                    res = urllib.urlopen('http://test.ureport.unicefuganda.org/router/receive/?', params)
-                    params = {'password':'p73xvyqi','backend': backend_str,'sender': identity_str,'message': msg_str}
+                    params = {'backend': backend_str,'sender': identity_str,'message': msg_str}
+                    params.update{'password':password}
                     res = client.get('http://ureport.ug/router/receive/', params)
                     if ScriptProgress.objects.filter(connection__identity=identity_str, connection__backend__name=backend_str, script__slug__in=['ureport_autoreg2', 'ureport_autoreg_luo2']):
-                        print 'Added %s to autoreg...' % identity_str  
+                        print 'Added %s to autoreg...' % identity_str
                     else:
                         print '%s not added to autoreg...', identity_str
 
