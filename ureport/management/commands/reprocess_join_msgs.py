@@ -65,7 +65,7 @@ class Command(BaseCommand):
                     if ScriptProgress.objects.filter(connection__identity=identity_str, connection__backend__name=backend_str, script__slug__in=['ureport_autoreg2', 'ureport_autoreg_luo2']):
                         print 'Added %s to autoreg...' % identity_str  
                     else:
-                        print '%s not added to autoreg...', identity_str
+                        print '%s not added to autoreg...' % identity_str
 
 
 
