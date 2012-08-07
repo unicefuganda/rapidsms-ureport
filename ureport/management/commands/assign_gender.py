@@ -20,7 +20,6 @@ class Command(BaseCommand):
         try:
             for message in messages:
                 contact=message.connection.contact
-                print "yappy "+contact.name
                 if message.text.lower()=="m":
                     contact.gender="M"
                 elif message.text.lower() =="f":
