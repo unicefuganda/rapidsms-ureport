@@ -16,7 +16,7 @@ class Command(BaseCommand):
         #get gender_les
         no_gender_conns=Contact.objects.filter(gender=None).values_list('connection').distinct()
 
-        messages=Message.objects.filter(connection__pk__in=no_gender_conns,direction="I").filter(Q(text="f")|Q(text="m")).order_by('date')
+        messages=Message.objects.filter(connection__pk__in=no_gender_conns,direction="I").filter(Q(text="f")|Q(text="m")|Q(text="F")|Q(text="M")).order_by('date')
         try:
             for message in messages:
                 contact=message.connection.contact
