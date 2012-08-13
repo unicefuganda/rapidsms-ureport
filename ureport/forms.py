@@ -320,6 +320,7 @@ class MassTextForm(ActionForm):
     action_label = 'Send Message'
 
     def perform(self, request, results):
+        import pdb;pdb.set_trace()
         if results is None or len(results) == 0:
             return ('A message must have one or more recipients!', 'error')
 
