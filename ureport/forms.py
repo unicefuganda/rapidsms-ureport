@@ -317,6 +317,7 @@ class MassTextForm(ActionForm):
 
     text = forms.CharField(max_length=160, required=True, widget=SMSInput())
     text_luo = forms.CharField(max_length=160, required=False, widget=SMSInput())
+
     action_label = 'Send Message'
 
     def perform(self, request, results):
