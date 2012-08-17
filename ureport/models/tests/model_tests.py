@@ -54,10 +54,6 @@ class ModelTest(TestCase): #pragma: no cover
         self.gem_group=Group.objects.create(name="GEM")
         Location.objects.create(name="kampala",type=LocationType.objects.create(name="district",slug="district"))
         
-       
-
-        
-
 
     def fakeIncoming(self, message, connection):
         self.router.handle_incoming(connection.backend.name, connection.identity, message)
@@ -200,7 +196,6 @@ class ModelTest(TestCase): #pragma: no cover
         connection=Connection.objects.all()[0]
         incomingmessage = self.fakeIncoming('quit',self.connection)
         self.assertEquals(Blacklist.objects.count(), 1)
-        script_prog = ScriptProgress.objects.all().order_by('pk')[0]
         self.assertEqual(1,Poll.objects.get(name="blacklist").contacts.filter(connection=self.connection).count())
 
 

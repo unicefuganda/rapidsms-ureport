@@ -1,10 +1,17 @@
 import datetime
 from django.test import TestCase
 from django.core.urlresolvers import reverse
-class TestViews(TestCase):
+from poll.models import Poll
 
+class TestViews(TestCase):
+    fixtures = ['test_fix.json','Initial_data.json','luo_translation.json','script2.json','script_luo.json','ussd.json']
     def setUp(self):
-        pass
+        try:
+            #if using db dump use this
+            self.poll=Poll.objects.get(pk=200)
+        except:
+            #else use autoreg poll
+            self.poll=Poll.objects.get(pk=121)
     def test_home(self):
         
         response = self.client.get(reverse('ureport-home'))
@@ -106,7 +113,7 @@ class TestViews(TestCase):
         
     def test_bestviz(self):
         
-        response = self.client.get(reverse('best-viz'))
+        response = self.client.get(reverse('best-viz',kwrgs={'poll_id',self.poll.pk}))
         self.assertEqual(response.status_code, 200)
 
     def test_tagcloud(self):

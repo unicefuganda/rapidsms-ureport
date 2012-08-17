@@ -12,6 +12,7 @@ from models import AutoregGroupRules,EquatelLocation
 from .utils import update_poll_results
 from poll.models import ResponseCategory,Response,Poll
 from rapidsms_httprouter.models import Message
+from django.conf import settings
 
 def autoreg(**kwargs):
     connection = kwargs['connection']
