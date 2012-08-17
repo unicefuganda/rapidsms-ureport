@@ -4,6 +4,8 @@
 from rapidsms_httprouter.models import Message
 from django.contrib.auth.decorators import login_required
 from generic.views import generic
+from rapidsms.models import Contact,Connection
+from generic.sorters import SimpleSorter
 
 @login_required
 def ussd_manager(request):

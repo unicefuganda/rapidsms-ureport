@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response,HttpResponse
 from django.template import RequestContext
 from ureport.models import AutoregGroupRules
 from ureport.forms import GroupRules
+from django.contrib.auth.models import Group
 
 
 def set_autoreg_rules(request):

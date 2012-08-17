@@ -12,7 +12,15 @@ from rapidsms_httprouter.models import Message
 from django.contrib.auth.decorators import login_required
 from generic.views import generic
 from ureport.utils import retrieve_poll
+from generic.sorters import SimpleSorter
+from rapidsms.models import Connection
+from contact.models import Flag,MessageFlag
 
+
+from ureport.forms import SendMessageForm
+from ureport.models import MessageAttribute,MessageDetail
+from contact.forms import FlaggedMessageForm
+from ureport.views.utils.tags import _get_responses
 
 
 

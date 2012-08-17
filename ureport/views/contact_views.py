@@ -16,6 +16,16 @@ from script.utils.handling import find_closest_match
 import re
 import datetime
 
+from rapidsms.models import Connection,Contact
+from poll.models import Poll
+from generic.sorters import SimpleSorter
+from ureport.forms import  ReplyTextForm,EditReporterForm,SignupForm,ExcelUploadForm
+
+from unregister.models import Blacklist
+from django.conf import settings
+from rapidsms.contrib.locations.models import Location
+from django.contrib.auth.models import Group
+from ureport.views.utils.excel import handle_excel_file
 
 @login_required
 def ureporter_profile(request, connection_pk):
