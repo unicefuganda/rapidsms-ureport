@@ -1,0 +1,241 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+from django.shortcuts import render_to_response
+from django.shortcuts import  redirect
+from django.template import RequestContext
+from django.utils import simplejson
+from django.utils.safestring import mark_safe
+from django.http import HttpResponse
+from uganda_common.utils import ExcelResponse
+
+from rapidsms_httprouter.models import Message
+
+
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.core.urlresolvers import reverse
+import datetime
+
+
+
+@login_required
+def mp_dashboard(request):
+    from contact.forms import FilterGroupsForm, MultipleDistictFilterForm, GenderFilterForm, AgeFilterForm
+    from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+    groupform = AssignResponseGroupForm(request=request)
+    if request.method == "POST" and request.POST.get('groups', None):
+        g_form = AssignResponseGroupForm(request.POST, request=request)
+        if g_form.is_valid():
+            request.session['groups'] = g_form.cleaned_data['groups']
+    if not request.session.get('groups', None):
+        mp_contacts = Contact.objects.filter(groups__name__in=['MP'])
+    else:
+        mp_contacts = Contact.objects.filter(groups__in=request.session.get('groups'))
+    forms = [MultipleDistictFilterForm, FilterGroupsForm, GenderFilterForm, AgeFilterForm]
+    filter_forms = []
+    mp_conns = Connection.objects.filter(contact__in=mp_contacts)
+    contacts = Contact.objects.exclude(connection__in=Blacklist.objects.all()).distinct()
+    message_list =\
+    Message.objects.filter(connection__in=mp_conns, direction="I").order_by('-date')
+    if request.GET.get("ajax", None):
+        date = datetime.datetime.now() - datetime.timedelta(seconds=15)
+        msgs = Message.objects.filter(connection__in=mp_conns, direction="I").filter(date__gte=date)
+        msgs_list = []
+        if msgs.exists():
+            for msg in msgs:
+                m = {}
+                m["text"] = msg.text
+                m["date"]=str(msg.date.date())
+                m["name"] = msg.connection.contact.name
+                m["number"] = msg.connection.identity
+                if msg.connection.contact.reporting_location:
+                    m["district"] = msg.connection.contact.reporting_location.name
+                else:
+                    m["district"] = "N/A"
+
+                m["group"] = msg.connection.contact.groups.all()[0].name
+                msgs_list.append(m)
+            return HttpResponse(mark_safe(simplejson.dumps(msgs_list)))
+        else:
+            return HttpResponse("success")
+
+    old_contacts = contacts
+    if request.POST and request.GET.get("filter", None):
+        for form_class in forms:
+            form_instance = form_class(request.POST, request=request)
+            if form_instance.is_valid():
+                contacts = form_instance.filter(request, contacts)
+        if old_contacts.count() == contacts.count():
+            return HttpResponse("No Contacts Selected")
+        else:
+            request.session['filtered'] = contacts
+            return HttpResponse(str(contacts.count()))
+    for form in forms:
+        filter_forms.append(form(**{'request': request}))
+    paginator = Paginator(message_list, 15)
+    page = request.GET.get('page', 1)
+    try:
+        messages = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        messages = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        messages = paginator.page(paginator.num_pages)
+    poll_form = NewPollForm()
+    poll_form.updateTypes()
+
+    if request.method == "POST" and request.GET.get("poll", None):
+        res_dict = request.POST.copy()
+        res_dict.update({'groups': u'2'})
+        poll_form = NewPollForm(res_dict)
+        poll_form.updateTypes()
+        #create poll
+        if request.session.get("filtered", None) and poll_form.is_valid():
+            name = poll_form.cleaned_data['name']
+            p_type = poll_form.cleaned_data['type']
+            response_type = poll_form.cleaned_data['response_type']
+            question = poll_form.cleaned_data['question']
+            default_response = poll_form.cleaned_data['default_response']
+
+            if not poll_form.cleaned_data['default_response_luo'] == ''\
+            and not poll_form.cleaned_data['default_response'] == '':
+                (translation, created) =\
+                Translation.objects.get_or_create(language='ach',
+                    field=poll_form.cleaned_data['default_response'],
+                    value=poll_form.cleaned_data['default_response_luo'])
+
+            if not poll_form.cleaned_data['question_luo'] == '':
+                (translation, created) =\
+                Translation.objects.get_or_create(language='ach',
+                    field=poll_form.cleaned_data['question'],
+                    value=poll_form.cleaned_data['question_luo'])
+
+            poll_type = (Poll.TYPE_TEXT if p_type
+            == NewPollForm.TYPE_YES_NO else p_type)
+
+            poll = Poll.create_with_bulk(\
+                name,
+                poll_type,
+                question,
+                default_response,
+                request.session.get("filtered"),
+                request.user)
+            return redirect(reverse('poll.views.view_poll', args=[poll.pk]))
+
+    context_dict = {"poll_form": poll_form,
+                    "filter_forms": filter_forms,
+                    'messages': messages,
+                    'groupform': groupform}
+
+    return render_to_response('ureport/mp_dashboard.html', context_dict,
+        context_instance=RequestContext(request))
+
+
+
+
+
+
+@login_required
+def alerts(request):
+    select_poll=SelectPoll()
+    poll_form = NewPollForm()
+    range_form=rangeForm()
+    poll_form.updateTypes()
+    template="ureport/polls/alerts.html"
+    message_list=Message.objects.filter(details__attribute__name="alert").order_by('-date')
+    capture_status,_=Settings.objects.get_or_create(attribute='alerts')
+    rate,_=MessageAttribute.objects.get_or_create(name="rating")
+    #message_list=[Message.objects.latest('date')]
+    #use more efficient count
+    if request.GET.get('download',None):
+
+
+        data=list(AlertsExport.objects.all().values())
+        return ExcelResponse(data=data)
+    if request.GET.get('capture',None):
+        s,_=Settings.objects.get_or_create(attribute='alerts')
+        if s.value=='true':
+            s.value='false'
+            s.save()
+            reply="Start Capture"
+        else:
+            s.value='true'
+            s.save()
+            reply="Stop Capture"
+        return HttpResponse(reply)
+    if request.GET.get("ajax", None):
+        date = datetime.datetime.now() - datetime.timedelta(seconds=30)
+        prev=request.session.get('prev',[])
+        msgs = Message.objects.filter(details__attribute__name="alert", direction="I").filter(date__gte=date).exclude(pk__in=prev)
+        request.session['prev']=list(msgs.values_list('pk',flat=True))
+        msgs_list = []
+        if msgs.exists():
+            for msg in msgs:
+                from django.template.loader import render_to_string
+                row_rendered=render_to_string('ureport/partials/row.html', { 'msg': msg })
+
+                m = {}
+                m["text"] = msg.text
+                m["date"]=str(msg.date.date())
+                if msg.connection.contact:
+                    m["name"] = msg.connection.contact.name
+                else:
+                    m['name']="Anonymous User"
+                m["number"] = msg.connection.identity
+                if msg.connection.contact and msg.connection.contact.reporting_location:
+                    m["district"] = msg.connection.contact.reporting_location.name
+                else:
+                    m["district"] = "N/A"
+                rating=msg.details.filter(attribute__name="alerts")
+                if rating.exists():
+                    r=rating[0].value
+                else:
+                    r=0
+                m["row"] = row_rendered
+                m['connection']=msg.connection.pk
+                m['pk']=msg.pk
+                msgs_list.append(m)
+            return HttpResponse(mark_safe(simplejson.dumps(msgs_list)))
+        else:
+            return HttpResponse("success")
+    if request.GET.get('rating',None):
+        rating=request.GET.get('rating')
+        descs={'1':'Requires Attention','2':'Moderate','3':'Important','4':'Urgent','5':'Very Urgent'}
+        msg=Message.objects.get(pk=int(request.GET.get('msg')))
+        rate,_=MessageAttribute.objects.get_or_create(name="rating")
+        det=MessageDetail.objects.create(message=msg,attribute=rate,value=rating,description=descs.get(rating,''))
+        response ="""<li><a href='javascript:void(0)'  class="rate%s"
+
+                            title="%s">%s</a></li>"""%(rating,descs.get(rating,''),descs.get(rating,''))
+
+        return HttpResponse(mark_safe(response))
+
+
+
+    paginator = Paginator(message_list, 15)
+    page = request.GET.get('page', 1)
+    try:
+        messages = paginator.page(page)
+    except (PageNotAnInteger,EmptyPage):
+        # If page is not an integer, deliver first page.
+        messages = paginator.page(1)
+
+
+    return render_to_response(template,{'messages':messages,'capture_status':capture_status,'rate':rate,"range_form":range_form},context_instance=RequestContext(request))
+
+
+
+def remove_captured(request):
+    range_form=rangeForm(request.POST)
+    if range_form.is_valid():
+        start=range_form.cleaned_data['startdate']
+        end=range_form.cleaned_data['enddate']
+        message_list=Message.objects.filter(details__attribute__name="alert").filter(date__range=(start,end))
+        alert=MessageAttribute.objects.get(name="alert")
+        mesg_details=MessageDetail.objects.filter(message__in=message_list,attribute=alert).delete()
+        return HttpResponse("success")
+
+    return HttpResponse("Sucessfully deleted")
