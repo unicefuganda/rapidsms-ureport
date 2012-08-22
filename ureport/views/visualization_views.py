@@ -14,8 +14,10 @@ from poll.models import Poll
 import bisect
 import textwrap
 import datetime
+from eav.models import Value
 
-from poll.models import ResponseCategory
+
+from poll.models import ResponseCategory,Response
 from ureport.views.utils.tags import _get_tags,_get_responses
 
 
