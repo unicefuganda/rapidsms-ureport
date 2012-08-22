@@ -11,7 +11,7 @@ from uganda_common.utils import ExcelResponse
 
 from rapidsms_httprouter.models import Message
 
-
+from ureport.forms import AssignResponseGroupForm
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
