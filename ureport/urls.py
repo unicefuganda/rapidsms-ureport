@@ -17,7 +17,7 @@ from .forms import *
 
 urlpatterns = patterns('',
     # dashboard view for viewing all poll reports in one place
-    url(r'^dashboard/$', generic, {
+    url(r'^dashboard/$', login_required(generic), {
         'model':Poll,
         'queryset':get_polls,
         'results_title':'Polls',
@@ -62,7 +62,7 @@ urlpatterns = patterns('',
     }, name="ureport-contact"),
     url(r'^reporter/(?P<reporter_pk>\d+)/edit', editReporter,name="edit-reporter"),
     url(r'^reporter/(?P<reporter_pk>\d+)/delete', deleteReporter,name="delete-reporter"),
-    url(r'^reporter/(?P<pk>\d+)/show', generic_row, {'model':Contact, 'partial_row':'ureport/partials/contacts/contacts_row.html'},name="reporter-profile"),
+    url(r'^reporter/(?P<pk>\d+)/show', login_required(generic_row), {'model':Contact, 'partial_row':'ureport/partials/contacts/contacts_row.html'},name="reporter-profile"),
     # poll management views using generic (rather than built-in poll views
     url(r'^mypolls/$', login_required(generic), {
         'model':Poll,
@@ -162,13 +162,13 @@ urlpatterns = patterns('',
     #flagged messages
     url(r'^flaggedmessages/$', login_required(flagged_messages),name="flaggedmessages"),
 
-    url(r"^flags/(\d+)/messages/$", view_flagged_with, name="flagged_with"),
+    url(r"^flags/(?P<pk>\d+)/messages/$", view_flagged_with, name="flagged_with"),
      url(r"^flags/new/$", create_flags , name="flags_new"),
      url(r"^flags/(?P<pk>\d+)/edit/$", create_flags , name="flags_new"),
      url(r'^flags/(?P<flag_pk>\d+)/delete/', delete_flag, name="delete_flag"),
 
     # view responses for a poll (based on generic rather than built-in poll view
-    url(r"^(\d+)/responses/$", view_responses, name="responses"),
+    url(r"^(?P<poll_id>\d+)/responses/$", view_responses, name="responses"),
 
     # content pages (cms-style static pages)
     url(r'^content/(?P<slug>[a-z]+)/$', ureport_content,name="ureport_content"),
@@ -187,7 +187,7 @@ urlpatterns = patterns('',
     url(r'^bestviz/(?P<poll_id>\d+)/$', best_visualization, name="best-viz"),
 
     # tag cloud views
-    url(r'^tag_cloud/$', tag_cloud, name="tag_cloud"),
+    url(r'^tag_cloud/$', tag_cloud, name="tagcloud"),
     url(r'^tag_cloud/(?P<pks>\d+)/$', tag_cloud, name="tag_cloud"),
     url(r'^add_tag/$', add_drop_word, name="add_tag"),
     url(r'^add_tag/(?P<tag_name>.+)/(?P<poll_pk>\d+)/$', add_drop_word, name="add_tag"),
@@ -201,7 +201,7 @@ urlpatterns = patterns('',
     url(r'^histogram/(?P<pks>\d+)/$', histogram, name="histogram"),
 
     # total responses vs time view
-    url(r'^timeseries/$', show_timeseries, name="time-series"),
+    url(r'^timeseries/$', show_timeseries, name="timeseries"),
     url(r'^timeseries/(?P<pks>\d+)/$', show_timeseries, name="time-series"),
 
     # export contacts to excel

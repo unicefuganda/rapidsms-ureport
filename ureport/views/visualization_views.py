@@ -43,7 +43,7 @@ def best_visualization(request, poll_id=None):
     == 0:
         dict.update({'tags': _get_tags(polls), 'responses'
         : _get_responses(poll), 'poll_id': poll.pk})
-    return render_to_response('/ureport/partials/viz/best_visualization.html'
+    return render_to_response('ureport/partials/viz/best_visualization.html'
         , dict,
         context_instance=RequestContext(request))
 
@@ -156,7 +156,7 @@ def histogram(request, pks=None):
             plottable_data['median'] = vals_list[len(vals_list) / 2]
         return HttpResponse(mark_safe(simplejson.dumps(plottable_data)))
 
-    return render_to_response('ureport/histogram.html', {'polls'
+    return render_to_response('ureport/partials/viz/histogram.html', {'polls'
                                                          : all_polls},
         context_instance=RequestContext(request))
 

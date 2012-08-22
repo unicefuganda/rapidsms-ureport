@@ -25,7 +25,7 @@ from ureport.views.utils.tags import _get_responses
 
 
 @login_required
-def send_message(request):
+def send_message(request,template="ureport/partials/forward.html"):
     if not request.method =="POST":
         send_message_form=SendMessageForm()
 
