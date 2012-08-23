@@ -13,6 +13,7 @@ from .utils import update_poll_results
 from poll.models import ResponseCategory,Response,Poll
 from rapidsms_httprouter.models import Message
 from django.conf import settings
+from django.core.mail import send_mail
 
 def autoreg(**kwargs):
     connection = kwargs['connection']
