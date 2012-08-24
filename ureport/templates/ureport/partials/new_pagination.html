@@ -1,0 +1,14 @@
+
+<div class="pagination" style="margin-botton:10px;">
+
+    {% for num in c_page.page_range %}
+    {% if not num %} <a>...</a>  {# literally dots #}
+    {% else %}
+    <span {% if num == c_page.number%}class="current"{%endif%}>
+    <a href="javascript:void(0)" onclick="page(this, {{ num }})">{{ num }}</a>
+    </span>
+    {% endif %}
+    {% endfor %}
+
+</div>
+        <div class="clear"></div>

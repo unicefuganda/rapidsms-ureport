@@ -113,6 +113,9 @@
         border: none;
         width: 40px;
     }
+    .current a{
+        background-color: #ccc;
+    }
 
     .star-rating a.rate1 {
         background: url({{ MEDIA_URL }}ureport/images/star_rating2.gif ) left bottom;
@@ -432,20 +435,21 @@
 
 
         </div>
+
+
+
         <div class="pagination">
-            <span class="step-links">
-                {% if messages.has_previous %}
-                    <a href="?page={{ messages.previous_page_number }}">previous</a>
-                {% endif %}
 
-                <span class="current">
-            Page {{ messages.number }} of {{ messages.paginator.num_pages }}.
-        </span>
 
-                {% if messages.has_next %}
-                    <a href="?page={{ messages.next_page_number }}">next</a>
-                {% endif %}
-            </span>
+
+            {% for num in messages.page_range %}
+            {% if not num %} <a>...</a>  {# literally dots #}
+            {% else %}
+            <span {% if num == messages.number%}class="current"{%endif%}> <a href="?page={{ num }}">{{num}}</a></span>
+
+            {% endif %}
+            {% endfor %}
+
         </div>
 
 

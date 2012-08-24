@@ -41,6 +41,10 @@
 .pagination-right {
     text-align: right;
 }
+.current a{
+    background-color: #ccc;
+
+}
 .pager {
     margin-left: 0;
     margin-bottom: 18px;

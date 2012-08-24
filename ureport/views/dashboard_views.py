@@ -21,13 +21,13 @@ from poll.models import Translation,Poll
 from ureport.models import MessageAttribute,AlertsExport,Settings,MessageDetail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import datetime
-
+from ureport.views.utils.paginator import UreportPaginator
 
 
 @login_required
 def mp_dashboard(request):
     from contact.forms import FilterGroupsForm, MultipleDistictFilterForm, GenderFilterForm, AgeFilterForm
-    from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
     groupform = AssignResponseGroupForm(request=request)
     if request.method == "POST" and request.POST.get('groups', None):
@@ -79,7 +79,7 @@ def mp_dashboard(request):
             return HttpResponse(str(contacts.count()))
     for form in forms:
         filter_forms.append(form(**{'request': request}))
-    paginator = Paginator(message_list, 15)
+    paginator=UreportPaginator(message_list, 10, body=6, padding=2)
     page = request.GET.get('page', 1)
     try:
         messages = paginator.page(page)
@@ -220,7 +220,7 @@ def alerts(request):
 
 
 
-    paginator = Paginator(message_list, 15)
+    paginator = UreportPaginator(message_list, 10, body=12, padding=2)
     page = request.GET.get('page', 1)
     try:
         messages = paginator.page(page)
@@ -229,7 +229,7 @@ def alerts(request):
         messages = paginator.page(1)
 
 
-    return render_to_response(template,{'messages':messages,'capture_status':capture_status,'rate':rate,"range_form":range_form},context_instance=RequestContext(request))
+    return render_to_response(template,{'messages':messages,'paginator':paginator,'capture_status':capture_status,'rate':rate,"range_form":range_form},context_instance=RequestContext(request))
 
 
 
