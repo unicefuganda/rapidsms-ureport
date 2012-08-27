@@ -14,6 +14,7 @@ from django.db import connection
 from optparse import OptionParser, make_option
 
 from uganda_common.utils import ExcelResponse
+from .anonymise import loadnames,removenames
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option("-p", "--poll", dest="p"),
@@ -23,6 +24,7 @@ class Command(BaseCommand):
     def handle(self, **options):
 
         poll =Poll.objects.get(pk=int(options['p']))
+        names = loadnames()
         
         if poll.responses.exists():
             responses=poll.responses.all()
@@ -31,6 +33,12 @@ class Command(BaseCommand):
             for response in responses:
 
                 response_export_data = SortedDict()
+                if response.contact:
+                    response_export_data['contact_pk']=response.contact.pk
+                else:
+                    response_export_data['contact_pk']=""
+
+                response_export_data['message_pk']=response.message.pk
                 if response.contact and response.contact.name:
                     print "adding " + response.contact.name
                     response_export_data['contact_name'] = response.contact.name
@@ -64,7 +72,7 @@ class Command(BaseCommand):
                 else:
                     response_export_data['groups'] = 'N/A'
                 if response.message:
-                    response_export_data['response']=response.message.text
+                    response_export_data['response']=removenames(response.message.text,names)
                     response_export_data['date']=response.message.date.date()
                     response_export_data['time']=response.message.date.time()
 
