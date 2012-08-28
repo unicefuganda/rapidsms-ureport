@@ -21,6 +21,7 @@ def dictinvert(dict):
     for k, v in dict.iteritems():
         keys = inv.setdefault(v, [])
         keys.append(k)
+    return inv
 
 
 def _get_tags(polls):
@@ -66,7 +67,6 @@ def _get_tags(polls):
     poll_qn = 'Qn:' + ' '.join(textwrap.wrap(polls[0].question.rsplit('?'
     )[0])) + '?'
 
-    print sql
     cursor = connection.cursor()
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -84,7 +84,6 @@ def _get_tags(polls):
     # randomly shuffle tags
 
     random.shuffle(tags)
-    print counts_dict
     return tags
 
 
