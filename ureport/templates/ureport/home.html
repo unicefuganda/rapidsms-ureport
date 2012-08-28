@@ -23,12 +23,14 @@
 <div class="poll_list">
 <ul>
     {% for p in polls %}
+    {% if p.start_date %}
         <li>
             <span class="poll-date">{{ p.start_date|date:"d/M/Y" }}</span> :
             {{ p.question }}
             <a href="javascript:void(0)" 
                onclick="clear_layers();$('#viz').load('{% url ureport.views.best_visualization p.pk %}')">See results</a>
         </li>
+    {%endif%}
     {% endfor %}
 </ul>
 </div>
