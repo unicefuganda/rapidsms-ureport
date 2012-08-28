@@ -8,7 +8,7 @@ from generic.views import generic
 from django.views.decorators.cache import cache_control
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import permission_required
-
+from django.http import HttpResponse
 from rapidsms_xforms.models import  XFormField
 from ussd.models import StubScreen
 from poll.models import Poll,Category,Rule,Translation,Response
@@ -18,16 +18,23 @@ from ureport.forms import NewPollForm
 from django.conf import settings
 from ureport.forms import AssignToPollForm,SearchResponsesForm, AssignResponseGroupForm, ReplyTextForm,DeleteSelectedForm
 from django.contrib.sites.models import Site
-
+from ureport.tasks import start_poll
+from ureport.utils import  get_polls , get_script_polls
+from generic.sorters import SimpleSorter
+from ureport.views.utils.paginator import ureport_paginate
 
 @login_required
 def view_poll(request,pk):
+    poll=Poll.objects.get(pk=pk)
     if request.GET.get('start'):
-        pass
+        start_poll.delay(poll)
+        return HttpResponse("Stop")
+    if request.GET.get('stop'):
+
+        return HttpResponse("Stop")
     xf=XFormField.objects.get(name='latest_poll')
     response=StubScreen.objects.get(slug='question_response')
     template='ureport/polls/view_poll.html'
-    poll=Poll.objects.get(pk=pk)
     categories=poll.categories.all()
     category_form=CategoryForm()
     rule_form=RuleForm2()
@@ -151,8 +158,7 @@ def poll_summary(request):
     ScriptStep.objects.exclude(poll=None).values_list('poll',
         flat=True)
     polls =\
-    Poll.objects.exclude(pk__in=script_polls).order_by('-start_date'
-    )
+    Poll.objects.exclude(pk__in=script_polls).exclude(start_date=None).order_by('-start_date')
     return render_to_response('/ureport/poll_summary.html', {'polls'
                                                              : polls, 'poll': polls[0]},
         context_instance=RequestContext(request))
@@ -229,3 +235,68 @@ def view_rules(request,pk):
     rule_form=RuleForm2(instance=rule)
     return render_to_response("ureport/polls/rules.html",{'rules':rules,'rule_form':rule_form,'category':category,"edit":True},context_instance=RequestContext(request))
 
+@login_required
+def poll_dashboard(request):
+    columns=[('Name', True, 'name', SimpleSorter()),
+        ('Question', True, 'question', SimpleSorter(),),
+        ('Start Date', True, 'start_date', SimpleSorter(),),
+        ('# Participants', False, 'participants', None,),
+        ('Visuals', False, 'visuals', None,),
+    ]
+    return generic(request,
+        model=Poll,
+        queryset=get_polls,
+        results_title='Polls',
+        objects_per_page=10,
+        partial_row='ureport/partials/dashboard/poll_row.html',
+        partial_header='ureport/partials/dashboard/partial_header_dashboard.html',
+        base_template='ureport/dashboard.html',
+        paginator_template='ureport/partials/new_pagination.html',
+        paginator_func=ureport_paginate,
+        selectable=False,
+        sort_column='start_date'
+    )
+
+@login_required
+def ureport_polls(request):
+    columns=[('Name', True, 'name', SimpleSorter()),
+        ('Question', True, 'question', SimpleSorter(),),
+        ('Start Date', True, 'start_date', SimpleSorter(),),
+        ('Closing Date', True, 'end_date', SimpleSorter()),
+        ('', False, '', None)]
+    return generic(request,
+        model=Poll,
+        queryset=get_polls,
+        objects_per_page=10,
+        selectable=False,
+        partial_row='ureport/partials/polls/poll_admin_row.html',
+        base_template='ureport/poll_admin_base.html',
+        paginator_template='ureport/partials/new_pagination.html',
+        results_title='Polls',
+        paginator_func=ureport_paginate,
+        sort_column='start_date',
+        sort_ascending=False,
+    )
+
+
+@login_required
+def script_polls(request):
+    columns=[('Name', True, 'name', SimpleSorter()),
+        ('Question', True, 'question', SimpleSorter(),),
+        ('Start Date', True, 'start_date', SimpleSorter(),),
+        ('Closing Date', True, 'end_date', SimpleSorter()),
+        ('', False, '', None)]
+    return generic(request,
+            model=Poll,
+            queryset=get_script_polls,
+            objects_per_page=10,
+            selectable=False,
+            partial_row='ureport/partials/polls/poll_admin_row.html',
+            base_template='ureport/poll_admin_base.html',
+            paginator_template='ureport/partials/new_pagination.html',
+            paginator_func=ureport_paginate,
+            results_title='Polls',
+            sort_column='start_date',
+            auto_reg=True,
+            sort_ascending=False,
+            columns=columns)

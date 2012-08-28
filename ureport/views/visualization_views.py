@@ -16,9 +16,8 @@ import textwrap
 import datetime
 from eav.models import Value
 
-
-from poll.models import ResponseCategory,Response
-from ureport.views.utils.tags import _get_tags,_get_responses
+from poll.models import ResponseCategory, Response
+from ureport.views.utils.tags import _get_tags, _get_responses
 
 
 def best_visualization(request, poll_id=None):
@@ -32,29 +31,30 @@ def best_visualization(request, poll_id=None):
     #        poll = Poll.objects.get(pk=poll_id)
     #    else:
     #        poll = Poll.objects.latest('start_date')
-    rate=poll.responses.count()*100/poll.contacts.count()
+
+    rate = poll.responses.count() * 100 / poll.contacts.count()
     dict = {
         'poll': poll,
         'polls': [poll],
         'unlabeled': True,
         'module': module,
-        'rate':int(rate),
+        'rate': int(rate),
         }
-    if poll.type == Poll.TYPE_TEXT\
-    and ResponseCategory.objects.filter(response__poll=poll).count()\
-    == 0:
-        dict.update({'tags': _get_tags(polls), 'responses'
-        : _get_responses(poll), 'poll_id': poll.pk})
+    if poll.type == Poll.TYPE_TEXT \
+        and ResponseCategory.objects.filter(response__poll=poll).exists():
+        dict.update({'tags': _get_tags(polls),
+                    'responses': _get_responses(poll),
+                    'poll_id': poll.pk})
     return render_to_response('ureport/partials/viz/best_visualization.html'
-        , dict,
-        context_instance=RequestContext(request))
+                              , dict,
+                              context_instance=RequestContext(request))
 
 
 @login_required
 def add_drop_word(request, tag_name=None, poll_pk=None):
     IgnoredTags.objects.create(name=tag_name,
-        poll=get_object_or_404(Poll,
-            pk=int(poll_pk)))
+                               poll=get_object_or_404(Poll,
+                               pk=int(poll_pk)))
     return HttpResponse(simplejson.dumps('success'))
 
 
@@ -70,10 +70,8 @@ def delete_drop_word(request, tag_pk):
 def show_ignored_tags(request, poll_id):
     tags = IgnoredTags.objects.filter(poll__pk=poll_id)
     return render_to_response('ureport/partials/tag_cloud/ignored_tags.html'
-        , {'tags': tags, 'poll_id': poll_id},
-        context_instance=RequestContext(request))
-
-
+                              , {'tags': tags, 'poll_id': poll_id},
+                              context_instance=RequestContext(request))
 
 
 @cache_control(no_cache=True, max_age=0)
@@ -85,16 +83,16 @@ def tag_cloud(request, pks):
     polls = retrieve_poll(request, pks)
 
     poll_qn = ['Qn:' + ' '.join(textwrap.wrap(poll.question.rsplit('?'
-    )[0])) + '?' for poll in polls]
+               )[0])) + '?' for poll in polls]
 
     tags = _get_tags(polls)
     return render_to_response('ureport/partials/tag_cloud/tag_cloud.html'
-        , {
-            'poll': polls[0],
-            'tags': tags,
-            'poll_qn': poll_qn[0],
-            'poll_id': pks,
-            }, context_instance=RequestContext(request))
+                              , {
+        'poll': polls[0],
+        'tags': tags,
+        'poll_qn': poll_qn[0],
+        'poll_id': pks,
+        }, context_instance=RequestContext(request))
 
 
 def histogram(request, pks=None):
@@ -110,7 +108,7 @@ def histogram(request, pks=None):
         responses = Response.objects.filter(poll__in=polls)
         pks = polls.values_list('pk', flat=True)
         responses = Response.objects.filter(poll__in=polls,
-            poll__type=u'n')
+                poll__type=u'n')
         plottable_data = {}
         if responses:
             poll_results = {}
@@ -118,9 +116,9 @@ def histogram(request, pks=None):
                         Poll.objects.filter(pk__in=pks)]
 
             total_responses = responses.count()
-            vals_list =\
-            Value.objects.filter(entity_id__in=responses).values_list('value_float'
-                , flat=True)
+            vals_list = \
+                Value.objects.filter(entity_id__in=responses).values_list('value_float'
+                    , flat=True)
             vals_list = sorted(vals_list)
             max = int(vals_list[-1])
             min = int(vals_list[0])
@@ -137,8 +135,8 @@ def histogram(request, pks=None):
                 poll_results.setdefault(name, {})
                 poll_results[name].setdefault('data', {})
                 if len(response.eav_values.all()) > 0:
-                    value =\
-                    int(response.eav_values.all()[0].value_float)
+                    value = \
+                        int(response.eav_values.all()[0].value_float)
                 pos = bisect.bisect_right(bounds, value) - 1
                 r = ranges_list[pos]
                 poll_results[name]['data'].setdefault(r, 0)
@@ -158,9 +156,9 @@ def histogram(request, pks=None):
             plottable_data['median'] = vals_list[len(vals_list) / 2]
         return HttpResponse(mark_safe(simplejson.dumps(plottable_data)))
 
-    return render_to_response('ureport/partials/viz/histogram.html', {'polls'
-                                                         : all_polls},
-        context_instance=RequestContext(request))
+    return render_to_response('ureport/partials/viz/histogram.html',
+                              {'polls': all_polls},
+                              context_instance=RequestContext(request))
 
 
 def show_timeseries(request, pks):
@@ -175,7 +173,7 @@ def show_timeseries(request, pks):
     message_count_list = []
     while current_date < end_date:
         count = responses.filter(message__date__range=(start_date,
-                                                       current_date)).count()
+                                 current_date)).count()
         message_count_list.append(count)
         current_date += interval
 
@@ -185,6 +183,5 @@ def show_timeseries(request, pks):
         'end': end_date,
         'poll': mark_safe(poll),
         }, context_instance=RequestContext(request))
-
 
 

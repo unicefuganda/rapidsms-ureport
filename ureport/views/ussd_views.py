@@ -4,16 +4,17 @@
 from rapidsms_httprouter.models import Message
 from django.contrib.auth.decorators import login_required
 from generic.views import generic
-from rapidsms.models import Contact,Connection
+from rapidsms.models import Contact, Connection
 from generic.sorters import SimpleSorter
+
 
 @login_required
 def ussd_manager(request):
-    ussd_contacts=Contact.objects.filter(groups__name="equatel")
-    ussd_conns=Connection.objects.filter(contact__in=ussd_contacts)
-    messages=Message.objects.filter(connection__in=ussd_conns).order_by('-date')
-
-
+    ussd_contacts = Contact.objects.filter(groups__name='equatel')
+    ussd_conns = Connection.objects.filter(contact__in=ussd_contacts)
+    messages = \
+        Message.objects.filter(connection__in=ussd_conns).order_by('-date'
+            )
 
     return generic(
         request,
@@ -24,11 +25,10 @@ def ussd_manager(request):
         base_template='ureport/ussd_messages_base.html',
         results_title='Ussd Messages',
         columns=[('Message', True, 'text', SimpleSorter()),
-            ('Sender Information', True,
-             'connection__contact__name', SimpleSorter()), ('Date',
-                                                            True, 'date', SimpleSorter()), ('Type', True,
-                                                                                            'application',
-                                                                                            SimpleSorter())],
+                 ('Sender Information', True,
+                 'connection__contact__name', SimpleSorter()), ('Date',
+                 True, 'date', SimpleSorter()), ('Type', True,
+                 'application', SimpleSorter())],
         sort_column='date',
         sort_ascending=False,
-    )
+        )

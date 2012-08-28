@@ -19,13 +19,18 @@ import datetime
 from rapidsms.models import Connection,Contact
 from poll.models import Poll
 from generic.sorters import SimpleSorter
-from ureport.forms import  ReplyTextForm,EditReporterForm,SignupForm,ExcelUploadForm
+from ureport.forms import  ReplyTextForm,EditReporterForm,SignupForm,ExcelUploadForm,MassTextForm,AssignToNewPollForm
 
 from unregister.models import Blacklist
 from django.conf import settings
 from rapidsms.contrib.locations.models import Location
 from django.contrib.auth.models import Group
 from ureport.views.utils.excel import handle_excel_file
+from ureport.utils import get_contacts
+from contact.forms import  FreeSearchForm, MultipleDistictFilterForm,  GenderFilterForm,  FilterGroupsForm, AssignGroupForm, AgeFilterForm
+from unregister.forms import BlacklistForm
+from ureport.models import Ureporter
+from ureport.views.utils.paginator import ureport_paginate
 
 @login_required
 def ureporter_profile(request, connection_pk):
@@ -232,6 +237,7 @@ def signup(request):
 
 
 
+@login_required
 def get_all_contacts(request):
     from uganda_common.utils import ExcelResponse
 
@@ -273,6 +279,7 @@ def get_all_contacts(request):
     response = ExcelResponse(export_data_list)
     return response
 
+@login_required
 def bulk_upload_contacts(request):
     """
     bulk upload contacts from an excel file
@@ -325,3 +332,32 @@ def blacklist(request,pk):
         Blacklist.objects.get_or_create(connection=contact.default_connection)
         Message.objects.create(status="Q",direction="O",connection=contact.default_connection,text="Your UReport opt out is confirmed.If you made a mistake,or you want your voice to be heard again,text in JOIN and send it to 8500!All SMS messages are free")
         return HttpResponse(status=200)
+
+@login_required
+def ureporters(request):
+
+    columns=[('Name', True, 'name', SimpleSorter()),
+        ('Number', True, 'connection__identity', SimpleSorter(),),
+        ('Age', False, '', None,),
+        ('Gender', True, 'gender', SimpleSorter(),),
+        ('Language', True, 'language',SimpleSorter(),),
+        ('Location', True, 'reporting_location__name', SimpleSorter(),),
+        ('Group(s)', True, 'groups__name', SimpleSorter()),
+        ('Total Poll Responses', True, 'responses__count', SimpleSorter()),
+        ('', False, '', None)]
+
+    return generic(request,
+        model=Ureporter,
+        queryset=get_contacts,
+        results_title='uReporters',
+        filter_forms=[ FreeSearchForm,  GenderFilterForm, AgeFilterForm, MultipleDistictFilterForm,FilterGroupsForm ],
+        action_forms=[MassTextForm, AssignGroupForm, BlacklistForm, AssignToNewPollForm],
+        objects_per_page=25,
+        partial_row='ureport/partials/contacts/contacts_row.html',
+        base_template='ureport/ureporters_base.html',
+        paginator_template='ureport/partials/new_pagination.html',
+        paginator_func=ureport_paginate,
+         columns=columns,
+
+    )
+
