@@ -98,5 +98,11 @@ urlpatterns = patterns('',
     url(r"sendmessage/$",send_message,name="send_message"),
     url(r"group_rules/$",set_autoreg_rules,name="set_group_rules"),
     url(r"kannel_shaolin/$",kannel_status,name="kannel"),
+    (r'^accounts/password/reset/$', 'django.contrib.auth.views.password_reset',
+         {'post_reset_redirect' : '/accounts/password/reset/done/'}),
+    (r'^accounts/password/reset/done/$', 'django.contrib.auth.views.password_reset_done'),
+    (r'^accounts/password/reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm',
+         {'post_reset_redirect' : '/accounts/password/done/'}),
+    (r'^accounts/password/done/$', 'django.contrib.auth.views.password_reset_complete'),
 
 )

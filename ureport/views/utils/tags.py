@@ -133,6 +133,3 @@ def _get_responses(poll):
     paginator = Paginator(responses, 8)
     responses = paginator.page(1).object_list
     return responses
-
-
-    return inv
