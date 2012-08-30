@@ -132,8 +132,11 @@ color:#666;">Response:
 </div>
 </div>
 {%if not  poll.start_date%}
-<a href="" data-remote=true class="btn">Start Poll</a>
+<a href="?start=True" data-remote=true class="btn">Start Poll</a>
 click on question to edit
+        {%else%}
+<a href="?stop=True" data-remote=true class="btn">Close Poll</a>
+
   {%endif%}
 
 <form action="">

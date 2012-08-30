@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.core.management.base import BaseCommand
 import traceback
 import os
@@ -40,7 +41,7 @@ class Command(BaseCommand):
 
                 response_export_data['message_pk']=response.message.pk
                 if response.contact and response.contact.name:
-                    print "adding " + response.contact.name
+                    print "adding " + str(response.contact.name)
                     response_export_data['contact_name'] = response.contact.name
                 else:
                     response_export_data['contact_name'] = "N/A"
