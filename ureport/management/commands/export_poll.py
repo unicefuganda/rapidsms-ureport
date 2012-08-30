@@ -41,7 +41,6 @@ class Command(BaseCommand):
 
                 response_export_data['message_pk']=response.message.pk
                 if response.contact and response.contact.name:
-                    print "adding " + str(response.contact.name)
                     response_export_data['contact_name'] = response.contact.name
                 else:
                     response_export_data['contact_name'] = "N/A"
