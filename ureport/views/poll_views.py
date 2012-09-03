@@ -153,7 +153,7 @@ def new_poll(req):
             if settings.SITE_ID:
                 poll.sites.add(Site.objects.get_current())
 
-            return redirect(reverse('poll.views.view_poll', args=[poll.pk]))
+            return redirect(reverse('ureport.views.view_poll', args=[poll.pk]))
 
     else:
         form = NewPollForm()
