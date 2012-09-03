@@ -301,10 +301,13 @@
 
 
         </a>
+        {%if  perms.ureport.can_export %}
 
         <span><a class="btn" href="?download=true" >Download</a></span>
 
-        <span><a  onclick="$('#remove').toggle();" href="javascript:void(0);" >Remove Captured >></a> </span>
+
+        <span><a  onclick="$('#remove').toggle();" href="javascript:void(0);" >Remove Captured >></a>
+        </span> {%endif%}
         <div id="remove" style="display:none;">
             <form data-remote=true method="post" id="remove_form" action="/remove_captured/">
 <table>
@@ -321,7 +324,7 @@
                 <th>Text</th>
                 <th>Date</th>
                 <th>Name</th>
-                <th>Number</th>
+                {%if perms.rapidsms.view_numbers %} <th>Number</th>{%endif%}
                 <th>District</th>
                 <th>Action</th>
                 <th>Rating</th>
@@ -349,10 +352,12 @@
                 <td>{{ msg.text }}</td>
                 <td>{{ msg.date|date:"m/d/Y H:i:s" }}</td>
                 <td>{{ msg.connection.contact.name }}</td>
-                <td><a href="/messagehistory/{{ msg.connection.pk }}/">{{ msg.connection.identity }}</a></td>
+                {%if perms.rapidsms.view_numbers %} <td><a href="/messagehistory/{{ msg.connection.pk }}/">{{ msg.connection.identity }}</a></td>{%endif%}
                 <td>{{ msg.connection.contact.reporting_location }}</td>
-                <td><a id="msg_rep_link" href="/sendmessage/?forward=true&msg={{msg.pk}}" class="btn msg_rep"
-                       data-remote=true>Foward</a> <a style="margin-top:3px; "
+                <td>
+                    {%if perms.rapidsms.forward %}
+                    <a id="msg_rep_link" href="/sendmessage/?forward=true&msg={{msg.pk}}" class="btn msg_rep"
+                       data-remote=true>Foward</a>{%endif%} <a style="margin-top:3px; "
                                                       href="/sendmessage/?reply=true&msg={{msg.pk}}"
                                                       class="btn msg_send" id="msg_send_link" data-remote=true>Reply</a>
                 </td>
