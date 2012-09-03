@@ -12,9 +12,9 @@
     {% endif %}
 </td>
         <td>
-            <a href="javascript:void(0)" onclick="$('#view_rules').load('/category/{{category.pk}}/rules/view/');$('#view_rules').show();" class="btn">View Rules</a>
+            <a href="javascript:void(0)" onclick="ajax_loading(this);$('#view_rules').load('/category/{{category.pk}}/rules/view/',function() { $('.ajax_loading').remove();$('#view_rules').show();$('#view_rules').effect('highlight', {}, 3000);});" class="btn">View Rules</a>
         </td>
         <td>
-            <a href="javascript:void(0)" onclick="$('#edit_category').load('/category/{{category.pk}}/edit/');$('#edit_category').show();" class="btn">Edit</a>
+            <a href="javascript:void(0)" onclick="ajax_loading(this);$('#edit_category').load('/category/{{category.pk}}/edit/',function() { $('.ajax_loading').remove();$('#edit_category').show();$('#edit_category').effect('highlight', {}, 3000);});" class="btn">Edit</a>
         </td>
 

@@ -1,29 +1,54 @@
 
-<form method="post">
+
+<form method="post" id="rule_form" action="{% url ureport.views.poll_views.create_rule category.pk %}" data-remote=true>
     <div class="modal-header">
         <a class="close" data-dismiss="modal" onclick='$(".modal").hide()'>×</a>
         {%if rules%}
-        <h3>Rules</h3>
-        <table>
+        <h3>Rules for  {{category.name}}</h3>
+        <table class="zebra-striped bordered fc">
             <thead><tr><td>Rule</td><td>Words</td></tr></thead>
             <tbody>
             {% for rule in rules %}
-            <tr><td>{{rule.rule}}</td> <td>{{rule.rule_string}}</td></tr>
+            <tr> <td>
+                {% if rule.rule_string == 1 %}
+                     Contains all of
+            {%else%}
+             Contains one of
+                {%endif%}
+            </td><td>{{rule.rule_string}}</td></tr>
             {%endfor%}
+            <tr id="rule_result"><td ></td><td></td></tr>
             </tbody>
         </table>
+
+
+        {%else%}
+        <table>
+            <table class="zebra-striped bordered fc">
+                <thead><tr><td>Rule</td><td>Words</td></tr></thead>
+                <tbody>
+            <tr id="rule_result"><td ></td><td></td></tr>
+                </tbody>
+        </table>
+<h4>No rules for {{category.name}} yet</h4>
+
         {%endif%}
         <h3>Add  a rule</h3>
     </div>
-    <div class="modal-body" style="input">
-        <table>
 
-            {{rule_form.as_table}}
+    <div class="modal-body"  id="rule_cont">
+
+        <table>
+            <tr><td>Type : </td><td>{{rule_form.rule}}</td></tr>
+             <tr><td colspan="2">enter list of comma separated words</td></tr>
+            <tr><td>Words :</td><td>{{rule_form.rule_string}}</td></tr>
+
 
         </table>
+
     </div>
     <div class="modal-footer">
-        {%if edit%}<a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>{%else%}<input type="submit" href="./" style="width:100px;" class="btn btn-primary" value="Save and close"> {%endif%}
-        <input type="submit" href="?category=true{% if edit %}&pk={{category.pk}}{%endif%}" class="btn btn-primary" width="100px;" {% if edit%}value="save edits"{%else%} value="Save and add another"{%endif%}>
+        {%if edit%}<a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>{%else%}<input type="submit"  style="width:120px;" class="btn btn-primary" value="Save and close" onclick="bind_ruleform();"> {%endif%}
+        <input type="submit" onclick="bind_ruleform();" class="btn btn-primary" style="width:120px" {% if edit%}value="save edits"{%else%} value="Save and add another"{%endif%}>
     </div>
 </form>

@@ -17,6 +17,10 @@
     </div>
     <div class="modal-footer">
         <a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>
+        {% if not edit%}
         <input type="submit"  onclick="bind_form();" class="btn btn-primary" value="Next">
+        {%else%}
+        <input type="submit"  onclick="bind_form();" class="btn btn-primary" value="Save">
+        {% endif %}
     </div>
 </form>

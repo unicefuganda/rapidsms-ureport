@@ -9,9 +9,7 @@ from rapidsms_httprouter.models import Message
 from unregister.models import Blacklist
 from django.db.models.signals import post_save
 from ussd.models import  ussd_complete
-
-
-
+from managers import CachingManager
 import datetime
 import re
 from script.signals import script_progress_was_completed
@@ -72,6 +70,8 @@ class Permit(models.Model):
 
 
 class Ureporter(Contact):
+    from_cache = False
+    objects = CachingManager()
     def age(self):
         if self.birthdate:
             return (datetime.datetime.now() - self.birthdate).days / 365

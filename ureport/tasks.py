@@ -19,7 +19,8 @@ def start_poll(poll):
 
 @task
 def reprocess_responses(poll):
-    poll.reprocess_responses()
+    if poll.responses.exists():
+        poll.reprocess_responses()
 
 @task
 def process_message(pk,**kwargs):

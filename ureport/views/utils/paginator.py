@@ -1,7 +1,6 @@
 from django.core.paginator import  Paginator,QuerySetPaginator,Page,InvalidPage
 import math
 from django.db import connection
-from django.conf import settings
 
 class UreportPaginator(Paginator):
     """

@@ -482,3 +482,13 @@ class GroupRules(forms.ModelForm):
 
     class Meta:
         model=AutoregGroupRules
+
+
+def UnsolicitizedMessages(FilterForm):
+    pass
+
+def AutoregMessages(FilterForm):
+    pass
+
+def ExportForm(ActionForm):
+    pass

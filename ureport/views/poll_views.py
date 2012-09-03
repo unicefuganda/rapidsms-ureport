@@ -22,16 +22,26 @@ from ureport.tasks import start_poll
 from ureport.utils import  get_polls , get_script_polls
 from generic.sorters import SimpleSorter
 from ureport.views.utils.paginator import ureport_paginate
+from ureport.tasks import reprocess_responses
 
 @login_required
 def view_poll(request,pk):
     poll=Poll.objects.get(pk=pk)
-    if request.GET.get('start'):
-        start_poll.delay(poll)
-        return HttpResponse("Stop")
-    if request.GET.get('stop'):
-
-        return HttpResponse("Stop")
+    category=None
+    if request.GET.get('poll'):
+        if request.GET.get('start'):
+            start_poll.delay(poll)
+            res=""" <a href="?stop=True&poll=True" data-remote=true  id="poll_action" class="btn">Close Poll</a> """
+            return HttpResponse(res)
+        if request.GET.get('stop'):
+            poll.end()
+            res=""" <a href="?reopen=True&poll=True" data-remote=true id="poll_action" class="btn">Reopen Poll</a> """
+            return HttpResponse(res)
+        if request.GET.get("reopen"):
+            poll.end_date=None
+            poll.save()
+            res="""<a href="?stop=True&poll=True" data-remote=true  id="poll_action" class="btn">Close Poll</a>  """
+            return HttpResponse(res)
     xf=XFormField.objects.get(name='latest_poll')
     response=StubScreen.objects.get(slug='question_response')
     template='ureport/polls/view_poll.html'
@@ -63,7 +73,7 @@ def view_poll(request,pk):
             category_form=CategoryForm(request.POST,instance=category)
             if category_form.is_valid():
                 template="ureport/polls/rules.html"
-                category_form.save()
+                category=category_form.save()
                 request.session['category'] =category
             else:
                 template="ureport/polls/category.html"
@@ -88,6 +98,7 @@ def view_poll(request,pk):
         'categories': categories,
         'category_form':category_form,
         'rule_form':rule_form,
+        'category':category ,
         }, context_instance=RequestContext(request))
 
 
@@ -224,7 +235,8 @@ def view_responses(req, poll_id):
 def edit_category(request,pk):
     category=Category.objects.get(pk=int(pk))
     category_form=CategoryForm(instance=category)
-    return render_to_response("ureport/polls/category.html",{'category':category,'category_form':category_form,'edit':True},context_instance=RequestContext(request))
+    title="Editing "+category.name
+    return render_to_response("ureport/polls/category.html",{'category':category,'category_form':category_form,'edit':True,"title":title},context_instance=RequestContext(request))
 
 @login_required
 def view_rules(request,pk):
@@ -234,6 +246,27 @@ def view_rules(request,pk):
     rule.category=category
     rule_form=RuleForm2(instance=rule)
     return render_to_response("ureport/polls/rules.html",{'rules':rules,'rule_form':rule_form,'category':category,"edit":True},context_instance=RequestContext(request))
+
+
+def create_rule(request,pk):
+    rule_form=RuleForm2(request.POST or None)
+    category=Category.objects.get(pk=int(pk))
+
+    if rule_form.is_valid():
+        rule=rule_form.save(commit=False)
+        rule.category=category
+        rule.save()
+        reprocess_responses.delay(category.poll)
+        if rule.rule == 1:
+            r="Contains all of"
+        else:
+            r="Contains one of"
+        res="<td >"+r+"</td><td>"+rule.rule_string+"</td>"
+
+        return HttpResponse(res)
+    return HttpResponse("<td colspan='2'>Please enter all the fields</td>")
+
+
 
 @login_required
 def poll_dashboard(request):

@@ -827,4 +827,5 @@ fieldset{
     background-image:url("../images/ajax-loader.gif");
     background-repeat:no-repeat;
     background-position: center center;
+    z-index: 999999;
 }

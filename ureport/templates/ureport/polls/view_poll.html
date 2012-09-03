@@ -80,14 +80,38 @@
         {%block top_js %}
 
         <script type="text/javascript">
+
+            function bind_ruleform(){
+                $("#rule_form").bind('ajax:before',function (exhr, status, error) {
+                    ajax_loading('#rule_cont');
+
+                })
+                        .bind('ajax:success', function(evt, data, status, xhr) {
+
+                            $('#rule_result').html(xhr.responseText);
+                            $('#rule_result').effect("highlight", {}, 3000);
+                            $('.ajax_loading').remove();
+
+
+                        })
+                        .bind('ajax:failure', function(evt, data, status, xhr) {
+                            alert("something went wrong!");
+                        });
+            }
             function bind_form(){
-                $("#category_form")
+                $("#category_form").bind('ajax:before',function (exhr, status, error) {
+                    ajax_loading('#cat_tb');
+
+                })
                         .bind('ajax:success', function(evt, data, status, xhr) {
                             var $form = $(this);
 
                             // Insert response partial into page below the form.
 
                             $('#category').html(xhr.responseText);
+                            $('#category').effect("highlight", {}, 3000);
+                            $('.ajax_loading').remove();
+
 
                         })
                         .bind('ajax:failure', function(evt, data, status, xhr) {
@@ -98,6 +122,19 @@
 
                 bind_form();
                 jQuery(".best_in_place").best_in_place();
+
+
+                $('#poll_action').bind('ajax:before',function (exhr, status, error) {
+                    ajax_loading('#poll_action');
+
+                }).bind('ajax:success', function (evt, data, status, xhr) {
+
+                            $('#state').html(xhr.responseText);
+                            $('#state').effect("highlight", {}, 3000);
+                            $('.ajax_loading').remove();
+                        });
+
+
 
             });
 
@@ -132,10 +169,20 @@ color:#666;">Response:
 </div>
 </div>
 {%if not  poll.start_date%}
-<a href="?start=True" data-remote=true class="btn">Start Poll</a>
+<span id="state" >
+<a href="?start=True?&poll=True" data-remote=true  id="poll_action" class="btn">Start Poll</a>
+</span>
 click on question to edit
         {%else%}
-<a href="?stop=True" data-remote=true class="btn">Close Poll</a>
+        {% if not poll.end_date %}
+<span id="state" >
+<a href="?stop=True&poll=True" data-remote=true  id="poll_action" class="btn">Close Poll</a>
+ </span>
+        {%else%}
+<span id="state" >
+<a href="?reopen=True&poll=True" data-remote=true id="poll_action" class="btn">Reopen Poll</a>
+</span>
+    {%endif%}
 
   {%endif%}
 
@@ -173,7 +220,7 @@ click on question to edit
         <h3>Create A new Category</h3>
     </div>
     <div class="modal-body" >
-        <table>
+        <table id="cat_tb">
 
         {{category_form.as_table}}
 
@@ -211,7 +258,7 @@ click on question to edit
             <TEXTAREA NAME="response" COLS=15 ROWS=2   length="150" wrap="soft">{{response.text}}</TEXTAREA>
 
 
-        <input value="Save Edits" class="btn" type="submit" >
+        <input value="Save Menu  Edits" class="btn" style="width:120px;" type="submit" >
         </div>
 </form>
 {%endblock%}

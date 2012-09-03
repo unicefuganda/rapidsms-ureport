@@ -149,7 +149,9 @@
                     else {
                         d = eval(data);
                         $.each(d, function (k, v) {
-                                    $("#mp_bd").prepend(v.row);
+                                    $("#mp_bd").prepend(v.row).effect('highlight', {}, 3000);
+
+
 
 
                                 }
@@ -170,6 +172,7 @@
 
                         // Insert response partial into page below the form.
                         $('#message').html(xhr.responseText);
+                        $('#message').effect("highlight", {}, 3000);
                         $('#message').show();
                         $('.ajax_loading').remove();
                     })
@@ -213,12 +216,14 @@
             $('#mesg_title').html("info");
             $('#mesg_body').html("Message Successfully sent");
             $('#mesg_st').show();
+            $('#mesg_st').effect("highlight", {}, 3000);
         });
 
         $('#message_forward').bind('ajax:success', function (evt, data, status, xhr) {
             $('#mesg_title').html("info");
             $('#mesg_body').html("Message Successfully forwarded");
             $('#mesg_st').show();
+            $('#mesg_st').effect("highlight", {}, 3000);
         });
 
 
@@ -231,7 +236,9 @@
 
                         $('#message').html(xhr.responseText);
                         $('#message').show();
+                        $('#message').effect("highlight", {}, 3000);
                         $('.ajax_loading').remove();
+
                     })
                     .bind('ajax:failure', function (xhr, status, error) {
                         alert("something went wrong!");
@@ -250,6 +257,7 @@
                     // Insert response partial into page below the form.
 
                     $('#' + cont).html(xhr.responseText);
+                    $('#'+cont).effect("highlight", {}, 3000);
                     $('.ajax_loading').remove();
 
 
@@ -265,6 +273,7 @@
         $('#mesg_title').html("info");
         $('#mesg_body').html("Message Successfully sent");
         $('#mesg_st').show();
+        $('#mesg_st').effect("highlight", {}, 3000);
     }
 
 
