@@ -49,7 +49,7 @@ class App(AppBase):
                 alert_setting,_=Settings.objects.get_or_create(attribute="alerts")
                 if alert_setting.value=="true":
                     alert,_=MessageAttribute.objects.get_or_create(name="alert")
-                    msg_a=MessageDetail.objects.create(message=message,attribute=alert,value='true')
+                    msg_a=MessageDetail.objects.create(message=message.db_message,attribute=alert,value='true')
             if message.connection.contact and message.connection.contact.language == "ach" and message.text.lower() == "english":
                 contact=message.connection.contact
                 contact.language="en"
