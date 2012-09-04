@@ -18,8 +18,10 @@ from eav.models import Value
 
 from poll.models import ResponseCategory, Response
 from ureport.views.utils.tags import _get_tags, _get_responses
+from django.db import transaction
 
 
+@transaction.autocommit
 def best_visualization(request, poll_id=None):
     module = False
     if 'module' in request.GET:
@@ -74,6 +76,7 @@ def show_ignored_tags(request, poll_id):
 
 
 @cache_control(no_cache=True, max_age=0)
+@transaction.autocommit
 def tag_cloud(request, pks):
     """
         generates a tag cloud
@@ -93,7 +96,7 @@ def tag_cloud(request, pks):
         'poll_id': pks,
         }, context_instance=RequestContext(request))
 
-
+@transaction.autocommit
 def histogram(request, pks=None):
     """
          view for numeric polls
@@ -159,7 +162,7 @@ def histogram(request, pks=None):
                               {'polls': all_polls},
                               context_instance=RequestContext(request))
 
-
+@transaction.autocommit
 def show_timeseries(request, pks):
     polls = retrieve_poll(request, pks)
     poll_obj = polls[0]

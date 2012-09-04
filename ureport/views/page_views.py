@@ -9,6 +9,7 @@ from generic.views import generic_dashboard
 from generic.forms import StaticModuleForm
 from generic.models import Dashboard
 from ureport.forms import PollModuleForm
+from django.db import transaction
 
 
 def ureport_content(

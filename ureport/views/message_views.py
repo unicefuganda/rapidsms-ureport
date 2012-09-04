@@ -28,9 +28,12 @@ from contact.models import MassText
 from ureport.models import Ureporter
 from ureport.forms import BlacklistForm2,ReplyTextForm
 from ureport.views.utils.paginator import ureport_paginate
+from django.contrib.admin.views.decorators import staff_member_required
+from django.db import transaction
 
 
-@login_required
+@staff_member_required
+@transaction.autocommit
 def messages(request):
     filter_forms = [FreeSearchTextForm, DistictFilterMessageForm]
     action_forms = [ReplyTextForm, BlacklistForm2]
@@ -60,7 +63,8 @@ def messages(request):
         )
 
 
-@login_required
+@transaction.autocommit
+@staff_member_required
 def quit_messages(request):
     columns = [('Name', True, 'name', TupleSorter(0)), ('JoinDate',
                False, '', None), ('QuitDate', False, '', None),
@@ -79,7 +83,8 @@ def quit_messages(request):
         )
 
 
-@login_required
+@transaction.autocommit
+@staff_member_required
 def mass_messages(request):
     columns = [('Message', True, 'text', TupleSorter(0)), ('Time',
                True, 'date', TupleSorter(1)), ('User', True, 'user',
@@ -157,6 +162,7 @@ def send_message(request, template='ureport/partials/forward.html'):
 
 
 @login_required
+@transaction.autocommit
 def flagged_messages(request):
     all_flags = Flag.objects.all()
     if request.GET.get('export', None):
@@ -203,6 +209,7 @@ def flagged_messages(request):
 
 
 @login_required
+@transaction.autocommit
 def view_flagged_with(request, pk):
     flag = get_object_or_404(Flag, pk=pk)
     messages = flag.get_messages()

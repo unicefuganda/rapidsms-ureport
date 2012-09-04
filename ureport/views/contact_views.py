@@ -31,6 +31,8 @@ from contact.forms import  FreeSearchForm, MultipleDistictFilterForm,  GenderFil
 from unregister.forms import BlacklistForm
 from ureport.models import Ureporter
 from ureport.views.utils.paginator import ureport_paginate
+from django.contrib.admin.views.decorators import staff_member_required
+from django.db import transaction
 
 @login_required
 def ureporter_profile(request, connection_pk):
@@ -143,6 +145,7 @@ def ureporter_profile(request, connection_pk):
     )
 
 @login_required
+@staff_member_required
 def deleteReporter(request, reporter_pk):
     reporter = get_object_or_404(Contact, pk=reporter_pk)
     if request.method == 'POST':
@@ -151,6 +154,7 @@ def deleteReporter(request, reporter_pk):
 
 
 @login_required
+@staff_member_required
 def editReporter(request, reporter_pk):
     reporter = get_object_or_404(Contact, pk=reporter_pk)
     reporter_form = EditReporterForm(instance=reporter)
@@ -238,6 +242,7 @@ def signup(request):
 
 
 @login_required
+@staff_member_required
 def get_all_contacts(request):
     from uganda_common.utils import ExcelResponse
 

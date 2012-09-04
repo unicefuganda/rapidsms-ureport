@@ -23,6 +23,7 @@ from ureport.models import MessageAttribute, AlertsExport, Settings, \
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import datetime
 from ureport.views.utils.paginator import UreportPaginator
+from django.db import transaction
 
 
 @login_required
@@ -160,6 +161,9 @@ def mp_dashboard(request):
     return render_to_response('ureport/mp_dashboard.html',
                               context_dict,
                               context_instance=RequestContext(request))
+
+
+
 
 
 @login_required
