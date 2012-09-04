@@ -16,7 +16,6 @@ class Command(BaseCommand):
         )
 
     def handle(self, **options):
-        import pdb;pdb.set_trace()
         num=re.compile(r'(\d+)')
         router=get_router()
         file = options['f']
