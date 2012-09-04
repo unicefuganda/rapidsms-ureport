@@ -35,7 +35,7 @@ class Command(BaseCommand):
 
                     router.handle_incoming(incoming['backend'][0], id,  incoming['message'][0])
                     print incoming
-            except IndexError:
+            except IndexError,KeyError:
                 pass
 
 
