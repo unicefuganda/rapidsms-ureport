@@ -145,7 +145,6 @@ def ureporter_profile(request, connection_pk):
     )
 
 @login_required
-@staff_member_required
 def deleteReporter(request, reporter_pk):
     reporter = get_object_or_404(Contact, pk=reporter_pk)
     if request.method == 'POST':
@@ -154,7 +153,6 @@ def deleteReporter(request, reporter_pk):
 
 
 @login_required
-@staff_member_required
 def editReporter(request, reporter_pk):
     reporter = get_object_or_404(Contact, pk=reporter_pk)
     reporter_form = EditReporterForm(instance=reporter)
@@ -242,7 +240,6 @@ def signup(request):
 
 
 @login_required
-@staff_member_required
 def get_all_contacts(request):
     from uganda_common.utils import ExcelResponse
 

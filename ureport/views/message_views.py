@@ -32,7 +32,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.db import transaction
 
 
-@staff_member_required
+@login_required
 @transaction.autocommit
 def messages(request):
     filter_forms = [FreeSearchTextForm, DistictFilterMessageForm]
@@ -64,7 +64,7 @@ def messages(request):
 
 
 @transaction.autocommit
-@staff_member_required
+@login_required
 def quit_messages(request):
     columns = [('Name', True, 'name', TupleSorter(0)), ('JoinDate',
                False, '', None), ('QuitDate', False, '', None),
@@ -84,7 +84,7 @@ def quit_messages(request):
 
 
 @transaction.autocommit
-@staff_member_required
+@login_required
 def mass_messages(request):
     columns = [('Message', True, 'text', TupleSorter(0)), ('Time',
                True, 'date', TupleSorter(1)), ('User', True, 'user',

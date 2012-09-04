@@ -26,7 +26,7 @@ from ureport.tasks import reprocess_responses
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import transaction
 
-@staff_member_required
+@login_required
 def view_poll(request,pk):
     poll=Poll.objects.get(pk=pk)
     category=None
@@ -105,7 +105,7 @@ def view_poll(request,pk):
 
 
 @permission_required('poll.can_poll')
-@staff_member_required
+@login_required
 def new_poll(req):
     if req.method == 'POST':
         form = NewPollForm(req.POST)
@@ -251,7 +251,7 @@ def view_rules(request,pk):
     rule_form=RuleForm2(instance=rule)
     return render_to_response("ureport/polls/rules.html",{'rules':rules,'rule_form':rule_form,'category':category,"edit":True},context_instance=RequestContext(request))
 
-@staff_member_required
+@login_required
 def create_rule(request,pk):
     rule_form=RuleForm2(request.POST or None)
     category=Category.objects.get(pk=int(pk))
@@ -296,7 +296,7 @@ def poll_dashboard(request):
     )
 
 @transaction.autocommit
-@staff_member_required
+@login_required
 def ureport_polls(request):
     columns=[('Name', True, 'name', SimpleSorter()),
         ('Question', True, 'question', SimpleSorter(),),
@@ -319,7 +319,7 @@ def ureport_polls(request):
 
 
 @transaction.autocommit
-@staff_member_required
+@login_required
 def script_polls(request):
     columns=[('Name', True, 'name', SimpleSorter()),
         ('Question', True, 'question', SimpleSorter(),),
