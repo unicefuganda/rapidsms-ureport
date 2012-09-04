@@ -28,14 +28,14 @@ class Command(BaseCommand):
             url=parts[-1].strip()[1:-1]
             url_parts=urlparse.urlparse(url)
             incoming=urlparse.parse_qs(url_parts.query)
-            id_parts=num.split(incoming['sender'][0])
             try:
+                id_parts=num.split(incoming['sender'][0])
                 id=id_parts[1]
                 if not Message.objects.filter(direction="I",text=incoming['message'][0],connection__identity=id,date__gte=date):
 
                     router.handle_incoming(incoming['backend'][0], id,  incoming['message'][0])
                     print incoming
-            except IndexError,KeyError:
+            except (IndexError,KeyError):
                 pass
 
 
