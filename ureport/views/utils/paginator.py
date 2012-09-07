@@ -1,6 +1,7 @@
 from django.core.paginator import  Paginator,QuerySetPaginator,Page,InvalidPage
 import math
 from django.db import connection
+from django.db.utils import DatabaseError
 
 class UreportPaginator(Paginator):
     """
@@ -137,19 +138,16 @@ class UreportPaginator(Paginator):
         if self._count is None:
             try:
                 estimate = 0
-                if not self.object_list.query.where:
-                    try:
-                        cursor = connection.cursor()
-                        cursor.execute("SELECT reltuples FROM pg_class WHERE relname = %s",
-                            [self.object_list.query.model._meta.db_table])
-                        estimate = int(cursor.fetchone()[0])
-                    except:
-                        pass
+                cursor = connection.cursor()
+                cursor.execute("SELECT reltuples FROM pg_class WHERE relname = %s",
+                    [self.object_list.query.model._meta.db_table])
+                estimate = int(cursor.fetchone()[0])
+
                 if estimate < 10000:
                     self._count = self.object_list.count()
                 else:
                     self._count = estimate
-            except (AttributeError, TypeError):
+            except (AttributeError, TypeError,DatabaseError):
                 # AttributeError if object_list has no count() method.
                 # TypeError if object_list.count() requires arguments
                 # (i.e. is of type list).
