@@ -326,7 +326,7 @@ def blacklist(request,pk):
 def ureporters(request):
 
     download_form=DownloadForm(request.POST or None)
-    if request.get('download',None):
+    if request.POST and request.POST.get('download',None):
         if download_form.is_valid():
             download_form.export(request,request.session['queryset'],'autoreg_join_date')
         else:
