@@ -326,12 +326,15 @@ def blacklist(request,pk):
 def ureporters(request):
 
     download_form=DownloadForm(request.POST or None)
-    if download_form.is_valid():
-        download_form.export(request,request.session['queryset'],'autoreg_join_date')
+    if request.get('download',None):
+        if download_form.is_valid():
+            download_form.export(request,request.session['queryset'],'autoreg_join_date')
+        else:
+            return HttpResponse("Some thing went wrong")
 
     columns=[('Name', True, 'name', SimpleSorter()),
         ('Number', True, 'mobile', SimpleSorter(),),
-        ('Age', False, '', None,),
+        ('Age', False, 'age', SimpleSorter(),),
         ('Gender', True, 'gender', SimpleSorter(),),
         ('Language', True, 'language',SimpleSorter(),),
         ('District', True, 'district', SimpleSorter(),),
