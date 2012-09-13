@@ -4,7 +4,7 @@ from rapidsms.models import Contact
 from poll.models import Poll,ResponseCategory
 from script.models import ScriptStep
 from django.db.models import Count
-from .models import Ureporter
+from .models import Ureporter,UreportContact
 from unregister.models import Blacklist
 from django.conf import settings
 from rapidsms_httprouter.models import Message, MessageBatch
@@ -18,10 +18,16 @@ import re
 def get_contacts(**kwargs):
     request = kwargs.pop('request')
     if request.user.is_authenticated() and hasattr(Contact, 'groups'):
-        return Ureporter.objects.filter(groups__in=request.user.groups.all()).distinct().annotate(Count('responses'))
+        return Ureporter.objects.filter(groups__in=request.user.groups.all()).distinct().annotate(Count('responses')).select_related()
     else:
-        return Ureporter.objects.annotate(Count('responses'))
+        return Ureporter.objects.annotate(Count('responses')).select_related()
 
+def get_contacts2(**kwargs):
+    request = kwargs.pop('request')
+    if request.user.is_authenticated() and hasattr(Contact, 'groups'):
+        return UreportContact.objects.filter(group__in=request.user.groups.values_list('name'))
+    else:
+        return UreportContact.objects.all()
 
 def get_polls(**kwargs):
     script_polls = ScriptStep.objects.exclude(poll=None).values_list('poll', flat=True)
@@ -68,7 +74,7 @@ def create_poll(name, type, question, default_response, contacts, user,start_imm
         else:
 
             localized_contacts = contacts.filter(language=language)
-        if localized_contacts.exists():
+        if localized_contacts:
             if start_immediately:
                 messages = Message.mass_text(gettext_db(field=question, language=language), Connection.objects.filter(contact__in=localized_contacts).distinct(), status='Q', batch_status='Q')
             else:
@@ -107,7 +113,7 @@ def add_to_poll(poll,contacts):
         else:
 
             localized_contacts = contacts.filter(language=language)
-        if localized_contacts.exists():
+        if localized_contacts:
             messages = Message.mass_text(gettext_db(field=poll.question, language=language), Connection.objects.filter(contact__in=localized_contacts).distinct(), status='Q', batch_status='Q')
 
             localized_messages[language] = [messages, localized_contacts]

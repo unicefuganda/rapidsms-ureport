@@ -19,18 +19,19 @@ import datetime
 from rapidsms.models import Connection,Contact
 from poll.models import Poll
 from generic.sorters import SimpleSorter
-from ureport.forms import  ReplyTextForm,EditReporterForm,SignupForm,ExcelUploadForm,MassTextForm,AssignToNewPollForm
+from ureport.forms import  ReplyTextForm,DownloadForm,EditReporterForm,SignupForm,ExcelUploadForm,MassTextForm,AssignToNewPollForm
 
 from unregister.models import Blacklist
 from django.conf import settings
 from rapidsms.contrib.locations.models import Location
 from django.contrib.auth.models import Group
 from ureport.views.utils.excel import handle_excel_file
-from ureport.utils import get_contacts
-from contact.forms import  FreeSearchForm, MultipleDistictFilterForm,  GenderFilterForm,  FilterGroupsForm, AssignGroupForm, AgeFilterForm
+from ureport.utils import get_contacts,get_contacts2
+from contact.forms import   MultipleDistictFilterForm,  GenderFilterForm,  FilterGroupsForm, AssignGroupForm
 from unregister.forms import BlacklistForm
-from ureport.models import Ureporter
+from ureport.models import Ureporter,UreportContact
 from ureport.views.utils.paginator import ureport_paginate
+from ureport.forms import UreporterSearchForm,AgeFilterForm
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import transaction
 
@@ -57,7 +58,7 @@ def ureporter_profile(request, connection_pk):
         response_rate = None
     gr_poll = Poll.objects.get(pk=121)
     how_did_u_hear = None
-    if session.exists():
+    if session:
         try:
             how_did_u_hear =\
             session[0].responses.filter(response__poll=gr_poll)[0].response.message.text
@@ -66,22 +67,8 @@ def ureporter_profile(request, connection_pk):
     if request.GET.get('download',None):
 
         data = []
-        for message in messages:
-            rep = {}
-
-            rep['Message'] = message.text
-            rep['direction']=message.direction
-            rep['date']=message.date.date()
-            rep['Mobile Number'] = message.connection.identity
-
-
-            if message.connection.contact:
-                rep['name'] = message.connection.contact.name
-                rep['district'] = message.connection.contact.reporting_location
-            else:
-                rep['name'] = ''
-                rep['district'] = ''
-            data.append(rep)
+        date=messages.values_list('text','direction','date','connection__identity','connection__contact__name','connection__contact__reporting_location__name',flat=True)
+        data.insert(0,['Message','Direction','Date','Mobile','Name','District'])
 
         return ExcelResponse(data=data)
     columns = [('Message', True, 'text', SimpleSorter()), ('connection'
@@ -338,21 +325,31 @@ def blacklist(request,pk):
 @login_required
 def ureporters(request):
 
+    download_form=DownloadForm(request.POST or None)
+    if download_form.is_valid():
+        download_form.export(request,request.session['queryset'],'autoreg_join_date')
+
     columns=[('Name', True, 'name', SimpleSorter()),
-        ('Number', True, 'connection__identity', SimpleSorter(),),
+        ('Number', True, 'mobile', SimpleSorter(),),
         ('Age', False, '', None,),
         ('Gender', True, 'gender', SimpleSorter(),),
         ('Language', True, 'language',SimpleSorter(),),
-        ('Location', True, 'reporting_location__name', SimpleSorter(),),
-        ('Group(s)', True, 'groups__name', SimpleSorter()),
-        ('Total Poll Responses', True, 'responses__count', SimpleSorter()),
-        ('', False, '', None)]
+        ('District', True, 'district', SimpleSorter(),),
+        ('Group(s)', True, 'group', SimpleSorter()),
+        ('Questions ', True, 'questions', SimpleSorter()),
+        ('Responses ', True, 'responses', SimpleSorter()),
+        ('Messages Sent', True, 'incoming', SimpleSorter()),
+        ('caregiver', True, 'is_caregiver', SimpleSorter()),
+        ('join date', True, 'autoreg_join_date', SimpleSorter()),
+        ('quit date', True, 'quit_date', SimpleSorter()),
+]
 
     return generic(request,
-        model=Ureporter,
-        queryset=get_contacts,
+        model=UreportContact,
+        queryset=get_contacts2,
+        download_form=download_form,
         results_title='uReporters',
-        filter_forms=[ FreeSearchForm,  GenderFilterForm, AgeFilterForm, MultipleDistictFilterForm,FilterGroupsForm ],
+        filter_forms=[ UreporterSearchForm,  GenderFilterForm, AgeFilterForm, MultipleDistictFilterForm,FilterGroupsForm ],
         action_forms=[MassTextForm, AssignGroupForm, BlacklistForm, AssignToNewPollForm],
         objects_per_page=25,
         partial_row='ureport/partials/contacts/contacts_row.html',

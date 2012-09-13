@@ -23,6 +23,7 @@ from contact.models import MassText
 from poll.models import Poll, Translation
 from unregister.models import Blacklist
 from .models import AutoregGroupRules
+from uganda_common.utils import ExcelResponse
 
 import subprocess
 
@@ -228,12 +229,13 @@ class AssignToNewPollForm(ActionForm):
                 u'\u0025')
         default_response = self.cleaned_data['default_response']
         response_type = self.cleaned_data['response_type']
+        contacts=Contact.objects.filter(pk__in=results)
         poll = Poll.create_with_bulk(
             name=name,
             type=poll_type,
             question=question,
             default_response=default_response,
-            contacts=results,
+            contacts=contacts,
             user=request.user
             )
 
@@ -342,11 +344,12 @@ class MassTextForm(ActionForm):
 
 
             messages = Message.mass_text(text, connections)
+            contacts=Contact.objects.filter(pk__in=results)
 
             MassText.bulk.bulk_insert(send_pre_save=False,
                     user=request.user,
                     text=text,
-                    contacts=list(results))
+                    contacts=list(contacts))
             masstexts = MassText.bulk.bulk_insert_commit(send_post_save=False, autoclobber=True)
             masstext = masstexts[0]
             
@@ -484,11 +487,82 @@ class GroupRules(forms.ModelForm):
         model=AutoregGroupRules
 
 
-def UnsolicitizedMessages(FilterForm):
-    pass
+class DownloadForm(forms.Form):
 
-def AutoregMessages(FilterForm):
-    pass
+    startdate = forms.DateField(('%d/%m/%Y',), label='Start Date', required=False,widget=forms.DateTimeInput(format='%d/%m/%Y', attrs={
+        'class': 'input',
+        'readonly': 'readonly',
+        'size': '15'
+    }))
+    enddate = forms.DateField(('%d/%m/%Y',), label='End Date', required=False,widget=forms.DateTimeInput(format='%d/%m/%Y', attrs={
+        'class': 'input',
+        'readonly': 'readonly',
+        'size': '15'
+    }))
 
-def ExportForm(ActionForm):
-    pass
+    def export(self,request,queryset,date_field):
+        if request.user.has_perm("ureport.can_export"):
+            start = self.cleaned_data['startdate']
+            end = self.cleaned_data['enddate']
+            date="%s__range"%date_field
+            kwargs=dict(date=(start,end))
+            data=queryset.filter(**kwargs).values()
+            response=ExcelResponse(data=list(data))
+            return response
+
+
+class UreporterSearchForm(FilterForm):
+
+    """ concrete implementation of filter form
+        TO DO: add ability to search for multiple search terms separated by 'or'
+    """
+
+    searchx = forms.CharField(max_length=100, required=False, label="Free-form search",
+        help_text="Use 'or' to search for multiple names")
+
+    def filter(self, request, queryset):
+        searchx = self.cleaned_data['searchx'].strip()
+        if searchx == "":
+            return queryset
+        elif searchx[0] in ["'", '"'] and searchx[-1] in ["'", '"']:
+            searchx = searchx[1:-1]
+            return queryset.filter(Q(name__iregex=".*\m(%s)\y.*" % searchx)
+                                   | Q(district__iregex=".*\m(%s)\y.*" % searchx)
+                                   | Q(mobile__iregex=".*\m(%s)\y.*" % searchx))
+
+        else:
+            return queryset.filter(Q(name__icontains=searchx)
+                                   | Q(district__icontains=searchx)
+                                   | Q(mobile__icontains=searchx))
+
+
+
+class AgeFilterForm(FilterForm):
+    """ filter contacts by their age """
+    flag = forms.ChoiceField(label='' , choices=(('', '-----'), ('==', 'Equal to'), ('>', 'Greater than'), ('<',\
+                                                                                                            'Less than'), ('None', 'N/A')), required=False)
+    age = forms.CharField(max_length=20, label="Age", widget=forms.TextInput(attrs={'size':'20'}), required=False)
+    def filter(self, request, queryset):
+
+        flag = self.cleaned_data['flag']
+
+        try:
+            age = int(self.cleaned_data['age'])
+        except:
+            age=None
+
+        if flag == '':
+            return queryset
+        elif flag == '==':
+            return queryset.filter(age=age)
+        elif flag == '>':
+            return queryset.filter(age__gte=age)
+        elif flag == "<":
+            return queryset.filter(age__lte=age)
+        else:
+            return queryset.filter(age=None)
+
+
+
+
+

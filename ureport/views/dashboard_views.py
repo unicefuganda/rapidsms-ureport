@@ -55,7 +55,7 @@ def mp_dashboard(request):
         msgs = Message.objects.filter(connection__in=mp_conns,
                 direction='I').filter(date__gte=date)
         msgs_list = []
-        if msgs.exists():
+        if msgs:
             for msg in msgs:
                 m = {}
                 m['text'] = msg.text
@@ -207,7 +207,7 @@ def alerts(request):
         request.session['prev'] = list(msgs.values_list('pk',
                 flat=True))
         msgs_list = []
-        if msgs.exists():
+        if msgs:
             for msg in msgs:
                 from django.template.loader import render_to_string
                 row_rendered = \
@@ -229,7 +229,7 @@ def alerts(request):
                 else:
                     m['district'] = 'N/A'
                 rating = msg.details.filter(attribute__name='alerts')
-                if rating.exists():
+                if rating:
                     r = rating[0].value
                 else:
                     r = 0
@@ -300,8 +300,117 @@ def remove_captured(request):
 
 
 def aids_dashboard(request):
-    return render_to_response("ureport/aids_dashboard.html",
-        context_instance=RequestContext(request))
+    select_poll = SelectPoll()
+    poll_form = NewPollForm()
+    range_form = rangeForm()
+    poll_form.updateTypes()
+    template = 'ureport/aids_dashboard.html'
+    message_list =\
+    Message.objects.filter(details__attribute__name='alert'
+    ).order_by('-date')
+    (capture_status, _) =\
+    Settings.objects.get_or_create(attribute='alerts')
+    (rate, _) = MessageAttribute.objects.get_or_create(name='rating')
+
+    # message_list=[Message.objects.latest('date')]
+    # use more efficient count
+
+    if request.GET.get('download', None):
+
+        data = list(AlertsExport.objects.all().values())
+        return ExcelResponse(data=data)
+    if request.GET.get('capture', None):
+        (s, _) = Settings.objects.get_or_create(attribute='alerts')
+        if s.value == 'true':
+            s.value = 'false'
+            s.save()
+            reply = 'Start Capture'
+        else:
+            s.value = 'true'
+            s.save()
+            reply = 'Stop Capture'
+        return HttpResponse(reply)
+    if request.GET.get('ajax', None):
+        date = datetime.datetime.now() - datetime.timedelta(seconds=30)
+        prev = request.session.get('prev', [])
+        msgs = Message.objects.filter(details__attribute__name='alert',
+            direction='I'
+        ).filter(date__gte=date).exclude(pk__in=prev)
+        request.session['prev'] = list(msgs.values_list('pk',
+            flat=True))
+        msgs_list = []
+        if msgs:
+            for msg in msgs:
+                from django.template.loader import render_to_string
+                row_rendered =\
+                render_to_string('ureport/partials/row.html',
+                    {'msg': msg})
+
+                m = {}
+                m['text'] = msg.text
+                m['date'] = str(msg.date.date())
+                if msg.connection.contact:
+                    m['name'] = msg.connection.contact.name
+                else:
+                    m['name'] = 'Anonymous User'
+                m['number'] = msg.connection.identity
+                if msg.connection.contact\
+                and msg.connection.contact.reporting_location:
+                    m['district'] =\
+                    msg.connection.contact.reporting_location.name
+                else:
+                    m['district'] = 'N/A'
+                rating = msg.details.filter(attribute__name='alerts')
+                if rating:
+                    r = rating[0].value
+                else:
+                    r = 0
+                m['row'] = row_rendered
+                m['connection'] = msg.connection.pk
+                m['pk'] = msg.pk
+                msgs_list.append(m)
+            return HttpResponse(mark_safe(simplejson.dumps(msgs_list)))
+        else:
+            return HttpResponse('success')
+    if request.GET.get('rating', None):
+        rating = request.GET.get('rating')
+        descs = {
+            '1': 'Requires Attention',
+            '2': 'Moderate',
+            '3': 'Important',
+            '4': 'Urgent',
+            '5': 'Very Urgent',
+            }
+        msg = Message.objects.get(pk=int(request.GET.get('msg')))
+        (rate, _) = MessageAttribute.objects.get_or_create(name='rating'
+        )
+        det = MessageDetail.objects.create(message=msg, attribute=rate,
+            value=rating, description=descs.get(rating, ''))
+        response =\
+        """<li><a href='javascript:void(0)'  class="rate%s"
+
+        title="%s">%s</a></li>"""\
+        % (rating, descs.get(rating, ''), descs.get(rating, ''))
+
+        return HttpResponse(mark_safe(response))
+
+    paginator = UreportPaginator(message_list, 10, body=12, padding=2)
+    page = request.GET.get('page', 1)
+    try:
+        messages = paginator.page(page)
+    except (PageNotAnInteger, EmptyPage):
+
+        # If page is not an integer, deliver first page.
+
+        messages = paginator.page(1)
+
+    return render_to_response(template, {
+        'messages': messages,
+        'paginator': paginator,
+        'capture_status': capture_status,
+        'rate': rate,
+        'range_form': range_form,
+        }, context_instance=RequestContext(request))
 
 
 

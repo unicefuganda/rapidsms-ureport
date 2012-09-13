@@ -11,9 +11,15 @@
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/modal.css"/>
 {% endblock %}
 {% block javascripts %}
-    
-   
-    
+        {%endblock%}
+{% block extra_js %}
+<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/tabs.js"></script>
+<script type="text/javascript">
+$(function() {
+$("#id_startdate").datepicker({ dateFormat: 'dd/mm/yy' ,changeYear: true ,changeMonth: true,minDate: new Date(2009, 1 - 1, 1) });
+$("#id_enddate").datepicker({ dateFormat: 'dd/mm/yy' ,changeYear: true ,changeMonth: true,minDate: new Date(2009, 1 - 1, 1) });
+});
+</script>
    
 {% endblock %}
 
@@ -51,29 +57,58 @@
         {% endblock %}
 
  {% block action_forms %}
-<table >
-<tr><td>{{ action_forms.0.1.errors }}{{ action_forms.1.1.errors }}{{ action_forms.2.1.errors }}{{ action_forms.3.1.errors }}</td></tr>
+<div style="margin-top:10px;">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#send_sms" data-toggle="tab">Send SMS </a></li>
+        <li><a href="#assign_groups" data-toggle="tab">Assign Group</a></li>
+        <li><a href="#blacklist" data-toggle="tab">Blacklist</a></li>
+        <li><a href="#send_poll" data-toggle="tab">Send Poll</a></li>
+        <li><a href="#exports" data-toggle="tab">Export to excel</a></li>
 
-<tr><td>English SMS:</td><td>{{action_forms.0.1.text}}</td><td>Select Group(s):</td><td>{{action_forms.1.1.groups}}</td></tr>
+    </ul>
+</div>
+<div class="tab-content">
+    <div class="tab-pane active" id="send_sms">
+        <table>
+     {{action_forms.0.1.as_table}}
 
- <tr><td>Luo SMS:</td><td>{{action_forms.0.1.text_luo}}</td><td></td><td><a class="{{ action_forms.1.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onclick="action(this, '{{ action_forms.1.0 }}',{{ page }})">Assign Group </a></td></tr>
-  <tr><td><a class="{{ action_forms.0.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onclick="action(this, '{{ action_forms.0.0 }}',{{ page }})">Send Message </a></td><td></td><td></td><td><a class="{{ action_forms.2.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onclick="action(this, '{{ action_forms.2.0 }}',{{ page }})">Blacklist Selected </a></td></tr>
+      <tr><td><a id ="send_btn" class="{{ action_forms.0.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#send_btn', '{{ action_forms.0.0 }}',{{ page }});">Send Message </a></td></tr>
+        </table>
+
+        </div>
+    <div class="tab-pane " id="assign_groups">
+        <table>
+            {{action_forms.1.1.as_table}}
+            <tr><td><a id="groups_btn" class="{{ action_forms.1.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#groups_btn', '{{ action_forms.1.0 }}',{{ page }});">Assign Group </a></td></tr>
+        </table>
+        </div>
+    <div class="tab-pane " id="blacklist">
+        <table>
+            {{action_forms.2.1.as_table}}
+            <tr><td><a id="blacklist_btn" class="{{ action_forms.2.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#blacklist_btn', '{{ action_forms.2.0 }}',{{ page }});">Blacklist Selected </a></td></tr>
+        </table>
+    </div>
+    <div class="tab-pane " id="send_poll">
+        <table>
+
+            {{action_forms.3.1.as_table}}
+            <tr><td><a id="poll_btn" class="{{ action_forms.3.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#poll_btn', '{{ action_forms.3.0 }}',{{ page }});">Assign To Poll </a></td></tr>
+        </table>
+    </div>
+    <div class="tab-pane " id="exports">
+        <table>
+            {{export_form.as_table}}
+            <tr><td colspan="2">Select Join Date range and download</td></tr>
+
+            </tr>
+            {{download_form.as_table}}
+            <tr><td><input type="submit" value="Download"></td></tr>
+            <tr><td>  <tr><td><a class="export_link" href="{{ MEDIA_URL }}ureport/spreadsheets/ureporters.zip">Export All To Excel</a></td></td></tr>
+        </table>
+    </div>
 
 
-
-<tr><td><a class="export_link" href="{{ MEDIA_URL }}ureport/spreadsheets/ureporters.zip">Export All To Excel</a></td></tr>
-</table>
-
-     <table>
-
-         <tr><td>Name:</td><td>{{ action_forms.3.1.poll_name}}</td><td>Question:</td><td>{{ action_forms.3.1.question}}</td> </tr>
-             <tr><td>Type:</td><td>{{ action_forms.3.1.poll_type}}</td><td>Auto Response:</td><td>{{ action_forms.3.1.default_response}}</td></tr>
-             <tr><td>Response Type:</td><td>{{ action_forms.3.1.response_type}}</td><td></td><td><a class="{{ action_forms.3.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onclick="action(this, '{{ action_forms.3.0 }}',{{ page }})">Assign To Poll </a></td></tr>
-
-
-
-     </table>
-
+</div>
 
 
                 {% endblock %}

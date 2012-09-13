@@ -6,7 +6,7 @@ from poll.models import Poll
 def get_results(poll):
     cats=[]
     response_count=poll.responses.count()
-    if poll.categories.all().exists():
+    if poll.categories.all():
         for category in poll.categories.all():
             ccount=poll.responses.filter(categories__category=category).count()
             try:

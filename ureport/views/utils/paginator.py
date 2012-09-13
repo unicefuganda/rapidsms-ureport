@@ -139,8 +139,11 @@ class UreportPaginator(Paginator):
             try:
                 estimate = 0
                 cursor = connection.cursor()
+                dbtable=self.object_list.query.model._meta.db_table
+                if dbtable == "contacts_export":
+                    dbtable="rapidsms_contact"
                 cursor.execute("SELECT reltuples FROM pg_class WHERE relname = %s",
-                    [self.object_list.query.model._meta.db_table])
+                    [dbtable])
                 estimate = int(cursor.fetchone()[0])
 
                 if estimate < 10000:

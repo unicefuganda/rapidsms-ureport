@@ -42,7 +42,7 @@ def best_visualization(request, poll_id=None):
         'module': module,
         'rate': int(rate),
         }
-    if poll.type == Poll.TYPE_TEXT and not  ResponseCategory.objects.filter(response__poll=poll).exists():
+    if poll.type == Poll.TYPE_TEXT and not  ResponseCategory.objects.filter(response__poll=poll):
         dict.update({'tags': _get_tags(polls),
                     'responses': _get_responses(poll),
                     'poll_id': poll.pk})

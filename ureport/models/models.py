@@ -78,22 +78,22 @@ class Ureporter(Contact):
         else:
             return ""
     def is_active(self):
-        return not Blacklist.objects.filter(connection=self.default_connection).exists()
+        return not Blacklist.objects.filter(connection=self.default_connection)
 
     def join_date(self):
         ss = ScriptSession.objects.filter(connection__contact=self)
-        if ss.exists():
+        if ss:
             return ScriptSession.objects.filter(connection__contact=self)[0].start_time.date()
         else:
             messages = Message.objects.filter(connection=self.default_connection).order_by('date')
-            if messages.exists():
+            if messages:
                 return messages[0].date
             else:
                 return None
 
     def quit_date(self):
         quit_msg = Message.objects.filter(connection__contact=self,application="unregister")
-        if quit_msg.exists():
+        if quit_msg:
             return quit_msg.latest('date').date
     def messages_count(self):
         return Message.objects.filter(connection__contact=self,direction="I").count()
@@ -105,6 +105,8 @@ class Ureporter(Contact):
                 ("can_filter", "can view filters"),
                 ("can_action", "can view actions"),
                 ("view_number", "can view numbers"),
+                ("can_export", "can view exports"),
+                ("can_forward", "can forward messages"),
 
             ]
 

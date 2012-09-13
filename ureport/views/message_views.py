@@ -35,11 +35,11 @@ from django.db import transaction
 @login_required
 @transaction.autocommit
 def messages(request):
+
     filter_forms = [FreeSearchTextForm, DistictFilterMessageForm]
     action_forms = [ReplyTextForm, BlacklistForm2]
     partial_row = 'ureport/partials/messages/message_row.html'
     base_template = 'ureport/contact_message_base.html'
-    paginator_template = 'ureport/partials/new_pagination.html'
     paginator_template = 'ureport/partials/new_pagination.html'
     columns = [('Text', True, 'text', SimpleSorter()),
                ('Contact Information', True, 'connection__contact__name'
@@ -167,25 +167,8 @@ def flagged_messages(request):
     all_flags = Flag.objects.all()
     if request.GET.get('export', None):
         flaggedmessages = MessageFlag.objects.exclude(flag=None)
-
-        data = []
-        for mf in flaggedmessages:
-            rep = {}
-
-            rep['Message'] = mf.message.text
-            rep['Mobile Number'] = mf.message.connection.identity
-            rep['flag'] = mf.flag.name
-            rep['date'] = mf.message.date.date()
-            if mf.message.connection.contact:
-                rep['name'] = mf.message.connection.contact.name
-                rep['district'] = \
-                    mf.message.connection.contact.reporting_location
-            else:
-                rep['name'] = ''
-                rep['district'] = ''
-
-            data.append(rep)
-
+        data=flaggedmessages.values_list('message__text','message__connection__identity','flag__name','message__date','message__connection__contact__name','message__connection__contact__reporting_location__name')
+        data.insert(0,['Message','Mobile Number','Flag','Date','Name','District'])
         return ExcelResponse(data=data)
     return generic(
         request,
@@ -214,23 +197,8 @@ def view_flagged_with(request, pk):
     flag = get_object_or_404(Flag, pk=pk)
     messages = flag.get_messages()
     if request.GET.get('export', None):
-        data = []
-        for message in messages:
-            rep = {}
-
-            rep['Message'] = message.text
-            rep['Mobile Number'] = message.connection.identity
-            rep['flag'] = flag.name
-            if message.connection.contact:
-                rep['name'] = message.connection.contact.name
-                rep['district'] = \
-                    message.connection.contact.reporting_location
-            else:
-                rep['name'] = ''
-                rep['district'] = ''
-            data.append(rep)
-
-        return ExcelResponse(data=data)
+        export_data=messages.values_list('text','connection__identity','connection__contact__name','connection__contact__reporting_location__name')
+        return ExcelResponse(data=export_data)
     return generic(
         request,
         model=Message,

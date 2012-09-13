@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from rapidsms.contrib.locations.models import  Location
+from django.contrib.auth.models import User
 
-class ContactExport(models.Model):
+class UreportContact(models.Model):
     name = models.CharField(max_length=100)
     mobile = models.CharField(max_length=100)
     language = models.CharField(max_length=6)
@@ -17,6 +19,10 @@ class ContactExport(models.Model):
     responses = models.IntegerField()
     questions = models.IntegerField()
     incoming = models.IntegerField()
+    is_caregiver = models.BooleanField()
+    connection_pk = models.IntegerField()
+    reporting_location = models.ForeignKey(Location)
+    user = models.ForeignKey(User)
     class Meta:
         db_table="contacts_export"
         app_label = 'ureport'
@@ -34,3 +40,4 @@ class AlertsExport(models.Model):
     class Meta:
         db_table="alerts_export"
         app_label = 'ureport'
+
