@@ -333,7 +333,7 @@ def ureporters(request):
 
     columns=[('Name', True, 'name', SimpleSorter()),
         ('Number', True, 'mobile', SimpleSorter(),),
-        ('Age', False, 'age', SimpleSorter(),),
+        ('Age', True, 'age', SimpleSorter(),),
         ('Gender', True, 'gender', SimpleSorter(),),
         ('Language', True, 'language',SimpleSorter(),),
         ('District', True, 'district', SimpleSorter(),),
