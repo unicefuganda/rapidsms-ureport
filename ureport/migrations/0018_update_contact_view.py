@@ -8,7 +8,7 @@ class Migration(DataMigration):
 
     def forwards(self, orm):
         year_now = datetime.datetime.now().year
-        sql =\
+        view_sql =\
         """   create or replace view contacts_export as SELECT
 "rapidsms_contact"."id",
 "rapidsms_contact"."name" as name,
@@ -49,10 +49,9 @@ and  "rapidsms_httprouter_message"."connection_id" = (
    WHERE
       "rapidsms_connection"."contact_id" = "rapidsms_contact"."id"  LIMIT 1
 ) LIMIT 1
-) as quit_date,                                 "locations_location"."name" as district,   (
-%d-EXTRACT('year'
-FROM
-"rapidsms_contact"."birthdate")) as age,
+) as quit_date,                                 "locations_location"."name" as district,   
+
+age("rapidsms_contact"."birthdate") as age,
 
 "rapidsms_contact"."gender",
  "rapidsms_contact"."health_facility" as facility,
@@ -80,12 +79,12 @@ FROM "rapidsms_httprouter_message"
 JOIN "poll_response"
    ON "poll_response"."message_id"= "rapidsms_httprouter_message"."id"  where poll_id=121 and contact_id="rapidsms_contact"."id" and has_errors='f' limit 1) as source,
 (SELECT
-COUNT(*) FROM
+COUNT("poll_response"."id") FROM
    "poll_response"
 WHERE
    "poll_response"."contact_id"="rapidsms_contact"."id") as responses,
    (SELECT DISTINCT
-COUNT(*) FROM
+COUNT("poll_poll_contacts"."id") FROM
    "poll_poll_contacts"
 WHERE
    "poll_poll_contacts"."contact_id"="rapidsms_contact"."id" GROUP BY "poll_poll_contacts"."contact_id") as questions,
@@ -116,10 +115,57 @@ FROM
 "rapidsms_contact"
 LEFT JOIN
 "locations_location"
-   ON "rapidsms_contact"."reporting_location_id" = "locations_location"."id";
-        """\
-        % year_now
-        db.execute(sql)
+   ON "rapidsms_contact"."reporting_location_id" = "locations_location"."id" ;
+        """
+        materialized_view_sql="""
+        create table ureport_contact as select id,name,is_caregiver,reporting_location_id ,user_id ,mobile ,language ,autoreg_join_date ,quit_date ,district ,age ,gender ,facility ,village  ,source ,responses ,questions ,incoming ,connection_pk,contacts_export.group,
+false as dirty,null::timestamp with time zone as expiry from contacts_export;
+
+
+        """
+        trigger="""
+
+        create or replace function ureport_contact_refresh_row( id integer
+) returns void
+security definer language 'plpgsql' as $$ begin
+delete
+from ureport_contact uc
+where uc.id = id;
+insert into ureport_contact  select id,name,is_caregiver,reporting_location_id ,user_id ,mobile ,language ,autoreg_join_date ,quit_date ,district ,age ,gender ,facility ,village  ,source ,responses ,questions ,incoming ,connection_pk,ce.group  from contacts_export ce where ce.id = id;
+end $$;
+
+   create or replace function ureport_contact_refresh_row_connection( id integer
+) returns void
+security definer language 'plpgsql' as $$ begin
+delete
+from ureport_contact uc
+where uc.connection_pk = id;
+insert into ureport_contact  select id,name,is_caregiver,reporting_location_id ,user_id ,mobile ,language ,autoreg_join_date ,quit_date ,district ,age ,gender ,facility ,village  ,source ,responses ,questions ,incoming ,connection_pk,ce.group  from contacts_export ce where ce.connection_pk = id;
+end $$;
+
+create or refresh function contact_update()  returns trigger
+security definer language 'plpgsql' as $$ begin
+ureport_contact_refresh_row(new.id);
+return null;
+end $$;
+
+create or refresh function contact_update_message()  returns trigger
+security definer language 'plpgsql' as $$ begin
+ureport_contact_refresh_row_connection(new.connection_id);
+return null;
+end $$;
+
+create trigger update_contact after insert on rapidsms_contact for each row execute procedure contact_update();
+create trigger update_contact after update on rapidsms_contact for each row execute procedure contact_update();
+create trigger update_contact after insert on rapidsms_httprouter_message for each row execute procedure contact_update_message();
+
+
+
+
+           """
+        db.execute(view_sql)
+        db.execute(materialized_view_sql)
+        db.execute(trigger)
 
 
     def backwards(self, orm):

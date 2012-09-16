@@ -24,7 +24,7 @@ class UreportContact(models.Model):
     reporting_location = models.ForeignKey(Location)
     user = models.ForeignKey(User)
     class Meta:
-        db_table="contacts_export"
+        db_table="ureport_contact"
         app_label = 'ureport'
 
 class AlertsExport(models.Model):
