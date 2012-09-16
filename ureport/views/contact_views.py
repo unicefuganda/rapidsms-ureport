@@ -32,9 +32,7 @@ from unregister.forms import BlacklistForm
 from ureport.models import Ureporter,UreportContact
 from ureport.views.utils.paginator import ureport_paginate
 from ureport.forms import UreporterSearchForm,AgeFilterForm
-from django.contrib.admin.views.decorators import staff_member_required
-from django.db import transaction
-from ureport.views.utils.sorters import ContactsViewSorter
+
 
 @login_required
 def ureporter_profile(request, connection_pk):
@@ -333,19 +331,19 @@ def ureporters(request):
         else:
             return HttpResponse("Some thing went wrong")
 
-    columns=[('Name', True, 'name', ContactsViewSorter()),
-        ('Number', True, 'mobile', ContactsViewSorter(),),
-        ('Age', False, 'age', ContactsViewSorter(),),
-        ('Gender', True, 'gender', ContactsViewSorter(),),
-        ('Language', True, 'language',ContactsViewSorter(),),
-        ('District', True, 'district', ContactsViewSorter(),),
-        ('Group(s)', True, 'group', ContactsViewSorter()),
-        ('Questions ', True, 'questions', ContactsViewSorter()),
-        ('Responses ', True, 'responses', ContactsViewSorter()),
-        ('Messages Sent', True, 'incoming', ContactsViewSorter()),
-        ('caregiver', True, 'is_caregiver', ContactsViewSorter()),
-        ('join date', True, 'autoreg_join_date', ContactsViewSorter()),
-        ('quit date', True, 'quit_date', ContactsViewSorter()),
+    columns=[('Name', True, 'name', SimpleSorter()),
+        ('Number', True, 'mobile', SimpleSorter(),),
+        ('Age', False, 'age', SimpleSorter(),),
+        ('Gender', True, 'gender', SimpleSorter(),),
+        ('Language', True, 'language',SimpleSorter(),),
+        ('District', True, 'district', SimpleSorter(),),
+        ('Group(s)', True, 'group', SimpleSorter(),),
+        ('Questions ', True, 'questions', SimpleSorter(),),
+        ('Responses ', True, 'responses', SimpleSorter(),),
+        ('Messages Sent', True, 'incoming', SimpleSorter(),),
+        ('caregiver', True, 'is_caregiver', SimpleSorter(),),
+        ('join date', True, 'autoreg_join_date', SimpleSorter(),),
+        ('quit date', True, 'quit_date', SimpleSorter(),),
 ]
 
     return generic(request,
