@@ -165,7 +165,7 @@ create trigger update_contact after insert on rapidsms_httprouter_message for ea
            """
         db.execute(view_sql)
         db.execute(materialized_view_sql)
-        db.execute(trigger)
+        #db.execute(trigger)
 
 
     def backwards(self, orm):
