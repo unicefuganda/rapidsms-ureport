@@ -143,13 +143,13 @@ where uc.connection_pk = id;
 insert into ureport_contact  select id,name,is_caregiver,reporting_location_id ,user_id ,mobile ,language ,autoreg_join_date ,quit_date ,district ,age ,gender ,facility ,village  ,source ,responses ,questions ,incoming ,connection_pk,ce.group  from contacts_export ce where ce.connection_pk = id;
 end $$;
 
-create function contact_update()  returns trigger
+create or replace  function contact_update()  returns trigger
 security definer language 'plpgsql' as $$ begin
 perform ureport_contact_refresh_row(new.id);
 return null;
 end $$;
 
-create  function contact_update_message()  returns trigger
+create  or replace function contact_update_message()  returns trigger
 security definer language 'plpgsql' as $$ begin
 perform ureport_contact_refresh_row_connection(new.connection_id);
 return null;

@@ -48,7 +48,7 @@
 <td>{{ object.autoreg_join_date }}</td>
 <td>
     {% if object.quit_date %}
-    {{ object.quit_date }}
+    {{ object.quit_date.date }}
     {%else%}
     N/A
     {%endif%}

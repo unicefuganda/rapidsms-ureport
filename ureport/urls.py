@@ -105,5 +105,5 @@ urlpatterns = patterns('',
     (r'^accounts/password/reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm',
          {'post_reset_redirect' : '/accounts/password/done/'}),
     (r'^accounts/password/done/$', 'django.contrib.auth.views.password_reset_complete'),
-
+    url(r'^aids_dashboard/$', aids_dashboard, name="aids-dashboard"),
 )

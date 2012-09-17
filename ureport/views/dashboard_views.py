@@ -306,10 +306,10 @@ def aids_dashboard(request):
     poll_form.updateTypes()
     template = 'ureport/aids_dashboard.html'
     message_list =\
-    Message.objects.filter(details__attribute__name='alert'
+    Message.objects.filter(details__attribute__name='aids'
     ).order_by('-date')
     (capture_status, _) =\
-    Settings.objects.get_or_create(attribute='alerts')
+    Settings.objects.get_or_create(attribute='aids')
     (rate, _) = MessageAttribute.objects.get_or_create(name='rating')
 
     # message_list=[Message.objects.latest('date')]
@@ -320,7 +320,7 @@ def aids_dashboard(request):
         data = list(AlertsExport.objects.all().values())
         return ExcelResponse(data=data)
     if request.GET.get('capture', None):
-        (s, _) = Settings.objects.get_or_create(attribute='alerts')
+        (s, _) = Settings.objects.get_or_create(attribute='aids')
         if s.value == 'true':
             s.value = 'false'
             s.save()
@@ -333,7 +333,7 @@ def aids_dashboard(request):
     if request.GET.get('ajax', None):
         date = datetime.datetime.now() - datetime.timedelta(seconds=30)
         prev = request.session.get('prev', [])
-        msgs = Message.objects.filter(details__attribute__name='alert',
+        msgs = Message.objects.filter(details__attribute__name='aids',
             direction='I'
         ).filter(date__gte=date).exclude(pk__in=prev)
         request.session['prev'] = list(msgs.values_list('pk',
