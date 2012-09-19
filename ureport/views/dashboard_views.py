@@ -24,6 +24,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import datetime
 from ureport.views.utils.paginator import UreportPaginator
 from django.db import transaction
+from contact.models import Flag, MessageFlag
 
 
 @login_required
@@ -311,14 +312,16 @@ def aids_dashboard(request):
     (capture_status, _) =\
     Settings.objects.get_or_create(attribute='aids')
     (rate, _) = MessageAttribute.objects.get_or_create(name='rating')
+    flag=Flag.objects.get(name="HIV")
+    messages=flag.get_messages()
 
     # message_list=[Message.objects.latest('date')]
     # use more efficient count
 
     if request.GET.get('download', None):
 
-        data = list(AlertsExport.objects.all().values())
-        return ExcelResponse(data=data)
+        export_data=messages.values_list('text','connection__identity','connection__contact__name','connection__contact__reporting_location__name')
+        return ExcelResponse(data=export_data)
     if request.GET.get('capture', None):
         (s, _) = Settings.objects.get_or_create(attribute='aids')
         if s.value == 'true':
@@ -333,9 +336,7 @@ def aids_dashboard(request):
     if request.GET.get('ajax', None):
         date = datetime.datetime.now() - datetime.timedelta(seconds=30)
         prev = request.session.get('prev', [])
-        msgs = Message.objects.filter(details__attribute__name='aids',
-            direction='I'
-        ).filter(date__gte=date).exclude(pk__in=prev)
+        msgs = flag.get_messages().filter(date__gte=date).exclude(pk__in=prev)
         request.session['prev'] = list(msgs.values_list('pk',
             flat=True))
         msgs_list = []
@@ -360,7 +361,7 @@ def aids_dashboard(request):
                     msg.connection.contact.reporting_location.name
                 else:
                     m['district'] = 'N/A'
-                rating = msg.details.filter(attribute__name='alerts')
+                rating = msg.details.filter(attribute__name='aids')
                 if rating:
                     r = rating[0].value
                 else:
