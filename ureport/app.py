@@ -63,7 +63,11 @@ class App(AppBase):
         for reg in pattern_list:
             match= reg[0].search(message.text)
             if match:
-                MessageFlag.objects.create(message=message.db_message,flag=reg[1])
+                if hasattr(message, 'db_message'):
+                    msg = message.db_message
+                else:
+                    msg=message
+                MessageFlag.objects.create(message=msg,flag=reg[1])
 
         #if no rule_regex default to name this is just for backward compatibility ... it will soon die an unnatural death
 
