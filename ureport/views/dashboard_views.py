@@ -306,17 +306,14 @@ def aids_dashboard(request):
     range_form = rangeForm()
     poll_form.updateTypes()
     template = 'ureport/aids_dashboard.html'
-    message_list =\
-    Message.objects.filter(details__attribute__name='aids'
-    ).order_by('-date')
+
     (capture_status, _) =\
     Settings.objects.get_or_create(attribute='aids')
     (rate, _) = MessageAttribute.objects.get_or_create(name='rating')
     flag=Flag.objects.get(name="HIV")
     messages=flag.get_messages()
 
-    # message_list=[Message.objects.latest('date')]
-    # use more efficient count
+
 
     if request.GET.get('download', None):
 
@@ -395,7 +392,7 @@ def aids_dashboard(request):
 
         return HttpResponse(mark_safe(response))
 
-    paginator = UreportPaginator(message_list, 10, body=12, padding=2)
+    paginator = UreportPaginator(messages, 10, body=12, padding=2)
     page = request.GET.get('page', 1)
     try:
         messages = paginator.page(page)
