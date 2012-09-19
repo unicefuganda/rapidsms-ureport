@@ -57,8 +57,7 @@ class App(AppBase):
                 return True
 
         flags=Flag.objects.exclude(rule=None).exclude(rule_regex=None)
-        for flag in flags:
-            print flag.rule_regex
+
         pattern_list=[[re.compile(flag.rule_regex, re.IGNORECASE),flag] for flag in flags if flag.rule ]
         for reg in pattern_list:
             match= reg[0].search(message.text)
@@ -67,7 +66,8 @@ class App(AppBase):
                     msg = message.db_message
                 else:
                     msg=message
-                MessageFlag.objects.create(message=msg,flag=reg[1])
+                mf=MessageFlag.objects.create(message=msg,flag=reg[1])
+                print mf
 
         #if no rule_regex default to name this is just for backward compatibility ... it will soon die an unnatural death
 

@@ -18,7 +18,7 @@ urlpatterns = patterns('',
     url(r'^mypolls/$', ureport_polls, name="ureport-polls"),
 
     # poll management views using generic (rather than built-in poll views
-    url(r'^scriptpolls/$', script_polls, name="script-polls"),
+    #url(r'^scriptpolls/$', script_polls, name="script-polls"),
 
      url(r'^messages/$', messages, name="messagelog"),
      url(r'^massmessages/$',mass_messages,name="massmessages"),
