@@ -299,7 +299,7 @@ def remove_captured(request):
 
     return HttpResponse('Sucessfully deleted')
 
-
+@login_required
 def aids_dashboard(request):
     select_poll = SelectPoll()
     poll_form = NewPollForm()
