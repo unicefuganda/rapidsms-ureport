@@ -311,7 +311,7 @@ def aids_dashboard(request):
     Settings.objects.get_or_create(attribute='aids')
     (rate, _) = MessageAttribute.objects.get_or_create(name='rating')
     flag=Flag.objects.get(name="HIV")
-    messages=flag.get_messages()
+    messages=flag.get_messages().order_by('-date')
 
 
 
