@@ -9,6 +9,8 @@ from django.db import transaction
 from django.db import IntegrityError
 from script.models import Script
 from django.contrib.auth.models import  Group
+import gc
+from celery.signals import task_postrun
 
 
 
@@ -57,3 +59,11 @@ def reprocess_groups():
                                 break
     except:
         pass
+
+
+
+#manually  collect memory
+@task_postrun.collect
+def collect_after_task(**kwargs):
+    gc.collect()
+
