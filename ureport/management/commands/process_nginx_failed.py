@@ -24,8 +24,8 @@ class Command(BaseCommand):
         for line in lines:
 
             parts=line.split()
-            date=dateutil.parser.parse(parts[0])
-            url=parts[-1].strip()[1:-1]
+            date=dateutil.parser.parse(parts[1][1:].split(':')[0])
+            url=parts[4]
             url_parts=urlparse.urlparse(url)
             incoming=urlparse.parse_qs(url_parts.query)
             try:
