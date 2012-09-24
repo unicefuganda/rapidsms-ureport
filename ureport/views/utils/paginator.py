@@ -168,4 +168,5 @@ class CustomPage(Page):
 def ureport_paginate(objects_list,perpage,page,p):
     paginator = UreportPaginator(objects_list, perpage, body=12, padding=2)
     filtered_list = paginator.page(page).object_list
-    return dict(paginator=paginator,c_page= paginator.page(page),page=page,object_list=filtered_list)
+    count=len(filtered_list)
+    return dict(count=count,paginator=paginator,c_page= paginator.page(page),page=page,object_list=filtered_list)
