@@ -127,11 +127,11 @@ class ExcelUploadForm(forms.Form):
 
 class SearchResponsesForm(FilterForm):
 
-    """ search responses 
+    """ search responses
     """
 
     search = forms.CharField(max_length=100, required=True,
-                             label='search Responses')
+        label='search Responses')
 
     def filter(self, request, queryset):
         search = self.cleaned_data['search'].strip()
@@ -140,11 +140,11 @@ class SearchResponsesForm(FilterForm):
         elif search[0] == '"' and search[-1] == '"':
             search = search[1:-1]
             return queryset.filter(Q(message__text__iregex=".*\m(%s)\y.*"
-                                    % search)
+                                                           % search)
                                    | Q(message__connection__contact__reporting_location__name__iregex=".*\m(%s)\y.*"
-                                    % search)
+                                                                                                      % search)
                                    | Q(message__connection__identity__iregex=".*\m(%s)\y.*"
-                                    % search))
+                                                                             % search))
         elif search[0] == "'" and search[-1] == "'":
 
             search = search[1:-1]

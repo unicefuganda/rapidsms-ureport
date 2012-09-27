@@ -179,7 +179,6 @@ def poll_summary(request):
 
 
 @login_required
-@transaction.autocommit
 def view_responses(req, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
 
