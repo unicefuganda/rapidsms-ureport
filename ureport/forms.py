@@ -428,9 +428,11 @@ class AssignResponseGroupForm(ActionForm):
 
     def perform(self, request, results):
         groups = self.cleaned_data['groups']
+
         for response in results:
             for g in groups:
-                if response.contact:
+                contact=response.message.connection.contact
+                if contact:
                     response.contact.groups.add(g)
         return ('%d Contacts assigned to %d groups.' % (len(results), len(groups)), 'success',)
 
