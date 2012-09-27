@@ -284,15 +284,7 @@
 
         <span><a class="btn" href="?download=true" >Download</a></span>
 
-        <span><a  onclick="$('#remove').toggle();" href="javascript:void(0);" >Remove Captured >></a> </span>
-        <div id="remove" style="display:none;">
-            <form data-remote=true method="post" id="remove_form" action="/remove_captured/">
-                <table>
-                    {{range_form.as_table}}
-                    <tr><td><input type="submit" value="remove from alerts" class="btn" ></td></tr>
-                </table>
-            </form>
-        </div>
+       
 
         <table class="zebra-striped bordered fc" width="100%">
             <thead>
