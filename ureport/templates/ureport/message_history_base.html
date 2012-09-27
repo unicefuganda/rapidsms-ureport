@@ -74,8 +74,17 @@
                 <td>{{ contact.join_date }}</td>
             </tr>
             <tr>
-                <td>Group:</td>
-                <td>{{ contact.groups.all.0 }}</td>
+                <td>Group(s):</td>
+                <td>
+                    <ul>
+                    {% for g in contact.groups.all %}
+
+                    <li>{{ g.name }}</li>
+
+                    {%endfor%}
+                    </ul>
+
+                </td>
             </tr>
             <tr>
                 <td>How Did You Hear About Ureport?</td>
