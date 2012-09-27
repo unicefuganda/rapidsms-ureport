@@ -433,7 +433,7 @@ class AssignResponseGroupForm(ActionForm):
             for g in groups:
                 contact=response.message.connection.contact
                 if contact:
-                    response.contact.groups.add(g)
+                    contact.groups.add(g)
         return ('%d Contacts assigned to %d groups.' % (len(results), len(groups)), 'success',)
 
 
