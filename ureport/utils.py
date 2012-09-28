@@ -15,6 +15,7 @@ from poll.models import gettext_db
 import datetime
 import re
 
+
 def get_contacts(**kwargs):
     request = kwargs.pop('request')
     if request.user.is_authenticated() and hasattr(Contact, 'groups'):
@@ -59,8 +60,22 @@ def get_flagged_messages(**kwargs):
     return MessageFlag.objects.all()
 
 def get_quit_messages(**kwargs):
-    bl=Blacklist.objects.values_list('connection',flat=True).distinct()
-    return Ureporter.objects.filter(connection__in=bl)
+    OPT_OUT_WORDS = getattr(settings, 'OPT_OUT_WORDS')
+    opt_words = "|".join(OPT_OUT_WORDS)
+    return Message.objects.filter(text__iregex=".*\m(%s)\y.*"%opt_words).exclude(text__iregex=".*\m(%s)\y.*"%"what|uganda|sex|Because|why|which|how|\?|community|Children|where|yes|no")
+
+def get_unsolicitized_messages(**kwargs):
+    OPT_IN_WORDS_LUO = getattr(settings, 'OPT_IN_WORDS_LUO')
+    OPT_IN_WORDS_EN = getattr(settings, 'OPT_IN_WORDS')
+    opt_reg = "|".join(OPT_IN_WORDS_LUO+OPT_IN_WORDS_EN)
+    return Message.objects.filter(application="ureport",direction="I").exclude(text__iregex=".*\m(%s)\y.*"%opt_reg).exclude(application="poll")
+
+def get_poll_messages(**kwargs):
+
+    return Message.objects.filter(application='poll',direction="I")
+
+def get_autoreg_messages(**kwargs):
+    return Message.objects.filter(application="script",direction="I")
 
 
 def create_poll(name, type, question, default_response, contacts, user,start_immediately=False):

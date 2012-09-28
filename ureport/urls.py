@@ -25,6 +25,9 @@ urlpatterns = patterns('',
     #Quit Messages View
 
     url(r'^quitmessages/$', quit_messages,name="quitmessages"),
+    url(r'^autoreg_messages/$', autoreg_messages,name="autoreg_messages"),
+    url(r'^poll_messages/$', poll_messages,name="poll_messages"),
+    url(r'^unsolicitized_messages/$', unsolicitized_messages,name="unsolicitized_messages"),
 
     #flagged messages
     url(r'^flaggedmessages/$', login_required(flagged_messages),name="flaggedmessages"),

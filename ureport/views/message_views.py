@@ -23,7 +23,7 @@ from ureport.views.utils.tags import _get_responses
 from contact.forms import FreeSearchTextForm, DistictFilterMessageForm
 from generic.sorters import  TupleSorter
 from contact.utils import  get_mass_messages, get_messages
-from ureport.utils import get_quit_messages
+from ureport.utils import get_quit_messages,get_autoreg_messages,get_quit_messages,get_unsolicitized_messages,get_poll_messages
 from contact.models import MassText
 from ureport.models import Ureporter
 from ureport.forms import BlacklistForm2,ReplyTextForm
@@ -33,7 +33,6 @@ from django.db import transaction
 
 
 @login_required
-@transaction.autocommit
 def messages(request):
 
     filter_forms = [FreeSearchTextForm, DistictFilterMessageForm]
@@ -53,6 +52,7 @@ def messages(request):
         filter_forms=filter_forms,
         action_forms=action_forms,
         objects_per_page=25,
+        results_title="Message Log",
         partial_row=partial_row,
         base_template=base_template,
         paginator_template=paginator_template,
@@ -62,25 +62,128 @@ def messages(request):
         sort_ascending=False,
         )
 
+@login_required
+def autoreg_messages(request):
+
+    filter_forms = [FreeSearchTextForm, DistictFilterMessageForm]
+    action_forms = [ReplyTextForm, BlacklistForm2]
+    partial_row = 'ureport/partials/messages/message_row.html'
+    base_template = 'ureport/contact_message_base.html'
+    paginator_template = 'ureport/partials/new_pagination.html'
+    columns = [('Text', True, 'text', SimpleSorter()),
+               ('Contact Information', True, 'connection__contact__name'
+                , SimpleSorter()), ('Date', True, 'date',
+                                    SimpleSorter()), ('Type', True, 'application',
+                                                      SimpleSorter()), ('Response', False, 'response', None)]
+    return generic(
+        request,
+        model=Message,
+        queryset=get_autoreg_messages,
+        filter_forms=filter_forms,
+        action_forms=action_forms,
+        objects_per_page=25,
+        partial_row=partial_row,
+        results_title="Autoreg Messages",
+        base_template=base_template,
+        paginator_template=paginator_template,
+        paginator_func=ureport_paginate,
+        columns=columns,
+        sort_column='date',
+        sort_ascending=False,
+    )
+
+
+@login_required
+def unsolicitized_messages(request):
+
+    filter_forms = [FreeSearchTextForm, DistictFilterMessageForm]
+    action_forms = [ReplyTextForm, BlacklistForm2]
+    partial_row = 'ureport/partials/messages/message_row.html'
+    base_template = 'ureport/contact_message_base.html'
+    paginator_template = 'ureport/partials/new_pagination.html'
+    columns = [('Text', True, 'text', SimpleSorter()),
+               ('Contact Information', True, 'connection__contact__name'
+                , SimpleSorter()), ('Date', True, 'date',
+                                    SimpleSorter()), ('Type', True, 'application',
+                                                      SimpleSorter()), ('Response', False, 'response', None)]
+    return generic(
+        request,
+        model=Message,
+        queryset=get_unsolicitized_messages,
+        filter_forms=filter_forms,
+        action_forms=action_forms,
+        objects_per_page=25,
+        partial_row=partial_row,
+        base_template=base_template,
+        results_title="Unsolicitized Messages",
+        paginator_template=paginator_template,
+        paginator_func=ureport_paginate,
+        columns=columns,
+        sort_column='date',
+        sort_ascending=False,
+    )
+
+
+@login_required
+def poll_messages(request):
+
+    filter_forms = [FreeSearchTextForm, DistictFilterMessageForm]
+    action_forms = [ReplyTextForm, BlacklistForm2]
+    partial_row = 'ureport/partials/messages/message_row.html'
+    base_template = 'ureport/contact_message_base.html'
+    paginator_template = 'ureport/partials/new_pagination.html'
+    columns = [('Text', True, 'text', SimpleSorter()),
+               ('Contact Information', True, 'connection__contact__name'
+                , SimpleSorter()), ('Date', True, 'date',
+                                    SimpleSorter()), ('Type', True, 'application',
+                                                      SimpleSorter()), ('Response', False, 'response', None)]
+    return generic(
+        request,
+        model=Message,
+        queryset=get_poll_messages,
+        filter_forms=filter_forms,
+        action_forms=action_forms,
+        objects_per_page=25,
+        partial_row=partial_row,
+        base_template=base_template,
+        results_title="Poll Messages",
+        paginator_template=paginator_template,
+        paginator_func=ureport_paginate,
+        columns=columns,
+        sort_column='date',
+        sort_ascending=False,
+    )
+
 
 @transaction.autocommit
 @login_required
 def quit_messages(request):
-    columns = [('Name', True, 'name', TupleSorter(0)), ('JoinDate',
-               False, '', None), ('QuitDate', False, '', None),
-               ('Messages sent', False, '', None)]
-
+    filter_forms = [FreeSearchTextForm, DistictFilterMessageForm]
+    action_forms = [ReplyTextForm, BlacklistForm2]
+    partial_row = 'ureport/partials/messages/message_row.html'
+    base_template = 'ureport/contact_message_base.html'
+    paginator_template = 'ureport/partials/new_pagination.html'
+    columns = [('Text', True, 'text', SimpleSorter()),
+               ('Contact Information', True, 'connection__contact__name'
+                , SimpleSorter()), ('Date', True, 'date',
+                                    SimpleSorter()), ('Type', True, 'application',
+                                                      SimpleSorter()), ('Response', False, 'response', None)]
     return generic(
         request,
-        model=Ureporter,
+        model=Message,
         queryset=get_quit_messages,
+        filter_forms=filter_forms,
+        action_forms=action_forms,
         objects_per_page=25,
-        partial_row='ureport/partials/contacts/quit_message_row.html',
-        paginator_template='ureport/partials/new_pagination.html',
+        partial_row=partial_row,
+        base_template=base_template,
+        results_title="Quit Messages",
+        paginator_template=paginator_template,
         paginator_func=ureport_paginate,
-        base_template='ureport/contacts_base.html',
         columns=columns,
-        )
+        sort_column='date',
+        sort_ascending=False,
+    )
 
 
 @transaction.autocommit
@@ -101,9 +204,14 @@ def mass_messages(request):
         paginator_func=ureport_paginate,
         base_template='ureport/contacts_base.html',
         sort_column='date',
+        results_title="Mass Messages",
         sort_ascending=False,
         selectable=False,
         )
+
+
+
+
 
 
 @login_required
