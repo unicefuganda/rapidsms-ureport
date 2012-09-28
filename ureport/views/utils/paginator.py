@@ -70,8 +70,14 @@ class UreportPaginator(Paginator):
         page ranges attached.
         """
 
-        page = super(UreportPaginator, self).page(number, *args, **kwargs)
-        number = int(number) # we know this will work
+        try:
+            page = super(UreportPaginator, self).page(number, *args, **kwargs)
+            number = int(number) # we know this will work
+        except:
+            page = super(UreportPaginator, self).page(1, *args, **kwargs)
+            number=1
+
+
 
         # easier access
         num_pages, body, tail, padding, margin =\
@@ -168,5 +174,4 @@ class CustomPage(Page):
 def ureport_paginate(objects_list,perpage,page,p):
     paginator = UreportPaginator(objects_list, perpage, body=12, padding=2)
     filtered_list = paginator.page(page).object_list
-    count=len(filtered_list)
-    return dict(count=count,paginator=paginator,c_page= paginator.page(page),page=page,object_list=filtered_list)
+    return dict(total="filtered",count="filtered",paginator=paginator,c_page= paginator.page(page),page=page,object_list=filtered_list)
