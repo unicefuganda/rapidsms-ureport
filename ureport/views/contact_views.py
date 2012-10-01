@@ -183,27 +183,30 @@ def signup(request):
             signup_form.cleaned_data['district']
             connection.contact.gender =\
             signup_form.cleaned_data['gender']
-            connection.contact.village =\
-            find_closest_match(signup_form.cleaned_data['village'],
-                Location.objects)
-            connection.contact.birthdate = datetime.datetime.now()\
-            - datetime.timedelta(days=365
-            * int(signup_form.cleaned_data['age']))
+            if signup_form.cleaned_data['village']:
+                connection.contact.village =\
+                find_closest_match(signup_form.cleaned_data['village'],
+                    Location.objects)
+            if signup_form.cleaned_data['age']:
+                connection.contact.birthdate = datetime.datetime.now()\
+                - datetime.timedelta(days=365
+                * int(signup_form.cleaned_data['age']))
 
-            group_to_match = signup_form.cleaned_data['group']
+            if signup_form.cleaned_data['group']:
+                group_to_match = signup_form.cleaned_data['group']
 
-            if Group.objects.filter(name='Other uReporters').count():
-                default_group =\
-                Group.objects.get(name='Other uReporters')
-                connection.contact.groups.add(default_group)
-            if group_to_match:
-                for g in re.findall(r'\w+', group_to_match):
-                    if g:
-                        group = find_closest_match(str(g),
-                            Group.objects)
-                        if group:
-                            connection.contact.groups.add(group)
-                            break
+                if Group.objects.filter(name='Other uReporters').count():
+                    default_group =\
+                    Group.objects.get(name='Other uReporters')
+                    connection.contact.groups.add(default_group)
+                if group_to_match:
+                    for g in re.findall(r'\w+', group_to_match):
+                        if g:
+                            group = find_closest_match(str(g),
+                                Group.objects)
+                            if group:
+                                connection.contact.groups.add(group)
+                                break
 
             connection.save()
             status_message = 'You have successfully signed up :)'
