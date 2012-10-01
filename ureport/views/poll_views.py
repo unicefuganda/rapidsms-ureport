@@ -171,7 +171,7 @@ def poll_summary(request):
     script_polls =\
     ScriptStep.objects.exclude(poll=None).values_list('poll',
         flat=True)
-    excluded_polls=[296]
+    excluded_polls=[297]
     polls =\
     Poll.objects.exclude(pk__in=script_polls).exclude(pk__in=excluded_polls).exclude(start_date=None).order_by('-start_date')
     return render_to_response('/ureport/poll_summary.html', {'polls'
