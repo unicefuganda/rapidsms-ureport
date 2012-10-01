@@ -157,6 +157,7 @@ class Settings(models.Model):
     attribute=models.CharField(max_length=50,null=False)
     value=models.CharField(default='',max_length=50,null=True)
     description= models.TextField(null=True)
+    #user=models.ForeignKey(User,null=True,blank=True)
 
     class Meta:
         app_label = 'ureport'
@@ -179,4 +180,4 @@ script_progress_was_completed.connect(autoreg, weak=False)
 post_save.connect(check_conn, sender=Connection, weak=False)
 post_save.connect(update_latest_poll, sender=Poll, weak=False)
 ussd_complete.connect(ussd_poll, weak=False)
-post_save.connect(add_to_poll, sender=Blacklist, weak=False)
+#post_save.connect(add_to_poll, sender=Blacklist, weak=False)
