@@ -16,7 +16,7 @@ from generic.sorters import SimpleSorter
 from rapidsms.models import Connection
 from contact.models import Flag, MessageFlag
 
-from ureport.forms import SendMessageForm
+from ureport.forms import SendMessageForm,SearchMessagesForm
 from ureport.models import MessageAttribute, MessageDetail
 from contact.forms import FlaggedMessageForm
 from ureport.views.utils.tags import _get_responses
@@ -35,7 +35,7 @@ from django.db import transaction
 @login_required
 def messages(request):
 
-    filter_forms = [FreeSearchTextForm, DistictFilterMessageForm]
+    filter_forms = [SearchMessagesForm, DistictFilterMessageForm]
     action_forms = [ReplyTextForm, BlacklistForm2]
     partial_row = 'ureport/partials/messages/message_row.html'
     base_template = 'ureport/contact_message_base.html'
