@@ -160,6 +160,44 @@ class SearchResponsesForm(FilterForm):
                                    | Q(message__connection__identity__icontains=search))
 
 
+
+class SearchMessagesForm(FilterForm):
+
+    """ search messages
+    """
+
+    search = forms.CharField(max_length=100, required=True,
+        label='search ')
+
+    def filter(self, request, queryset):
+
+        search = self.cleaned_data['search'].strip()
+        if search == '':
+            return queryset
+        elif search[0] == '"' and search[-1] == '"':
+            search = search[1:-1]
+            return queryset.filter(Q(text__iregex=".*\m(%s)\y.*"
+                                                           % search)
+                                   | Q(connection__contact__reporting_location__name__iregex=".*\m(%s)\y.*"
+                                                                                                      % search)
+                                   | Q(connection__identity__iregex=".*\m(%s)\y.*"
+                                                                             % search))
+        elif search[0] == "'" and search[-1] == "'":
+
+            search = search[1:-1]
+            return queryset.filter(Q(text__iexact=search)
+                                   | Q(connection__contact__reporting_location__name__iexact=search)
+                                   | Q(connection__identity__iexact=search))
+        elif search == "=numerical value()":
+            return queryset.filter(text__iregex="(-?\d+(\.\d+)?)")
+        else:
+
+            return queryset.filter(Q(text__icontains=search)
+                                   | Q(connection__contact__reporting_location__name__icontains=search)
+                                   | Q(connection__identity__icontains=search))
+
+
+
 class AssignToPollForm(ActionForm):
 
     """ assigns responses to poll  """
