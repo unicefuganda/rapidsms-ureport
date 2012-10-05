@@ -55,11 +55,14 @@ def autoreg(**kwargs):
 
         group_to_match = find_best_response(session, youthgrouppoll)
         gr_matched=False
-        for group_pk, word_list in word_dict.items():
-            for word in word_list.split(","):
-                if word in group_to_match.split():
-                    contact.groups.add(Group.objects.get(pk=group_pk))
-                    gr_matched=True
+        
+        #to avoid an attempt to None.split()
+        if group_to_match:
+            for group_pk, word_list in word_dict.items():
+                for word in word_list.split(","):
+                    if word in group_to_match.split():
+                        contact.groups.add(Group.objects.get(pk=group_pk))
+                        gr_matched=True
         default_group = None
         if progress.language:
             contact.language = progress.language
