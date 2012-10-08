@@ -13,17 +13,17 @@ from django.contrib.auth.models import  Group
 
 
 @task
-def start_poll(poll):
+def start_poll(poll,ignore_result=True):
     if not poll.start_date:
         poll.start()
 
 @task
-def reprocess_responses(poll):
+def reprocess_responses(poll,ignore_result=True):
     if poll.responses.exists():
         poll.reprocess_responses()
 
 @task
-def process_message(pk,**kwargs):
+def process_message(pk,ignore_result=True,**kwargs):
 
     try:
         message=Message.objects.get(pk=pk)
@@ -37,7 +37,7 @@ def process_message(pk,**kwargs):
 
 
 @task
-def reprocess_groups():
+def reprocess_groups(ignore_result=True):
     try:
         scripts=Script.objects.filter(pk__in=['ureport_autoreg', 'ureport_autoreg_luo','ureport_autoreg2', 'ureport_autoreg_luo2'])
         word_dict=dict(AutoregGroupRules.objects.exclude(values=None).values_list('group__name','values'))
