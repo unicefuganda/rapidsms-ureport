@@ -58,11 +58,14 @@ def autoreg(**kwargs):
         
         #to avoid an attempt to None.split()
         if group_to_match:
-            for group_pk, word_list in word_dict.items():
-                for word in word_list.split(","):
-                    if word in group_to_match.split():
-                        contact.groups.add(Group.objects.get(pk=group_pk))
-                        gr_matched=True
+            try:
+                for group_pk, word_list in word_dict.items():
+                    for word in word_list.split(","):
+                        if word in group_to_match.split():
+                            contact.groups.add(Group.objects.get(pk=group_pk))
+                            gr_matched=True
+            except AssertionError:
+                pass
         default_group = None
         if progress.language:
             contact.language = progress.language
