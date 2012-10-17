@@ -181,7 +181,7 @@ var pie_opts = {
                       return "N/A"
                     }
                     else {
-                      return this.point.name;
+                      return this.y.toFixed(1) + ' %';
                     }},
                 color: 'white',
                 style: {font: '13px Trebuchet MS, Verdana, sans-serif'}}}},
