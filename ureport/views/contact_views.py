@@ -4,7 +4,7 @@
 from django.shortcuts import render_to_response
 from django.shortcuts import  get_object_or_404
 from django.template import RequestContext
-from django.http import HttpResponse
+from django.http import HttpResponse,HttpResponseRedirect
 from uganda_common.utils import ExcelResponse
 from rapidsms_httprouter.models import Message
 from django.contrib.auth.decorators import login_required
@@ -316,6 +316,8 @@ def download_contacts_template(request, f):
     return response
 
 
+
+
 @login_required
 def blacklist(request,pk):
     contact=Contact.objects.get(pk=int(pk))
@@ -323,6 +325,13 @@ def blacklist(request,pk):
         Blacklist.objects.get_or_create(connection=contact.default_connection)
         Message.objects.create(status="Q",direction="O",connection=contact.default_connection,text="Your UReport opt out is confirmed.If you made a mistake,or you want your voice to be heard again,text in JOIN and send it to 8500!All SMS messages are free")
         return HttpResponse(status=200)
+
+@login_required
+def delete(request,pk):
+    contact=Contact.objects.get(pk=int(pk))
+    contact.delete()
+    return HttpResponseRedirect("/reporter")
+
 
 @login_required
 def ureporters(request):

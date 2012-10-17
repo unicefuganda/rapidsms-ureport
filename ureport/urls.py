@@ -93,6 +93,7 @@ urlpatterns = patterns('',
        url(r'ussd_manager/$',ussd_manager,name="ussd_manager"),
 
        url(r'^contact/(?P<pk>\d+)/blacklist/$', blacklist, name="blacklist"),
+       url(r'^contact/(?P<pk>\d+)/delete/$', delete, name="delete_contact"),
         url(r'^view_poll/(?P<pk>\d+)/$', view_poll, name="view_poll"),
     url(r'^category/(?P<pk>\d+)/edit/$', edit_category, name="edit_category"),
     url(r'^category/(?P<pk>\d+)/rules/view/$', view_rules, name="view_rules"),
