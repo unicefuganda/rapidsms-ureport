@@ -363,6 +363,7 @@ div.why-placeholder span {
 
 #map_layers {
     position:relative;
+    margin-bottom: 38px;
 }
 
 .key {
