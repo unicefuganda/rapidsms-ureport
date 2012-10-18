@@ -328,8 +328,11 @@ def blacklist(request,pk):
 
 @login_required
 def delete(request,pk):
-    contact=Contact.objects.get(pk=int(pk))
-    contact.delete()
+    try:
+        contact=Contact.objects.get(pk=int(pk))
+        contact.delete()
+    except Contact.DoesNotExist:
+        pass
     return HttpResponseRedirect("/reporter")
 
 
