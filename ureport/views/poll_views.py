@@ -243,6 +243,13 @@ def edit_category(request,pk):
     title="Editing "+category.name
     return render_to_response("ureport/polls/category.html",{'category':category,'category_form':category_form,'edit':True,"title":title},context_instance=RequestContext(request))
 
+
+@login_required
+def delete_category(request,pk):
+    category=Category.objects.get(pk=int(pk))
+    category.delete()
+    return HttpResponse(status=200)
+
 @login_required
 def view_rules(request,pk):
     category=Category.objects.get(pk=int(pk))

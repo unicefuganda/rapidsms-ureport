@@ -17,4 +17,7 @@
         <td>
             <a href="javascript:void(0)" onclick="ajax_loading(this);$('#edit_category').load('/category/{{category.pk}}/edit/',function() { $('.ajax_loading').remove();$('#edit_category').show();$('#edit_category').effect('highlight', {}, 3000);});" class="btn">Edit</a>
         </td>
+        <td>
+            <a  href="/category/{{category.pk}}/delete/" onclick="$(this).parent().parent().hide()" data-remote=true>Delete</a>
+        </td>
 
