@@ -3,6 +3,7 @@ from django.conf.urls.defaults import *
 from ureport.views import *
 from django.contrib.auth.decorators import login_required
 from generic.views import  generic_row
+from contact.forms import FreeSearchTextForm, FreeSearchForm, MultipleDistictFilterForm, HandledByForm, FlaggedForm, FlagMessageForm,  GenderFilterForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, AgeFilterForm
 
 
 urlpatterns = patterns('',
@@ -111,4 +112,25 @@ urlpatterns = patterns('',
          {'post_reset_redirect' : '/accounts/password/done/'}),
     (r'^accounts/password/done/$', 'django.contrib.auth.views.password_reset_complete'),
     url(r'^aids_dashboard/$', aids_dashboard, name="aids-dashboard"),
+    url(r'^reporter2/$', login_required(generic), {
+        'model':Ureporter,
+        'queryset':get_contacts,
+        'results_title':'uReporters',
+        'filter_forms':[ FreeSearchForm,  GenderFilterForm, AgeFilterForm, MultipleDistictFilterForm,FilterGroupsForm ],
+        'action_forms':[MassTextForm, AssignGroupForm, BlacklistForm, AssignToNewPollForm],
+        'objects_per_page':25,
+        'partial_row':'ureport/partials/contacts/contact_row2.html',
+        'base_template':'ureport/ureporters_base.html',
+        'paginator_template':'ureport/partials/pagination.html',
+        'columns':[('Name', True, 'name', SimpleSorter()),
+                   ('Number', True, 'connection__identity', SimpleSorter(),),
+                   ('Age', False, '', None,),
+                   ('Gender', True, 'gender', SimpleSorter(),),
+                   ('Language', True, 'language',SimpleSorter(),),
+                   ('Location', True, 'reporting_location__name', SimpleSorter(),),
+                   ('Group(s)', True, 'groups__name', SimpleSorter()),
+                   ('Total Poll Responses', True, 'responses__count', SimpleSorter()),
+                   ('', False, '', None)],
+        }, name="ureport-contact2"),
+
 )
