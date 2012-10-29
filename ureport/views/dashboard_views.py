@@ -12,7 +12,7 @@ from uganda_common.utils import ExcelResponse
 from rapidsms_httprouter.models import Message
 
 from ureport.forms import AssignResponseGroupForm, SelectPoll, \
-    NewPollForm, rangeForm
+    NewPollForm, rangeForm,DistrictForm
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from rapidsms.models import Contact, Connection
@@ -25,6 +25,7 @@ import datetime
 from ureport.views.utils.paginator import UreportPaginator
 from django.db import transaction
 from contact.models import Flag, MessageFlag
+
 
 
 @login_required
@@ -173,10 +174,18 @@ def alerts(request):
     poll_form = NewPollForm()
     range_form = rangeForm()
     poll_form.updateTypes()
+    assign_polls=Poll.objects.exclude(start_date=None).order_by('-pk')[0:5]
+    district_form=DistrictForm(request.POST or None)
+    if district_form.is_valid():
+        request.session['districts']=[c.pk for c in district_form.cleaned_data['districts']]
     template = 'ureport/polls/alerts.html'
-    message_list = \
-        Message.objects.filter(details__attribute__name='alert'
-                               ).order_by('-date')
+    if request.session.get('districts'):
+        message_list = \
+            Message.objects.filter(details__attribute__name='alert'
+                                   ).filter(connection__contact__reporting_location__in=request.session.get('districts')).order_by('-date')
+    else:
+        message_list =Message.objects.filter(details__attribute__name='alert').order_by('-date')
+
     (capture_status, _) = \
         Settings.objects.get_or_create(attribute='alerts')
     (rate, _) = MessageAttribute.objects.get_or_create(name='rating')
@@ -275,12 +284,26 @@ def alerts(request):
 
     return render_to_response(template, {
         'messages': messages,
+        'assign_polls':assign_polls,
         'paginator': paginator,
         'capture_status': capture_status,
         'rate': rate,
+        'district_form':district_form,
         'range_form': range_form,
         }, context_instance=RequestContext(request))
 
+
+def remove_captured_ind(request,pk):
+    msg=Message.objects.get(pk=pk)
+    rate = MessageAttribute.objects.get(name='rating')
+    ma=MessageDetail.objects.filter(attribute=rate,message=msg).delete()
+    return HttpResponse(status=200)
+
+def assign_poll(request,pk,poll):
+   message=Message.objects.get(pk=pk)
+   poll=Poll.objects.get(pk=poll)
+   poll.process_response(message)
+   return HttpResponse(status=200)
 
 @login_required
 def remove_captured(request):

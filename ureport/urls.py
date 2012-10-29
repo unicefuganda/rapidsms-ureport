@@ -112,6 +112,8 @@ urlpatterns = patterns('',
          {'post_reset_redirect' : '/accounts/password/done/'}),
     (r'^accounts/password/done/$', 'django.contrib.auth.views.password_reset_complete'),
     url(r'^aids_dashboard/$', aids_dashboard, name="aids-dashboard"),
+    url(r'^uncapture/(?P<pk>\d+)/$',remove_captured_ind,name="remove-captured_ind"),
+    url(r'^assign/(?P<pk>\d+)/(?P<poll>\d+)/$',assign_poll,name="remove-captured_ind"),
     url(r'^reporter2/$', login_required(generic), {
         'model':Ureporter,
         'queryset':get_contacts,

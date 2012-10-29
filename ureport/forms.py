@@ -602,7 +602,8 @@ class AgeFilterForm(FilterForm):
         else:
             return queryset.filter(age=None)
 
-
+class DistrictForm(forms.Form):
+    districts = forms.ModelMultipleChoiceField(queryset=Location.objects.filter(type__slug='district').order_by('name'), required=True)
 
 
 

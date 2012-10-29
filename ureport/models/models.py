@@ -157,7 +157,8 @@ class Settings(models.Model):
     attribute=models.CharField(max_length=50,null=False)
     value=models.CharField(default='',max_length=50,null=True)
     description= models.TextField(null=True)
-    #user=models.ForeignKey(User,null=True,blank=True)
+    user=models.ForeignKey(User,null=True,blank=True)
+
 
     class Meta:
         app_label = 'ureport'
