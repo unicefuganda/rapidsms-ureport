@@ -94,7 +94,7 @@ def ureporter_profile(request, connection_pk):
                 total_incoming=total_incoming,
                 response_rate=response_rate,
                 how_did_u_hear=how_did_u_hear,
-                contact=contact,
+                contact=Ureporter(contact),
                 objects_per_page=20,
                 status_message='Message sent',
                 status_message_type='success',

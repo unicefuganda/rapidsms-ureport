@@ -249,7 +249,8 @@ def send_message(request, template='ureport/partials/forward.html'):
                 MessageAttribute.objects.get_or_create(name=status)
             (det, _) = \
                 MessageDetail.objects.get_or_create(message=request.session['mesg'
-                    ], attribute=st, value='1', description='replied')
+                    ], attribute=st, value=send_message_form.cleaned_data.get('text'
+                ), description='replied')
             for r in recs:
                 connection = Connection.objects.get(identity=r)
 
