@@ -113,7 +113,7 @@ def ureporter_profile(request, connection_pk):
         request,
         model=Message,
         queryset=messages,
-        contact=contact,
+        contact=Ureporter(contact),
         total_outgoing=total_outgoing,
         total_incoming=total_incoming,
         response_rate=response_rate,
