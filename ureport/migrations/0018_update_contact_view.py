@@ -10,7 +10,7 @@ class Migration(DataMigration):
         year_now = datetime.datetime.now().year
         view_sql =\
         """   create or replace view contacts_export as SELECT
-"rapidsms_contact"."id",
+"rapidsms_contact"."id" as id,
 "rapidsms_contact"."name" as name,
 "rapidsms_contact"."is_caregiver",
 "rapidsms_contact"."reporting_location_id",
@@ -125,13 +125,13 @@ false as dirty,null::timestamp with time zone as expiry from contacts_export;
         """
         trigger="""
 
-        create or replace function ureport_contact_refresh_row( id integer
+        create or replace function ureport_contact_refresh_row( xid integer
 ) returns void
 security definer language 'plpgsql' as $$ begin
 delete
 from ureport_contact uc
-where uc.id = id;
-insert into ureport_contact  select id,name,is_caregiver,reporting_location_id ,user_id ,mobile ,language ,autoreg_join_date ,quit_date ,district ,age ,gender ,facility ,village  ,source ,responses ,questions ,incoming ,connection_pk,ce.group  from contacts_export ce where ce.id = id;
+where uc.id = xid;
+insert into ureport_contact  select id,name,is_caregiver,reporting_location_id ,user_id ,mobile ,language ,autoreg_join_date ,quit_date ,district ,age ,gender ,facility ,village  ,source ,responses ,questions ,incoming ,connection_pk,ce.group  from contacts_export ce where ce.id = xid;
 end $$;
 
    create or replace function ureport_contact_refresh_row_connection( id integer
@@ -155,11 +155,19 @@ perform ureport_contact_refresh_row_connection(new.connection_id);
 return null;
 end $$;
 
+
+create  or replace function contact_update_message()  returns trigger
+security definer language 'plpgsql' as $$ begin
+perform ureport_contact_refresh_row_connection(new.connection_id);
+return null;
+end $$;
+
+
 create trigger update_contact after insert on rapidsms_contact for each row execute procedure contact_update();
 create trigger update_contact_update after update on rapidsms_contact for each row execute procedure contact_update();
 create trigger update_contact_message after insert on rapidsms_httprouter_message for each row execute procedure contact_update_message();
 
-
+update ureport_contact set id=c.id,name=c.name,is_caregiver=c.is_caregiver,reporting_location_id=c.reporting_location_id ,user_id=c.user_id ,mobile=c.mobile ,language=c.language ,autoreg_join_date=c.autoreg_join_date ,quit_date=c.quit_date ,district=c.district ,age=c.age ,gender=c.gender ,facility=c.facility ,village=c.village  ,source=c.source ,responses=c.responses ,questions=c.questions ,incoming=c.incoming ,connection_pk=c.connection_pk,group=c.group from  contacts_export as c;
 
 
            """
