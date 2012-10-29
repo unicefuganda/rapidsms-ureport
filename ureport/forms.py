@@ -34,7 +34,7 @@ class EditReporterForm(forms.ModelForm):
         super(EditReporterForm, self).__init__(*args, **kwargs)
         self.fields['reporting_location'] = \
             TreeNodeChoiceField(queryset=self.fields['reporting_location'
-                                ].queryset, level_indicator=u'.')
+                                ].queryset.filter(type="district"), level_indicator=u'')
 
 
     class Meta:

@@ -41,10 +41,12 @@ def ureporter_profile(request, connection_pk):
     connection = get_object_or_404(Connection, pk=connection_pk)
     session = ScriptSession.objects.filter(connection__pk=connection_pk)
 
+
     messages =\
     Message.objects.filter(connection=connection).order_by('-date')
 
     contact = connection.contact
+    reporter_form = EditReporterForm(instance=contact)
     total_outgoing = messages.filter(direction='O',
         connection__pk=connection_pk).count()
     total_incoming = messages.filter(direction='I',
@@ -95,6 +97,7 @@ def ureporter_profile(request, connection_pk):
                 response_rate=response_rate,
                 how_did_u_hear=how_did_u_hear,
                 contact=Ureporter(contact),
+                reporter_form=reporter_form,
                 objects_per_page=20,
                 status_message='Message sent',
                 status_message_type='success',
@@ -119,6 +122,7 @@ def ureporter_profile(request, connection_pk):
         response_rate=response_rate,
         objects_per_page=20,
         how_did_u_hear=how_did_u_hear,
+        reporter_form=reporter_form,
         results_title='Message History',
         selectable=False,
         partial_row='ureport/partials/messages/message_history_row.html'

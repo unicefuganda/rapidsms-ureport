@@ -15,7 +15,7 @@
 
     <script type="text/javascript">
         $(function() {
-            $('#actions').append('<input type="checkbox" checked="checked" style="display:none;" name="results" value="{{contact.pk}}">');
+            $('#actions').append('<input type="checkbox" checked="checked" style="display:none;" name="results" value="{{contact.pk.pk}}">');
             $('#div_action_0').find('a').html("Send Message");
         });
 
@@ -114,13 +114,42 @@
                         {{ contact.language }}
                     {% endif %}
                 </td>
-                <td><a href="?download=True" class="btn">Download</a></td>
-                <td><a class="btn" href="/contact/{{ contact.pk }}/blacklist/" data-remote=true
+                <td><a href="javascript:void(0);" onclick="$('#edit_reporter').show();" class="btn">Edit Reporter</a></td>
+                <td><a href="?download=True" class="btn">Download History</a></td>
+                <td><a class="btn" href="/contact/{{ contact.pk.pk }}/blacklist/" data-remote=true
                        data-disable-with="blacklisting...">Blacklist</a></td>
-                <td><a class="btn" href="/contact/{{ contact.pk }}/delete/" >Delete</a></td>
+                <td><a class="btn" href="/contact/{{ contact.pk.pk }}/delete/" >Delete</a></td>
 
             </tr>
         </table>
+
+        <div class="modal hide" id="edit_reporter">
+            <form method="post" id="message_form" action="/reporter/{{contact.pk.pk}}/edit/" data-remote=true>
+                <div class="modal-header">
+                    <a class="close" data-dismiss="modal" onclick='$(".modal").hide()'>×</a>
+
+
+                    <h3>Editing {{contact.name}}</h3>
+
+
+                </div>
+                <div class="modal-body">
+                    <table>
+
+                        {{reporter_form.as_table}}
+                        <tr>
+                            <td></td>
+                        </tr>
+
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>
+                    <input type="submit" class="btn btn-primary" value="Save Edits">
+                </div>
+            </form>
+
+        </div>
 
     </div>
     {{ block.super }}
