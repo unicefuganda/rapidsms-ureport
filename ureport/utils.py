@@ -12,6 +12,7 @@ from django.contrib.sites.models import Site
 from rapidsms.models import Contact, Connection
 from django.db import models, transaction, connection
 from poll.models import gettext_db
+from django.db.models import Q
 import datetime
 import re
 
@@ -19,14 +20,25 @@ import re
 def get_contacts(**kwargs):
     request = kwargs.pop('request')
     if request.user.is_authenticated() and hasattr(Contact, 'groups'):
+
         return Ureporter.objects.filter(groups__in=request.user.groups.all()).distinct().annotate(Count('responses')).select_related()
     else:
         return Ureporter.objects.annotate(Count('responses')).select_related()
 
 def get_contacts2(**kwargs):
     request = kwargs.pop('request')
+
     if request.user.is_authenticated() and hasattr(Contact, 'groups'):
-        return UreportContact.objects.filter(group__in=request.user.groups.values_list('name'))
+        q = None
+        for f in request.user.groups.values_list('name',flat=True):
+            if not q:
+                q=Q(group__icontains=f)
+            else:
+                q=q | Q(group__icontains=f)
+
+
+        #import pdb;pdb.set_trace()
+        return UreportContact.objects.filter(q)
     else:
         return UreportContact.objects.all()
 
