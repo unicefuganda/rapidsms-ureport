@@ -33,7 +33,7 @@ DROP VIEW CONTACTS_EXPORT;CREATE VIEW CONTACTS_EXPORT AS SELECT   CONTACT.ID AS 
         """
         materialized_view_sql="""
         drop table ureport_contact;
-        create table ureport_contact as select id,name,is_caregiver,reporting_location_id ,user_id ,mobile ,language ,autoreg_join_date ,quit_date ,district ,age ,gender ,facility ,village  ,source ,responses ,questions ,incoming ,connection_pk,contacts_export.group,
+        create table ureport_contact as select id,name,is_caregiver,reporting_location_id ,user_id ,mobile ,language ,autoreg_join_date ,quit_date ,district ,age ,gender ,facility ,village  ,source ,responses ,questions ,incoming ,connection_pk,"group",
 false as dirty,null::timestamp with time zone as expiry from contacts_export;
 
 
