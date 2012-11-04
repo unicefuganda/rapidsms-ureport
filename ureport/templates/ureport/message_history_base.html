@@ -15,7 +15,7 @@
 
     <script type="text/javascript">
         $(function() {
-            $('#actions').append('<input type="checkbox" checked="checked" style="display:none;" name="results" value="{{contact.pk.pk}}">');
+            $('#actions').append('<input type="checkbox" checked="checked" style="display:none;" name="results" value="{{contact.pk}}">');
             $('#div_action_0').find('a').html("Send Message");
         });
 
@@ -116,15 +116,15 @@
                 </td>
                 <td><a href="javascript:void(0);" onclick="$('#edit_reporter').show();" class="btn">Edit Reporter</a></td>
                 <td><a href="?download=True" class="btn">Download History</a></td>
-                <td><a class="btn" href="/contact/{{ contact.pk.pk }}/blacklist/" data-remote=true
+                <td><a class="btn" href="/contact/{{ contact.pk }}/blacklist/" data-remote=true
                        data-disable-with="blacklisting...">Blacklist</a></td>
-                <td><a class="btn" href="/contact/{{ contact.pk.pk }}/delete/" >Delete</a></td>
+                <td><a class="btn" href="/contact/{{ contact.pk }}/delete/" >Delete</a></td>
 
             </tr>
         </table>
 
         <div class="modal hide" id="edit_reporter">
-            <form method="post" id="message_form" action="/reporter/{{contact.pk.pk}}/edit/" data-remote=true>
+            <form method="post" id="message_form" action="/reporter/{{contact.pk}}/edit/" data-remote=true>
                 <div class="modal-header">
                     <a class="close" data-dismiss="modal" onclick='$(".modal").hide()'>×</a>
 
