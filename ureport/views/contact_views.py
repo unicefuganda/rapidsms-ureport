@@ -44,8 +44,11 @@ def ureporter_profile(request, connection_pk):
 
     messages =\
     Message.objects.filter(connection=connection).order_by('-date')
+    contact=connection.contact
+    if contact:
+        #get the proxy
+        contact = Ureporter.objects.get(pk=connection.contact.pk)
 
-    contact = connection.contact
     reporter_form = EditReporterForm(instance=contact)
     total_outgoing = messages.filter(direction='O',
         connection__pk=connection_pk).count()
@@ -96,7 +99,7 @@ def ureporter_profile(request, connection_pk):
                 total_incoming=total_incoming,
                 response_rate=response_rate,
                 how_did_u_hear=how_did_u_hear,
-                contact=Ureporter(contact),
+                contact=contact,
                 reporter_form=reporter_form,
                 objects_per_page=20,
                 status_message='Message sent',
@@ -116,7 +119,7 @@ def ureporter_profile(request, connection_pk):
         request,
         model=Message,
         queryset=messages,
-        contact=Ureporter(contact),
+        contact=contact,
         total_outgoing=total_outgoing,
         total_incoming=total_incoming,
         response_rate=response_rate,
