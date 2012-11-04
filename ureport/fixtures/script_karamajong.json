@@ -1,0 +1,146 @@
+[
+
+
+    {
+        "pk": "ureport_autoreg_kdj",
+        "model": "script.script",
+        "fields": {
+            "enabled": true,
+            "name": "uReport autoregistration script  KDJ",
+            "sites": [2]
+        }
+    },
+
+   
+    {
+        "pk": 111,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_kdj",
+            "retry_offset": null,
+            "rule": "w",
+            "email": null,
+            "num_tries": null,
+            "start_offset": 0,
+            "message": "Alakaraalomun U-report, neniipedoriaiy’ongakikeunekon toil kaalimorng’unaeya lore – ikong’in. Erai U-report SMS ng’oloelomunitnasimkonikong’in. UNICEF.",
+            "poll": null,
+            "order": 0,
+            "giveup_offset": 60
+        }
+    },
+
+
+    {
+        "pk": 112,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_kdj",
+            "retry_offset": null,
+            "rule": "w",
+            "email": null,
+            "num_tries": null,
+            "start_offset": 60,
+            "message": "Ikitalakaritaiiyong!!! IraukonaiyongemembataUreport! KalotoomaUreport, ipedoriiyongakikeunakonikuap. Awoyaarkonaekoniporoto. Kania UNICEF.",
+            "poll": null,
+            "order": 7,
+            "giveup_offset": 0
+        }
+    },
+    {
+        "pk": 113,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_kdj",
+            "retry_offset": 3600,
+            "rule": "R",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 0,
+            "message": "",
+            "poll": 121,
+            "order": 1,
+            "giveup_offset": 3600
+        }
+    },
+    {
+        "pk": 114,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_kdj",
+            "retry_offset": 3600,
+            "rule": "M",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 0,
+            "message": "",
+            "poll": 122,
+            "order": 2,
+            "giveup_offset": 3600
+        }
+    },
+    {
+        "pk": 115,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_kdj",
+            "retry_offset": 3600,
+            "rule": "R",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 60,
+            "message": "",
+            "poll": 123,
+            "order": 3,
+            "giveup_offset": 3600
+        }
+    },
+    {
+        "pk": 116,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_kdj",
+            "retry_offset": 3600,
+            "rule": "M",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 60,
+            "message": "",
+            "poll": 124,
+            "order": 4,
+            "giveup_offset": 3600
+        }
+    },
+    {
+        "pk": 117,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_kdj",
+            "retry_offset": 3600,
+            "rule": "R",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 60,
+            "message": "",
+            "poll": 125,
+            "order": 5,
+            "giveup_offset": 3600
+        }
+    },
+    {
+        "pk": 118,
+        "model": "script.scriptstep",
+        "fields": {
+            "script": "ureport_autoreg_kdj",
+            "retry_offset": 3600,
+            "rule": "R",
+            "email": null,
+            "num_tries": 1,
+            "start_offset": 0,
+            "message": "",
+            "poll": 126,
+            "order": 6,
+            "giveup_offset": 3600
+        }
+    }
+
+]

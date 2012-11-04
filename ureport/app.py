@@ -15,18 +15,30 @@ class App(AppBase):
         one_template = r"(.*\b(%s)\b.*)"
         OPT_IN_WORDS_LUO = getattr(settings, 'OPT_IN_WORDS_LUO', None)
         OPT_IN_WORDS_EN = getattr(settings, 'OPT_IN_WORDS', None)
+        OPT_IN_WORDS_KDJ = getattr(settings, 'OPT_IN_WORDS_KDJ', None)
         if OPT_IN_WORDS_LUO:
-            opt_reg = re.compile(r"|".join(OPT_IN_WORDS_LUO), re.IGNORECASE)
+            opt_reg_luo = re.compile(r"|".join(OPT_IN_WORDS_LUO), re.IGNORECASE)
+        if OPT_IN_WORDS_KDJ:
+            opt_reg_kdj = re.compile(r"|".join(OPT_IN_WORDS_KDJ), re.IGNORECASE)
 
         #dump new connections in Autoreg
         if not message.connection.contact and not\
-        ScriptProgress.objects.filter(script__slug__in=['ureport_autoreg', 'ureport_autoreg_luo','ureport_autoreg2', 'ureport_autoreg_luo2'],\
+        ScriptProgress.objects.filter(script__slug__in=['ureport_autoreg2', 'ureport_autoreg_luo2','ureport_autoreg_kdj'],\
             connection=message.connection).exists():
-            match = opt_reg.search(message.text.lower())
-            if match:
+
+            luo_match = opt_reg_luo.search(message.text.lower())
+            kdj_match = opt_reg_kdj.search(message.text.lower())
+
+
+            if luo_match:
                 prog = ScriptProgress.objects.create(script=Script.objects.get(pk="ureport_autoreg_luo2"),\
                     connection=message.connection)
                 prog.language = "ach"
+                prog.save()
+            elif kdj_match:
+                prog = ScriptProgress.objects.create(script=Script.objects.get(pk="ureport_autoreg_kdj"),\
+                    connection=message.connection)
+                prog.language = "kdj"
                 prog.save()
             else:
                 prog = ScriptProgress.objects.create(script=Script.objects.get(pk="ureport_autoreg2"),\
