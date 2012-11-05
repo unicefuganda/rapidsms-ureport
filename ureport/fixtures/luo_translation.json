@@ -120,7 +120,7 @@
         "pk": 20,
         "model": "poll.translation",
         "fields": {
-            "field": "Best responses may be shared! Send us your name, or if you prefer a nickname so we can give you recognition for good replies in the media",
+            "field": "Best responses may be shared!Send us your name,or if you prefer a nickname so we can give u recognition for good replies by sharing them in the media!",
             "value": "Lagam ma bejo ki biketo ne i karatac me ngec cwali wa nyingionyo nying pak mamegi.",
             "language": "ach"
         }

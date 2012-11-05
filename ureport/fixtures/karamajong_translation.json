@@ -94,7 +94,7 @@
         "pk": 240,
         "model": "poll.translation",
         "fields": {
-            "field": "Best responses may be shared! Send us your name, or if you prefer a nickname so we can give you recognition for good replies in the media",
+            "field": "Best responses may be shared!Send us your name,or if you prefer a nickname so we can give u recognition for good replies by sharing them in the media!",
             "value": "Emoring’abokinetakori SMS luajuwak! Kiyakuuekonkiro, keraibo lo ikimaitere dang, kotereikipedoriisuaakitilakariyongaloemuto.",
             "language": "kdj"
         }
