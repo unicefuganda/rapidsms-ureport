@@ -13,7 +13,7 @@
 
    
     {
-        "pk": 111,
+        "pk": 112,
         "model": "script.scriptstep",
         "fields": {
             "script": "ureport_autoreg_kdj",
@@ -31,7 +31,7 @@
 
 
     {
-        "pk": 112,
+        "pk": 113,
         "model": "script.scriptstep",
         "fields": {
             "script": "ureport_autoreg_kdj",
@@ -47,7 +47,7 @@
         }
     },
     {
-        "pk": 113,
+        "pk": 114,
         "model": "script.scriptstep",
         "fields": {
             "script": "ureport_autoreg_kdj",
@@ -63,7 +63,7 @@
         }
     },
     {
-        "pk": 114,
+        "pk": 115,
         "model": "script.scriptstep",
         "fields": {
             "script": "ureport_autoreg_kdj",
@@ -79,7 +79,7 @@
         }
     },
     {
-        "pk": 115,
+        "pk": 116,
         "model": "script.scriptstep",
         "fields": {
             "script": "ureport_autoreg_kdj",
@@ -95,7 +95,7 @@
         }
     },
     {
-        "pk": 116,
+        "pk": 117,
         "model": "script.scriptstep",
         "fields": {
             "script": "ureport_autoreg_kdj",
@@ -111,7 +111,7 @@
         }
     },
     {
-        "pk": 117,
+        "pk": 118,
         "model": "script.scriptstep",
         "fields": {
             "script": "ureport_autoreg_kdj",
@@ -127,7 +127,7 @@
         }
     },
     {
-        "pk": 118,
+        "pk": 119,
         "model": "script.scriptstep",
         "fields": {
             "script": "ureport_autoreg_kdj",
