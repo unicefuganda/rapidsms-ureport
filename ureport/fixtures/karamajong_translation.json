@@ -1,0 +1,111 @@
+[
+    {
+        "pk": 230,
+        "model": "poll.translation",
+        "fields": {
+            "field": "What is your age?",
+            "value": "Ng’ikonkarung’iyayi?",
+            "language": "kdj"
+        }
+    },
+    {
+        "pk": 231,
+        "model": "poll.translation",
+        "fields": {
+            "field": "Are you male or female?  Type F for female, and M for Male",
+            "value": "Kichamak F kiraiiyongaberukori M kiraiekile",
+            "language": "kdj"
+        }
+    },
+    {
+        "pk": 232,
+        "model": "poll.translation",
+        "fields": {
+            "field": "Which village in the district will you be reporting from? Please respond ONLY with the name of your village.",
+            "value": "Ali kyaaloalo district iyakuuniaiyongemut? Tobongokkeekirokekonekyalo BON.",
+            "language": "kdj"
+        }
+    },
+    {
+        "pk": 233,
+        "model": "poll.translation",
+        "fields": {
+            "field": "Congratulations!!!! You are now a registered member of U-report! With U-report you can make a real difference.  Your Voice Matters.  From UNICEF.",
+            "value": "Ikitalakaritaiiyong!!! IraukonaiyongemembataUreport! KalotoomaUreport, ipedoriiyongakikeunakonikuap. Awoyaarkonaekoniporoto. Kania UNICEF.",
+            "language": "kdj"
+        }
+    },
+    {
+        "pk": 234,
+        "model": "poll.translation",
+        "fields": {
+            "field": "Yes",
+            "value": "Ewa",
+            "language": "kdj"
+        }
+    },
+    {
+        "pk": 235,
+        "model": "poll.translation",
+        "fields": {
+            "field": "No",
+            "value": "Emam",
+            "language": "kdj"
+        }
+    },
+    {
+        "pk": 236,
+        "model": "poll.translation",
+        "fields": {
+            "field": "Join",
+            "value": "Togeu",
+            "language": "kdj"
+        }
+    },
+    {
+        "pk": 237,
+        "model": "poll.translation",
+        "fields": {
+            "field": "Welcome to U-report where you can SPEAK UP and BE HEARD on what is happening in your community . it is FREE",
+            "value": "Alakaraalomun U-report, neniipedoriaiy’ongakikeunekon toil kaalimorng’unaeya lore – ikong’in. Erai U-report SMS ng’oloelomunitnasimkonikong’in. UNICEF.",
+            "language": "kdj"
+        }
+    },
+    {
+        "pk": 238,
+        "model": "poll.translation",
+        "fields": {
+            "field": "How did you hear about U REPORT?",
+            "value": "Aiiikolongianyuniaiyong Ureport?",
+            "language": "kdj"
+        }
+    },
+    {
+        "pk": 239,
+        "model": "poll.translation",
+        "fields": {
+            "field": "Its important to know which District you'll be reporting on so we can work together to try & resolve issues in your community!Reply ONLY with your district.",
+            "value": "Ejokalimoredistrictng’inaikeuniaiyongekoni toil. Kotereatopedothidaangakitiyaaiwapeiasukbakinng’akirong’unaeyainaa. Tobong’ok SMS logo keekirokeedistrictkon BON",
+            "language": "kdj"
+        }
+    },
+
+    {
+        "pk": 240,
+        "model": "poll.translation",
+        "fields": {
+            "field": "Best responses may be shared! Send us your name, or if you prefer a nickname so we can give you recognition for good replies in the media",
+            "value": "Emoring’abokinetakori SMS luajuwak! Kiyakuuekonkiro, keraibo lo ikimaitere dang, kotereikipedoriisuaakitilakariyongaloemuto.",
+            "language": "kdj"
+        }
+    },
+    {
+        "pk": 241,
+        "model": "poll.translation",
+        "fields": {
+            "field": "We didn't recognize your district.  Please carefully type the name of your district and re-send.",
+            "value": "Ejokalimoredistrictng’inaikeuniaiyongekoni toil. Kotereatopedothidaangakitiyaaiwapeiasukbakinng’akirong’unaeyainaa. Tobong’ok SMS logo keekirokeedistrictkon BON",
+            "language": "kdj"
+        }
+    }
+]
