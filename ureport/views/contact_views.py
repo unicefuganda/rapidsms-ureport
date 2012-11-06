@@ -180,7 +180,7 @@ def signup(request):
 
             # create our connection
 
-            (connection, created) =\
+            (connection, conn_created) =\
             Connection.objects.get_or_create(backend=backend,
                 identity=number)
             connection.contact =\
@@ -217,11 +217,12 @@ def signup(request):
 
             connection.save()
             status_message = 'You have successfully signed up :)'
-            Message.objects.create(date=datetime.datetime.now(),
-                connection=connection, direction='O'
-                , status='Q',
-                text='CONGRATULATIONS!!! You are now a registered member of Ureport! With Ureport, you can make a real difference!  Speak Up and Be Heard! from UNICEF'
-            )
+            if conn_created:
+                Message.objects.create(date=datetime.datetime.now(),
+                    connection=connection, direction='O'
+                    , status='Q',
+                    text='CONGRATULATIONS!!! You are now a registered member of Ureport! With Ureport, you can make a real difference!  Speak Up and Be Heard! from UNICEF'
+                )
         else:
             return render_to_response('ureport/signup.html',
                 dict(signup_form=signup_form),
