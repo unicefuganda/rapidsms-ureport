@@ -30,6 +30,7 @@ from ureport.forms import BlacklistForm2,ReplyTextForm
 from ureport.views.utils.paginator import ureport_paginate
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import transaction
+from uganda_common.utils import  assign_backend
 
 
 @login_required
@@ -252,7 +253,12 @@ def send_message(request, template='ureport/partials/forward.html'):
                     ], attribute=st, value=send_message_form.cleaned_data.get('text'
                 ), description='replied')
             for r in recs:
-                connection = Connection.objects.get(identity=r)
+                try:
+                    connection = Connection.objects.get(identity=r)
+                except Connection.DoesNotExist:
+                    number, backend= assign_backend(r)
+                    connection= Connection.objects.create(identity=r,backend=backend)
+
 
                 #                rate,_=MessageAttribute.objects.get_or_create(name="forwarded")
                 #                det,_=MessageDetail.objects.get_or_create(message=message,attribute=rate,value="1",description="forwarded")
