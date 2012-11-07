@@ -112,8 +112,8 @@ def new_poll(req):
         form.updateTypes()
         if form.is_valid():
             # create our XForm
-            question = form.cleaned_data['question']
-            default_response = form.cleaned_data['default_response']
+            question = form.cleaned_data['question_en']
+            default_response = form.cleaned_data['default_response_en']
             districts = form.cleaned_data['districts']
             if hasattr(Contact, 'groups'):
                 groups = form.cleaned_data['groups']
@@ -127,17 +127,29 @@ def new_poll(req):
             p_type = form.cleaned_data['type']
             response_type = form.cleaned_data['response_type']
             if not form.cleaned_data['default_response_luo'] == ''\
-            and not form.cleaned_data['default_response'] == '':
+            and not form.cleaned_data['default_response_en'] == '':
                 (translation, created) =\
                 Translation.objects.get_or_create(language='ach',
-                    field=form.cleaned_data['default_response'],
+                    field=form.cleaned_data['default_response_en'],
                     value=form.cleaned_data['default_response_luo'])
+            if not form.cleaned_data['default_response_kdj'] == '' \
+            and not form.cleaned_data['default_response_en'] == '':
+                (translation, created) =\
+                Translation.objects.get_or_create(language='kdj',
+                    field=form.cleaned_data['default_response_en'],
+                    value=form.cleaned_data['default_response_kdj'])
 
             if not form.cleaned_data['question_luo'] == '':
                 (translation, created) =\
                 Translation.objects.get_or_create(language='ach',
-                    field=form.cleaned_data['question'],
+                    field=form.cleaned_data['question_en'],
                     value=form.cleaned_data['question_luo'])
+
+            if not form.cleaned_data['question_kdj'] == '':
+                (translation, created) =\
+                Translation.objects.get_or_create(language='kdj',
+                    field=form.cleaned_data['question_en'],
+                    value=form.cleaned_data['question_kdj'])
 
             poll_type = (Poll.TYPE_TEXT if p_type
             == NewPollForm.TYPE_YES_NO else p_type)
@@ -148,7 +160,7 @@ def new_poll(req):
                 question,
                 default_response,
                 contacts,
-                req.user)
+                req.user,send_signals=False)
 
             if p_type == NewPollForm.TYPE_YES_NO:
                 poll.add_yesno_categories()
