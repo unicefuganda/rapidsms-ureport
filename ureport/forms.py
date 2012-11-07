@@ -410,9 +410,11 @@ class NewPollForm(forms.Form): # pragma: no cover
         self.fields['type'].widget.choices += [(choice['type'], choice['label']) for choice in Poll.TYPE_CHOICES.values()]
 
     name = forms.CharField(max_length=32, required=True)
-    question = forms.CharField(max_length=160, required=True,widget=SMSInput())
+    question_en = forms.CharField(max_length=160, required=True,widget=SMSInput())
     question_luo = forms.CharField(max_length=160, required=False,widget=SMSInput())
-    default_response = forms.CharField(max_length=160, required=False,widget=SMSInput())
+    question_kdj = forms.CharField(max_length=160, required=False,widget=SMSInput())
+    default_response_en = forms.CharField(max_length=160, required=False,widget=SMSInput())
+    default_response_kdj = forms.CharField(max_length=160, required=False,widget=SMSInput())
     default_response_luo = forms.CharField(max_length=160, required=False,widget=SMSInput())
     districts = forms.ModelMultipleChoiceField(queryset=
                                  Location.objects.filter(type__slug='district'
@@ -432,10 +434,10 @@ class NewPollForm(forms.Form): # pragma: no cover
     def clean(self):
         cleaned_data = self.cleaned_data
         groups = cleaned_data.get('groups')
-        if cleaned_data.get('question',None):
-            cleaned_data['question'] = cleaned_data.get('question').replace('%', u'\u0025')
-        if cleaned_data.get('default_response',None):
-            cleaned_data['default_response'] = cleaned_data['default_response'].replace('%', u'\u0025')
+        if cleaned_data.get('question_en',None):
+            cleaned_data['question_en'] = cleaned_data.get('question').replace('%', u'\u0025')
+        if cleaned_data.get('default_response_en',None):
+            cleaned_data['default_response_en'] = cleaned_data['default_response'].replace('%', u'\u0025')
 
         if  not groups:
             raise forms.ValidationError("You must provide a set of recipients (a group or groups)")
