@@ -160,7 +160,7 @@ def new_poll(req):
                 question,
                 default_response,
                 contacts,
-                req.user,send_signals=False)
+                req.user)
 
             if p_type == NewPollForm.TYPE_YES_NO:
                 poll.add_yesno_categories()
