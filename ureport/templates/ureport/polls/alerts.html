@@ -150,7 +150,9 @@
                     else {
                         d = eval(data);
                         $.each(d, function (k, v) {
-                                    $("#mp_bd").prepend(v.row).effect('highlight', {}, 3000);
+
+                                    $("#mp_bd").prepend(v.row);
+                                         $('#'+v.pk).effect('highlight', {}, 3000);
 
 
 
