@@ -167,8 +167,8 @@ def ureport_paginate(objects_list,perpage,page,p):
     filtered_list = paginator.page(page).object_list
 
     try:
-        count=filtered_list.count()
+        count=objects_list.count()
     except:
-        count=len(filtered_list)
+        count=len(objects_list)
 
-    return dict(total=count,count=count,paginator=paginator,c_page= paginator.page(page),page=page,object_list=filtered_list)
+    return dict(total=count,count=len(filtered_list),paginator=paginator,c_page= paginator.page(page),page=page,object_list=filtered_list)
