@@ -260,7 +260,7 @@ def alerts(request):
                 can_foward=request.user.has_perm('forward')
                 row_rendered = \
                     render_to_string('ureport/partials/row.html',
-                        {'msg': msg,'can_foward':can_foward,'can_view_number':can_view_number})
+                        {'msg': msg,'can_foward':can_foward,'can_view_number':can_view_number,'assign_polls':assign_polls})
 
                 m = {}
                 m['text'] = msg.text
