@@ -2,6 +2,7 @@ from django.core.paginator import  Paginator,QuerySetPaginator,Page,InvalidPage
 import math
 from django.db import connection
 from django.db.utils import DatabaseError
+from ureport.models import UreportContact
 
 class UreportPaginator(Paginator):
     """
@@ -73,9 +74,11 @@ class UreportPaginator(Paginator):
         try:
             page = super(UreportPaginator, self).page(number, *args, **kwargs)
             number = int(number) # we know this will work
-        except:
+        except InvalidPage, e:
             page = super(UreportPaginator, self).page(1, *args, **kwargs)
             number=1
+
+
 
 
 
@@ -143,19 +146,7 @@ class UreportPaginator(Paginator):
         """
         if self._count is None:
             try:
-                estimate = 0
-                cursor = connection.cursor()
-                dbtable=self.object_list.query.model._meta.db_table
-                if dbtable == "contacts_export":
-                    dbtable="rapidsms_contact"
-                cursor.execute("SELECT reltuples FROM pg_class WHERE relname = %s",
-                    [dbtable])
-                estimate = int(cursor.fetchone()[0])
-
-                if estimate < 10000:
-                    self._count = self.object_list.count()
-                else:
-                    self._count = estimate
+                self._count = self.object_list.count()
             except (AttributeError, TypeError,DatabaseError):
                 # AttributeError if object_list has no count() method.
                 # TypeError if object_list.count() requires arguments
@@ -174,4 +165,10 @@ class CustomPage(Page):
 def ureport_paginate(objects_list,perpage,page,p):
     paginator = UreportPaginator(objects_list, perpage, body=12, padding=2)
     filtered_list = paginator.page(page).object_list
-    return dict(total="filtered",count="filtered",paginator=paginator,c_page= paginator.page(page),page=page,object_list=filtered_list)
+
+    try:
+        count=filtered_list.count()
+    except:
+        count=len(filtered_list)
+
+    return dict(total="filtered",count=count,paginator=paginator,c_page= paginator.page(page),page=page,object_list=filtered_list)

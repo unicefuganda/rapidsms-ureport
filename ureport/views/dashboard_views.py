@@ -25,6 +25,7 @@ import datetime
 from ureport.views.utils.paginator import UreportPaginator
 from django.db import transaction
 from contact.models import Flag, MessageFlag
+from django.db.models import Q
 
 
 
@@ -200,9 +201,37 @@ def alerts(request):
         #import pdb;pdb.set_trace()
 
         data = list(AlertsExport.objects.all().values())
+        #save some memory
+        from django import db
+        db.reset_queries()
         res=ExcelResponse(data=data)
         res['Cache-Control'] = 'no-cache'
         return res
+
+
+    if request.GET.get('search',None):
+        search=request.GET.get('search')
+        if search[0] == '"' and search[-1] == '"':
+            search = search[1:-1]
+            message_list = message_list.filter(Q(text__iregex=".*\m(%s)\y.*"
+                                                           % search)
+                                   | Q(connection__contact__reporting_location__name__iregex=".*\m(%s)\y.*"
+                                                                                                      % search)
+                                   | Q(connection__identity__iregex=".*\m(%s)\y.*"
+                                                                             % search))
+        elif search[0] == "'" and search[-1] == "'":
+
+            search = search[1:-1]
+            message_list = message_list.filter(Q(text__iexact=search)
+                                   | Q(connection__contact__reporting_location__name__iexact=search)
+                                   | Q(connection__identity__iexact=search))
+        elif search == "=numerical value()":
+            message_list = message_list.filter(text__iregex="(-?\d+(\.\d+)?)")
+        else:
+
+            message_list = message_list.filter(Q(text__icontains=search)
+                                   | Q(connection__contact__reporting_location__name__icontains=search)
+                                   | Q(connection__identity__icontains=search))
 
     if request.GET.get('capture', None):
         (s, _) = Settings.objects.get_or_create(attribute='alerts')
@@ -227,9 +256,11 @@ def alerts(request):
         if msgs:
             for msg in msgs:
                 from django.template.loader import render_to_string
+                can_view_number=request.user.has_perm('view_numbers')
+                can_foward=request.user.has_perm('forward')
                 row_rendered = \
                     render_to_string('ureport/partials/row.html',
-                        {'msg': msg})
+                        {'msg': msg,'can_foward':can_foward,'can_view_number':can_view_number})
 
                 m = {}
                 m['text'] = msg.text

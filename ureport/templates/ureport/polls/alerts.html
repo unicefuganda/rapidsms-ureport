@@ -310,7 +310,11 @@
 <span> <a  onclick="$('#district_filter').toggle();" href="javascript:void(0);" >Filter Districts >>|</a></span>
 
         <span><a  onclick="$('#remove').toggle();" href="javascript:void(0);" >Remove Captured >></a>
-        </span> {%endif%}
+        </span>
+
+
+        {%endif%}
+
         <div id="remove" style="display:none;">
             <form data-remote=true method="post" id="remove_form" action="/remove_captured/">
 <table>
@@ -330,6 +334,17 @@
                 </table>
 
            </form>
+        </div>
+
+        <div>
+            <span> <form method="get">
+                <table>
+                    <tr>
+                        <td><input type="text" name="search"></td>
+                        <td><input type="submit" value="Search"></td
+
+                </table>
+            </form>  </span>
         </div>
 
         <table class="zebra-striped bordered fc" width="100%">
@@ -487,12 +502,14 @@
 
         <div class="pagination">
 
-
+{% load ureport %}
 
             {% for num in messages.page_range %}
             {% if not num %} <a>...</a>  {# literally dots #}
             {% else %}
-            <span {% if num == messages.number%}class="current"{%endif%}> <a href="?page={{ num }}">{{num}}</a></span>
+            <span {% if num == messages.number%}class="current"{%endif%}>
+
+            <a href=" {% add_get_parameter page=num %} " >{{num}}</a>{{num}}</a></span>
 
             {% endif %}
             {% endfor %}
