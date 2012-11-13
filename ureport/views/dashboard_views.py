@@ -176,6 +176,9 @@ def alerts(request):
     poll_form.updateTypes()
     assign_polls=Poll.objects.exclude(start_date=None).order_by('-pk')[0:5]
     district_form=DistrictForm(request.POST or None)
+    if request.GET.get('reset_districts',None):
+        request.session['districts']=None
+
     if district_form.is_valid():
         request.session['districts']=[c.pk for c in district_form.cleaned_data['districts']]
     template = 'ureport/polls/alerts.html'
@@ -194,9 +197,13 @@ def alerts(request):
     # use more efficient count
 
     if request.GET.get('download', None):
+        #import pdb;pdb.set_trace()
 
         data = list(AlertsExport.objects.all().values())
-        return ExcelResponse(data=data)
+        res=ExcelResponse(data=data)
+        res['Cache-Control'] = 'no-cache'
+        return res
+
     if request.GET.get('capture', None):
         (s, _) = Settings.objects.get_or_create(attribute='alerts')
         if s.value == 'true':

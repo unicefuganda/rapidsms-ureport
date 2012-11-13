@@ -321,7 +321,10 @@
         <div id="district_filter" style="display:none;">
            <form action="" method="POST" data-remote=true>
                <table>
-            <tr><td>{{district_form.as_table}}</td> <td><input type="submit" name="Filter By District(s)" value="Filter By District(s)" data-disable-with="Filtering......"></td></tr>
+            <tr><td>{{district_form.as_table}}</td> <td><input type="submit" name="Filter By District(s)" value="Filter By District(s)" data-disable-with="Filtering......"></td>
+
+            <td><a class="btn" href="?reset_districts=true" data-remote=true>Reset Filter</a></td>
+            </tr>
                 </table>
 
            </form>
