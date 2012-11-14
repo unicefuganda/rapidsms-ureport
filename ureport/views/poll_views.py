@@ -56,7 +56,7 @@ def view_poll(request,pk):
                 poll.default_response=request.POST['poll[default_response]']
                 poll.save()
             if request.POST.get('poll[question]'):
-                poll.default_response=request.POST['poll[question]']
+                poll.question=request.POST['poll[question]']
                 poll.save()
 
         if request.GET.get("ussd",None):
@@ -67,8 +67,8 @@ def view_poll(request,pk):
             response.text=response
             response.save()
         if request.GET.get("category",None):
-            if request.GET.get('pk'):
-                category=Category.objects.get(pk=int(pk))
+            if request.GET.get('cat_pk'):
+                category=Category.objects.get(pk=int(request.GET.get('cat_pk')))
             else:
                 category=Category()
                 category.poll=poll

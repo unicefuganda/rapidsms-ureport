@@ -1,4 +1,4 @@
-<form method="post" id="category_form" action="./?category=true" data-remote=true>
+<form method="post" id="category_form" action="./?category=true&cat_pk={{category.pk}}" data-remote=true>
     <div class="modal-header">
         <a class="close" data-dismiss="modal" onclick='$(".modal").hide()'>×</a>
         {% if title %}
