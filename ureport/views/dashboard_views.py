@@ -199,14 +199,19 @@ def alerts(request):
 
     if request.GET.get('download', None):
         #import pdb;pdb.set_trace()
+        range_form = rangeForm(request.POST)
+        if range_form.is_valid():
 
-        data = list(AlertsExport.objects.all().values())
-        #save some memory
-        from django import db
-        db.reset_queries()
-        res=ExcelResponse(data=data)
-        res['Cache-Control'] = 'no-cache'
-        return res
+            start = range_form.cleaned_data['startdate']
+            end = range_form.cleaned_data['enddate']
+
+            data = list(AlertsExport.objects.filter(date__range=(start, end)).values())
+            #save some memory
+            from django import db
+            db.reset_queries()
+            res=ExcelResponse(data=data)
+            res['Cache-Control'] = 'no-cache'
+            return res
 
 
     if request.GET.get('search',None):
