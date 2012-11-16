@@ -63,7 +63,7 @@ def retrieve_poll(request, pks=None):
     if pks == None:
         pks = request.GET.get('pks', '')
     if pks == 'l':
-        return [Poll.objects.exclude(pk__in=script_polls).latest('start_date')]
+        return [Poll.objects.exclude(pk__in=script_polls).exclude(pk__in=[297,296,349,350]).latest('start_date')]
     else:
         return Poll.objects.filter(pk__in=[pks]).exclude(pk__in=script_polls)
 
@@ -94,6 +94,7 @@ def create_poll(name, type, question, default_response, contacts, user,start_imm
     localized_messages = {}
     bad_conns = Blacklist.objects.values_list('connection__pk', flat=True).distinct()
     contacts=contacts.exclude(connection__in=bad_conns)
+    poll = Poll.objects.create(name=name, type=type, question=question, default_response=default_response, user=user)
     for language in dict(settings.LANGUAGES).keys():
         if language == "en":
             """default to English for contacts with no language preference"""
@@ -106,21 +107,8 @@ def create_poll(name, type, question, default_response, contacts, user,start_imm
                 messages = Message.mass_text(gettext_db(field=question, language=language), Connection.objects.filter(contact__in=localized_contacts).distinct(), status='Q', batch_status='Q')
             else:
                 messages = Message.mass_text(gettext_db(field=question, language=language), Connection.objects.filter(contact__in=localized_contacts).distinct(), status='L', batch_status='L')
-            localized_messages[language] = [messages, localized_contacts]
-    poll = Poll.objects.create(name=name, type=type, question=question, default_response=default_response, user=user)
 
-        
-    # This is the fastest (pretty much only) was to get contacts and messages M2M into the
-    # DB fast enough at scale
-    cursor = connection.cursor()
-    for language in localized_messages.keys():
-        raw_sql = "insert into poll_poll_contacts (poll_id, contact_id) values %s" % ','.join(\
-            ["(%d, %d)" % (poll.pk, c.pk) for c in localized_messages.get(language)[1].iterator()])
-        cursor.execute(raw_sql)
-
-        raw_sql = "insert into poll_poll_messages (poll_id, message_id) values %s" % ','.join(\
-            ["(%d, %d)" % (poll.pk, m.pk) for m in localized_messages.get(language)[0].iterator()])
-        cursor.execute(raw_sql)
+            poll.messages.add(*messages.values_list('pk',flat=True))
 
     if 'django.contrib.sites' in settings.INSTALLED_APPS:
         poll.sites.add(Site.objects.get_current())
