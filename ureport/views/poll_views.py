@@ -183,7 +183,7 @@ def poll_summary(request):
     script_polls =\
     ScriptStep.objects.exclude(poll=None).values_list('poll',
         flat=True)
-    excluded_polls=[297,296]
+    excluded_polls=[297,296,349,350]
     polls =\
     Poll.objects.exclude(pk__in=script_polls).exclude(pk__in=excluded_polls).exclude(start_date=None).order_by('-start_date')
     return render_to_response('/ureport/poll_summary.html', {'polls'
@@ -261,6 +261,14 @@ def delete_category(request,pk):
     category=Category.objects.get(pk=int(pk))
     category.delete()
     return HttpResponse(status=200)
+
+@login_required
+def delete_rule(request,cat_pk,rule_pk):
+    rule=Rule.objects.get(pk=int(rule_pk))
+    rule.delete()
+    return HttpResponse(status=200)
+
+
 
 @login_required
 def view_rules(request,pk):
