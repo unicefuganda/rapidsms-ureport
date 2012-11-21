@@ -263,8 +263,8 @@ def delete_category(request,pk):
     return HttpResponse(status=200)
 
 @login_required
-def delete_rule(request,cat_pk,rule_pk):
-    rule=Rule.objects.get(pk=int(rule_pk))
+def delete_rule(request,pk):
+    rule=Rule.objects.get(pk=int(pk))
     rule.delete()
     return HttpResponse(status=200)
 
@@ -293,7 +293,7 @@ def create_rule(request,pk):
             r="Contains all of"
         else:
             r="Contains one of"
-        res="<td >"+r+"</td><td>"+rule.rule_string+"</td>"
+        res="<td >"+r+"</td><td>"+rule.rule_string+"</td><td><a href="+  +"</td>"
 
         return HttpResponse(res)
     return HttpResponse("<td colspan='2'>Please enter all the fields</td>")

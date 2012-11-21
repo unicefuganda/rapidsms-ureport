@@ -6,7 +6,7 @@
         {%if rules%}
         <h3>Rules for  {{category.name}}</h3>
         <table class="zebra-striped bordered fc">
-            <thead><tr><td>Rule</td><td>Words</td></tr></thead>
+            <thead><tr><td>Rule</td><td>Words</td> <td>Action</td></td></tr></thead>
             <tbody>
             {% for rule in rules %}
             <tr> <td>
@@ -15,8 +15,12 @@
             {%else%}
              Contains one of
                 {%endif%}
-            </td><td>{{rule.rule_string}}</td></tr>
+            </td><td>{{rule.rule_string}}</td>
+
+            <td> <a  onclick="$(this).parent().parent().remove();" href="/rule/{{rule.pk}}/delete/" data-remote=true> Delete</a></td>
+            </tr>
             {%endfor%}
+
             <tr id="rule_result"><td ></td><td></td></tr>
             </tbody>
         </table>
