@@ -63,6 +63,7 @@ $("#id_enddate").datepicker({ dateFormat: 'dd/mm/yy' ,changeYear: true ,changeMo
     <ul class="nav nav-tabs">
         <li class="active"><a href="#send_sms" data-toggle="tab">Send SMS </a></li>
         <li><a href="#assign_groups" data-toggle="tab">Assign Group</a></li>
+        <li><a href="#remove_group" data-toggle="tab">Remove Group</a></li>
         <li><a href="#blacklist" data-toggle="tab">Blacklist</a></li>
         <li><a href="#send_poll" data-toggle="tab">Send Poll</a></li>
         <li><a href="#exports" data-toggle="tab">Export to excel</a></li>
@@ -84,6 +85,13 @@ $("#id_enddate").datepicker({ dateFormat: 'dd/mm/yy' ,changeYear: true ,changeMo
             <tr><td><a id="groups_btn" class="{{ action_forms.1.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#groups_btn', '{{ action_forms.1.0 }}',{{ page }});">Assign Group </a></td></tr>
         </table>
         </div>
+
+    <div class="tab-pane " id="remove_group">
+        <table>
+            {{action_forms.1.1.as_table}}
+            <tr><td><a id="group_rm_btn" class="{{ action_forms.4.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#group_rm_btn', '{{ action_forms.4.0 }}',{{ page }});">Remove Group(s) </a></td></tr>
+        </table>
+    </div>
     <div class="tab-pane " id="blacklist">
         <table>
             {{action_forms.2.1.as_table}}

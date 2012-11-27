@@ -27,7 +27,7 @@ from rapidsms.contrib.locations.models import Location
 from django.contrib.auth.models import Group
 from ureport.views.utils.excel import handle_excel_file
 from ureport.utils import get_contacts,get_contacts2
-from contact.forms import   MultipleDistictFilterForm,  GenderFilterForm,  FilterGroupsForm, AssignGroupForm
+from contact.forms import   MultipleDistictFilterForm,  GenderFilterForm,  FilterGroupsForm, AssignGroupForm,RemoveGroupForm
 from unregister.forms import BlacklistForm
 from ureport.models import Ureporter,UreportContact
 from ureport.views.utils.paginator import ureport_paginate
@@ -375,7 +375,7 @@ def ureporters(request):
         download_form=download_form,
         results_title='uReporters',
         filter_forms=[ UreporterSearchForm,  GenderFilterForm, AgeFilterForm, MultipleDistictFilterForm,FilterGroupsForm ],
-        action_forms=[MassTextForm, AssignGroupForm, BlacklistForm, AssignToNewPollForm],
+        action_forms=[MassTextForm, AssignGroupForm, BlacklistForm, AssignToNewPollForm,RemoveGroupForm],
         objects_per_page=25,
         partial_row='ureport/partials/contacts/contacts_row.html',
         base_template='ureport/ureporters_base.html',

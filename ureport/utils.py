@@ -30,15 +30,18 @@ def get_contacts2(**kwargs):
 
     if request.user.is_authenticated() and hasattr(Contact, 'groups'):
         q = None
-        for f in request.user.groups.values_list('name',flat=True):
+        for f in request.user.groups.values_list('name',flat=True) :
             if not q:
                 q=Q(group__icontains=f)
             else:
                 q=q | Q(group__icontains=f)
 
 
-        #import pdb;pdb.set_trace()
-        return UreportContact.objects.filter(q)
+        try:
+            to_ret=UreportContact.objects.filter(q)
+        except TypeError:
+            to_ret=UreportContact.objects.none()
+        return to_ret
     else:
         return UreportContact.objects.all()
 
