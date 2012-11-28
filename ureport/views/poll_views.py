@@ -293,7 +293,7 @@ def create_rule(request,pk):
             r="Contains all of"
         else:
             r="Contains one of"
-        res="<td >"+r+"</td><td>"+rule.rule_string+"</td><td><a href="+  +"</td>"
+        res="""<td>%s</td><td>%s</td><td> <a  onclick="$(this).parent().parent().remove();" href="/rule/%d/delete/" data-remote=true> Delete</a></td>"""%(r,rule.rule_string,rule.pk)
 
         return HttpResponse(res)
     return HttpResponse("<td colspan='2'>Please enter all the fields</td>")
