@@ -4,7 +4,17 @@ from ureport.views import *
 from django.contrib.auth.decorators import login_required
 from generic.views import  generic_row
 from contact.forms import FreeSearchTextForm, FreeSearchForm, MultipleDistictFilterForm, HandledByForm, FlaggedForm, FlagMessageForm,  GenderFilterForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, AgeFilterForm
+from tastypie.api import Api
+from .api import PollResponseResource,PollResource,MessageResource,ContactResource,ResponseResource
 
+message_resource=MessageResource()
+
+v1_api = Api(api_name='v1')
+v1_api.register(MessageResource())
+v1_api.register(PollResponseResource())
+v1_api.register(PollResource())
+v1_api.register(ContactResource())
+v1_api.register(ResponseResource())
 
 urlpatterns = patterns('',
     # dashboard view for viewing all poll reports in one place
@@ -135,5 +145,6 @@ urlpatterns = patterns('',
                    ('Total Poll Responses', True, 'responses__count', SimpleSorter()),
                    ('', False, '', None)],
         }, name="ureport-contact2"),
+    (r'^api/',include(v1_api.urls)),
 
 )
