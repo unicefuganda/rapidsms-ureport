@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
     depends_on = (
         ("poll", "0006_auto__add_field_rule_rule"),
         ("rapidsms_httprouter", "0004_auto__add_field_messagebatch_name"),
-        ("script","0003_auto__add_transition__add_field_script_type__add_field_script_category"),
+        ("script","0002_auto__add_field_scriptprogress_language"),
         ("unregister","0001_initial"),
     )
     def forwards(self, orm):
