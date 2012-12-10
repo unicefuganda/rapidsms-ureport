@@ -608,4 +608,82 @@ class DistrictForm(forms.Form):
     districts = forms.ModelMultipleChoiceField(queryset=Location.objects.filter(type__slug='district').order_by('name'), required=True)
 
 
+def get_poll_data(poll):
+    yesno_category_names = ['yes', 'no', 'unknown']
+    if poll.categories.count():
+        category_names = yesno_category_names if poll.is_yesno_poll() else list(poll.categories.all().values_list('name', flat=True))
+        root = Location.tree.root_nodes()[0]
+        data=poll.responses_by_category(root)
+        clean_data={}
+        for d in data:
+            l = Location.objects.get(pk=d['location_id'])
+            clean_data.setdefault(l.pk, {})
+            clean_data[l.pk][d['category__name']] = d['value']
 
+        for district_code, values in clean_data.items():
+            total = 0
+            for c in category_names:
+                values.setdefault(c, 0)
+            for cat_name, val in values.items():
+                total += val
+            for cat_name in category_names:
+                values[cat_name] = '%d%% '% int(float(values[cat_name])*100 / total)
+
+        return clean_data
+    return None
+
+def get_summary(pk,poll_data):
+    c=poll_data.get(pk,None)
+    return " ".join(["%s,%s"%(str(a) ,str(c[a])) for a in c.keys() if not a=="uncategorized"])
+
+
+
+class TemplateMessage(ActionForm):
+    template = forms.CharField(max_length=160, required=True, widget=SMSInput(),help_text="message shd be of form Dear Hon. [insert name]. [insert results ] of people from [insert district] say that lorem ipsum")
+    poll=forms.ModelChoiceField(queryset=Poll.objects.exclude(start_date=None).order_by('-pk'))
+
+    label="Send Message"
+
+
+
+    def perform(self, request, results):
+
+
+        if request.user :
+            poll= self.cleaned_data['poll']
+            contacts=Contact.objects.filter(pk__in=results)
+            regex=re.compile(r"(\[[^\[\]]+\])")
+            template= self.cleaned_data['template']
+            parts=regex.split(template)
+            yesno_category_names = ['yes', 'no', 'unknown']
+            poll_data=get_poll_data(poll)
+            if poll_data:
+
+                for contact in contacts:
+                    if poll_data.get(contact.reporting_location.pk,None):
+                        d={
+                            'name':contact.name.split()[-1],
+                            'district':contact.reporting_location.name,
+                            'results':get_summary(contact.reporting_location.pk,poll_data)
+
+                            }
+                        
+                        message=""
+                        for p in parts:
+                            if p.strip().startswith("[insert"):
+                                message=message+d[p.rsplit()[1][:-1]]
+                            else:
+                                message=message+p
+
+
+
+                        Message.objects.create(status="Q",direction="O",connection=contact.default_connection,text=message)
+
+
+
+                return ('Message sent to  %d contacts' % len(results), 'success',)
+            else:
+                return ("The poll %s  has no categories yet "%poll.name, 'error',)
+
+        else:
+            return ("you need to be logged in ", 'error',)

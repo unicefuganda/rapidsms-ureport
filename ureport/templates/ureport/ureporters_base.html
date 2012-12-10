@@ -67,6 +67,7 @@ $("#id_enddate").datepicker({ dateFormat: 'dd/mm/yy' ,changeYear: true ,changeMo
         <li><a href="#blacklist" data-toggle="tab">Blacklist</a></li>
         <li><a href="#send_poll" data-toggle="tab">Send Poll</a></li>
         <li><a href="#exports" data-toggle="tab">Export to excel</a></li>
+        <li><a href="#send_custom" data-toggle="tab">Send Custom SMS</a></li>
 
     </ul>
 </div>
@@ -102,7 +103,7 @@ $("#id_enddate").datepicker({ dateFormat: 'dd/mm/yy' ,changeYear: true ,changeMo
         <table>
 
             {{action_forms.3.1.as_table}}
-            <tr><td><a id="poll_btn" class="{{ action_forms.3.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#poll_btn', '{{ action_forms.3.0 }}',{{ page }});">Assign To Poll </a></td></tr>
+            <tr><td><a id="msg_btn" class="{{ action_forms.3.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#msg_btn', '{{ action_forms.3.0 }}',{{ page }});">Send Message </a></td></tr>
         </table>
     </div>
     <div class="tab-pane " id="exports">
@@ -114,6 +115,12 @@ $("#id_enddate").datepicker({ dateFormat: 'dd/mm/yy' ,changeYear: true ,changeMo
             {{download_form.as_table}}
             <tr><td><input type="submit" value="Download"></td></tr>
             <tr><td>  <tr><td><a class="export_link" href="{{ MEDIA_URL }}ureport/spreadsheets/ureporters.zip">Export All To Excel</a></td></td></tr>
+        </table>
+    </div>
+    <div class="tab-pane " id="send_custom">
+        <table>
+            {{action_forms.5.1.as_table}}
+            <tr><td><a id="send_msg_btn" class="{{ action_forms.5.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#send_msg_btn', '{{ action_forms.5.0 }}',{{ page }});">Send Message </a></td></tr>
         </table>
     </div>
 
