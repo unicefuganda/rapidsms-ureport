@@ -9,7 +9,7 @@ class Migration(DataMigration):
     def forwards(self, orm):
         year_now = datetime.datetime.now().year
         view_sql =\
-        """   create or replace view contacts_export as SELECT
+        """  drop view contacts_export; create or replace view contacts_export as SELECT
 "rapidsms_contact"."id" as id,
 "rapidsms_contact"."name" as name,
 "rapidsms_contact"."is_caregiver",
@@ -72,7 +72,7 @@ INNER JOIN
       )
 WHERE
    "rapidsms_contact_groups"."contact_id" = "rapidsms_contact"."id" order by "auth_group"."id" desc  LIMIT 1) as
-group,
+"group",
 (SELECT
 "rapidsms_httprouter_message"."text"
 FROM "rapidsms_httprouter_message"
@@ -167,7 +167,7 @@ create trigger update_contact after insert on rapidsms_contact for each row exec
 create trigger update_contact_update after update on rapidsms_contact for each row execute procedure contact_update();
 create trigger update_contact_message after insert on rapidsms_httprouter_message for each row execute procedure contact_update_message();
 
-update ureport_contact set id=c.id,name=c.name,is_caregiver=c.is_caregiver,reporting_location_id=c.reporting_location_id ,user_id=c.user_id ,mobile=c.mobile ,language=c.language ,autoreg_join_date=c.autoreg_join_date ,quit_date=c.quit_date ,district=c.district ,age=c.age ,gender=c.gender ,facility=c.facility ,village=c.village  ,source=c.source ,responses=c.responses ,questions=c.questions ,incoming=c.incoming ,connection_pk=c.connection_pk,group=c.group from  contacts_export as c;
+update ureport_contact set id=c.id,name=c.name,is_caregiver=c.is_caregiver,reporting_location_id=c.reporting_location_id ,user_id=c.user_id ,mobile=c.mobile ,language=c.language ,autoreg_join_date=c.autoreg_join_date ,quit_date=c.quit_date ,district=c.district ,age=c.age ,gender=c.gender ,facility=c.facility ,village=c.village  ,source=c.source ,responses=c.responses ,questions=c.questions ,incoming=c.incoming ,connection_pk=c.connection_pk,"group"=c.group from  contacts_export as c;
 
 
            """

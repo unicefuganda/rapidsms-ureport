@@ -7,9 +7,9 @@ from django.db import models
 class Migration(SchemaMigration):
 
     depends_on = (
-        ("poll", "0001_initial"),
-        ("rapidsms_httprouter", "0001_initial"),
-        ("script","0001_initial"),
+        ("poll", "0006_auto__add_field_rule_rule"),
+        ("rapidsms_httprouter", "0004_auto__add_field_messagebatch_name"),
+        ("script","0003_auto__add_transition__add_field_script_type__add_field_script_category"),
         ("unregister","0001_initial"),
     )
     def forwards(self, orm):
