@@ -1,4 +1,5 @@
 [
+    {"pk": 2, "model": "sites.site", "fields": {"domain": "ureport.rapidsms.org", "name": "uReport"}},
 
     {
         "pk": 122,
