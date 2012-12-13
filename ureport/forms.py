@@ -640,7 +640,7 @@ def get_summary(pk,poll_data):
 
 class TemplateMessage(ActionForm):
     template = forms.CharField(max_length=160, required=True, widget=SMSInput(),help_text="message shd be of form Dear Hon. [insert name]. [insert results ] of people from [insert district] say that lorem ipsum")
-    poll=forms.ModelChoiceField(queryset=Poll.objects.exclude(start_date=None).order_by('-pk'))
+    poll=forms.ModelChoiceField(queryset=Poll.objects.exclude(start_date=None).exclude(categories=None).order_by('-pk'))
 
     label="Send Message"
 
@@ -667,7 +667,7 @@ class TemplateMessage(ActionForm):
                             'results':get_summary(contact.reporting_location.pk,poll_data)
 
                             }
-                        
+
                         message=""
                         for p in parts:
                             if p.strip().startswith("[insert"):
