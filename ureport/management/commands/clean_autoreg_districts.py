@@ -17,11 +17,16 @@ class Command(BaseCommand):
         try:
             for message in messages:
                 if message.connection.contact:
-                    msg=message.text.split()
+                    mesg=message.text
+                    mesg=mesg.replace("."," ").replace("("," ").replace(")"," ").replace("-"," ")
+                    msg=mesg.split()
+
                     for m in msg:
+
                         district=Location.objects.filter(name__iregex=".*\m(%s)\y.*"%m,type="district")
-                        if district and not district.count()>1:
-                            print district
+                        l=district.count()
+                        if district and l == 1:
+
                             conn=message.connection
                             if not conn.contact.reporting_location:
                                 conn.contact.reporting_location=district[0]
