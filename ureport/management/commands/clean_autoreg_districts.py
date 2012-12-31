@@ -20,11 +20,11 @@ class Command(BaseCommand):
                     msg=message.text.split()
                     for m in msg:
                         district=Location.objects.filter(name__iregex=m,type="district")
-                        if district:
+                        if district and not district.count()>1:
                             print district
                             conn=message.connection
                             if not conn.contact.reporting_location:
-                                conn.contact.reporting_location=district
+                                conn.contact.reporting_location=district[0]
                                 conn.contact.save()
                         break
 
