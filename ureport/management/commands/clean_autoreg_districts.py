@@ -19,8 +19,9 @@ class Command(BaseCommand):
                 if message.connection.contact:
                     msg=message.text.split()
                     for m in msg:
-                        district=find_closest_match(m, Location.objects.filter(type__name='district'))
+                        district=Location.objects.filter(name__iregex=m,type="district")
                         if district:
+                            print district
                             conn=message.connection
                             if not conn.contact.reporting_location:
                                 conn.contact.reporting_location=district
