@@ -19,7 +19,7 @@ class Command(BaseCommand):
                 if message.connection.contact:
                     msg=message.text.split()
                     for m in msg:
-                        district=Location.objects.filter(name__iregex=m,type="district")
+                        district=Location.objects.filter(name__iregex=".*\m(%s)\y.*"%m,type="district")
                         if district and not district.count()>1:
                             print district
                             conn=message.connection
