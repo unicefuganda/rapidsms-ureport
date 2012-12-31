@@ -25,6 +25,7 @@ class Command(BaseCommand):
                             if not conn.contact.reporting_location:
                                 conn.contact.reporting_location=district
                                 conn.contact.save()
+                        break
 
         except Exception, exc:
             print traceback.format_exc(exc)
