@@ -382,4 +382,42 @@ def clickatell_wrapper(request):
                        'message': request.GET['text']})
     return receive(request)
 
+def comfirm_message_sending(request,key):
+    messages=Message.objects.filter(details__attribute__name=key).order_by('-date')
+    messages.update(status="Q")
+    return HttpResponse(status=200)
+
+def comfirmmessages(request,key):
+    messages=Message.objects.filter(details__attribute__name=key).order_by('-date')
+    partial_row = 'ureport/partials/messages/message_row.html'
+    base_template = 'ureport/comfirmbase.html'
+    paginator_template = 'ureport/partials/new_pagination.html'
+    columns = [('Text', True, 'text', SimpleSorter()),
+               ('Contact Information', True, 'connection__contact__name'
+                , SimpleSorter()), ('Date', True, 'date',
+                                    SimpleSorter())]
+
+
+    if request.GET.get("comfirm"):
+        res=dict(request.GET)['results']
+        messages=Message.objects.filter(pk__in=res).update(status="Q")
+        return HttpResponse(status=200)
+
+    return generic(
+        request,
+        model=Message,
+        queryset=messages,
+        objects_per_page=25,
+        partial_row=partial_row,
+        base_template=base_template,
+        results_title="Messages To be Sent. Please Comfirm to sent .",
+        paginator_template=paginator_template,
+        paginator_func=ureport_paginate,
+        columns=columns,
+        sort_column='date',
+        key=key,
+        sort_ascending=False,
+    )
+
+
 

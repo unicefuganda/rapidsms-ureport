@@ -146,5 +146,7 @@ urlpatterns = patterns('',
                    ('', False, '', None)],
         }, name="ureport-contact2"),
     (r'^api/',include(v1_api.urls)),
+    url(r'^comfirm/(?P<key>.+)/$',comfirm_message_sending,name="comfirm"),
+    url(r'^comfirmmessages/(?P<key>.+)/$',comfirmmessages,name="comfirm-messages"),
 
 )

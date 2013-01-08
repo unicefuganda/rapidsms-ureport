@@ -24,6 +24,8 @@ from poll.models import Poll, Translation
 from unregister.models import Blacklist
 from .models import AutoregGroupRules
 from uganda_common.utils import ExcelResponse
+from ureport.models import MessageAttribute,MessageDetail
+from django.utils.safestring import  mark_safe
 
 import subprocess
 
@@ -609,7 +611,7 @@ class DistrictForm(forms.Form):
 
 
 def get_poll_data(poll):
-    yesno_category_names = ['yes', 'no', 'unknown']
+    yesno_category_names = ['yes', 'no']
     if poll.categories.count():
         category_names = yesno_category_names if poll.is_yesno_poll() else list(poll.categories.all().values_list('name', flat=True))
         root = Location.tree.root_nodes()[0]
@@ -634,7 +636,7 @@ def get_poll_data(poll):
 
 def get_summary(pk,poll_data):
     c=poll_data.get(pk,None)
-    return " ".join(["%s,%s"%(str(a) ,str(c[a])) for a in c.keys() if not a=="uncategorized"])
+    return " ".join(["%s said %s"%( str(c[a]),str(a)) for a in c.keys() if not a in ["uncategorized","unknown"]])
 
 
 
@@ -648,19 +650,23 @@ class TemplateMessage(ActionForm):
 
     def perform(self, request, results):
 
-
         if request.user :
             poll= self.cleaned_data['poll']
             contacts=Contact.objects.filter(pk__in=results)
             regex=re.compile(r"(\[[^\[\]]+\])")
             template= self.cleaned_data['template']
             parts=regex.split(template)
-            yesno_category_names = ['yes', 'no', 'unknown']
+            yesno_category_names = ['yes', 'no']
             poll_data=get_poll_data(poll)
             if poll_data:
+                import datetime
+                key="templatemsg%s"%str(datetime.datetime.now().isoformat())
+                temp_msg,_=MessageAttribute.objects.get_or_create(name=key)
+
 
                 for contact in contacts:
-                    if poll_data.get(contact.reporting_location.pk,None):
+
+                    if contact.reporting_location and poll_data.get(contact.reporting_location.pk,None):
                         d={
                             'name':contact.name.split()[-1],
                             'district':contact.reporting_location.name,
@@ -670,20 +676,23 @@ class TemplateMessage(ActionForm):
 
                         message=""
                         for p in parts:
-                            if p.strip().startswith("[insert"):
-                                message=message+d[p.rsplit()[1][:-1]]
+                            if p.strip().startswith("["):
+
+                                message=message+d[p.replace("[","").replace("]","").strip().rsplit()[1]]
                             else:
                                 message=message+p
 
 
 
-                        Message.objects.create(status="Q",direction="O",connection=contact.default_connection,text=message)
+
+                        message=Message.objects.create(status="P",direction="O",connection=contact.default_connection,text=message)
+                        msg_a=MessageDetail.objects.create(message=message,attribute=temp_msg,value='comfirm')
 
 
 
-                return ('Message sent to  %d contacts' % len(results), 'success',)
+                return (mark_safe('Message is going to be sent to   %d contacts .<a href="/comfirmmessages/%s/">Comfirm Sending </a>' % (len(results),key,key)), 'success',)
             else:
-                return ("The poll %s  has no categories yet "%poll.name, 'error',)
+                return ("some thing went wrong", 'error',)
 
         else:
             return ("you need to be logged in ", 'error',)
