@@ -1,6 +1,30 @@
 <form method="post" id="message_forward" action="/sendmessage/?forward=true" data-remote=true>
     <div class="modal-header">
+
         <a class="close" data-dismiss="modal" onclick='$(".modal").hide()'>×</a>
+        <script type="text/javascript">
+
+            function bind_rform(){
+
+                form=$("#message_forward");
+                $.ureport.handleRemote( $("#message_forward") );
+
+                form.bind('ajax:before',function (exhr, status, error) {
+                    ajax_loading('#cat_tb');
+
+                })
+                        .bind('ajax:success', function(evt, data, status, xhr) {
+                            $('#mesg_title').html("info");
+                            $('#mesg_body').html("Message Successfully sent");
+                            $('#mesg_st').show();
+                            $('#mesg_st').effect("highlight", {}, 3000);
+
+                        })
+                        .bind('ajax:failure', function(evt, data, status, xhr) {
+                            alert("something went wrong!");
+                        });
+            }
+        </script>
 
 
         <h3>Foward Message</h3>
@@ -16,7 +40,11 @@
         </table>
     </div>
     <div class="modal-footer">
-        <a href="javascript:void(0)" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>
-        <input type="submit"  onclick='$(".modal").hide()'  class="btn btn-primary" value="Send Message">
+        <a href="javascript:void(0)" data-dismiss="modal" class="btn" onclick='$(".modal").hide();bind_rform();'>Close</a>
+        <a href="javascript:void(0);"   onclick='$(".modal").hide();bind_rform();'  class="btn btn-primary" >
+            Send Message
+            </a>
+
+
     </div>
 </form>
