@@ -279,6 +279,32 @@
         $('#mesg_st').effect("highlight", {}, 3000);
     }
 
+    function bind_form(){
+
+
+        form=$($(this).parents.find("form")[0]);
+        $.ureport.handleRemote( form );
+        form.bind('ajax:before',function (exhr, status, error) {
+            ajax_loading('#cat_tb');
+
+        })
+                .bind('ajax:success', function(evt, data, status, xhr) {
+                    $('#mesg_title').html("info");
+                    $('#mesg_body').html("Message Successfully sent");
+                    $('#mesg_st').show();
+                    $('#mesg_st').effect("highlight", {}, 3000);
+
+                })
+                .bind('ajax:failure', function(evt, data, status, xhr) {
+                    alert("something went wrong!");
+                });
+    }
+
+    $(function() {
+
+        bind_form();
+    });
+
 
 
 
