@@ -652,7 +652,7 @@ class TemplateMessage(ActionForm):
 
         if request.user :
             poll= self.cleaned_data['poll']
-            contacts=Contact.objects.filter(pk__in=results)
+            contacts=Contact.objects.filter(pk__in=results).exclude(connection=None)
             regex=re.compile(r"(\[[^\[\]]+\])")
             template= self.cleaned_data['template']
             parts=regex.split(template)
