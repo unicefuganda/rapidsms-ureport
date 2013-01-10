@@ -690,7 +690,7 @@ class TemplateMessage(ActionForm):
 
 
 
-                return (mark_safe('Message is going to be sent to   %d contacts .<a href="/comfirmmessages/%s/">Comfirm Sending </a>' % (len(results),key,key)), 'success',)
+                return (mark_safe('Message is going to be sent to   %d contacts .<a href="/comfirmmessages/%s/">Comfirm Sending </a>' % (len(results),key)), 'success',)
             else:
                 return ("some thing went wrong", 'error',)
 
