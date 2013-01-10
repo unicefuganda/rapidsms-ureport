@@ -16,7 +16,7 @@
 {% endblock %}
 {% block content %}
 
- <form method="GET" data-remote="true" action="./?comfirm=true">
+ <form method="POST" id="comfirm"  >
 
     <div id="object_list" class="module">
             {% block object_list %}
@@ -25,7 +25,7 @@
         </div>
     
 
-    <input class="btn" type="submit" value="Comfirm Sending" onclick="$(this).remove();$('.status_success').show();" >
+    <input class="btn" type="submit" id="sbtn" value="Comfirm Sending" >
 <div id="span_status_message " class="status_success " style="display:none;">
         Message(s) successfully sent 
     

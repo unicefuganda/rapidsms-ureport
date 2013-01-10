@@ -398,10 +398,10 @@ def comfirmmessages(request,key):
                                     SimpleSorter())]
 
 
-    if request.GET.get("comfirm"):
-        res=dict(request.GET)['results']
+    if request.method == "POST":
+        res=dict(request.POST)['results']
         messages=Message.objects.filter(pk__in=res).update(status="Q")
-        return HttpResponse(status=200)
+        return HttpResponseRedirect("/reporter/")
 
     return generic(
         request,
