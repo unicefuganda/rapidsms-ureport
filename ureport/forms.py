@@ -696,3 +696,4 @@ class TemplateMessage(ActionForm):
 
         else:
             return ("you need to be logged in ", 'error',)
+
