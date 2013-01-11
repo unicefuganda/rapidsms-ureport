@@ -8,13 +8,17 @@ from django.db import DatabaseError
 from django.db import connection
 from rapidsms.models import Contact
 
-def db_table_exists(table_name):
-    return table_name in connection.introspection.table_names()
+
+
+def db_table_field_exists(table_name,field):
+    cursor=connection.cursor()
+    return field in map(lambda x:  x[0].lower(),connection.introspection.get_table_description(cursor, table_name))
+
 
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        if not 'occupation' in Contact._meta.get_all_field_names():
+        if not db_table_field_exists("rapidsms_contact","occupation"):
             db.add_column('rapidsms_contact', 'occupation', self.gf('django.db.models.fields.CharField')(default='a', max_length=1, null=True), keep_default=False)
 
 

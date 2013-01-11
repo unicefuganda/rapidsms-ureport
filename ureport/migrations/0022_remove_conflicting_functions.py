@@ -3,13 +3,17 @@ import datetime
 from south.db import db
 from south.v2 import DataMigration
 from django.db import models
+from django.db import transaction,DatabaseError
 
 class Migration(DataMigration):
 
     def forwards(self, orm):
         "Write your forwards methods here."
         sql="drop function  contact_update_message() cascade;"
-        db.execute(sql)
+        try:
+            db.execute(sql)
+        except DatabaseError:
+            transaction.rollback()
 
 
     def backwards(self, orm):
