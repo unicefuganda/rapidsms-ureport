@@ -3,25 +3,17 @@ import datetime
 from south.db import db
 from south.v2 import DataMigration
 from django.db import models
-from django.db import transaction
-from django.db import DatabaseError
-from django.db import connection
-from rapidsms.models import Contact
-
-def db_table_exists(table_name):
-    return table_name in connection.introspection.table_names()
 
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        if not 'occupation' in Contact._meta.get_all_field_names():
-            db.add_column('rapidsms_contact', 'occupation', self.gf('django.db.models.fields.CharField')(default='a', max_length=1, null=True), keep_default=False)
-
-
+        "Write your forwards methods here."
+        sql="drop function  contact_update_message() cascade;"
+        db.execute(sql)
 
 
     def backwards(self, orm):
-        db.delete_column('rapidsms_contact', 'occupation')
+        "Write your backwards methods here."
 
 
     models = {
@@ -126,6 +118,7 @@ class Migration(DataMigration):
             'is_caregiver': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'language': ('django.db.models.fields.CharField', [], {'max_length': '6', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
+            'occupation': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'reporting_location': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['locations.Location']", 'null': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'contact'", 'unique': 'True', 'null': 'True', 'to': "orm['auth.User']"}),
             'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
