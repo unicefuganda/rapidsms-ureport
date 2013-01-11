@@ -44,7 +44,7 @@ def view_poll(request,pk):
             poll.save()
             res="""<a href="?stop=True&poll=True" data-remote=true  id="poll_action" class="btn">Close Poll</a>  """
             return HttpResponse(res)
-    xf=XFormField.objects.get(name='latest_poll')
+    xf,_=XFormField.objects.get_or_create(name='latest_poll')
     response=StubScreen.objects.get(slug='question_response')
     template='ureport/polls/view_poll.html'
     categories=poll.categories.all()
