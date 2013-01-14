@@ -6,7 +6,7 @@ from generic.views import  generic_row
 from contact.forms import FreeSearchTextForm, FreeSearchForm, MultipleDistictFilterForm, HandledByForm, FlaggedForm, FlagMessageForm,  GenderFilterForm, DistictFilterForm, FilterGroupsForm, AssignGroupForm, AgeFilterForm
 from tastypie.api import Api
 from .api import PollResponseResource,PollResource,MessageResource,ContactResource,ResponseResource
-from ureport.views.excel_reports_views import generate_poll_dump_report
+from ureport.views.excel_reports_views import generate_poll_dump_report, generate_per_district_report
 
 message_resource=MessageResource()
 
@@ -150,4 +150,5 @@ urlpatterns = patterns('',
     url(r'^comfirm/(?P<key>.+)/$',comfirm_message_sending,name="comfirm"),
     url(r'^comfirmmessages/(?P<key>.+)/$',comfirmmessages,name="comfirm-messages"),
     url(r"^dumpreport/(\d+)/$", generate_poll_dump_report),
+    url(r"^districtreport/(\d+)/$", generate_per_district_report),
 )
