@@ -37,7 +37,7 @@ class Command(BaseCommand):
                                 pass
                             continue
                         try:
-                            l=district.count()
+                            l=int(district.count())
                         except:
                             try:
                                 transaction.rollback()
