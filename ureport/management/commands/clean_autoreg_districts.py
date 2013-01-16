@@ -22,7 +22,7 @@ class Command(BaseCommand):
             for message in messages:
                 if message.connection.contact:
                     mesg=message.text
-                    mesg=mesg.replace("."," ").replace("é","e").replace("("," ").replace(")"," ").replace("-"," ").replace(":"," ").replace(","," ").replace("}"," ").replace("{"," ").replace("?"," ").replace("'"," ").replace("/"," ")
+                    mesg=mesg.replace("."," ").replace(u"é".encode("utf-8"),"e").replace("("," ").replace(")"," ").replace("-"," ").replace(":"," ").replace(","," ").replace("}"," ").replace("{"," ").replace("?"," ").replace("'"," ").replace("/"," ")
                     msg=mesg.split()
 
                     for m in msg:
