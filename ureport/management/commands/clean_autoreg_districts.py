@@ -22,20 +22,28 @@ class Command(BaseCommand):
             for message in messages:
                 if message.connection.contact:
                     mesg=message.text
-                    mesg=mesg.replace("."," ").replace("\xc3\xa9","e").replace("("," ").replace(")"," ").replace("-"," ").replace(":"," ").replace(","," ").replace("}"," ").replace("{"," ").replace("?"," ").replace("'"," ").replace("/"," ")
+                    mesg=mesg.replace("."," ").replace("("," ").replace(")"," ").replace("-"," ").replace(":"," ").replace(","," ").replace("}"," ").replace("{"," ").replace("?"," ").replace("'"," ").replace("/"," ")
                     msg=mesg.split()
+
 
                     for m in msg:
                         try:
                             print m
                             district=Location.objects.filter(name__iregex="\m(%s)\y"%re.escape(m),type="district")
+                            l=0
                         except:
                             try:
                                 transaction.rollback()
                             except:
                                 pass
                             continue
-                        l=district.count()
+                        try:
+                            l=district.count()
+                        except:
+                            try:
+                                transaction.rollback()
+                            except:
+                                pass
                         print district
                         if district and l == 1:
 
