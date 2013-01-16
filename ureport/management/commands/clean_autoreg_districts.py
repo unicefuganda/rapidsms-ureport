@@ -28,7 +28,6 @@ class Command(BaseCommand):
 
                     for m in msg:
                         try:
-                            print m
                             district=Location.objects.filter(name__iregex="\m(%s)\y"%re.escape(m),type="district")
                             l=0
                         except:
@@ -44,7 +43,6 @@ class Command(BaseCommand):
                                 transaction.rollback()
                             except:
                                 pass
-                        print district
                         if district and l == 1:
 
                             conn=message.connection
