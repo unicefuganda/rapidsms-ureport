@@ -29,6 +29,8 @@ class Command(BaseCommand):
                     for m in msg:
                         try:
                             district=Location.objects.filter(name__iregex="\m(%s)\y"%re.escape(m),type="district")
+                            if district:
+                                pass
                             l=0
                         except:
                             try:
