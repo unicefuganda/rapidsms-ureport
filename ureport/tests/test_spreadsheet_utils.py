@@ -4,8 +4,10 @@ from poll.models import Poll, Response
 from rapidsms_httprouter.models import Message
 from rapidsms.models import Contact, Connection, Backend
 from rapidsms.contrib.locations.models import Location
-from ureport.spreadsheet_utils import get_poll_responses
+from ureport.spreadsheet_utils import get_poll_responses, get_formatted_responses_for_poll_per_district
 from rapidsms.messages.incoming import IncomingMessage
+from geoserver.models import PollData
+import random
 
 def _create_poll(contacts, user):
     poll = Poll.objects.create(
@@ -48,6 +50,19 @@ class TestSpreadSheetUtils(TestCase):
         self.assertEqual(1,len(responses))
         self.assertEqual(expected_response,responses[0])
 
+    def test_per_district_report_for_yes_no_polls(self):
+        for i in range(5):
+            PollData.objects.using('geoserver').create(district='district%s' % i, poll_id = 1,
+                deployment_id=1, yes = random.randint(0,10), no = random.randint(0,10),
+                unknown = random.randint(0,10), uncategorized = random.randint(0,10))
+
+        PollData.objects.using('geoserver').create(district='district1', poll_id = 2,
+            deployment_id=1, yes = random.randint(0,10), no = random.randint(0,10),
+            unknown = random.randint(0,10), uncategorized = random.randint(0,10))
+
+        results = get_formatted_responses_for_poll_per_district(1)
+        self.assertEqual(6, len(results))
+
     def tearDown(self):
         Backend.objects.all().delete()
         Connection.objects.all().delete()
@@ -56,3 +71,4 @@ class TestSpreadSheetUtils(TestCase):
         Poll.objects.all().delete()
         Message.objects.all().delete()
         Response.objects.all().delete()
+        PollData.objects.using('geoserver').all().delete()
