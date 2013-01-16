@@ -7,6 +7,8 @@ from django.contrib.auth.models import Group, User
 from script.utils.handling import find_closest_match
 from rapidsms.contrib.locations.models import Location
 from rapidsms_httprouter.models import Message, Connection
+from django.db import DatabaseError,transaction
+import re
 class Command(BaseCommand):
     def handle(self, **options):
         auto_reg_conns=ScriptSession.objects.values_list('connection',flat=True)
@@ -18,13 +20,21 @@ class Command(BaseCommand):
             for message in messages:
                 if message.connection.contact:
                     mesg=message.text
-                    mesg=mesg.replace("."," ").replace("("," ").replace(")"," ").replace("-"," ")
+                    mesg=mesg.replace("."," ").replace("("," ").replace(")"," ").replace("-"," ").replace(":"," ").replace(","," ").replace("}"," ").replace("{"," ").replace("?"," ").replace("'"," ").replace("/"," ")
                     msg=mesg.split()
 
                     for m in msg:
-
-                        district=Location.objects.filter(name__iregex=".*\m(%s)\y.*"%m,type="district")
+                        try:
+                            print m
+                            district=Location.objects.filter(name__iregex="\m(%s)\y"%re.escape(m),type="district")
+                        except:
+                            try:
+                                transaction.rollback()
+                            except:
+                                pass
+                            continue
                         l=district.count()
+                        print district
                         if district and l == 1:
 
                             conn=message.connection
@@ -35,3 +45,4 @@ class Command(BaseCommand):
 
         except Exception, exc:
             print traceback.format_exc(exc)
+            pass

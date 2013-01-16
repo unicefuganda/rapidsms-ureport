@@ -82,7 +82,7 @@ class Command(BaseCommand):
             "locations_location"
          WHERE
             "locations_location"."id"="rapidsms_contact"."village_id") as village,
-         (SELECT
+         array(SELECT
             "auth_group"."name"
          FROM
             "auth_group"
@@ -92,7 +92,7 @@ class Command(BaseCommand):
                   "auth_group"."id" = "rapidsms_contact_groups"."group_id"
                )
          WHERE
-            "rapidsms_contact_groups"."contact_id" = "rapidsms_contact"."id" order by "auth_group"."id" desc  LIMIT 1) as
+            "rapidsms_contact_groups"."contact_id" = "rapidsms_contact"."id" order by "auth_group"."id" ) as
       group,
       (SELECT
       "rapidsms_httprouter_message"."text"
@@ -132,7 +132,10 @@ class Command(BaseCommand):
             ON "rapidsms_contact"."reporting_location_id" = "locations_location"."id";
                  """ \
                 % year_now
-            cursor = connection.cursor()
+
+            if connection.connection is None:
+                cursor = connection.cursor()
+            cursor = connection.connection.cursor(name='contacts')
             cursor.execute(sql)
             row_0 = [(
                 'Id',
