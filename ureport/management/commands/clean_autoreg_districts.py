@@ -37,20 +37,19 @@ class Command(BaseCommand):
                             except:
                                 pass
                             continue
-                        try:
-                            l=int(district.count())
-                        except:
-                            try:
-                                transaction.rollback()
-                            except:
-                                pass
+                        
+                        l=int(district.count())
+                       
                         if district and l == 1:
 
                             conn=message.connection
                             if not conn.contact.reporting_location:
-                                conn.contact.reporting_location=district[0]
-                                conn.contact.save()
-                        break
+                                contact=conn.contact
+                                contact.reporting_location=district[0]
+                                contact.save()
+                            break
+                    print message.text
+                    print message.connection.contact.reporting_location
 
         except Exception, exc:
             print traceback.format_exc(exc)
