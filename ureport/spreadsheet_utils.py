@@ -29,11 +29,11 @@ def get_poll_responses(poll):
 def get_formatted_responses_for_poll_per_district(poll_id):
     from django.db import connections
     cursor = connections['geoserver'].cursor()
-    q = 'select district, yes+no+unknown+uncategorized, yes, no, unknown+uncategorized'+\
+    q = 'select district, yes*100, no*100, (unknown+uncategorized)*100'+\
         ' from geoserver_polldata where poll_id=' + str(poll_id)
     cursor.execute(q)
     poll_responses = cursor.fetchall()
-    headers = ['District', 'Total received', 'Yes', 'No', 'Unknown']
+    headers = ['District', 'Yes(%)', 'No(%)', 'Unknown(%)']
     poll_responses.insert(0, headers)
     return poll_responses
 
