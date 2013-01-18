@@ -13,8 +13,7 @@ from django.db import DatabaseError,transaction
 import re
 class Command(BaseCommand):
     def handle(self, **options):
-        auto_reg_conns=ScriptSession.objects.values_list('connection',flat=True)
-        no_district_connections=Connection.objects.filter(contact__reporting_location=None).filter(pk__in=auto_reg_conns).values_list('pk',flat=True)
+        no_district_connections=Connection.objects.filter(contact__reporting_location=None).values_list('pk',flat=True)
         sic="|".join(Location.objects.filter(type__name='district').values_list('name',flat=True))
 
         messages=Message.objects.filter(connection__pk__in=no_district_connections,direction="I").filter(text__iregex=".*\m(%s)\y.*"%sic).order_by('date')
