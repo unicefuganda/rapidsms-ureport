@@ -82,6 +82,12 @@ class Command(BaseCommand):
             "locations_location"
          WHERE
             "locations_location"."id"="rapidsms_contact"."village_id") as village,
+(SELECT
+            "locations_location"."name"
+         FROM
+            "locations_location"
+         WHERE
+            "locations_location"."id"="rapidsms_contact"."subcounty_id") as subcounty,
          array(SELECT
             "auth_group"."name"
          FROM
@@ -149,6 +155,7 @@ class Command(BaseCommand):
                 'Gender',
                 'Health Facility',
                 'Village',
+                'Subcounty',
                 'Group',
                 'How did you hear about ureport?',
                 'Number Of Responses',
@@ -228,6 +235,11 @@ class Command(BaseCommand):
                             response.contact.village.name
                     else:
                         response_export_data['village'] = 'N/A'
+                    if response.contact and response.contact.subcounty:
+                        response_export_data['subcounty'] = \
+                            response.contact.subcounty.name
+                    else:
+                        response_export_data['subcounty'] = 'N/A'
                     if response.contact \
                         and response.contact.groups.count() > 0:
                         response_export_data['groups'] = \
