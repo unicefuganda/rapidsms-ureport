@@ -147,6 +147,10 @@ class SearchResponsesForm(FilterForm):
                                                                                                       % search)
                                    | Q(message__connection__identity__iregex=".*\m(%s)\y.*"
                                                                              % search))
+
+        elif search == "'=numerical value()'":
+            return queryset.filter(message__text__iregex="^[0-9]+$")
+            
         elif search[0] == "'" and search[-1] == "'":
 
             search = search[1:-1]
