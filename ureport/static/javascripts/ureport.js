@@ -420,6 +420,7 @@ function action(elem, action,page) {
         ajax_loading(elem);
         $('#object_list').load("./", form_data, function() {
             $('.ajax_loading').remove();
+            $(form).find('textarea,input[type="text"],input[type="file"]').val("");
         });
     }
     else {
@@ -441,6 +442,7 @@ function actionx(elem, action,page) {
         $('#object_list').load("./", form_data, function() {
 
             $('.ajax_loading').remove();
+            $(form).find('textarea,input[type="text"],input[type="file"]').val("");
         });
     }
     else {
