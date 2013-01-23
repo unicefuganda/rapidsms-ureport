@@ -186,8 +186,8 @@ class SearchMessagesForm(FilterForm):
                                                                              % search))
 
         elif search == "'=numerical value()'":
-            return queryset.filter(text__iregex="^[0-9]+$)
-            
+            return queryset.filter(text__iregex="^[0-9]+$")
+
         elif search[0] == "'" and search[-1] == "'":
 
             search = search[1:-1]
