@@ -192,6 +192,9 @@ class SearchMessagesForm(FilterForm):
                                    | Q(connection__identity__iexact=search))
         elif search == "=numerical value()":
             return queryset.filter(text__iregex="(-?\d+(\.\d+)?)")
+
+        elif search == "'=numerical value()'":
+            return queryset.filter(text__iregex="^[0-9]+$")
         else:
 
             return queryset.filter(Q(text__icontains=search)
