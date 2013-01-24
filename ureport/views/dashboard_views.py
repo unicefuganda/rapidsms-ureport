@@ -338,8 +338,7 @@ def alerts(request):
 
 def remove_captured_ind(request,pk):
     msg=Message.objects.get(pk=pk)
-    rate = MessageAttribute.objects.get(name='rating')
-    ma=MessageDetail.objects.filter(attribute=rate,message=msg).delete()
+    ma=MessageDetail.objects.filter(message=msg).delete()
     return HttpResponse(status=200)
 
 def assign_poll(request,pk,poll):
@@ -475,6 +474,11 @@ def aids_dashboard(request):
         'rate': rate,
         'range_form': range_form,
         }, context_instance=RequestContext(request))
+
+def schedule_alerts(request):
+    mps=Contact.objects.filter(groups__name="MP")
+
+    render_to_response("mp_alerts.html", dict(), context_instance=RequestContext(request))
 
 
 
