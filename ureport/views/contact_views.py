@@ -83,11 +83,12 @@ def ureporter_profile(request, connection_pk):
          , SimpleSorter())]
 
     # hack hack send the reply message by hacking the sendmessage form
-    if request.method == 'POST':
+    if request.method == 'POST' :
         if not request.POST.get('text', None) == u''\
         and request.POST.get('action')\
-        == u'ureport.forms.ReplyTextForm':
-            Message.objects.create(date=datetime.datetime.now(),
+        == u'ureport.forms.ReplyTextForm' and not request.POST.get('page_action',None):
+            rep_form=ReplyTextForm(request=request)
+            Message.objects.create(
                 connection=connection, direction='O'
                 , status='Q',
                 text=request.POST.get('text'))
