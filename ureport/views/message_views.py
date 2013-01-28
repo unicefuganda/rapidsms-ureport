@@ -319,7 +319,7 @@ def view_flagged_with(request, pk):
         model=Message,
         queryset=messages,
         objects_per_page=25,
-        partial_row='contact/partials/message_row.html',
+        partial_row='ureport/partials/contacts/contacts_row_flag.html',
         base_template='ureport/view_flagged_with_base.html',
         results_title='Messages Flagged With %s' % flag.name,
         columns=[('Message', True, 'text', SimpleSorter()),

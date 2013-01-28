@@ -1,0 +1,26 @@
+{% extends 'generic/partials/partial_row.html' %}
+{% block remaining_row_content %}
+        <td >
+            <span >{{object.text}}</span>
+        </td>
+<td>
+
+    <a href="{% url ureport.views.ureporter_profile object.connection.pk %}">
+
+        {{ object.connection.identity }}
+
+    </a>
+
+</td>
+<td>
+
+    {{ object.date|date:"m/d/Y H:i:s"}}
+
+</td>
+        <td>
+
+        </td>
+
+
+
+{% endblock %}
