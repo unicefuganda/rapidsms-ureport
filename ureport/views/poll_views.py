@@ -14,7 +14,7 @@ from ussd.models import StubScreen
 from poll.models import Poll,Category,Rule,Translation,Response
 from poll.forms import CategoryForm,RuleForm2
 from rapidsms.models import Contact
-from ureport.forms import NewPollForm
+from ureport.forms import NewPollForm,GroupsFilter
 from django.conf import settings
 from ureport.forms import AssignToPollForm,SearchResponsesForm, AssignResponseGroupForm, ReplyTextForm,DeleteSelectedForm
 from django.contrib.sites.models import Site
@@ -109,19 +109,21 @@ def view_poll(request,pk):
 def new_poll(req):
     if req.method == 'POST':
         form = NewPollForm(req.POST)
+        groups_form=GroupsFilter(req.POST)
         form.updateTypes()
-        if form.is_valid():
+        if form.is_valid() and groups_form.is_valid():
             # create our XForm
             question = form.cleaned_data['question_en']
             default_response = form.cleaned_data['default_response_en']
             districts = form.cleaned_data['districts']
+            excluded_groups=form.cleaned_data['groups']
             if hasattr(Contact, 'groups'):
                 groups = form.cleaned_data['groups']
 
             if len(districts):
-                contacts = Contact.objects.filter(reporting_location__in=districts).filter(groups__in=groups).distinct()
+                contacts = Contact.objects.filter(reporting_location__in=districts).filter(groups__in=groups).exclude(groups__in=excluded_groups)
             else:
-                contacts = Contact.objects.filter(groups__in=groups).distinct()
+                contacts = Contact.objects.filter(groups__in=groups).exclude(groups__in=excluded_groups)
 
             name = form.cleaned_data['name']
             p_type = form.cleaned_data['type']
@@ -172,9 +174,10 @@ def new_poll(req):
 
     else:
         form = NewPollForm()
+        groups_form=GroupsFilter()
         form.updateTypes()
 
-    return render_to_response('ureport/new_poll.html', {'form': form},
+    return render_to_response('ureport/new_poll.html', {'form': form,'groups_form':groups_form},
         context_instance=RequestContext(req))
 
 
