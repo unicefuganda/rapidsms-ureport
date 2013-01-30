@@ -705,3 +705,8 @@ class TemplateMessage(ActionForm):
         else:
             return ("you need to be logged in ", 'error',)
 
+
+class GroupsFilter(forms.Form):
+    groups = forms.ModelMultipleChoiceField(queryset=
+    Group.objects.order_by('name'), required=False)
+
