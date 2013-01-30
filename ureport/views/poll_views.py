@@ -116,7 +116,7 @@ def new_poll(req):
             question = form.cleaned_data['question_en']
             default_response = form.cleaned_data['default_response_en']
             districts = form.cleaned_data['districts']
-            excluded_groups=form.cleaned_data['groups']
+            excluded_groups=groups_form.cleaned_data['groups']
             if hasattr(Contact, 'groups'):
                 groups = form.cleaned_data['groups']
 
