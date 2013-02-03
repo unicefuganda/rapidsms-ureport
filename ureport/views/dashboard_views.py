@@ -216,7 +216,10 @@ def alerts(request):
             ExcelResponse(data, output_name=excel_file_path,
                 write_to_file=True)
             response = HttpResponse(FileWrapper(open(excel_file_path)), content_type='application/zip')
-            response['Content-Disposition'] = 'attachment; filename=myfile.zip'
+            response['Content-Disposition'] = 'attachment; filename=alerts.zip'
+            from django import db
+            db.reset_queries()
+            response['Cache-Control'] = 'no-cache'
             return response
 
 
