@@ -205,7 +205,7 @@ def alerts(request):
             start = range_form.cleaned_data['startdate']
             end = range_form.cleaned_data['enddate']
 
-            data = list(AlertsExport.objects.filter(date__range=(start, end)).values())
+            data = AlertsExport.objects.filter(date__range=(start, end)).values()
             #save some memory
             from django import db
             db.reset_queries()
