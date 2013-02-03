@@ -26,6 +26,8 @@ from ureport.views.utils.paginator import UreportPaginator
 from django.db import transaction
 from contact.models import Flag, MessageFlag
 from django.db.models import Q
+from ureport.settings import UREPORT_ROOT
+import os,sys
 
 
 
@@ -204,14 +206,18 @@ def alerts(request):
 
             start = range_form.cleaned_data['startdate']
             end = range_form.cleaned_data['enddate']
+            from django.core.servers.basehttp import FileWrapper
 
             data = AlertsExport.objects.filter(date__range=(start, end)).values()
-            #save some memory
-            from django import db
-            db.reset_queries()
-            res=ExcelResponse(data=data)
-            res['Cache-Control'] = 'no-cache'
-            return res
+            excel_file_path =\
+            os.path.join(os.path.join(os.path.join(UREPORT_ROOT,
+                'static'), 'spreadsheets'),
+                'alerts.zip')
+            ExcelResponse(data, output_name=excel_file_path,
+                write_to_file=True)
+            response = HttpResponse(FileWrapper(open(excel_file_path)), content_type='application/zip')
+            response['Content-Disposition'] = 'attachment; filename=myfile.zip'
+            return response
 
 
     if request.GET.get('search',None):
