@@ -107,6 +107,7 @@ def view_poll(request,pk):
 @permission_required('poll.can_poll')
 @login_required
 def new_poll(req):
+
     if req.method == 'POST':
         form = NewPollForm(req.POST)
         groups_form=GroupsFilter(req.POST)
@@ -116,7 +117,7 @@ def new_poll(req):
             question = form.cleaned_data['question_en']
             default_response = form.cleaned_data['default_response_en']
             districts = form.cleaned_data['districts']
-            excluded_groups=groups_form.cleaned_data['groups']
+            excluded_groups=groups_form.cleaned_data['group_list']
             if hasattr(Contact, 'groups'):
                 groups = form.cleaned_data['groups']
 

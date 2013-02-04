@@ -707,6 +707,6 @@ class TemplateMessage(ActionForm):
 
 
 class GroupsFilter(forms.Form):
-    groups = forms.ModelMultipleChoiceField(queryset=
+    group_list = forms.ModelMultipleChoiceField(queryset=
     Group.objects.order_by('name'), required=False)
 
