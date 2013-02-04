@@ -207,16 +207,16 @@ def alerts(request):
             start = range_form.cleaned_data['startdate']
             end = range_form.cleaned_data['enddate']
             from django.core.servers.basehttp import FileWrapper
-            cols=['replied', 'rating', 'direction', 'name', 'district', 'mobile', 'date', 'message', 'id', 'forwarded']
-            data = chain(cols,AlertsExport.objects.filter(date__range=(start, end)).values_list(*cols))
+            cols=["replied", "rating", "direction", "name", "district", "mobile", "date", "message", "id", "forwarded"]
+            data = chain([cols],AlertsExport.objects.filter(date__range=(start, end)).values_list(*cols))
             excel_file_path =\
             os.path.join(os.path.join(os.path.join(UREPORT_ROOT,
                 'static'), 'spreadsheets'),
-                'alerts.xls')
+                'alerts.zip')
             ExcelResponse(data, output_name=excel_file_path,
                 write_to_file=True)
-            response = HttpResponse(FileWrapper(open(excel_file_path)), content_type='application/vnd.ms-excel')
-            response['Content-Disposition'] = 'attachment; filename=alerts.xls'
+            response = HttpResponse(FileWrapper(open(excel_file_path)), content_type='application/zip')
+            response['Content-Disposition'] = 'attachment; filename=alerts.zip'
             from django import db
             db.reset_queries()
             response['Cache-Control'] = 'no-cache'
