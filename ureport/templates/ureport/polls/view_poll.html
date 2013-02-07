@@ -186,6 +186,12 @@ click on question to edit
 
   {%endif%}
 
+<h3>Groups</h3>
+{% for group in groups %}
+<span style="border:1px solid #ccc;padding:3px;">{{group.name}}</span>
+
+{%endfor%}
+
 <form action="">
 {% csrf_token %}
 
