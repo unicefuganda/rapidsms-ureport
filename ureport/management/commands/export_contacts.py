@@ -22,7 +22,7 @@ class Command(BaseCommand):
             excel_file_path = \
                 os.path.join(os.path.join(os.path.join(UREPORT_ROOT,
                              'static'), 'spreadsheets'),
-                             'ureporters.zip')
+                             'ureporters.xlsx')
             export_data_list = []
 
             # messages=Message.objects.select_related(depth=1)
@@ -182,7 +182,7 @@ class Command(BaseCommand):
                 excel_file_path = \
                     os.path.join(os.path.join(os.path.join(UREPORT_ROOT,
                                  'static'), 'spreadsheets'),
-                                 'poll_%d.xls' % poll.pk)
+                                 'poll_%d.xlsx' % poll.pk)
                 for response in responses:
 
                     response_export_data = SortedDict()
