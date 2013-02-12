@@ -2,13 +2,13 @@
 
 wget -O /etc/apt/sources.list.d/newrelic.list http://download.newrelic.com/debian/newrelic.list
 
-apt-key adv --keyserver hkp://subkeys.pgp.net --recv-keys 548C16BF
+apt-key adv --keyserver hkp://subkeys.pgp.net --recv-key:s 548C16BF
 
 apt-get update
 
 apt-get install -y newrelic-sysmond
 
-nrsysmond-config --set license_key=e7c93c5753132a22f60ab3e67442830e02398476
+nrsysmond-config --set license_key=$NEW_RELIC_LICENSE_KEY
 
 /etc/init.d/newrelic-sysmond start
 
