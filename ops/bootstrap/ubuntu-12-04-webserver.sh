@@ -2,7 +2,7 @@
 
 wget -O /etc/apt/sources.list.d/newrelic.list http://download.newrelic.com/debian/newrelic.list
 
-apt-key adv --keyserver hkp://subkeys.pgp.net --recv-key:s 548C16BF
+apt-key adv --keyserver hkp://subkeys.pgp.net --recv-keys 548C16BF
 
 apt-get update
 
