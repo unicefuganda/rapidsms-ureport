@@ -156,7 +156,6 @@ def poll_messages(request):
     )
 
 
-@transaction.autocommit
 @login_required
 def quit_messages(request):
     filter_forms = [FreeSearchTextForm, DistictFilterMessageForm]
@@ -187,7 +186,6 @@ def quit_messages(request):
     )
 
 
-@transaction.autocommit
 @login_required
 def mass_messages(request):
     columns = [('Message', True, 'text', TupleSorter(0)), ('Time',
@@ -216,6 +214,7 @@ def mass_messages(request):
 
 
 @login_required
+@transaction.commit_on_success
 def send_message(request, template='ureport/partials/forward.html'):
     if not request.method == 'POST':
         send_message_form = SendMessageForm()
@@ -277,14 +276,13 @@ def send_message(request, template='ureport/partials/forward.html'):
 
 
 @login_required
-@transaction.autocommit
 def flagged_messages(request):
     all_flags = Flag.objects.all()
     if request.GET.get('export', None):
         flaggedmessages = MessageFlag.objects.exclude(flag=None)
-        data=flaggedmessages.values_list('message__text','message__connection__identity','flag__name','message__date','message__connection__contact__name','message__connection__contact__reporting_location__name')
-        data.insert(0,['Message','Mobile Number','Flag','Date','Name','District'])
-        return ExcelResponse(data=data)
+        data=flaggedmessages.values_list('message__text','message__connection__identity','flag__name','message__date','message__connection__contact__name','message__connection__contact__reporting_location__name').iterator()
+        headers=['Message','Mobile Number','Flag','Date','Name','District']
+        return ExcelResponse(data=data,headers=headers)
     return generic(
         request,
         model=MessageFlag,
@@ -307,7 +305,6 @@ def flagged_messages(request):
 
 
 @login_required
-@transaction.autocommit
 def view_flagged_with(request, pk):
     flag = get_object_or_404(Flag, pk=pk)
     messages = flag.get_messages()
@@ -333,6 +330,7 @@ def view_flagged_with(request, pk):
 
 
 @login_required
+@transaction.commit_on_success
 def create_flags(request, pk=None):
     all_flags = Flag.objects.all()
     flag = Flag()
@@ -357,6 +355,7 @@ def create_flags(request, pk=None):
 
 
 @login_required
+@transaction.commit_on_success
 def delete_flag(request, flag_pk):
     flag = get_object_or_404(Flag, pk=flag_pk)
     if flag:
@@ -387,6 +386,7 @@ def comfirm_message_sending(request,key):
     messages.update(status="Q")
     return HttpResponse(status=200)
 
+@transaction.commit_on_success
 def comfirmmessages(request,key):
     messages=Message.objects.filter(details__attribute__name=key).order_by('-date')
     partial_row = 'ureport/partials/messages/message_row.html'
