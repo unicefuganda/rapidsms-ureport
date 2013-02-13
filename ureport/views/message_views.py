@@ -309,8 +309,9 @@ def view_flagged_with(request, pk):
     flag = get_object_or_404(Flag, pk=pk)
     messages = flag.get_messages()
     if request.GET.get('export', None):
-        export_data=messages.values_list('text','connection__identity','connection__contact__name','connection__contact__reporting_location__name')
-        return ExcelResponse(data=export_data)
+        export_data=messages.values_list('text','connection__identity','connection__contact__name','date','connection__contact__reporting_location__name')
+        headers=['Message','Mobile Number','Name','Date','District']
+        return ExcelResponse(data=export_data,headers=headers)
     return generic(
         request,
         model=Message,
