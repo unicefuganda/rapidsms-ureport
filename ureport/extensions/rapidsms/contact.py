@@ -1,8 +1,5 @@
 from django.db import models
 
-from rapidsms.models import ContactBase
-from rapidsms.contrib.locations.models import Location
-
 class ActivatedcContact(models.Model):
     """
     This extension for Contacts allows developers to tie a Contact to
