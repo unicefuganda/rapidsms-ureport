@@ -75,7 +75,7 @@ def autoreg(**kwargs):
 
             for g in re.findall(r'\w+', group_to_match):
                 if g:
-                    group = find_closest_match(str(g), Group.objects.exclude(name__in=["MP","Acode","delegate","CAO"]))
+                    group = find_closest_match(str(g), Group.objects.exclude(name__in=["MP","CODES Lugazi","delegate","CAO"]))
                     if group:
                         contact.groups.add(group)
                         break
