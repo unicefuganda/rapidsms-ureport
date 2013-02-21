@@ -197,7 +197,7 @@ def signup(request):
             if signup_form.cleaned_data['village']:
                 connection.contact.village =\
                 find_closest_match(signup_form.cleaned_data['village'],
-                    Location.objects)
+                    Location.objects.filter(type="village"))
             if signup_form.cleaned_data['age']:
                 contact.birthdate = datetime.datetime.now()\
                 - datetime.timedelta(days=365
