@@ -314,7 +314,7 @@ class SignupForm(forms.Form):
     village = forms.CharField(label='Village', required=False)
     mobile = forms.CharField(label='Mobile Number', max_length=13,
                              required=True)
-    gender = forms.ChoiceField(choices=(('Male', 'Male'), ('Female',
+    gender = forms.ChoiceField(choices=(('M', 'Male'), ('F',
                                'Female')), label='Sex')
     group = forms.CharField(max_length=100, required=False,
                             label='How did you hear about U-report?')

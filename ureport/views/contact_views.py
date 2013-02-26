@@ -171,6 +171,7 @@ def editReporter(request, reporter_pk):
                'reporter': reporter},
             context_instance=RequestContext(request))
 
+
 def signup(request):
     status_message = None
     if request.method == 'POST':
@@ -187,16 +188,18 @@ def signup(request):
             connection.contact =\
             Contact.objects.create(name=signup_form.cleaned_data['firstname'
                                         ] + ' ' + signup_form.cleaned_data['lastname'])
-            connection.contact.reporting_location =\
+            contact=connection.contact
+            contact.reporting_location =\
             signup_form.cleaned_data['district']
-            connection.contact.gender =\
+
+            contact.gender =\
             signup_form.cleaned_data['gender']
             if signup_form.cleaned_data['village']:
                 connection.contact.village =\
                 find_closest_match(signup_form.cleaned_data['village'],
-                    Location.objects)
+                    Location.objects.filter(type="village"))
             if signup_form.cleaned_data['age']:
-                connection.contact.birthdate = datetime.datetime.now()\
+                contact.birthdate = datetime.datetime.now()\
                 - datetime.timedelta(days=365
                 * int(signup_form.cleaned_data['age']))
 
@@ -206,7 +209,7 @@ def signup(request):
                 if Group.objects.filter(name='Other uReporters').count():
                     default_group =\
                     Group.objects.get(name='Other uReporters')
-                    connection.contact.groups.add(default_group)
+                    contact.groups.add(default_group)
                 if group_to_match:
                     for g in re.findall(r'\w+', group_to_match):
                         if g:
@@ -215,12 +218,11 @@ def signup(request):
                             if group:
                                 connection.contact.groups.add(group)
                                 break
-
+            contact.save()
             connection.save()
             status_message = 'You have successfully signed up :)'
             if conn_created:
-                Message.objects.create(date=datetime.datetime.now(),
-                    connection=connection, direction='O'
+                Message.objects.create(connection=connection, direction='O'
                     , status='Q',
                     text='CONGRATULATIONS!!! You are now a registered member of Ureport! With Ureport, you can make a real difference!  Speak Up and Be Heard! from UNICEF'
                 )
