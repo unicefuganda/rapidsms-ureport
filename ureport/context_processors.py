@@ -5,7 +5,7 @@ and returns a dictionary to add to the context.
 """
 from rapidsms.models import Contact
 from unregister.models import Blacklist
-from poll.models import Poll
+from ureport.models.models import UPoll as Poll
 from django.conf import settings
 from ureport.models import QuoteBox
 

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from contact.models import MessageFlag
 from rapidsms.models import Contact
-from poll.models import Poll,ResponseCategory
+from poll.models import ResponseCategory
+from ureport.models.models import UPoll as Poll
 from script.models import ScriptStep
 from django.db.models import Count
 from .models import Ureporter,UreportContact

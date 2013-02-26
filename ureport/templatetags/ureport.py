@@ -1,4 +1,5 @@
 from django import template
+from django.core.exceptions import ObjectDoesNotExist
 
 from django.template import  Node, resolve_variable,Variable
 
@@ -62,3 +63,12 @@ def add_get_parameter(parser, token):
     return AddGetParameter(values)
 
 register.tag('set', set_var)
+
+@register.filter
+def viewable(poll):
+    try:
+        if poll.get_attr('viewable') == False:
+            return False
+        return True
+    except ObjectDoesNotExist:
+        return True

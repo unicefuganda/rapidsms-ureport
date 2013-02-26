@@ -8,7 +8,7 @@ from script.models import ScriptSession
 from rapidsms_httprouter.models import Message
 from unregister.models import Blacklist
 from django.db.models.signals import post_save
-from ussd.models import  ussd_complete
+from ussd.models import ussd_complete
 import datetime
 import re
 from script.signals import script_progress_was_completed
@@ -20,8 +20,10 @@ class IgnoredTags(models.Model):
 
     def __unicode__(self):
         return '%s' % self.name
+
     class Meta:
         app_label = 'ureport'
+
 
 class QuoteBox(models.Model):
     question = models.TextField()
@@ -33,6 +35,7 @@ class QuoteBox(models.Model):
         get_latest_by = 'creation_date'
         app_label = 'ureport'
 
+
 class TopResponses(models.Model):
     poll = models.ForeignKey(Poll, related_name="top_responses")
     quote = models.TextField()
@@ -41,26 +44,30 @@ class TopResponses(models.Model):
     class Meta:
         app_label = 'ureport'
 
+
 class EquatelLocation(models.Model):
-    serial=models.CharField(max_length=50)
-    segment=models.CharField(max_length=50,null=True)
-    location=models.ForeignKey(Location)
-    name=models.CharField(max_length=50,null=True)
+    serial = models.CharField(max_length=50)
+    segment = models.CharField(max_length=50, null=True)
+    location = models.ForeignKey(Location)
+    name = models.CharField(max_length=50, null=True)
 
     class Meta:
         app_label = 'ureport'
 
+
 class Permit(models.Model):
     user = models.ForeignKey(User)
-    allowed=models.CharField(max_length=200)
-    date=models.DateField(auto_now=True)
+    allowed = models.CharField(max_length=200)
+    date = models.DateField(auto_now=True)
+
     def get_patterns(self):
-        pats=[]
-        ropes=self.allowed.split(",")
+        pats = []
+        ropes = self.allowed.split(",")
         for rop in ropes:
-            pattern=re.compile(rop+r"(.*)")
+            pattern = re.compile(rop + r"(.*)")
             pats.append(pattern)
         return pats
+
     def __unicode__(self):
         return self.user.username
 
@@ -70,11 +77,13 @@ class Permit(models.Model):
 
 class Ureporter(Contact):
     from_cache = False
+
     def age(self):
         if self.birthdate:
             return (datetime.datetime.now() - self.birthdate).days / 365
         else:
             return ""
+
     def is_active(self):
         return not Blacklist.objects.filter(connection=self.default_connection)
 
@@ -90,23 +99,24 @@ class Ureporter(Contact):
                 return None
 
     def quit_date(self):
-        quit_msg = Message.objects.filter(connection__contact=self,application="unregister")
+        quit_msg = Message.objects.filter(connection__contact=self, application="unregister")
         if quit_msg:
             return quit_msg.latest('date').date
+
     def messages_count(self):
-        return Message.objects.filter(connection__contact=self,direction="I").count()
+        return Message.objects.filter(connection__contact=self, direction="I").count()
 
     class Meta:
         permissions = [
-                ("view_numbers", "can view private info"),
-                ("restricted_access", "can view only particular pages"),
-                ("can_filter", "can view filters"),
-                ("can_action", "can view actions"),
-                ("view_number", "can view numbers"),
-                ("can_export", "can view exports"),
-                ("can_forward", "can forward messages"),
+            ("view_numbers", "can view private info"),
+            ("restricted_access", "can view only particular pages"),
+            ("can_filter", "can view filters"),
+            ("can_action", "can view actions"),
+            ("view_number", "can view numbers"),
+            ("can_export", "can view exports"),
+            ("can_forward", "can forward messages"),
 
-            ]
+        ]
 
         proxy = True
         app_label = 'ureport'
@@ -121,14 +131,15 @@ class MessageAttribute(models.Model):
 
     Possible attributes include things like number of replies,severity,department    etc
     '''
-    name = models.CharField(max_length=300,db_index=True)
-    description = models.TextField(blank=True,null=True)
+    name = models.CharField(max_length=300, db_index=True)
+    description = models.TextField(blank=True, null=True)
 
     def __unicode__(self):
         return u'%s' % self.name
 
     class Meta:
         app_label = 'ureport'
+
 
 class MessageDetail(models.Model):
     '''
@@ -149,15 +160,16 @@ class MessageDetail(models.Model):
     class Meta:
         app_label = 'ureport'
 
+
 class Settings(models.Model):
     """
     configurable  sitewide settings. Its better to store in db table
 
     """
-    attribute=models.CharField(max_length=50,null=False)
-    value=models.CharField(default='',max_length=50,null=True)
-    description= models.TextField(null=True)
-    user=models.ForeignKey(User,null=True,blank=True)
+    attribute = models.CharField(max_length=50, null=False)
+    value = models.CharField(default='', max_length=50, null=True)
+    description = models.TextField(null=True)
+    user = models.ForeignKey(User, null=True, blank=True)
 
 
     class Meta:
@@ -165,20 +177,77 @@ class Settings(models.Model):
 
 
 class AutoregGroupRules(models.Model):
-    group=models.ForeignKey(Group)
-    values=models.TextField(default=None)
+    group = models.ForeignKey(Group)
+    values = models.TextField(default=None)
+
     class Meta:
         app_label = 'ureport'
 
 
-
-
-
-
-from .litseners import  autoreg,check_conn,update_latest_poll,ussd_poll,add_to_poll
+from .litseners import autoreg, check_conn, update_latest_poll, ussd_poll, add_to_poll
 
 script_progress_was_completed.connect(autoreg, weak=False)
 post_save.connect(check_conn, sender=Connection, weak=False)
 post_save.connect(update_latest_poll, sender=Poll, weak=False)
 ussd_complete.connect(ussd_poll, weak=False)
 #post_save.connect(add_to_poll, sender=Blacklist, weak=False)
+
+
+class UPoll(Poll):
+    bool_dict = {'false': False, 'true': True}
+
+    def set_attr(self, key, value):
+        p = PollAttribute.objects.get_or_create(poll=self, key=key)[0]
+        p.value = value
+        p.save()
+        return self.get_attr(key)
+
+    def get_attr(self, key):
+        try:
+            p = PollAttribute.objects.get(poll=self, key=key)
+            if p.key_type == 'bool':
+                return self.bool_dict[p.value.lower()]
+            elif p.key_type == 'int':
+                return int(p.value)
+            else:
+                return p.value
+        except PollAttribute.DoesNotExist:
+            attributes = PollAttribute.objects.filter(key=key)
+            if attributes:
+                key_type = attributes[0].key_type
+                if key_type == 'bool':
+                    return True
+                elif key_type == 'int':
+                    return 1
+                else:
+                    return ""
+            else:
+                raise models.ObjectDoesNotExist("Poll object does not have attribute %s" % key)
+
+    class Meta:
+        proxy = True
+
+
+class PollAttribute(models.Model):
+    KEY_TYPES = (('bool', 'bool'), ('char', 'char'), ('int', 'int'), ('obj', 'obj'))
+    key = models.CharField(max_length=100)
+    key_type = models.CharField(max_length=100, choices=KEY_TYPES)
+    value = models.CharField(max_length=200)
+    poll = models.ForeignKey(Poll)
+
+    class Meta:
+        app_label = 'ureport'
+        unique_together = ('poll', 'key')
+
+    def save(self, force_insert=False, force_update=False, using=None):
+        if self.value.lower() in ['false', 'true']:
+            self.key_type = 'bool'
+        else:
+            try:
+                int(self.value)
+                self.key_type = 'int'
+            except ValueError:
+                self.key_type = 'char'
+
+        super(PollAttribute, self).save()
+

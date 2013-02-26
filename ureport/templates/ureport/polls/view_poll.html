@@ -80,6 +80,12 @@
         {%block top_js %}
 
         <script type="text/javascript">
+            function loadViewable(href){
+
+
+                    $('#state_h').load(href);
+
+            }
 
             function bind_ruleform(){
                 $("#rule_form").bind('ajax:before',function (exhr, status, error) {
@@ -186,6 +192,16 @@ click on question to edit
 
   {%endif%}
 
+{% if not poll_is_viewable %}
+    <span id="state_h" >
+<a href="javascript:void(0)" id="poll_v" class="btn" onclick="loadViewable('?viewable=True&poll=True')">Show On Home page</a>
+</span>
+ {% else %}
+    <span id="state_h" >
+<a href="javascript:void(0)" id="poll_v" class="btn" onclick="loadViewable('?unviewable=True&poll=True')">Don't Show on home page</a>
+</span>
+{% endif %}
+
 <h3>Groups</h3>
 {% for group in groups %}
 <span style="border:1px solid #ccc;padding:3px;">{{group.name}}</span>
@@ -217,7 +233,9 @@ click on question to edit
 </form>
 <br/>
 
+<script type="text/javascript">
 
+</script>
 
 <div  class="modal hide" id="category">
     <form method="post" id="category_form" action="./?category=true" data-remote=true>

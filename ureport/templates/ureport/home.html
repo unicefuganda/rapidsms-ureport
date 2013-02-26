@@ -21,9 +21,10 @@
 </div>
 <a name="poll_results"></a>
 <div class="poll_list">
+{% load ureport %}
 <ul>
     {% for p in polls %}
-    {% if p.start_date %}
+    {% if p.start_date and p|viewable %}
         <li>
             <span class="poll-date">{{ p.start_date|date:"d/M/Y" }}</span> :
             {{ p.question }}
