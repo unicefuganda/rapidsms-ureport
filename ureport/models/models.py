@@ -177,8 +177,42 @@ class Settings(models.Model):
 
 
 class AutoregGroupRules(models.Model):
-    group = models.ForeignKey(Group)
-    values = models.TextField(default=None)
+
+    contains_all_of=1
+    contains_one_of=2
+    group=models.ForeignKey(Group,related_name="rules")
+    rule=models.IntegerField(max_length=10,choices=((contains_all_of,"contains_all_of"),(contains_one_of,"contains_one_of"),),null=True)
+    values=models.TextField(default=None,null=True)
+    closed=models.NullBooleanField(default=False)    
+    rule_regex=models.CharField(max_length=700,null=True)
+
+    def get_regex(self):
+        words=self.values.split(",")
+
+        if self.rule == 1:
+            all_template=r"(?=.*\b%s\b)"
+            w_regex=r""
+            for word in words:
+                w_regex=w_regex+all_template%re.escape(word)
+            return w_regex
+
+        elif self.rule == 2:
+            one_template=r"(\b%s\b)"
+            w_regex=r""
+            for word in words:
+                if len(w_regex):
+                    w_regex=w_regex+r"|"+one_template%re.escape(word)
+                else:
+                    w_regex=w_regex+one_template%re.escape(word)
+
+            return w_regex
+    def save(self,*args,**kwargs):
+        if self.values:
+            self.rule_regex = self.get_regex()
+        super(AutoregGroupRules,self).save()
+
+    
+
 
     class Meta:
         app_label = 'ureport'
@@ -234,6 +268,7 @@ class PollAttribute(models.Model):
     key_type = models.CharField(max_length=100, choices=KEY_TYPES)
     value = models.CharField(max_length=200)
     poll = models.ForeignKey(Poll)
+
 
     class Meta:
         app_label = 'ureport'

@@ -7,6 +7,28 @@ from ureport.models import AutoregGroupRules
 from ureport.forms import GroupRules
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
+from generic.sorters import SimpleSorter
+from generic.views import generic
+
+
+
+
+def view_autoreg_rules(request):
+    columns = [('Group', True, 'group__name', SimpleSorter(),),('Rule', True, 'rule', SimpleSorter(),),('Words', True, 'words', SimpleSorter(),)]
+    qs=AutoregGroupRules.objects.all()
+    return generic(
+        request,
+        model=AutoregGroupRules,
+        queryset=qs,   
+        objects_per_page=20,
+        results_title='Group Rules',
+        selectable=False,
+        partial_row='ureport/partials/group_row.html',
+        base_template='ureport/group_base.html',
+        columns=columns,
+        
+    )
+
 
 @login_required
 def set_autoreg_rules(request):
