@@ -537,6 +537,7 @@ class GroupRules(forms.ModelForm):
 
     class Meta:
         model=AutoregGroupRules
+        exclude=('rule_regex',)
 
 
 class DownloadForm(forms.Form):

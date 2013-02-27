@@ -37,6 +37,7 @@ def view_poll(request, pk):
     category = None
     if request.GET.get('poll'):
         if request.GET.get('start'):
+            poll=Poll.objects.get(pk=pk)
             start_poll.delay(poll)
             res = """ <a href="?stop=True&poll=True" data-remote=true  id="poll_action" class="btn">Close Poll</a> """
             return HttpResponse(res)
