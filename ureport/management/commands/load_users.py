@@ -39,7 +39,6 @@ class Command(BaseCommand):
 
                     if not created:
                         contact = connection.contact
-                        contact.name = name
                         if not contact:
                             contact = Contact.objects.create(name=name)
                     else:
@@ -51,8 +50,6 @@ class Command(BaseCommand):
                     contact.occupation = "%s/%s" % (org.strip().replace("\"", '').replace('\'', "").replace("  ", " "),
                                                     designation.strip().replace("\"", '').replace('\'', "").replace(
                                                         "  ", " "))
-
-                    contact.save()
 
                     connection.contact = contact
                     connection.save()
