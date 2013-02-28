@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from django.db.models import Q
 from poll.models import Poll
 from rapidsms.models import Contact, Connection
 from django.contrib.auth.models import User, Group
@@ -177,41 +178,41 @@ class Settings(models.Model):
 
 
 class AutoregGroupRules(models.Model):
-
-    contains_all_of=1
-    contains_one_of=2
-    group=models.ForeignKey(Group,related_name="rules")
-    rule=models.IntegerField(max_length=10,choices=((contains_all_of,"contains_all_of"),(contains_one_of,"contains_one_of"),),null=True)
-    values=models.TextField(default=None,null=True)
-    closed=models.NullBooleanField(default=False)    
-    rule_regex=models.CharField(max_length=700,null=True)
+    contains_all_of = 1
+    contains_one_of = 2
+    group = models.ForeignKey(Group, related_name="rules")
+    rule = models.IntegerField(max_length=10,
+                               choices=((contains_all_of, "contains_all_of"), (contains_one_of, "contains_one_of"),),
+                               null=True)
+    values = models.TextField(default=None, null=True)
+    closed = models.NullBooleanField(default=False)
+    rule_regex = models.CharField(max_length=700, null=True)
 
     def get_regex(self):
-        words=self.values.split(",")
+        words = self.values.split(",")
 
         if self.rule == 1:
-            all_template=r"(?=.*\b%s\b)"
-            w_regex=r""
+            all_template = r"(?=.*\b%s\b)"
+            w_regex = r""
             for word in words:
-                w_regex=w_regex+all_template%re.escape(word)
+                w_regex = w_regex + all_template % re.escape(word)
             return w_regex
 
         elif self.rule == 2:
-            one_template=r"(\b%s\b)"
-            w_regex=r""
+            one_template = r"(\b%s\b)"
+            w_regex = r""
             for word in words:
                 if len(w_regex):
-                    w_regex=w_regex+r"|"+one_template%re.escape(word)
+                    w_regex = w_regex + r"|" + one_template % re.escape(word)
                 else:
-                    w_regex=w_regex+one_template%re.escape(word)
+                    w_regex = w_regex + one_template % re.escape(word)
 
             return w_regex
-    def save(self,*args,**kwargs):
+
+    def save(self, *args, **kwargs):
         if self.values:
             self.rule_regex = self.get_regex()
-        super(AutoregGroupRules,self).save()
-
-    
+        super(AutoregGroupRules, self).save()
 
 
     class Meta:
@@ -268,21 +269,37 @@ class PollAttribute(models.Model):
     key_type = models.CharField(max_length=100, choices=KEY_TYPES)
     value = models.CharField(max_length=200)
     poll = models.ForeignKey(Poll)
+    key_default = models.CharField(max_length=100, null=True)
 
 
     class Meta:
         app_label = 'ureport'
-        unique_together = ('poll', 'key')
+        unique_together = (('poll', 'key'), ('key', 'key_default'))
 
-    def save(self, force_insert=False, force_update=False, using=None):
-        if self.value.lower() in ['false', 'true']:
-            self.key_type = 'bool'
-        else:
-            try:
-                int(self.value)
-                self.key_type = 'int'
-            except ValueError:
-                self.key_type = 'char'
+    def set_default(self, default):
+        self.key_default = str(default).lower()
 
-        super(PollAttribute, self).save()
+    @classmethod
+    def _get_default_for_key(key):
+        attr = PollAttribute.objects.filter(key=key).exclude(key_default=None)
+        if attr.exists():
+            return attr[0].key_default
+
+        def get_default(self):
+            if self.key_type == 'bool':
+                return True if self.key_default.lower() == 'true' else False
+            elif self.key_type == 'int':
+                return int(self.key_default)
+
+        def save(self, force_insert=False, force_update=False, using=None):
+            if self.value.lower() in ['false', 'true']:
+                self.key_type = 'bool'
+            else:
+                try:
+                    int(self.value)
+                    self.key_type = 'int'
+                except ValueError:
+                    self.key_type = 'char'
+
+            super(PollAttribute, self).save()
 
