@@ -177,41 +177,41 @@ class Settings(models.Model):
 
 
 class AutoregGroupRules(models.Model):
-
-    contains_all_of=1
-    contains_one_of=2
-    group=models.ForeignKey(Group,related_name="rules")
-    rule=models.IntegerField(max_length=10,choices=((contains_all_of,"contains_all_of"),(contains_one_of,"contains_one_of"),),null=True)
-    values=models.TextField(default=None,null=True)
-    closed=models.NullBooleanField(default=False)    
-    rule_regex=models.CharField(max_length=700,null=True)
+    contains_all_of = 1
+    contains_one_of = 2
+    group = models.ForeignKey(Group, related_name="rules")
+    rule = models.IntegerField(max_length=10,
+                               choices=((contains_all_of, "contains_all_of"), (contains_one_of, "contains_one_of"),),
+                               null=True)
+    values = models.TextField(default=None, null=True)
+    closed = models.NullBooleanField(default=False)
+    rule_regex = models.CharField(max_length=700, null=True)
 
     def get_regex(self):
-        words=self.values.split(",")
+        words = self.values.split(",")
 
         if self.rule == 1:
-            all_template=r"(?=.*\b%s\b)"
-            w_regex=r""
+            all_template = r"(?=.*\b%s\b)"
+            w_regex = r""
             for word in words:
-                w_regex=w_regex+all_template%re.escape(word)
+                w_regex = w_regex + all_template % re.escape(word)
             return w_regex
 
         elif self.rule == 2:
-            one_template=r"(\b%s\b)"
-            w_regex=r""
+            one_template = r"(\b%s\b)"
+            w_regex = r""
             for word in words:
                 if len(w_regex):
-                    w_regex=w_regex+r"|"+one_template%re.escape(word)
+                    w_regex = w_regex + r"|" + one_template % re.escape(word)
                 else:
-                    w_regex=w_regex+one_template%re.escape(word)
+                    w_regex = w_regex + one_template % re.escape(word)
 
             return w_regex
-    def save(self,*args,**kwargs):
+
+    def save(self, *args, **kwargs):
         if self.values:
             self.rule_regex = self.get_regex()
-        super(AutoregGroupRules,self).save()
-
-    
+        super(AutoregGroupRules, self).save()
 
 
     class Meta:
@@ -230,36 +230,51 @@ ussd_complete.connect(ussd_poll, weak=False)
 class UPoll(Poll):
     bool_dict = {'false': False, 'true': True}
 
-    def set_attr(self, key, value):
-        p = PollAttribute.objects.get_or_create(poll=self, key=key)[0]
-        p.value = value
-        p.save()
+    def set_attr(self, key, value, default=None):
+        p = PollAttribute.objects.filter(poll=self, key=key)
+        if p.exists():
+            p = p[0]
+            p.value = value
+            p.save()
+        else:
+            PollAttribute.objects.create_attr(key, value, super(UPoll, self), default=default)
         return self.get_attr(key)
+
+    @classmethod
+    def set_default_for_key(cls, key, default):
+        attr = PollAttribute.objects.filter(key=key)
+        if attr.exists():
+            attr = attr[0]
+            attr.set_default(default)
+        else:
+            raise models.ObjectDoesNotExist("Attribute %s does not exist for any poll" % key)
 
     def get_attr(self, key):
         try:
             p = PollAttribute.objects.get(poll=self, key=key)
-            if p.key_type == 'bool':
-                return self.bool_dict[p.value.lower()]
-            elif p.key_type == 'int':
-                return int(p.value)
-            else:
-                return p.value
+            return p.get_attr()
         except PollAttribute.DoesNotExist:
             attributes = PollAttribute.objects.filter(key=key)
             if attributes:
-                key_type = attributes[0].key_type
-                if key_type == 'bool':
-                    return True
-                elif key_type == 'int':
-                    return 1
-                else:
-                    return ""
+                return attributes[0].get_default()
             else:
                 raise models.ObjectDoesNotExist("Poll object does not have attribute %s" % key)
 
     class Meta:
         proxy = True
+
+
+class PollAttributeManager(models.Manager):
+    def create_attr(self, key, value, poll, default=None):
+        attr = PollAttribute()
+        attr.key = key
+        attr.value = value
+        attr.poll = poll
+        if default is not None:
+            attr.set_default(default)
+        attr.save()
+        return attr
+
 
 
 class PollAttribute(models.Model):
@@ -268,14 +283,37 @@ class PollAttribute(models.Model):
     key_type = models.CharField(max_length=100, choices=KEY_TYPES)
     value = models.CharField(max_length=200)
     poll = models.ForeignKey(Poll)
+    key_default = models.CharField(max_length=100, null=True, default=None)
+    objects = PollAttributeManager()
 
 
     class Meta:
         app_label = 'ureport'
-        unique_together = ('poll', 'key')
+        unique_together = (('poll', 'key'), ('key', 'key_default'))
+
+    def set_default(self, default):
+        attr = PollAttribute.objects.filter(key=self.key).exclude(key_default=None)
+        if attr.exists():
+            attr = attr[0]
+        else:
+            attr = self
+        attr.key_default = str(default).lower()
+        attr.save()
+
+    def get_attr(self):
+        return self._make_native(self.value)
+
+
+    def get_default(self):
+        attr = PollAttribute.objects.filter(key=self.key).exclude(key_default=None)
+        if attr.exists():
+            default = attr[0].key_default
+            return self._make_native(default)
+        return None
 
     def save(self, force_insert=False, force_update=False, using=None):
-        if self.value.lower() in ['false', 'true']:
+        self.value = str(self.value).lower()
+        if self.value in ['false', 'true']:
             self.key_type = 'bool'
         else:
             try:
@@ -286,3 +324,10 @@ class PollAttribute(models.Model):
 
         super(PollAttribute, self).save()
 
+    def _make_native(self, default):
+        if self.key_type == 'bool':
+            return True if default.lower() == 'true' else False
+        elif self.key_type == 'int':
+            return int(default)
+        else:
+            return default
