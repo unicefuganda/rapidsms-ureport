@@ -237,7 +237,7 @@ class UPoll(Poll):
             p.value = value
             p.save()
         else:
-            PollAttribute.objects.create_attr(key, value, super(UPoll, self), default=default)
+            PollAttribute.objects.create_attr(key, value, self, default=default)
         return self.get_attr(key)
 
     @classmethod

@@ -7,15 +7,35 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+
+        # Adding model 'PollAttribute'
+        db.create_table('ureport_pollattribute', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('key', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('key_type', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('value', self.gf('django.db.models.fields.CharField')(max_length=200)),
+            ('poll', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['poll.Poll'])),
+            ('key_default', self.gf('django.db.models.fields.CharField')(default=None, max_length=100, null=True)),
+        ))
+        db.send_create_signal('ureport', ['PollAttribute'])
+
         # Adding unique constraint on 'PollAttribute', fields ['poll', 'key']
         db.create_unique('ureport_pollattribute', ['poll_id', 'key'])
+
+        # Adding unique constraint on 'PollAttribute', fields ['key', 'key_default']
+        db.create_unique('ureport_pollattribute', ['key', 'key_default'])
 
 
     def backwards(self, orm):
         
+        # Removing unique constraint on 'PollAttribute', fields ['key', 'key_default']
+        db.delete_unique('ureport_pollattribute', ['key', 'key_default'])
+
         # Removing unique constraint on 'PollAttribute', fields ['poll', 'key']
         db.delete_unique('ureport_pollattribute', ['poll_id', 'key'])
+
+        # Deleting model 'PollAttribute'
+        db.delete_table('ureport_pollattribute')
 
 
     models = {
@@ -169,9 +189,12 @@ class Migration(SchemaMigration):
         },
         'ureport.autoreggrouprules': {
             'Meta': {'object_name': 'AutoregGroupRules'},
-            'group': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.Group']"}),
+            'closed': ('django.db.models.fields.NullBooleanField', [], {'default': 'False', 'null': 'True', 'blank': 'True'}),
+            'group': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'rules'", 'to': "orm['auth.Group']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'values': ('django.db.models.fields.TextField', [], {'default': 'None'})
+            'rule': ('django.db.models.fields.IntegerField', [], {'max_length': '10', 'null': 'True'}),
+            'rule_regex': ('django.db.models.fields.CharField', [], {'max_length': '700', 'null': 'True'}),
+            'values': ('django.db.models.fields.TextField', [], {'default': 'None', 'null': 'True'})
         },
         'ureport.equatellocation': {
             'Meta': {'object_name': 'EquatelLocation'},
@@ -209,9 +232,10 @@ class Migration(SchemaMigration):
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
         },
         'ureport.pollattribute': {
-            'Meta': {'unique_together': "(('poll', 'key'),)", 'object_name': 'PollAttribute'},
+            'Meta': {'unique_together': "(('poll', 'key'), ('key', 'key_default'))", 'object_name': 'PollAttribute'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'key': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'key_default': ('django.db.models.fields.CharField', [], {'default': 'None', 'max_length': '100', 'null': 'True'}),
             'key_type': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'poll': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['poll.Poll']"}),
             'value': ('django.db.models.fields.CharField', [], {'max_length': '200'})
