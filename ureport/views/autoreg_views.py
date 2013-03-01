@@ -50,8 +50,8 @@ def set_autoreg_rules(request,pk=None):
 
         group_form = GroupRules(request.POST,instance=gr)
         if group_form.is_valid():
-            group_form.save()
-            reprocess_groups.delay(g)
+            gf=group_form.save()
+            reprocess_groups.delay(gf.group)
     else:
         group_form = GroupRules(instance=gr)
     return render_to_response('ureport/partials/groups_form.html',
