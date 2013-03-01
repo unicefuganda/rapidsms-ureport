@@ -173,7 +173,7 @@ class Command(BaseCommand):
 
         # export the last 2 polls
 
-        polls = Poll.objects.order_by('-pk')
+        polls = Poll.objects.order_by('-pk')[0:10]
         print "doxing"
         for poll in polls:
             if poll.responses.exists():
