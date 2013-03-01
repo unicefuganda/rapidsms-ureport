@@ -116,6 +116,8 @@ urlpatterns = patterns('',
     url(r"remove_captured/$",remove_captured,name="remove captured"),
     url(r"sendmessage/$",send_message,name="send_message"),
     url(r"view_group_rules/$",view_autoreg_rules,name="view_group_rules"),
+
+    url(r"set_group_rules/(?P<pk>\d+)/$",set_autoreg_rules,name="set_group_rules"),
     url(r"set_group_rules/$",set_autoreg_rules,name="set_group_rules"),
 
     url(r"kannel_shaolin/$",kannel_status,name="kannel"),

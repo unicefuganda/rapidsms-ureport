@@ -37,24 +37,17 @@ def process_message(pk,ignore_result=True,**kwargs):
 
 
 @task
-def reprocess_groups(ignore_result=True):
+def reprocess_groups(group,ignore_result=True):
     try:
         scripts=Script.objects.filter(pk__in=['ureport_autoreg', 'ureport_autoreg_luo','ureport_autoreg2', 'ureport_autoreg_luo2'])
-        word_dict=dict(AutoregGroupRules.objects.exclude(values=None).values_list('group__name','values'))
-        for script in scripts:
-            responses=script.steps.get(order=1).poll.responses.all()
-            for response in responses:
-                txt=response.message.text.strip().lower()
-
-                matched=False
-
-                for group_pk, word_list in word_dict.items():
-                    for word in word_list.split(","):
-                        if word in txt.split():
-                            if response.contact and group not in response.contact.groups.all():
-                                response.contact.groups.add(Group.objects.get(pk=group_pk))
-                                matched=True
-                                break
+        ar=AutoregGroupRules.objects.get(group=group)
+        if ar.rule_regex:
+            regex = re.compile(ar.rule_regex, re.IGNORECASE)
+            for script in scripts:
+                responses=script.steps.get(order=1).poll.responses.all()
+                for response in responses:
+                    if regex.search(response.message.text):
+                        response.contact.groups.add(group)
     except:
         pass
 

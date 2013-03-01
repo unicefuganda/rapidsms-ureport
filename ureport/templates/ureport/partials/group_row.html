@@ -1,0 +1,26 @@
+<td>
+    {{object.group.name}}
+</td>
+
+        <td>
+            {%if object.rule == 1 %}
+
+            Contains All Of
+            {%else%}
+            Contains One Of
+
+            {%endif%}
+
+
+        </td>
+        <td>
+            {{object.values}}
+        </td>
+<td>
+    {{object.closed}}
+</td>
+
+        <td>
+            <a href="javascript:void(0)" onclick="$('#mesg_st').load('{% url set_group_rules object.pk%}');$('#mesg_st').show()" style="float:left" class="btn">Edit</a>
+
+        </td>

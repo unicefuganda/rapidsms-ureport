@@ -34,7 +34,7 @@
     </a>
     {% if request.path == "/mypolls/" %}
 <a href="{% url script-polls %}" style="float:right" class="">View AutoReg Polls</a>
-    <a href="javascript:void(0)" onclick="$('#mesg_st').load('{% url set_group_rules %}');$('#mesg_st').show()" style="float:right" class="">Add Autoreg Group Rules</a>
+    <a href="{% url view_group_rules %}"  style="float:right" class="">View Autoreg Group Rules</a>
 {% endif %}
 </div>
 {% endblock %}
