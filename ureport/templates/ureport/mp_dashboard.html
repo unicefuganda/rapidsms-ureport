@@ -124,8 +124,6 @@
             <tr>
                 <th>Text</th>
                 <th>Date</th>
-                <th>Name</th>
-                <th>Number</th>
                 <th>District</th>
                 <th>Group(s)</th>
             </tr>
@@ -135,8 +133,6 @@
                 <tr>
                     <td>{{ msg.text }}</td>
                     <td>{{ msg.date|date:"m/d/Y H:i:s" }}</td>
-                    <td>{{ msg.connection.contact.name }}</td>
-                    <td><a href="/messagehistory/{{ msg.connection.pk }}/">{{ msg.connection.identity }}</a></td>
                     <td>{{ msg.connection.contact.reporting_location }}</td>
                     <td><ul>
                         {% for gr in msg.connection.contact.groups.all %}
