@@ -6,18 +6,6 @@
     {{ object.message.text }}
     </span>
 </td>
-<td><span class="small">
-        {% if object.message.connection.contact %}
-            {{ object.message.connection.contact.name }} ({% endif %}{{ object.message.message.connection.identity }}{% if object.message.connection.contact %}){% endif %}
-    <ul>
-        <li>
-            <a href="/messagehistory/{{ object.message.connection.pk }}/">
-                Show history
-            </a>
-        </li>
-    </ul>
-    </span>
-</td>
 <td>
     <span class="small">
         {{ object.message.date|date:"m/d/Y H:i:s" }}

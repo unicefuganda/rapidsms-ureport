@@ -26,10 +26,8 @@ def ussd_manager(request):
         base_template='ureport/ussd_messages_base.html',
         results_title='Ussd Messages',
         columns=[('Message', True, 'text', SimpleSorter()),
-                 ('Sender Information', True,
-                 'connection__contact__name', SimpleSorter()), ('Date',
-                 True, 'date', SimpleSorter()), ('Type', True,
-                 'application', SimpleSorter())],
+                 ('Date', True, 'date', SimpleSorter()),
+                 ('Type', True, 'application', SimpleSorter())],
         sort_column='date',
         sort_ascending=False,
         )

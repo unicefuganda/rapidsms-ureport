@@ -380,8 +380,6 @@
                 <th>Actioned</th>
                 <th>Text</th>
                 <th>Date</th>
-                <th>Name</th>
-                {%if perms.rapidsms.view_numbers %} <th>Number</th>{%endif%}
                 <th>District</th>
                 <th>Action</th>
                 <th>Rating</th>
@@ -408,8 +406,6 @@
                 </td>
                 <td>{{ msg.text }}</td>
                 <td>{{ msg.date|date:"m/d/Y H:i:s" }}</td>
-                <td>{{ msg.connection.contact.name }}</td>
-                {%if perms.rapidsms.view_numbers %} <td><a href="/messagehistory/{{ msg.connection.pk }}/">{{ msg.connection.identity }}</a></td>{%endif%}
                 <td>{{ msg.connection.contact.reporting_location }}</td>
                 <td>
                     {%if perms.rapidsms.forward %}
