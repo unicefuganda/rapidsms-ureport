@@ -115,6 +115,7 @@
             <thead>
             <tr>
                 <th>Identifier</th>
+                <td>Name</td>
                 <th>Text</th>
                 <th>Date</th>
                 <th>District</th>
@@ -124,7 +125,8 @@
             <tbody id="mp_bd">
             {% for msg in messages.object_list %}
                 <tr>
-                    <td>{{ msg.connection_id }}</td>
+                    <td><a href="/messagehistory/{{ msg.connection.pk }}/">{{ msg.connection_id }}</a></td>
+                    <td>{{ msg.connection.contact.name }}</td>
                     <td>{{ msg.text }}</td>
                     <td>{{ msg.date|date:"m/d/Y H:i:s" }}</td>
                     <td>{{ msg.connection.contact.reporting_location }}</td>
