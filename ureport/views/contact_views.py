@@ -74,7 +74,7 @@ def ureporter_profile(request, connection_pk):
         headers = ['Message', 'Direction', 'Date', 'District']
 
         return ExcelResponse(data=data, header=headers)
-    columns = [('Message', True, 'text', SimpleSorter()), ('connection'
+    columns = [('Message', True, 'text', SimpleSorter()), ('Identifier'
                                                            , True, 'connection', SimpleSorter()), ('Date', True,
                                                                                                    'date',
                                                                                                    SimpleSorter()),
@@ -353,6 +353,7 @@ def ureporters(request):
             return HttpResponse("Some thing went wrong")
 
     columns = [
+        ('Identifier', True, 'connection_pk', SimpleSorter()),
         ('Age', True, 'age', SimpleSorter(),),
         ('Gender', True, 'gender', SimpleSorter(),),
         ('Language', True, 'language', SimpleSorter(),),

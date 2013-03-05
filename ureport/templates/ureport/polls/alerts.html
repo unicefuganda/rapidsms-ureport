@@ -378,6 +378,7 @@
             <thead>
             <tr>
                 <th>Actioned</th>
+                <th>Identifier</th>
                 <th>Text</th>
                 <th>Date</th>
                 <th>District</th>
@@ -403,6 +404,9 @@
                     {%endif%}
 
                     {%endfor%}
+                </td>
+                <td>
+                   {{ msg.connection_id }}
                 </td>
                 <td>{{ msg.text }}</td>
                 <td>{{ msg.date|date:"m/d/Y H:i:s" }}</td>

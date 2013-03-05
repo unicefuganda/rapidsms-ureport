@@ -41,6 +41,7 @@ def messages(request):
     base_template = 'ureport/contact_message_base.html'
     paginator_template = 'ureport/partials/new_pagination.html'
     columns = [('Text', True, 'text', SimpleSorter()),
+               ('Identifier', True, 'connection__pk', SimpleSorter()),
                ('Date', True, 'date',
                 SimpleSorter()), ('Type', True, 'application',
                                   SimpleSorter()), ('Response', False, 'response', None)]
@@ -70,6 +71,7 @@ def autoreg_messages(request):
     base_template = 'ureport/contact_message_base.html'
     paginator_template = 'ureport/partials/new_pagination.html'
     columns = [('Text', True, 'text', SimpleSorter()),
+               ('Identifier', True, 'connection__pk', SimpleSorter()),
                ('Date', True, 'date',
                 SimpleSorter()), ('Type', True, 'application',
                                   SimpleSorter()), ('Response', False, 'response', None)]
@@ -99,6 +101,7 @@ def unsolicitized_messages(request):
     base_template = 'ureport/contact_message_base.html'
     paginator_template = 'ureport/partials/new_pagination.html'
     columns = [('Text', True, 'text', SimpleSorter()),
+               ('Identifier', True, 'connection__pk', SimpleSorter()),
                ('Date', True, 'date',
                 SimpleSorter()), ('Type', True, 'application',
                                   SimpleSorter()), ('Response', False, 'response', None)]
@@ -128,6 +131,7 @@ def poll_messages(request):
     base_template = 'ureport/contact_message_base.html'
     paginator_template = 'ureport/partials/new_pagination.html'
     columns = [('Text', True, 'text', SimpleSorter()),
+               ('Identifier', True, 'connection__pk', SimpleSorter()),
                ('Date', True, 'date',
                 SimpleSorter()), ('Type', True, 'application',
                                   SimpleSorter()), ('Response', False, 'response', None)]
@@ -157,6 +161,7 @@ def quit_messages(request):
     base_template = 'ureport/contact_message_base.html'
     paginator_template = 'ureport/partials/new_pagination.html'
     columns = [('Text', True, 'text', SimpleSorter()),
+               ('Identifier', True, 'connection__pk', SimpleSorter()),
                ('Date', True, 'date',
                 SimpleSorter()), ('Type', True, 'application',
                                   SimpleSorter()), ('Response', False, 'response', None)]
@@ -180,11 +185,11 @@ def quit_messages(request):
 
 @login_required
 def mass_messages(request):
-    columns = [('Message', True, 'text', TupleSorter(0)), ('Time',
-                                                           True, 'date', TupleSorter(1)), ('User', True, 'user',
-                                                                                           TupleSorter(2)),
-               ('Recipients', True, 'response',
-                TupleSorter(3)), ('Type', True, 'type', TupleSorter(4))]
+    columns = [('Message', True, 'text', TupleSorter(0)),
+               ('Identifier', True, 'connection__pk', SimpleSorter()),
+               ('Time', True, 'date', TupleSorter(1)), ('User', True, 'user',  TupleSorter(2)),
+               ('Recipients', True, 'response', TupleSorter(3)),
+               ('Type', True, 'type', TupleSorter(4))]
 
     return generic(
         request,
@@ -199,6 +204,7 @@ def mass_messages(request):
         results_title="Mass Messages",
         sort_ascending=False,
         selectable=False,
+        columns=columns
     )
 
 

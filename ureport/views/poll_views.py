@@ -384,6 +384,7 @@ def ureport_polls(request):
                    paginator_func=ureport_paginate,
                    sort_column='start_date',
                    sort_ascending=False,
+                   columns=columns
     )
 
 
