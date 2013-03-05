@@ -15,17 +15,19 @@ def voices(request):
     a context processor that passes the total number of ureporters to all templates.
     """
     try:
-        quote=QuoteBox.objects.latest()
+        quote = QuoteBox.objects.latest()
     except QuoteBox.DoesNotExist:
-        quote=None
+        quote = None
     return {
-        'total_ureporters':Contact.objects.exclude(connection__identity__in=Blacklist.objects.values_list('connection__identity')).count(),
-        'polls':Poll.objects.exclude(contacts=None, start_date=None).exclude(pk__in=[297,296,349,350]).order_by('-start_date'),
-       'deployment_id':settings.DEPLOYMENT_ID,
-       'quote':quote,
-       'geoserver_url':settings.GEOSERVER_URL,
-
-        }
+        'total_ureporters': Contact.objects.exclude(
+            connection__identity__in=Blacklist.objects.values_list('connection__identity')).count(),
+        'polls': Poll.objects.exclude(contacts=None, start_date=None).exclude(pk__in=[297, 296, 349, 350]).order_by(
+            '-start_date'),
+        'deployment_id': settings.DEPLOYMENT_ID,
+        'quote': quote,
+        'geoserver_url': settings.GEOSERVER_URL,
+        'show_contact_info': getattr(settings, 'SHOW_CONTACT_INFO', True)
+    }
 
 
 
