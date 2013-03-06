@@ -1,6 +1,7 @@
 {% extends 'generic/partials/partial_row.html' %}
 {% block remaining_row_content %}
 {% load extra_tags %}
+<td>{{ object.message.connection_id }}</td>
 <td>
     <span >
     {{ object.message.text }}

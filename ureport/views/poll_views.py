@@ -250,11 +250,14 @@ def view_responses(req, poll_id):
             except ZeroDivisionError:
                 response_rates.pop(group.name)
     typedef = Poll.TYPE_CHOICES[poll.type]
-    print typedef
-    columns = [('Sender', False, 'sender', None)]
-    for (column, style_class, sortable, db_field, sorter) in \
-        typedef['report_columns']:
-        columns.append((column, sortable, db_field, sorter))
+    # columns = [('Sender', False, 'sender', None)]
+    # for (column, style_class, sortable, db_field, sorter) in \
+    #     typedef['report_columns']:
+    #     columns.append((column, sortable, db_field, sorter))
+    columns = (
+               ('Date', True, 'date', SimpleSorter()),
+               ('Text', False, 'text', None),
+            )
 
     return generic(
         req,

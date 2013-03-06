@@ -203,7 +203,7 @@ def alerts(request):
             end = range_form.cleaned_data['enddate']
             from django.core.servers.basehttp import FileWrapper
 
-            cols = ["replied", "rating", "direction", "name", "district", "mobile", "date", "message", "id",
+            cols = ["replied", "rating", "direction", "district", "date", "message", "id",
                     "forwarded"]
             data = AlertsExport.objects.filter(date__range=(start, end)).values_list(*cols).iterator()
             excel_file_path = \

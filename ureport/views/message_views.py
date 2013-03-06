@@ -275,9 +275,9 @@ def flagged_messages(request):
     all_flags = Flag.objects.all()
     if request.GET.get('export', None):
         flaggedmessages = MessageFlag.objects.exclude(flag=None)
-        data = flaggedmessages.values_list('message__text', 'flag__name', 'message__date',
-                                           'message__connection__contact__reporting_location__name').iterator()
-        headers = ['Message', 'Flag', 'Date', 'District']
+        data = flaggedmessages.values_list('message__connection_id', 'message__text', 'flag__name', 'message__date',
+                                           'message__connection__contact__reporting_location__name')
+        headers = ['Identifier', 'Message', 'Flag', 'Date', 'District']
         return ExcelResponse(data=data, headers=headers)
     return generic(
         request,
@@ -289,7 +289,8 @@ def flagged_messages(request):
         partial_row='ureport/partials/messages/flagged_message_row.html'
         ,
         base_template='ureport/flagged_message_base.html',
-        columns=[('Message', True, 'message__text', SimpleSorter()),
+        columns=[('Identifier', True, 'message__connection_id', SimpleSorter()),
+                ('Message', True, 'message__text', SimpleSorter()),
                  ('Date', True, 'message__date', SimpleSorter()),
                  ('Flags', False, 'message__flagged', None)],
         sort_column='date',
@@ -303,9 +304,9 @@ def view_flagged_with(request, pk):
     flag = get_object_or_404(Flag, pk=pk)
     messages = flag.get_messages()
     if request.GET.get('export', None):
-        export_data = messages.values_list('text', 'date',
+        export_data = messages.values_list('text', 'connection_id', 'date',
                                            'connection__contact__reporting_location__name')
-        headers = ['Message', 'Mobile Number', 'Name', 'Date', 'District']
+        headers = ['Message', 'Identifier', 'Date', 'District']
         return ExcelResponse(data=export_data, headers=headers)
     return generic(
         request,
@@ -316,6 +317,7 @@ def view_flagged_with(request, pk):
         base_template='ureport/view_flagged_with_base.html',
         results_title='Messages Flagged With %s' % flag.name,
         columns=[('Message', True, 'text', SimpleSorter()),
+                 ('Identifier', True, 'connection_id', SimpleSorter()),
                  ('Date',True, 'date', SimpleSorter()),
                  ('Type', True, 'application', SimpleSorter())],
         sort_column='date',

@@ -14,6 +14,7 @@
 
         {%endfor%}
     </td>
+    <td>{{ msg.connection_id }}</td>
     <td>{{ msg.text }}</td>
     <td>{{ msg.date|date:"m/d/Y H:i:s" }}</td>
     <td>{{ msg.connection.contact.reporting_location }}</td>
