@@ -243,7 +243,7 @@ class UPoll(Poll):
         super(UPoll, self).__init__(*args, **kwargs)
         #Attach Attribute default if no attribute set for specific poll
         for attr in PollAttribute.objects.all():
-            if not getattr(self, attr.key, None):
+            if getattr(self, attr.key, None) is not None:
                 setattr(self, attr.key, attr.get_default())
         #Attach PollAttribute to object ie, poll.randomkey = 'some value'
         for attr, value in self._get_set_attr().items():
