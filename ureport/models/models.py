@@ -228,103 +228,102 @@ ussd_complete.connect(ussd_poll, weak=False)
 
 
 class UPoll(Poll):
-    bool_dict = {'false': False, 'true': True}
+    def _get_set_attr(self):
+        values = self.pollattributevalue_set.all()
+        key_value = {}
+        for value in values:
+            try:
+                key_value[value.get_key()] = value.get_value()
+            except PollAttribute.DoesNotExist:
+                pass
+        return key_value
 
-    def set_attr(self, key, value, default=None):
-        p = PollAttribute.objects.filter(poll=self, key=key)
-        if p.exists():
-            p = p[0]
-            p.value = value
-            p.save()
-        else:
-            PollAttribute.objects.create_attr(key, value, self, default=default)
-        return self.get_attr(key)
 
-    @classmethod
-    def set_default_for_key(cls, key, default):
-        attr = PollAttribute.objects.filter(key=key)
-        if attr.exists():
-            attr = attr[0]
-            attr.set_default(default)
-        else:
-            raise models.ObjectDoesNotExist("Attribute %s does not exist for any poll" % key)
+    def __init__(self, *args, **kwargs):
+        super(UPoll, self).__init__(*args, **kwargs)
+        #Attach Attribute default if no attribute set for specific poll
+        for attr in PollAttribute.objects.all():
+            if not getattr(self, attr.key, None):
+                setattr(self, attr.key, attr.get_default())
+        #Attach PollAttribute to object ie, poll.randomkey = 'some value'
+        for attr, value in self._get_set_attr().items():
+            setattr(self, attr.key, value)
 
-    def get_attr(self, key):
-        try:
-            p = PollAttribute.objects.get(poll=self, key=key)
-            return p.get_attr()
-        except PollAttribute.DoesNotExist:
-            attributes = PollAttribute.objects.filter(key=key)
-            if attributes:
-                return attributes[0].get_default()
-            else:
-                raise models.ObjectDoesNotExist("Poll object does not have attribute %s" % key)
+
+    def set_attr(self, attr, value):
+        attr = PollAttribute.objects.get(key=attr)
+        value = PollAttributeValue.objects.get_or_create(value=value, poll=self)[0]
+        attr.values.add(value)
+        attr.save()
+
+
+
+    def save(self, force_insert=False, force_update=False, using=None):
+        for key in self._get_set_attr().keys():
+            value = key.values.get(poll=self)
+            value.value = getattr(self, key.key)
+            value.save()
+        super(UPoll, self).save()
+
 
     class Meta:
         proxy = True
 
 
-class PollAttributeManager(models.Manager):
-    def create_attr(self, key, value, poll, default=None):
-        attr = PollAttribute()
-        attr.key = key
-        attr.value = value
-        attr.poll = poll
-        if default is not None:
-            attr.set_default(default)
-        attr.save()
-        return attr
+class PollAttributeValue(models.Model):
+    value = models.CharField(max_length=200)
+    poll = models.ForeignKey(Poll)
 
+    def get_key(self):
+        try:
+            return self.pollattribute_set.all()[0]
+        except IndexError:
+            raise PollAttribute.DoesNotExist("%s value does not a key attached to it" % self.value)
+
+    def __unicode__(self):
+        return self.value
+
+    def get_value(self):
+        key = self.get_key()
+        return key.make_native(self.value)
+
+    def save(self, force_insert=False, force_update=False, using=None):
+        self.value = str(self.value).lower()
+        super(PollAttributeValue, self).save()
+
+    class Meta:
+        app_label = 'ureport'
 
 
 class PollAttribute(models.Model):
+    """
+    This is for any extra attributes that we would want on polls that rapidsms_polls does not have.
+
+    """
     KEY_TYPES = (('bool', 'bool'), ('char', 'char'), ('int', 'int'), ('obj', 'obj'))
-    key = models.CharField(max_length=100)
-    key_type = models.CharField(max_length=100, choices=KEY_TYPES)
-    value = models.CharField(max_length=200)
-    poll = models.ForeignKey(Poll)
-    key_default = models.CharField(max_length=100, null=True, default=None)
-    objects = PollAttributeManager()
+    key = models.CharField(max_length=100, unique=True)
+    key_type = models.CharField(max_length=100, choices=KEY_TYPES, default='char')
+    values = models.ManyToManyField(PollAttributeValue)
+    default = models.CharField(max_length=100, null=True, default=None)
 
 
     class Meta:
         app_label = 'ureport'
-        unique_together = (('poll', 'key'), ('key', 'key_default'))
 
-    def set_default(self, default):
-        attr = PollAttribute.objects.filter(key=self.key).exclude(key_default=None)
-        if attr.exists():
-            attr = attr[0]
-        else:
-            attr = self
-        attr.key_default = str(default).lower()
-        attr.save()
 
-    def get_attr(self):
-        return self._make_native(self.value)
+    def __unicode__(self):
+        return self.key
 
 
     def get_default(self):
-        attr = PollAttribute.objects.filter(key=self.key).exclude(key_default=None)
-        if attr.exists():
-            default = attr[0].key_default
-            return self._make_native(default)
-        return None
+        return self.make_native(self.default)
 
     def save(self, force_insert=False, force_update=False, using=None):
-        self.value = str(self.value).lower()
-        if self.value in ['false', 'true']:
-            self.key_type = 'bool'
-        else:
-            try:
-                int(self.value)
-                self.key_type = 'int'
-            except ValueError:
-                self.key_type = 'char'
-
+        self.default = str(self.default).lower()
+        self.key = self.key.replace(" ", "_")
         super(PollAttribute, self).save()
 
-    def _make_native(self, default):
+    def make_native(self, default):
         if self.key_type == 'bool':
             return True if default.lower() == 'true' else False
         elif self.key_type == 'int':

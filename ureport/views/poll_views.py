@@ -55,14 +55,15 @@ def view_poll(request, pk):
             res['Cache-Control'] = 'no-store'
             return res
         if request.GET.get('viewable'):
-            poll.set_attr('viewable', True, default=True)
+            poll.viewable = True
+            poll.save()
             res = HttpResponse(
                 '<a href="javascript:void(0)" id="poll_v" class="btn" onclick="loadViewable'
                 '(\'?unviewable=True&poll=True\')">Don\'t Show On Home page</a>')
             res['Cache-Control'] = 'no-store'
             return res
         if request.GET.get('unviewable'):
-            poll.set_attr('viewable', 'false', default=True)
+            poll.set_attr('viewable', False)
             res = HttpResponse(
                 '<a href="javascript:void(0)" id="poll_v" class="btn" onclick="loadViewable'
                 '(\'?viewable=True&poll=True\')">Show On Home page</a>')
@@ -113,14 +114,8 @@ def view_poll(request, pk):
             else:
                 template = "ureport/polls/rules.html"
 
-    try:
-        poll_is_viewable = poll.get_attr('viewable')
-    except ObjectDoesNotExist:
-        poll_is_viewable = poll.set_attr('viewable', True, default=True)
-
     return render_to_response(template, {
         'poll': poll,
-        'poll_is_viewable': poll_is_viewable,
         'xf': xf,
         'response': response,
         'categories': categories,

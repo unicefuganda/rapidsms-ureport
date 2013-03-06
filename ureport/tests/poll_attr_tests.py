@@ -3,7 +3,7 @@ from django.test import TestCase
 from poll.models import Poll
 from rapidsms.models import Connection, Contact
 from uganda_common.utils import assign_backend
-from ureport.models import PollAttribute, UPoll
+from ureport.models import PollAttribute, UPoll, PollAttributeValue
 
 __author__ = 'kenneth'
 
@@ -20,47 +20,24 @@ class PollAttributeTest(TestCase):
                                    user=user)
         poll.contacts.add(contact)
         poll.save()
+        self.attr = PollAttribute.objects.create(key='viewable', key_type='bool', default=True)
+        self.value = PollAttributeValue.objects.create(poll=poll, value=False)
+        self.attr.values.add(self.value)
 
     def testCreate(self):
-        poll = Poll.objects.get(name='Test Poll for poll attribute', question='Test question for test poll')
-        attr = PollAttribute.objects.create_attr('viewable', True, poll, default=True)
-        self.assertTrue(PollAttribute.objects.filter(key='viewable', poll=poll).exists())
-        self.assertEqual(attr.key, 'viewable')
-        self.assertEqual(attr.value, 'true')
-        self.assertEqual(attr.key_type, 'bool')
+        self.assertEqual('true', self.attr.default)
+        self.assertEqual(True, self.attr.get_default())
 
-    def test_get_default(self):
-        poll = Poll.objects.get(name='Test Poll for poll attribute', question='Test question for test poll')
-        attr = PollAttribute.objects.create_attr('viewable', True, poll, default=True)
-        self.assertTrue(PollAttribute.objects.filter(key='viewable', poll=poll).exists())
-        self.assertEqual(attr.get_default(), True)
 
-    def test_set_default(self):
-        poll = Poll.objects.get(name='Test Poll for poll attribute', question='Test question for test poll')
-        attr = PollAttribute.objects.create_attr('viewable', True, poll, default=True)
-        self.assertTrue(PollAttribute.objects.filter(key='viewable', poll=poll).exists())
-        self.assertEqual(attr.get_default(), True)
-        attr.set_default(False)
-        self.assertEqual(attr.get_default(), False)
-
-    def test_get_upoll_attr(self):
+    def testAttrOnPoll(self):
         poll = UPoll.objects.get(name='Test Poll for poll attribute', question='Test question for test poll')
-        attr = PollAttribute.objects.create_attr('viewable', True, poll, default=True)
-        self.assertTrue(PollAttribute.objects.filter(key='viewable', poll=poll).exists())
-        self.assertEqual(poll.get_attr('viewable'), True)
+        self.assertEqual(False, poll.viewable)
 
-    def test_set_upoll_attr(self):
+
+    def testChangeAttr(self):
         poll = UPoll.objects.get(name='Test Poll for poll attribute', question='Test question for test poll')
-        attr = PollAttribute.objects.create_attr('viewable', True, poll, default=True)
-        self.assertTrue(PollAttribute.objects.filter(key='viewable', poll=poll).exists())
-        self.assertEqual(poll.get_attr('viewable'), True)
-        poll.set_attr('viewable', False)
-        self.assertEqual(poll.get_attr('viewable'), False)
-
-
-    def test_set_upoll_default(self):
-        poll = UPoll.objects.get(name='Test Poll for poll attribute', question='Test question for test poll')
-        attr = PollAttribute.objects.create_attr('viewable', True, poll, default=True)
-        self.assertTrue(PollAttribute.objects.filter(key='viewable', poll=poll).exists())
-        UPoll.set_default_for_key('viewable', False)
-        self.assertEqual(attr.get_default(),False)
+        poll.viewable = True
+        poll.save()
+        value = PollAttributeValue.objects.get(poll=poll)
+        self.assertEqual('true', value.value)
+        self.assertEqual(True, value.get_value())

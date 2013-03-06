@@ -192,7 +192,7 @@ click on question to edit
 
   {%endif%}
 
-{% if not poll_is_viewable %}
+{% if not poll.viewable %}
     <span id="state_h" >
 <a href="javascript:void(0)" id="poll_v" class="btn" onclick="loadViewable('?viewable=True&poll=True')">Show On Home page</a>
 </span>
