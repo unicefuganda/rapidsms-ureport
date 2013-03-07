@@ -1,20 +1,12 @@
 {% extends row_base %}
 {% block message_information %}
-     {%if  perms.rapidsms.view_numbers %}
+
     <td class="response_sender_col">
       <a href="{% url ureport.views.ureporter_profile  response.message.connection.pk %}">
-          {% if response.message.connection.contact %}
-              
-            {{ response.message.connection.contact }} (
-          {% endif %}
-          <span style="font-size:8px">{{ response.message.connection.identity }}</span>
-          {% if response.message.connection.contact %}
-            )
-          {% endif %}
+          {{ response.message.connection_id }}
       </a>
        at {{ response.message.date|date:"d/m/Y H:i" }}
     </td>
-    {% endif %}
 {% endblock %}
 {% block actions_cell %}
     {%if  perms.rapidsms.view_numbers %}

@@ -1,14 +1,8 @@
 from celery.task import Task, task
 from celery.registry import tasks
 from rapidsms_httprouter.models import Message
-
-from uganda_common.utils import ExcelResponse
 from ureport.models import *
-from poll.models import ResponseCategory, Poll, Response
-from django.db import transaction
-from django.db import IntegrityError
 from script.models import Script
-from django.contrib.auth.models import  Group
 
 
 

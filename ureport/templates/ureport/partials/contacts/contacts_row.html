@@ -1,18 +1,7 @@
 {% extends 'generic/partials/partial_row.html' %}
 {% block remaining_row_content %}
     <td>
-        {% if object.mobile %}
-            <a href="{% url ureport.views.ureporter_profile object.connection_pk %}">
-        {% endif %}
-        {{ object.name }}
-        {% if object.mobile %}
-            </a>
-        {% endif %}
-    </td>
-    <td>
-
-                    {{ object.mobile}}
-
+       {{ object.connection_pk }}
     </td>
     <td>
     {{  object.age }}

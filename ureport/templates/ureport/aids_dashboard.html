@@ -292,8 +292,7 @@
                 <th>Actioned</th>
                 <th>Text</th>
                 <th>Date</th>
-                <th>Name</th>
-                <th>Number</th>
+                <th>Identifier</th>
                 <th>District</th>
                 <th>Action</th>
                 <th>Rating</th>
@@ -320,8 +319,7 @@
                 </td>
                 <td>{{ msg.text }}</td>
                 <td>{{ msg.date|date:"m/d/Y H:i:s" }}</td>
-                <td>{{ msg.connection.contact.name }}</td>
-                <td><a href="/messagehistory/{{ msg.connection.pk }}/">{{ msg.connection.identity }}</a></td>
+                <td><a href="/messagehistory/{{ msg.connection.pk }}/">{{ msg.connection.pk }}</a></td>
                 <td>{{ msg.connection.contact.reporting_location }}</td>
                 <td><a id="msg_rep_link" href="/sendmessage/?forward=true&msg={{msg.pk}}" class="btn msg_rep"
                        data-remote=true>Foward</a> <a style="margin-top:3px; "

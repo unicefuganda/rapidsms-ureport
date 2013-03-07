@@ -35,13 +35,6 @@ class Command(BaseCommand):
             sql = \
                 """    SELECT
       "rapidsms_contact"."id",
-      "rapidsms_contact"."name",
-      (SELECT
-         "rapidsms_connection"."identity"
-      FROM
-         "rapidsms_connection"
-      WHERE
-         "rapidsms_connection"."contact_id" = "rapidsms_contact"."id"  LIMIT 1) as identity,
       "rapidsms_contact"."language",
       (SELECT
          DATE("script_scriptsession"."start_time")
@@ -145,8 +138,6 @@ class Command(BaseCommand):
             cursor.execute(sql)
             row_0 = [(
                 'Id',
-                'Name',
-                'Mobile',
                 'Language',
                 'Autoreg Join Date',
                 'Quit Date',

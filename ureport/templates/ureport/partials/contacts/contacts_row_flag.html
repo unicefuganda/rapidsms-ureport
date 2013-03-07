@@ -7,7 +7,7 @@
 
     <a href="{% url ureport.views.ureporter_profile object.connection.pk %}">
 
-        {{ object.connection.identity }}
+        {{ object.connection.pk }}
 
     </a>
 
@@ -18,7 +18,7 @@
 
 </td>
         <td>
-
+        {{ object.application }}
         </td>
 
 

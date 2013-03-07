@@ -11,17 +11,8 @@
     {{ object.text }}
     </span>
 </td>
-<td><span class="small">
-        {% if object.connection.contact %}
-            {{ object.connection.contact.name }} ({% endif %}{{ object.connection.identity }}{% if object.connection.contact %}){% endif %}
-    <ul>
-        <li>
-            <a href="/messagehistory/{{ object.connection.pk }}/">
-                Show history
-            </a>
-        </li>
-    </ul>
-    </span>
+<td>
+    {{ object.connection_id }}
 </td>
 <td>
     <span class="small">

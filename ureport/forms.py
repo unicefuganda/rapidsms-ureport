@@ -24,29 +24,26 @@ from poll.models import Poll, Translation
 from unregister.models import Blacklist
 from .models import AutoregGroupRules
 from uganda_common.utils import ExcelResponse
-from ureport.models import MessageAttribute,MessageDetail
-from django.utils.safestring import  mark_safe
+from ureport.models import MessageAttribute, MessageDetail
+from django.utils.safestring import mark_safe
 
 import subprocess
 
 
 class EditReporterForm(forms.ModelForm):
-
     def __init__(self, *args, **kwargs):
         super(EditReporterForm, self).__init__(*args, **kwargs)
         self.fields['reporting_location'] = \
             TreeNodeChoiceField(queryset=self.fields['reporting_location'
-                                ].queryset.filter(type="district"), level_indicator=u'')
+            ].queryset.filter(type="district"), level_indicator=u'')
 
 
     class Meta:
-
         model = Contact
         fields = ('name', 'reporting_location', 'groups')
 
 
 class PollModuleForm(ModuleForm):
-
     viz_type = forms.ChoiceField(choices=(
         ('ureport.views.show_timeseries', 'Poll responses vs time'),
         ('ureport.views.mapmodule', 'Map'),
@@ -57,18 +54,18 @@ class PollModuleForm(ModuleForm):
         ('poll-report-module', 'Tabular report'),
         ('best-viz', 'Results'),
         ('ureport.views.message_feed', 'Message Feed'),
-        ), label='Poll visualization')
+    ), label='Poll visualization')
     poll = forms.ChoiceField(choices=(('l', 'Latest Poll'), )
-                             + tuple([(int(p.pk), str(p)) for p in
-                             Poll.objects.all().order_by('-start_date'
-                             )]), required=True)
+                                     + tuple([(int(p.pk), str(p)) for p in
+                                              Poll.objects.all().order_by('-start_date'
+                                              )]), required=True)
 
     def setModuleParams(
-        self,
-        dashboard,
-        module=None,
-        title=None,
-        ):
+            self,
+            dashboard,
+            module=None,
+            title=None,
+    ):
         title_dict = {
             'ureport.views.show_timeseries': 'Poll responses vs time',
             'ureport.views.mapmodule': 'Map',
@@ -79,11 +76,11 @@ class PollModuleForm(ModuleForm):
             'poll-report-module': 'Tabular report',
             'best-viz': 'Results',
             'ureport.views.message_feed': 'Message Feed',
-            }
+        }
         viz_type = self.cleaned_data['viz_type']
         title = title_dict[viz_type]
         module = module or self.createModule(dashboard, viz_type,
-                title=title)
+                                             title=title)
         is_url_param = viz_type in ['poll-responses-module',
                                     'poll-report-module']
         if is_url_param:
@@ -98,24 +95,23 @@ class PollModuleForm(ModuleForm):
 
 
 class ExcelUploadForm(forms.Form):
-
     excel_file = forms.FileField(label='Contacts Excel File',
                                  required=False)
     assign_to_group = \
         forms.ModelChoiceField(queryset=Group.objects.all(),
                                required=False)
 
-#    def __init__(self, data=None, **kwargs):
-#        self.request=kwargs.pop('request')
-#        if data:
-#            forms.Form.__init__(self, data, **kwargs)
-#        else:
-#            forms.Form.__init__(self, **kwargs)
-#        if hasattr(Contact, 'groups'):
-#            if self.request.user.is_authenticated():
-#                self.fields['assign_to_group'] = forms.ModelChoiceField(queryset=Group.objects.filter(pk__in=self.request.user.groups.values_list('pk',flat=True)), required=False)
-#            else:
-#                self.fields['assign_to_group'] = forms.ModelChoiceField(queryset=Group.objects.all(), required=False)
+    #    def __init__(self, data=None, **kwargs):
+    #        self.request=kwargs.pop('request')
+    #        if data:
+    #            forms.Form.__init__(self, data, **kwargs)
+    #        else:
+    #            forms.Form.__init__(self, **kwargs)
+    #        if hasattr(Contact, 'groups'):
+    #            if self.request.user.is_authenticated():
+    #                self.fields['assign_to_group'] = forms.ModelChoiceField(queryset=Group.objects.filter(pk__in=self.request.user.groups.values_list('pk',flat=True)), required=False)
+    #            else:
+    #                self.fields['assign_to_group'] = forms.ModelChoiceField(queryset=Group.objects.all(), required=False)
 
     def clean(self):
         excel = self.cleaned_data.get('excel_file', None)
@@ -126,14 +122,12 @@ class ExcelUploadForm(forms.Form):
         return self.cleaned_data
 
 
-
 class SearchResponsesForm(FilterForm):
-
     """ search responses
     """
 
     search = forms.CharField(max_length=100, required=True,
-        label='search Responses')
+                             label='search Responses')
 
     def filter(self, request, queryset):
         search = self.cleaned_data['search'].strip()
@@ -150,7 +144,7 @@ class SearchResponsesForm(FilterForm):
 
         elif search == "'=numerical value()'":
             return queryset.filter(message__text__iregex="^[0-9]+$")
-            
+
         elif search[0] == "'" and search[-1] == "'":
 
             search = search[1:-1]
@@ -166,14 +160,12 @@ class SearchResponsesForm(FilterForm):
                                    | Q(message__connection__identity__icontains=search))
 
 
-
 class SearchMessagesForm(FilterForm):
-
     """ search messages
     """
 
     search = forms.CharField(max_length=100, required=True,
-        label='search ')
+                             label='search ')
 
     def filter(self, request, queryset):
 
@@ -183,11 +175,11 @@ class SearchMessagesForm(FilterForm):
         elif search[0] == '"' and search[-1] == '"':
             search = search[1:-1]
             return queryset.filter(Q(text__iregex=".*\m(%s)\y.*"
-                                                           % search)
+                                                  % search)
                                    | Q(connection__contact__reporting_location__name__iregex=".*\m(%s)\y.*"
-                                                                                                      % search)
+                                                                                             % search)
                                    | Q(connection__identity__iregex=".*\m(%s)\y.*"
-                                                                             % search))
+                                                                    % search))
 
         elif search == "'=numerical value()'":
             return queryset.filter(text__iregex="^[0-9]+$")
@@ -207,14 +199,12 @@ class SearchMessagesForm(FilterForm):
                                    | Q(connection__identity__icontains=search))
 
 
-
 class AssignToPollForm(ActionForm):
-
     """ assigns responses to poll  """
 
     poll = \
         forms.ModelChoiceField(queryset=Poll.objects.all().order_by('-pk'
-                               ))
+        ))
     action_label = 'Assign selected to poll'
 
     def perform(self, request, results):
@@ -224,11 +214,10 @@ class AssignToPollForm(ActionForm):
             c.poll = poll
             c.save()
         return ('%d responses assigned to  %s poll' % (len(results),
-                poll.name), 'success')
+                                                       poll.name), 'success')
 
 
 class DeleteSelectedForm(ActionForm):
-
     """ Deletes selected stuff  """
 
     action_label = 'Delete Selected '
@@ -249,19 +238,18 @@ class DeleteSelectedForm(ActionForm):
 
 
 class AssignToNewPollForm(ActionForm):
-
     """ assigns contacts to poll"""
 
     action_label = 'Assign to New poll'
     poll_name = forms.CharField(label='Poll Name', max_length='100')
     POLL_TYPES = [('yn', 'Yes/No Question')] + [(c['type'], c['label'])
-            for c in Poll.TYPE_CHOICES.values()]
+                                                for c in Poll.TYPE_CHOICES.values()]
     response_type = \
         forms.ChoiceField(choices=Poll.RESPONSE_TYPE_CHOICES,
                           widget=RadioSelect)
     poll_type = forms.ChoiceField(choices=POLL_TYPES)
-    question = forms.CharField(max_length=160, required=True,widget=SMSInput())
-    default_response = forms.CharField(max_length=160, required=False,widget=SMSInput())
+    question = forms.CharField(max_length=160, required=True, widget=SMSInput())
+    default_response = forms.CharField(max_length=160, required=False, widget=SMSInput())
 
 
     def perform(self, request, results):
@@ -274,10 +262,10 @@ class AssignToNewPollForm(ActionForm):
             poll_type = Poll.TYPE_TEXT
 
         question = self.cleaned_data.get('question').replace('%',
-                u'\u0025')
+                                                             u'\u0025')
         default_response = self.cleaned_data['default_response']
         response_type = self.cleaned_data['response_type']
-        contacts=Contact.objects.filter(pk__in=results)
+        contacts = Contact.objects.filter(pk__in=results)
         poll = Poll.create_with_bulk(
             name=name,
             type=poll_type,
@@ -285,7 +273,7 @@ class AssignToNewPollForm(ActionForm):
             default_response=default_response,
             contacts=contacts,
             user=request.user
-            )
+        )
 
         poll.response_type = response_type
         if self.cleaned_data['poll_type'] == NewPollForm.TYPE_YES_NO:
@@ -296,17 +284,16 @@ class AssignToNewPollForm(ActionForm):
             poll.sites.add(Site.objects.get_current())
 
         return ('%d participants added to  %s poll' % (len(results),
-                poll.name), 'success')
+                                                       poll.name), 'success')
 
 
 DISTRICT_CHOICES = tuple([(int(d.pk), d.name) for d in
-                         Location.objects.filter(type__slug='district'
-                         ).order_by('name')])
+                          Location.objects.filter(type__slug='district'
+                          ).order_by('name')])
 phone_re = re.compile(r'(\d+)')
 
 
 class SignupForm(forms.Form):
-
     firstname = forms.CharField(max_length=100, label='First Name')
     lastname = forms.CharField(max_length=100, label='Last Name')
     district = forms.ChoiceField(choices=DISTRICT_CHOICES,
@@ -315,18 +302,17 @@ class SignupForm(forms.Form):
     mobile = forms.CharField(label='Mobile Number', max_length=13,
                              required=True)
     gender = forms.ChoiceField(choices=(('M', 'Male'), ('F',
-                               'Female')), label='Sex')
+                                                        'Female')), label='Sex')
     group = forms.CharField(max_length=100, required=False,
                             label='How did you hear about U-report?')
     age = forms.IntegerField(max_value=100, min_value=10,
                              required=False)
 
     def clean(self):
-
         cleaned_data = self.cleaned_data
         cleaned_data['district'] = \
             Location.objects.get(pk=int(cleaned_data.get('district', '1'
-                                 )))
+            )))
         match = re.match(phone_re, cleaned_data.get('mobile', ''))
         if not match:
             raise ValidationError('invalid Number')
@@ -334,7 +320,6 @@ class SignupForm(forms.Form):
 
 
 class ReplyTextForm(ActionForm):
-
     text = forms.CharField(required=True, widget=SMSInput())
     action_label = 'Reply to selected'
 
@@ -344,14 +329,14 @@ class ReplyTextForm(ActionForm):
                     'error')
 
         if request.user and request.user.has_perm('contact.can_message'
-                ):
+        ):
             text = self.cleaned_data['text']
             if isinstance(results[0], Message):
                 connections = results.values_list('connection',
-                        flat=True)
+                                                  flat=True)
             elif isinstance(results[0], Response):
                 connections = results.values_list('message__connection'
-                        , flat=True)
+                    , flat=True)
 
             Message.mass_text(text,
                               Connection.objects.filter(pk__in=connections).distinct(),
@@ -363,8 +348,8 @@ class ReplyTextForm(ActionForm):
             return ("You don't have permission to send messages!",
                     'error')
 
-class MassTextForm(ActionForm):
 
+class MassTextForm(ActionForm):
     text = forms.CharField(max_length=160, required=True, widget=SMSInput())
     text_luo = forms.CharField(max_length=160, required=False, widget=SMSInput())
 
@@ -382,53 +367,53 @@ class MassTextForm(ActionForm):
             text = self.cleaned_data.get('text', "")
             text = text.replace('%', u'\u0025')
 
-
             if not self.cleaned_data['text_luo'] == '':
                 (translation, created) = \
                     Translation.objects.get_or_create(language='ach',
-                        field=self.cleaned_data['text'],
-                        value=self.cleaned_data['text_luo'])
-
-
+                                                      field=self.cleaned_data['text'],
+                                                      value=self.cleaned_data['text_luo'])
 
             messages = Message.mass_text(text, connections)
-            contacts=Contact.objects.filter(pk__in=results)
+            contacts = Contact.objects.filter(pk__in=results)
 
             MassText.bulk.bulk_insert(send_pre_save=False,
-                    user=request.user,
-                    text=text,
-                    contacts=list(contacts))
+                                      user=request.user,
+                                      text=text,
+                                      contacts=list(contacts))
             masstexts = MassText.bulk.bulk_insert_commit(send_post_save=False, autoclobber=True)
             masstext = masstexts[0]
-            
+
             return ('Message successfully sent to %d numbers' % len(connections), 'success',)
         else:
             return ("You don't have permission to send messages!", 'error',)
+
 
 class NewPollForm(forms.Form): # pragma: no cover
 
     TYPE_YES_NO = 'yn'
 
     type = forms.ChoiceField(
-               required=True,
-               choices=(
-                    (TYPE_YES_NO, 'Yes/No Question'),
-                ))
-    response_type=forms.ChoiceField(choices=Poll.RESPONSE_TYPE_CHOICES,widget=RadioSelect,initial=Poll.RESPONSE_TYPE_ALL)
+        required=True,
+        choices=(
+            (TYPE_YES_NO, 'Yes/No Question'),
+        ))
+    response_type = forms.ChoiceField(choices=Poll.RESPONSE_TYPE_CHOICES, widget=RadioSelect,
+                                      initial=Poll.RESPONSE_TYPE_ALL)
 
     def updateTypes(self):
-        self.fields['type'].widget.choices += [(choice['type'], choice['label']) for choice in Poll.TYPE_CHOICES.values()]
+        self.fields['type'].widget.choices += [(choice['type'], choice['label']) for choice in
+                                               Poll.TYPE_CHOICES.values()]
 
     name = forms.CharField(max_length=32, required=True)
-    question_en = forms.CharField(max_length=160, required=True,widget=SMSInput())
-    question_luo = forms.CharField(max_length=160, required=False,widget=SMSInput())
-    question_kdj = forms.CharField(max_length=160, required=False,widget=SMSInput())
-    default_response_en = forms.CharField(max_length=160, required=False,widget=SMSInput())
-    default_response_kdj = forms.CharField(max_length=160, required=False,widget=SMSInput())
-    default_response_luo = forms.CharField(max_length=160, required=False,widget=SMSInput())
+    question_en = forms.CharField(max_length=160, required=True, widget=SMSInput())
+    question_luo = forms.CharField(max_length=160, required=False, widget=SMSInput())
+    question_kdj = forms.CharField(max_length=160, required=False, widget=SMSInput())
+    default_response_en = forms.CharField(max_length=160, required=False, widget=SMSInput())
+    default_response_kdj = forms.CharField(max_length=160, required=False, widget=SMSInput())
+    default_response_luo = forms.CharField(max_length=160, required=False, widget=SMSInput())
     districts = forms.ModelMultipleChoiceField(queryset=
-                                 Location.objects.filter(type__slug='district'
-                                 ).order_by('name'), required=False)
+                                               Location.objects.filter(type__slug='district'
+                                               ).order_by('name'), required=False)
 
     # This may seem like a hack, but this allows time for the Contact model
     # to optionally have groups (i.e., poll doesn't explicitly depend on the rapidsms-auth
@@ -444,19 +429,18 @@ class NewPollForm(forms.Form): # pragma: no cover
     def clean(self):
         cleaned_data = self.cleaned_data
         groups = cleaned_data.get('groups')
-        if cleaned_data.get('question_en',None):
+        if cleaned_data.get('question_en', None):
             cleaned_data['question_en'] = cleaned_data.get('question_en').replace('%', u'\u0025')
-        if cleaned_data.get('default_response_en',None):
+        if cleaned_data.get('default_response_en', None):
             cleaned_data['default_response_en'] = cleaned_data['default_response_en'].replace('%', u'\u0025')
 
-        if  not groups:
+        if not groups:
             raise forms.ValidationError("You must provide a set of recipients (a group or groups)")
 
         return cleaned_data
 
 
 class AssignResponseGroupForm(ActionForm):
-
     action_label = 'Assign to group(s)'
 
     # This may seem like a hack, but this allows time for the Contact model's
@@ -472,7 +456,9 @@ class AssignResponseGroupForm(ActionForm):
             forms.Form.__init__(self, **kwargs)
         if hasattr(Contact, 'groups'):
             if self.request.user.is_authenticated():
-                self.fields['groups'] = forms.ModelMultipleChoiceField(queryset=Group.objects.filter(pk__in=self.request.user.groups.values_list('pk', flat=True)), required=False)
+                self.fields['groups'] = forms.ModelMultipleChoiceField(
+                    queryset=Group.objects.filter(pk__in=self.request.user.groups.values_list('pk', flat=True)),
+                    required=False)
             else:
                 self.fields['groups'] = forms.ModelMultipleChoiceField(queryset=Group.objects.all(), required=False)
 
@@ -481,7 +467,7 @@ class AssignResponseGroupForm(ActionForm):
 
         for response in results:
             for g in groups:
-                contact=response.message.connection.contact
+                contact = response.message.connection.contact
                 if contact:
                     contact.groups.add(g)
         return ('%d Contacts assigned to %d groups.' % (len(results), len(groups)), 'success',)
@@ -490,88 +476,97 @@ class AssignResponseGroupForm(ActionForm):
 class BlacklistForm2(ActionForm):
     """ abstract class for all the filter forms"""
     action_label = 'Blacklist/Opt-out Users'
+
     def perform(self, request, results):
         if request.user and request.user.has_perm('unregister.add_blacklist'):
 
-            connections=Connection.objects.filter(pk__in=results.values_list('connection')).distinct()
+            connections = Connection.objects.filter(pk__in=results.values_list('connection')).distinct()
             for c in connections:
                 Blacklist.objects.get_or_create(connection=c)
-                Message.objects.create(status="Q",direction="O",connection=c,text="Your UReport opt out is confirmed.If you made a mistake,or you want your voice to be heard again,text in JOIN and send it to 8500!All SMS messages are free")
+                Message.objects.create(status="Q", direction="O", connection=c,
+                                       text="Your UReport opt out is confirmed.If you made a mistake,or you want your voice to be heard again,text in JOIN and send it to 8500!All SMS messages are free")
             return ('You blacklisted %d numbers' % len(connections), 'success',)
         else:
             return ("You don't have permissions to blacklist numbers", 'error',)
 
-class SelectPoll(forms.Form):
 
+class SelectPoll(forms.Form):
     """ filter responses to poll  """
 
-    poll =\
-    forms.ModelChoiceField(queryset=Poll.objects.exclude(start_date=None).order_by('-pk'))
+    poll = \
+        forms.ModelChoiceField(queryset=Poll.objects.exclude(start_date=None).order_by('-pk'))
+
 
 class SelectCategory(forms.Form):
-    category =\
-    forms.ModelMultipleChoiceField(queryset=QuerySet())
+    category = \
+        forms.ModelMultipleChoiceField(queryset=QuerySet())
+
     def __init__(self, *args, **kwargs):
         categories = kwargs['categories']
         del kwargs['categories']
         super(SelectCategory, self).__init__(*args, **kwargs)
-        self.fields['category'].queryset =categories
+        self.fields['category'].queryset = categories
+
 
 class SendMessageForm(forms.Form):
-    recipients=forms.CharField(label="recepient(s)" ,required=True,help_text="enter numbers commas separated")
+    recipients = forms.CharField(label="recepient(s)", required=True, help_text="enter numbers commas separated",
+                                 widget=forms.HiddenInput)
     text = forms.CharField(required=True, widget=SMSInput())
 
+
 class rangeForm(forms.Form):
-    startdate = forms.DateField(('%d/%m/%Y',), label='Start Date', required=False,widget=forms.DateTimeInput(format='%d/%m/%Y', attrs={
-        'class': 'input',
-        'readonly': 'readonly',
-        'size': '15'
-    }))
-    enddate = forms.DateField(('%d/%m/%Y',), label='End Date', required=False,widget=forms.DateTimeInput(format='%d/%m/%Y', attrs={
-        'class': 'input',
-        'readonly': 'readonly',
-        'size': '15'
-    }))
+    startdate = forms.DateField(('%d/%m/%Y',), label='Start Date', required=False,
+                                widget=forms.DateTimeInput(format='%d/%m/%Y', attrs={
+                                    'class': 'input',
+                                    'readonly': 'readonly',
+                                    'size': '15'
+                                }))
+    enddate = forms.DateField(('%d/%m/%Y',), label='End Date', required=False,
+                              widget=forms.DateTimeInput(format='%d/%m/%Y', attrs={
+                                  'class': 'input',
+                                  'readonly': 'readonly',
+                                  'size': '15'
+                              }))
+
 
 class GroupRules(forms.ModelForm):
-
     class Meta:
-        model=AutoregGroupRules
-        exclude=('rule_regex',)
+        model = AutoregGroupRules
+        exclude = ('rule_regex',)
 
 
 class DownloadForm(forms.Form):
+    startdate = forms.DateField(('%d/%m/%Y',), label='Start Date', required=False,
+                                widget=forms.DateTimeInput(format='%d/%m/%Y', attrs={
+                                    'class': 'input',
+                                    'readonly': 'readonly',
+                                    'size': '15'
+                                }))
+    enddate = forms.DateField(('%d/%m/%Y',), label='End Date', required=False,
+                              widget=forms.DateTimeInput(format='%d/%m/%Y', attrs={
+                                  'class': 'input',
+                                  'readonly': 'readonly',
+                                  'size': '15'
+                              }))
 
-    startdate = forms.DateField(('%d/%m/%Y',), label='Start Date', required=False,widget=forms.DateTimeInput(format='%d/%m/%Y', attrs={
-        'class': 'input',
-        'readonly': 'readonly',
-        'size': '15'
-    }))
-    enddate = forms.DateField(('%d/%m/%Y',), label='End Date', required=False,widget=forms.DateTimeInput(format='%d/%m/%Y', attrs={
-        'class': 'input',
-        'readonly': 'readonly',
-        'size': '15'
-    }))
-
-    def export(self,request,queryset,date_field):
+    def export(self, request, queryset, date_field):
         if request.user.has_perm("ureport.can_export"):
             start = self.cleaned_data['startdate']
             end = self.cleaned_data['enddate']
-            date="%s__range"%date_field
-            kwargs=dict(date=(start,end))
-            data=queryset.filter(**kwargs).values()
-            response=ExcelResponse(data=list(data))
+            date = "%s__range" % date_field
+            kwargs = dict(date=(start, end))
+            data = queryset.filter(**kwargs).values()
+            response = ExcelResponse(data=list(data))
             return response
 
 
 class UreporterSearchForm(FilterForm):
-
     """ concrete implementation of filter form
         TO DO: add ability to search for multiple search terms separated by 'or'
     """
 
     searchx = forms.CharField(max_length=100, required=False, label="Free-form search",
-        help_text="Use 'or' to search for multiple names")
+                              help_text="Use 'or' to search for multiple names")
 
     def filter(self, request, queryset):
         searchx = self.cleaned_data['searchx'].strip()
@@ -589,12 +584,13 @@ class UreporterSearchForm(FilterForm):
                                    | Q(mobile__icontains=searchx))
 
 
-
 class AgeFilterForm(FilterForm):
     """ filter contacts by their age """
-    flag = forms.ChoiceField(label='' , choices=(('', '-----'), ('==', 'Equal to'), ('>', 'Greater than'), ('<',\
-                                                                                                            'Less than'), ('None', 'N/A')), required=False)
-    age = forms.CharField(max_length=20, label="Age", widget=forms.TextInput(attrs={'size':'20'}), required=False)
+    flag = forms.ChoiceField(label='', choices=(('', '-----'), ('==', 'Equal to'), ('>', 'Greater than'), ('<', \
+                                                                                                           'Less than'),
+                                                ('None', 'N/A')), required=False)
+    age = forms.CharField(max_length=20, label="Age", widget=forms.TextInput(attrs={'size': '20'}), required=False)
+
     def filter(self, request, queryset):
 
         flag = self.cleaned_data['flag']
@@ -602,7 +598,7 @@ class AgeFilterForm(FilterForm):
         try:
             age = int(self.cleaned_data['age'])
         except:
-            age=None
+            age = None
 
         if flag == '':
             return queryset
@@ -615,17 +611,20 @@ class AgeFilterForm(FilterForm):
         else:
             return queryset.filter(age=None)
 
+
 class DistrictForm(forms.Form):
-    districts = forms.ModelMultipleChoiceField(queryset=Location.objects.filter(type__slug='district').order_by('name'), required=True)
+    districts = forms.ModelMultipleChoiceField(queryset=Location.objects.filter(type__slug='district').order_by('name'),
+                                               required=True)
 
 
 def get_poll_data(poll):
     yesno_category_names = ['yes', 'no']
     if poll.categories.count():
-        category_names = yesno_category_names if poll.is_yesno_poll() else list(poll.categories.all().values_list('name', flat=True))
+        category_names = yesno_category_names if poll.is_yesno_poll() else list(
+            poll.categories.all().values_list('name', flat=True))
         root = Location.tree.root_nodes()[0]
-        data=poll.responses_by_category(root)
-        clean_data={}
+        data = poll.responses_by_category(root)
+        clean_data = {}
         for d in data:
             l = Location.objects.get(pk=d['location_id'])
             clean_data.setdefault(l.pk, {})
@@ -638,68 +637,67 @@ def get_poll_data(poll):
             for cat_name, val in values.items():
                 total += val
             for cat_name in category_names:
-                values[cat_name] = '%d%% '% int(float(values[cat_name])*100 / total)
+                values[cat_name] = '%d%% ' % int(float(values[cat_name]) * 100 / total)
 
         return clean_data
     return None
 
-def get_summary(pk,poll_data):
-    c=poll_data.get(pk,None)
-    return " ".join(["%s said %s"%( str(c[a]),str(a)) for a in c.keys() if not a in ["uncategorized","unknown"]])
 
+def get_summary(pk, poll_data):
+    c = poll_data.get(pk, None)
+    return " ".join(["%s said %s" % ( str(c[a]), str(a)) for a in c.keys() if not a in ["uncategorized", "unknown"]])
 
 
 class TemplateMessage(ActionForm):
-    template = forms.CharField(max_length=160, required=True, widget=SMSInput(),help_text="message shd be of form Dear Hon. [insert name]. [insert results ] of people from [insert district] say that lorem ipsum")
-    poll=forms.ModelChoiceField(queryset=Poll.objects.exclude(start_date=None).exclude(categories=None).order_by('-pk'))
+    template = forms.CharField(max_length=160, required=True, widget=SMSInput(),
+                               help_text="message shd be of form Dear Hon. [insert name]. [insert results ] of people from [insert district] say that lorem ipsum")
+    poll = forms.ModelChoiceField(
+        queryset=Poll.objects.exclude(start_date=None).exclude(categories=None).order_by('-pk'))
 
-    label="Send Message"
-
+    label = "Send Message"
 
 
     def perform(self, request, results):
 
-        if request.user :
-            poll= self.cleaned_data['poll']
-            contacts=Contact.objects.filter(pk__in=results).exclude(connection=None)
-            regex=re.compile(r"(\[[^\[\]]+\])")
-            template= self.cleaned_data['template']
-            parts=regex.split(template)
+        if request.user:
+            poll = self.cleaned_data['poll']
+            contacts = Contact.objects.filter(pk__in=results).exclude(connection=None)
+            regex = re.compile(r"(\[[^\[\]]+\])")
+            template = self.cleaned_data['template']
+            parts = regex.split(template)
             yesno_category_names = ['yes', 'no']
-            poll_data=get_poll_data(poll)
+            poll_data = get_poll_data(poll)
             if poll_data:
                 import datetime
-                key="templatemsg%s"%str(datetime.datetime.now().isoformat())
-                temp_msg,_=MessageAttribute.objects.get_or_create(name=key)
 
+                key = "templatemsg%s" % str(datetime.datetime.now().isoformat())
+                temp_msg, _ = MessageAttribute.objects.get_or_create(name=key)
 
                 for contact in contacts:
 
-                    if contact.reporting_location and poll_data.get(contact.reporting_location.pk,None):
-                        d={
-                            'name':contact.name.split()[-1],
-                            'district':contact.reporting_location.name,
-                            'results':get_summary(contact.reporting_location.pk,poll_data)
+                    if contact.reporting_location and poll_data.get(contact.reporting_location.pk, None):
+                        d = {
+                            'name': contact.name.split()[-1],
+                            'district': contact.reporting_location.name,
+                            'results': get_summary(contact.reporting_location.pk, poll_data)
 
-                            }
+                        }
 
-                        message=""
+                        message = ""
                         for p in parts:
                             if p.strip().startswith("["):
 
-                                message=message+d[p.replace("[","").replace("]","").strip().rsplit()[1]]
+                                message = message + d[p.replace("[", "").replace("]", "").strip().rsplit()[1]]
                             else:
-                                message=message+p
+                                message = message + p
 
+                        message = Message.objects.create(status="P", direction="O",
+                                                         connection=contact.default_connection, text=message)
+                        msg_a = MessageDetail.objects.create(message=message, attribute=temp_msg, value='comfirm')
 
-
-
-                        message=Message.objects.create(status="P",direction="O",connection=contact.default_connection,text=message)
-                        msg_a=MessageDetail.objects.create(message=message,attribute=temp_msg,value='comfirm')
-
-
-
-                return (mark_safe('Message is going to be sent to   %d contacts .<a href="/comfirmmessages/%s/">Comfirm Sending </a>' % (len(results),key)), 'success',)
+                return (mark_safe(
+                    'Message is going to be sent to   %d contacts .<a href="/comfirmmessages/%s/">Comfirm Sending </a>' % (
+                        len(results), key)), 'success',)
             else:
                 return ("some thing went wrong", 'error',)
 
@@ -709,5 +707,5 @@ class TemplateMessage(ActionForm):
 
 class GroupsFilter(forms.Form):
     group_list = forms.ModelMultipleChoiceField(queryset=
-    Group.objects.order_by('name'), required=False)
+                                                Group.objects.order_by('name'), required=False)
 

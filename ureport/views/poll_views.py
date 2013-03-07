@@ -55,14 +55,15 @@ def view_poll(request, pk):
             res['Cache-Control'] = 'no-store'
             return res
         if request.GET.get('viewable'):
-            poll.set_attr('viewable', True, default=True)
+            poll.viewable = True
+            poll.save()
             res = HttpResponse(
                 '<a href="javascript:void(0)" id="poll_v" class="btn" onclick="loadViewable'
                 '(\'?unviewable=True&poll=True\')">Don\'t Show On Home page</a>')
             res['Cache-Control'] = 'no-store'
             return res
         if request.GET.get('unviewable'):
-            poll.set_attr('viewable', 'false', default=True)
+            poll.set_attr('viewable', False)
             res = HttpResponse(
                 '<a href="javascript:void(0)" id="poll_v" class="btn" onclick="loadViewable'
                 '(\'?viewable=True&poll=True\')">Show On Home page</a>')
@@ -113,14 +114,8 @@ def view_poll(request, pk):
             else:
                 template = "ureport/polls/rules.html"
 
-    try:
-        poll_is_viewable = poll.get_attr('viewable')
-    except ObjectDoesNotExist:
-        poll_is_viewable = poll.set_attr('viewable', True, default=True)
-
     return render_to_response(template, {
         'poll': poll,
-        'poll_is_viewable': poll_is_viewable,
         'xf': xf,
         'response': response,
         'categories': categories,
@@ -255,11 +250,14 @@ def view_responses(req, poll_id):
             except ZeroDivisionError:
                 response_rates.pop(group.name)
     typedef = Poll.TYPE_CHOICES[poll.type]
-    print typedef
-    columns = [('Sender', False, 'sender', None)]
-    for (column, style_class, sortable, db_field, sorter) in \
-        typedef['report_columns']:
-        columns.append((column, sortable, db_field, sorter))
+    # columns = [('Sender', False, 'sender', None)]
+    # for (column, style_class, sortable, db_field, sorter) in \
+    #     typedef['report_columns']:
+    #     columns.append((column, sortable, db_field, sorter))
+    columns = (
+               ('Date', True, 'date', SimpleSorter()),
+               ('Text', False, 'text', None),
+            )
 
     return generic(
         req,
@@ -384,6 +382,7 @@ def ureport_polls(request):
                    paginator_func=ureport_paginate,
                    sort_column='start_date',
                    sort_ascending=False,
+                   columns=columns
     )
 
 

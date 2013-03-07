@@ -115,10 +115,10 @@
         <table class="zebra-striped bordered fc" width="100%" id="mps">
             <thead>
             <tr>
+                <th>Identifier</th>
+                <td>Name</td>
                 <th>Text</th>
                 <th>Date</th>
-                <th>Name</th>
-                <th>Number</th>
                 <th>District</th>
                 <th>Group(s)</th>
             </tr>
@@ -126,10 +126,10 @@
             <tbody id="mp_bd">
             {% for msg in messages.object_list %}
                 <tr>
+                    <td><a href="/messagehistory/{{ msg.connection.pk }}/">{{ msg.connection_id }}</a></td>
+                    <td>{{ msg.connection.contact.name }}</td>
                     <td>{{ msg.text }}</td>
                     <td>{{ msg.date|date:"m/d/Y H:i:s" }}</td>
-                    <td>{{ msg.connection.contact.name }}</td>
-                    <td><a href="/messagehistory/{{ msg.connection.pk }}/">{{ msg.connection.identity }}</a></td>
                     <td>{{ msg.connection.contact.reporting_location }}</td>
                     <td><ul>
                         {% for gr in msg.connection.contact.groups.all %}

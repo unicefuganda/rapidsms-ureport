@@ -165,7 +165,7 @@
 
                 });
 
-        $('.msg_rep').each(function (index, elem) {
+        $('.msg_rep_link').each(function (index, elem) {
 
             $(elem)
                     .bind('ajax:before', function (exhr, status, error) {
@@ -254,6 +254,9 @@
 
 
     function bind_ajax(elem, cont) {
+
+        form=$(elem);
+        $.ureport.handleRemote( form );
         $(elem).bind('ajax:before',function (exhr, status, error) {
             ajax_loading(elem);
         }).
@@ -302,7 +305,8 @@
                 });
     }
 
-    
+
+
 
 
 
@@ -390,10 +394,9 @@
             <thead>
             <tr>
                 <th>Actioned</th>
+                <th>Identifier</th>
                 <th>Text</th>
                 <th>Date</th>
-                <th>Name</th>
-                {%if perms.rapidsms.view_numbers %} <th>Number</th>{%endif%}
                 <th>District</th>
                 <th>Action</th>
                 <th>Rating</th>
@@ -418,10 +421,13 @@
 
                     {%endfor%}
                 </td>
+                <td>
+                    <a href="/messagehistory/{{msg.connection_id}}/">
+                   {{ msg.connection_id }}
+                    </a>
+                </td>
                 <td>{{ msg.text }}</td>
                 <td>{{ msg.date|date:"m/d/Y H:i:s" }}</td>
-                <td>{{ msg.connection.contact.name }}</td>
-                {%if perms.rapidsms.view_numbers %} <td><a href="/messagehistory/{{ msg.connection.pk }}/">{{ msg.connection.identity }}</a></td>{%endif%}
                 <td>{{ msg.connection.contact.reporting_location }}</td>
                 <td>
                     {%if perms.rapidsms.forward %}
