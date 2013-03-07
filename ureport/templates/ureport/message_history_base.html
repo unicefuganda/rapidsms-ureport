@@ -23,16 +23,12 @@
 {% endblock %}
 {% block content %}
     <div class="module">
-        <h2>Profile for {{ contact.name }}</h2>
+        <h2>Profile for {{ contact.default_connection.pk }}</h2>
 
         <table style="font-size: 16px;">
             <tr>
-                <td>Name:</td>
-                <td>{{ contact.name }}</td>
-            </tr>
-            <tr>
-                <td>Mobile:</td>
-                <td>{{ contact.default_connection.identity }}</td>
+                <td>Identifier:</td>
+                <td>{{ contact.default_connection.pk }}</td>
             </tr>
             <tr>
                 <td>Gender:</td>
