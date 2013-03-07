@@ -338,6 +338,8 @@
 
         <span><a  onclick="$('#download').toggle();" href="javascript:void(0);" >Download >></a>
         </span>
+         <span><a  onclick="$('#groups_filter').toggle();" href="javascript:void(0);" >Filter Groups >></a>
+        </span>
 
 
         {%endif%}
@@ -361,6 +363,16 @@
                 </table>
 
            </form>
+        </div>
+
+        <div id="groups_filter" style="display:none;">
+            <form action="" method="post" data-remote=true>
+                Filter Group
+                {{ groupform.groups }}
+
+                <input type="submit" value="filter group" data-disable-with="Filtering......" >
+            </form>
+
         </div>
 
         <div>

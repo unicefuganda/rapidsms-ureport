@@ -182,16 +182,28 @@ def alerts(request):
     district_form=DistrictForm(request.POST or None)
     if request.GET.get('reset_districts',None):
         request.session['districts']=None
+        request.session['groups']=None
 
     if district_form.is_valid():
         request.session['districts']=[c.pk for c in district_form.cleaned_data['districts']]
+
+    groupform = AssignResponseGroupForm(request=request)
+    if request.method == 'POST' and request.POST.get('groups', None):
+        g_form = AssignResponseGroupForm(request.POST, request=request)
+        if g_form.is_valid():
+            request.session['groups'] = g_form.cleaned_data['groups']
+
     template = 'ureport/polls/alerts.html'
     if request.session.get('districts'):
         message_list = \
             Message.objects.filter(details__attribute__name='alert'
-                                   ).filter(connection__contact__reporting_location__in=request.session.get('districts')).order_by('-date')
+                                   ).filter(connection__contact__reporting_location__in=request.session.get('districts'))
     else:
-        message_list =Message.objects.filter(details__attribute__name='alert').order_by('-date')
+        message_list =Message.objects.filter(details__attribute__name='alert')
+
+    if  request.session.get('groups', None):
+        message_list = message_list.filter(connection__contact__groups__name__in=request.session.get('groups'
+        ))
 
     (capture_status, _) = \
         Settings.objects.get_or_create(attribute='alerts')
@@ -342,6 +354,7 @@ def alerts(request):
         'rate': rate,
         'district_form':district_form,
         'range_form': range_form,
+        'groupform':groupform,
         }, context_instance=RequestContext(request))
 
 
