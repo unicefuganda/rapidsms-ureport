@@ -165,7 +165,7 @@
 
                 });
 
-        $('.msg_rep').each(function (index, elem) {
+        $('.msg_rep_link').each(function (index, elem) {
 
             $(elem)
                     .bind('ajax:before', function (exhr, status, error) {
@@ -254,6 +254,9 @@
 
 
     function bind_ajax(elem, cont) {
+
+        form=$(elem);
+        $.ureport.handleRemote( form );
         $(elem).bind('ajax:before',function (exhr, status, error) {
             ajax_loading(elem);
         }).
@@ -302,7 +305,8 @@
                 });
     }
 
-    
+
+
 
 
 
@@ -338,6 +342,8 @@
 
         <span><a  onclick="$('#download').toggle();" href="javascript:void(0);" >Download >></a>
         </span>
+         <span><a  onclick="$('#groups_filter').toggle();" href="javascript:void(0);" >Filter Groups >></a>
+        </span>
 
 
         {%endif%}
@@ -361,6 +367,16 @@
                 </table>
 
            </form>
+        </div>
+
+        <div id="groups_filter" style="display:none;">
+            <form action="" method="post" data-remote=true>
+                Filter Group
+                {{ groupform.groups }}
+
+                <input type="submit" value="filter group" data-disable-with="Filtering......" >
+            </form>
+
         </div>
 
         <div>
@@ -406,7 +422,9 @@
                     {%endfor%}
                 </td>
                 <td>
+                    <a href="/messagehistory/{{msg.connection_id}}/">
                    {{ msg.connection_id }}
+                    </a>
                 </td>
                 <td>{{ msg.text }}</td>
                 <td>{{ msg.date|date:"m/d/Y H:i:s" }}</td>
