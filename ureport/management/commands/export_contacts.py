@@ -81,7 +81,7 @@ class Command(BaseCommand):
             "locations_location"
          WHERE
             "locations_location"."id"="rapidsms_contact"."subcounty_id") as subcounty,
-         array(SELECT
+         (array(SELECT
             "auth_group"."name"
          FROM
             "auth_group"
@@ -91,8 +91,35 @@ class Command(BaseCommand):
                   "auth_group"."id" = "rapidsms_contact_groups"."group_id"
                )
          WHERE
-            "rapidsms_contact_groups"."contact_id" = "rapidsms_contact"."id" order by "auth_group"."id" ) as
-      group,
+            "rapidsms_contact_groups"."contact_id" = "rapidsms_contact"."id" order by "auth_group"."id" ))[1] as
+      group1,
+        (array(SELECT
+            "auth_group"."name"
+         FROM
+            "auth_group"
+         INNER JOIN
+            "rapidsms_contact_groups"
+               ON (
+                  "auth_group"."id" = "rapidsms_contact_groups"."group_id"
+               )
+         WHERE
+            "rapidsms_contact_groups"."contact_id" = "rapidsms_contact"."id" order by "auth_group"."id" ))[2] as
+      group2,
+
+        (array(SELECT
+            "auth_group"."name"
+         FROM
+            "auth_group"
+         INNER JOIN
+            "rapidsms_contact_groups"
+               ON (
+                  "auth_group"."id" = "rapidsms_contact_groups"."group_id"
+               )
+         WHERE
+            "rapidsms_contact_groups"."contact_id" = "rapidsms_contact"."id" order by "auth_group"."id" ))[3] as
+      group3,
+
+
       (SELECT
       "rapidsms_httprouter_message"."text"
       FROM "rapidsms_httprouter_message"
@@ -147,7 +174,9 @@ class Command(BaseCommand):
                 'Health Facility',
                 'Village',
                 'Subcounty',
-                'Group',
+                'Group 1',
+                'Group 2',
+                'Group 3',
                 'How did you hear about ureport?',
                 'Number Of Responses',
                 'Number Of Questions Asked',
@@ -233,6 +262,12 @@ class Command(BaseCommand):
                         response_export_data['subcounty'] = 'N/A'
                     if response.contact \
                         and response.contact.groups.count() > 0:
+                        gr=response.contact.groups.order_by('pk').values_list('name',flat=True).iterator()
+                        response_export_data['group1']=gr.next() or ""
+                        response_export_data['group2']=gr.next() or ""
+                        response_export_data['group3']=gr.next() or ""
+
+
                         response_export_data['groups'] = \
                             ','.join([group.name for group in
                                 response.contact.groups.all()])
@@ -242,9 +277,9 @@ class Command(BaseCommand):
                         response_export_data['response'] = \
                             response.message.text
                         response_export_data['date'] = \
-                            response.message.date.date()
+                            response.message.date.strftime("%Y-%m-%d")
                         response_export_data['time'] = \
-                            response.message.date.time()
+                            response.message.date.strftime("%H:%M:%S")
                     else:
 
                         response_export_data['response'] = ''
