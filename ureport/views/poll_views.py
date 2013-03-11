@@ -19,7 +19,7 @@ from ureport.forms import NewPollForm, GroupsFilter
 from django.conf import settings
 from ureport.forms import AssignToPollForm, SearchResponsesForm, AssignResponseGroupForm, ReplyTextForm, DeleteSelectedForm
 from django.contrib.sites.models import Site
-from ureport.tasks import start_poll
+from ureport import tasks
 from ureport.utils import get_polls, get_script_polls
 from generic.sorters import SimpleSorter
 from ureport.views.utils.paginator import ureport_paginate
@@ -38,7 +38,7 @@ def view_poll(request, pk):
     if request.GET.get('poll'):
         if request.GET.get('start'):
             poll=Poll.objects.get(pk=pk)
-            start_poll.delay(poll)
+            tasks.start_poll.delay(poll)
             res = """ <a href="?stop=True&poll=True" data-remote=true  id="poll_action" class="btn">Close Poll</a> """
             return HttpResponse(res)
         if request.GET.get('stop'):
