@@ -36,6 +36,7 @@ class Command(BaseCommand):
                 """    SELECT
       "rapidsms_contact"."id",
       "rapidsms_contact"."language",
+      "rapidsms_contact"."village_name" as village,
       (SELECT
          DATE("script_scriptsession"."start_time")
       FROM
@@ -69,12 +70,6 @@ class Command(BaseCommand):
 
          "rapidsms_contact"."gender",
           "rapidsms_contact"."health_facility" as facility,
-         (SELECT
-            "locations_location"."name"
-         FROM
-            "locations_location"
-         WHERE
-            "locations_location"."id"="rapidsms_contact"."village_id") as village,
 (SELECT
             "locations_location"."name"
          FROM
