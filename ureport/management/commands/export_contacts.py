@@ -11,9 +11,7 @@ import datetime
 from django.db import connection
 
 
-
 class Command(BaseCommand):
-
     def handle(self, **options):
         try:
 
@@ -21,7 +19,7 @@ class Command(BaseCommand):
 
             excel_file_path = \
                 os.path.join(os.path.join(os.path.join(UREPORT_ROOT,
-                             'static'), 'spreadsheets'),
+                                                       'static'), 'spreadsheets'),
                              'ureporters.xlsx')
             export_data_list = []
 
@@ -159,24 +157,24 @@ class Command(BaseCommand):
             cursor = connection.connection.cursor(name='contacts')
             cursor.execute(sql)
             row_0 = [(
-                'Id',
-                'Language',
-                'Autoreg Join Date',
-                'Quit Date',
-                'District',
-                'Age',
-                'Gender',
-                'Health Facility',
-                'Village',
-                'Subcounty',
-                'Group 1',
-                'Group 2',
-                'Group 3',
-                'How did you hear about ureport?',
-                'Number Of Responses',
-                'Number Of Questions Asked',
-                'Number of Incoming',
-                )]
+                         'Id',
+                         'Language',
+                         'Autoreg Join Date',
+                         'Quit Date',
+                         'District',
+                         'Age',
+                         'Gender',
+                         'Health Facility',
+                         'Village',
+                         'Subcounty',
+                         'Group 1',
+                         'Group 2',
+                         'Group 3',
+                         'How did you hear about ureport?',
+                         'Number Of Responses',
+                         'Number Of Questions Asked',
+                         'Number of Incoming',
+                     )]
 
             rows = row_0 + cursor.fetchall()
 
@@ -196,18 +194,17 @@ class Command(BaseCommand):
                 response_data_list = []
                 excel_file_path = \
                     os.path.join(os.path.join(os.path.join(UREPORT_ROOT,
-                                 'static'), 'spreadsheets'),
+                                                           'static'), 'spreadsheets'),
                                  'poll_%d.xlsx' % poll.pk)
                 for response in responses:
 
                     response_export_data = SortedDict()
                     if response.contact:
-                        response_export_data['contact_pk']=response.contact.pk
+                        response_export_data['contact_pk'] = response.contact.pk
                     else:
-                        response_export_data['contact_pk']=""
+                        response_export_data['contact_pk'] = ""
 
-                    response_export_data['message_pk']=response.message.pk
-
+                    response_export_data['message_pk'] = response.message.pk
 
                     if response.contact and response.contact.name:
                         response_export_data['contact_name'] = \
@@ -216,10 +213,10 @@ class Command(BaseCommand):
                         response_export_data['contact_name'] = 'N/A'
 
                     if response.contact and response.contact.language:
-                        response_export_data['language']=response.contact.language
+                        response_export_data['language'] = response.contact.language
                     else:
-                        response_export_data['language']="en"
-                           
+                        response_export_data['language'] = "en"
+
                     if response.contact and response.contact.gender:
                         response_export_data['sex'] = \
                             response.contact.gender
@@ -261,22 +258,22 @@ class Command(BaseCommand):
                         try:
                             response_export_data['group1'] = gr[0]
                         except IndexError:
-                            response_export_data['group1'] = ""
+                            response_export_data['group1'] = "N/A"
                         try:
                             response_export_data['group2'] = gr[1]
                         except IndexError:
-                            response_export_data['group2'] = ""
+                            response_export_data['group2'] = "N/A"
                         try:
                             response_export_data['group3'] = gr[2]
                         except IndexError:
-                            response_export_data['group3'] = ""
-
+                            response_export_data['group3'] = "N/A"
 
                         response_export_data['groups'] = \
                             ','.join([group.name for group in
-                                response.contact.groups.all()])
+                                      response.contact.groups.all()])
                     else:
-                        response_export_data['groups'] = 'N/A'
+                        response_export_data['group1'] = response_export_data['group2'] = response_export_data[
+                            'group3'] = 'N/A'
                     if response.message:
                         response_export_data['response'] = \
                             response.message.text
