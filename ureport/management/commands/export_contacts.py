@@ -257,10 +257,19 @@ class Command(BaseCommand):
                         response_export_data['subcounty'] = 'N/A'
                     if response.contact \
                         and response.contact.groups.count() > 0:
-                        gr=response.contact.groups.order_by('pk').values_list('name',flat=True).iterator()
-                        response_export_data['group1']=gr.next() or ""
-                        response_export_data['group2']=gr.next() or ""
-                        response_export_data['group3']=gr.next() or ""
+                        gr = list(response.contact.groups.order_by('pk').values_list('name', flat=True))
+                        try:
+                            response_export_data['group1'] = gr[0]
+                        except IndexError:
+                            response_export_data['group1'] = ""
+                        try:
+                            response_export_data['group2'] = gr[1]
+                        except IndexError:
+                            response_export_data['group2'] = ""
+                        try:
+                            response_export_data['group3'] = gr[2]
+                        except IndexError:
+                            response_export_data['group3'] = ""
 
 
                         response_export_data['groups'] = \
