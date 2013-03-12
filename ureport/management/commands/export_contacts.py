@@ -272,6 +272,7 @@ class Command(BaseCommand):
                             ','.join([group.name for group in
                                       response.contact.groups.all()])
                     else:
+                        response_export_data['groups'] = 'N/A'
                         response_export_data['group1'] = response_export_data['group2'] = response_export_data[
                             'group3'] = 'N/A'
                     if response.message:
