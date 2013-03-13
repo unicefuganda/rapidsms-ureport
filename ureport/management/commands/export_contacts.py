@@ -181,8 +181,15 @@ LEFT JOIN
                 ws.cell('%s%s' % (col, row_x)).value = value
 
 
+    def chunks(l, n):
+        """ Yield successive n-sized chunks from l.
+        """
+        for i in xrange(0, len(l), n):
+            yield l[i:i+n]
+
+
     def write_xls(self, file_name, sheet_name, headings, data, data_xfs, heading_xf=ezxf('font: bold on; align: wrap on, vert centre, horiz center')):
-        data = data[slice(0, len(data), 65000)]
+        data = self.chunks(data, 65000)
         book = xlwt.Workbook()
         sn = 0
         for dat in data:
