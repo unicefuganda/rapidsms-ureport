@@ -25,7 +25,8 @@ class Command(BaseCommand):
         """    SELECT
 "rapidsms_contact"."id",
 "rapidsms_contact"."language",
-"rapidsms_contact"."village_name" as village,
+
+
 (SELECT
  DATE("script_scriptsession"."start_time")
 FROM
@@ -37,6 +38,8 @@ INNER JOIN
     )
 WHERE
  "rapidsms_connection"."contact_id" = "rapidsms_contact"."id"   LIMIT 1) as autoreg_join_date,
+
+
 (SELECT
  DATE("rapidsms_httprouter_message"."date")
 FROM
@@ -52,19 +55,30 @@ WHERE
     WHERE
        "rapidsms_connection"."contact_id" = "rapidsms_contact"."id"  LIMIT 1
  ) LIMIT 1
-) as quit_date,                                 "locations_location"."name",   (
+) as quit_date,
+
+"locations_location"."name" as district,
+
+(
  %d-EXTRACT('year'
 FROM
  "rapidsms_contact"."birthdate")) as age,
 
+
  "rapidsms_contact"."gender",
+
   "rapidsms_contact"."health_facility" as facility,
+
+  "rapidsms_contact"."village_name" as village,
+
 (SELECT
     "locations_location"."name"
  FROM
     "locations_location"
  WHERE
     "locations_location"."id"="rapidsms_contact"."subcounty_id") as subcounty,
+
+
  (array(SELECT
     "auth_group"."name"
  FROM
@@ -77,6 +91,8 @@ FROM
  WHERE
     "rapidsms_contact_groups"."contact_id" = "rapidsms_contact"."id" order by "auth_group"."id" ))[1] as
 group1,
+
+
 (array(SELECT
     "auth_group"."name"
  FROM
@@ -89,6 +105,7 @@ group1,
  WHERE
     "rapidsms_contact_groups"."contact_id" = "rapidsms_contact"."id" order by "auth_group"."id" ))[2] as
 group2,
+
 
 (array(SELECT
     "auth_group"."name"
@@ -104,21 +121,28 @@ group2,
 group3,
 
 
+
 (SELECT
 "rapidsms_httprouter_message"."text"
 FROM "rapidsms_httprouter_message"
 JOIN "poll_response"
     ON "poll_response"."message_id"= "rapidsms_httprouter_message"."id"  where poll_id=121 and contact_id="rapidsms_contact"."id" and has_errors='f' limit 1) as source,
+
+
 (SELECT
  COUNT(*) FROM
     "poll_response"
  WHERE
     "poll_response"."contact_id"="rapidsms_contact"."id") as responses,
+
+
     (SELECT DISTINCT
  COUNT(*) FROM
     "poll_poll_contacts"
  WHERE
     "poll_poll_contacts"."contact_id"="rapidsms_contact"."id" GROUP BY "poll_poll_contacts"."contact_id") as questions,
+
+
 
     (SELECT DISTINCT count(*)
 
@@ -135,6 +159,8 @@ WHERE  "rapidsms_httprouter_message"."direction" ='I'  and
        "rapidsms_connection"."contact_id" = "rapidsms_contact"."id"  LIMIT 1
  ) ) as incoming
 
+
+
 FROM
  "rapidsms_contact"
 LEFT JOIN
@@ -143,39 +169,35 @@ LEFT JOIN
          """ \
         % year_now
 
-    # def write_with_openpyxl(self,filename, headers, data):
-    #     wb = Workbook()
-    #     ws = wb.worksheets[0]
-    #     ws.title = 'Ureporters'
-    #     row_x = 0
-    #     for row in data:
-    #         row_x += 1
-    #         for col_x, value in enumerate(headers):
-    #             col = get_column_letter(col_x)
-    #             ws.cell('%s%s' % (col, row_x)).value = value
-    #
+    def write_with_openpyxl(self,filename, headers, data):
+        wb = Workbook()
+        ws = wb.worksheets[0]
+        ws.title = 'Ureporters'
+        row_x = 0
+        for row in data:
+            row_x += 1
+            for col_x, value in enumerate(headers):
+                col = get_column_letter(col_x)
+                ws.cell('%s%s' % (col, row_x)).value = value
 
 
     def write_xls(self, file_name, sheet_name, headings, data, data_xfs, heading_xf=ezxf('font: bold on; align: wrap on, vert centre, horiz center')):
+        data = data[slice(0, len(data), 65000)]
         book = xlwt.Workbook()
-        sheet = book.add_sheet(sheet_name)
-        sheet2 = book.add_sheet('Ureportersheet2')
-        rowx = 0
-        for colx, value in enumerate(headings):
-            sheet.write(rowx, colx, value, heading_xf)
-        sheet.set_panes_frozen(True) # frozen headings instead of split panes
-        sheet.set_horz_split_pos(rowx + 1) # in general, freeze after last heading row
-        sheet.set_remove_splits(True) # if user does unfreeze, don't leave a split there
-        for row in data[:60000]:
-            rowx += 1
-            for colx, value in enumerate(row):
-                sheet.write(rowx, colx, value, data_xfs[colx])
-
-        rowx = 0
-        for row in data[60000:120001]:
-            rowx += 1
-            for colx, value in enumerate(row):
-                sheet2.write(rowx, colx, value, data_xfs[colx])
+        sn = 0
+        for dat in data:
+            sn += 1
+            sheet = book.add_sheet(sheet_name + str(sn))
+            rowx = 0
+            for colx, value in enumerate(headings):
+                sheet.write(rowx, colx, value, heading_xf)
+            sheet.set_panes_frozen(True) # frozen headings instead of split panes
+            sheet.set_horz_split_pos(rowx + 1) # in general, freeze after last heading row
+            sheet.set_remove_splits(True) # if user does unfreeze, don't leave a split there
+            for row in dat:
+                rowx += 1
+                for colx, value in enumerate(row):
+                    sheet.write(rowx, colx, value, data_xfs[colx])
         book.save(file_name)
 
     def handle(self, **options):
