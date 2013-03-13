@@ -206,6 +206,7 @@ LEFT JOIN
             data_xfs = [kind_to_xf_map[k] for k in kinds]
             # ExcelResponse(rows, output_name=excel_file_path,
             #               write_to_file=True)
+            print rows
             self.write_xls(excel_file_path, 'ureporters', row_0, rows, data_xfs)
         except Exception, exc:
 
