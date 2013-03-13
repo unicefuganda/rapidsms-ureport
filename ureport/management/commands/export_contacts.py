@@ -4,6 +4,7 @@
 from django.core.management.base import BaseCommand
 import traceback
 import os
+from openpyxl.cell import get_column_letter
 import xlwt
 from ureport.settings import UREPORT_ROOT
 from django.utils.datastructures import SortedDict
@@ -11,6 +12,9 @@ from poll.models import Poll
 import datetime
 from django.db import connection
 ezxf = xlwt.easyxf
+
+from openpyxl.workbook import Workbook
+from openpyxl.writer.excel import ExcelWriter
 
 
 
@@ -139,19 +143,39 @@ LEFT JOIN
          """ \
         % year_now
 
+    # def write_with_openpyxl(self,filename, headers, data):
+    #     wb = Workbook()
+    #     ws = wb.worksheets[0]
+    #     ws.title = 'Ureporters'
+    #     row_x = 0
+    #     for row in data:
+    #         row_x += 1
+    #         for col_x, value in enumerate(headers):
+    #             col = get_column_letter(col_x)
+    #             ws.cell('%s%s' % (col, row_x)).value = value
+    #
+
+
     def write_xls(self, file_name, sheet_name, headings, data, data_xfs, heading_xf=ezxf('font: bold on; align: wrap on, vert centre, horiz center')):
         book = xlwt.Workbook()
         sheet = book.add_sheet(sheet_name)
+        sheet2 = book.add_sheet('Ureportersheet2')
         rowx = 0
         for colx, value in enumerate(headings):
             sheet.write(rowx, colx, value, heading_xf)
         sheet.set_panes_frozen(True) # frozen headings instead of split panes
         sheet.set_horz_split_pos(rowx + 1) # in general, freeze after last heading row
         sheet.set_remove_splits(True) # if user does unfreeze, don't leave a split there
-        for row in data:
+        for row in data[:60000]:
             rowx += 1
             for colx, value in enumerate(row):
                 sheet.write(rowx, colx, value, data_xfs[colx])
+
+        rowx = 0
+        for row in data[60000:120001]:
+            rowx += 1
+            for colx, value in enumerate(row):
+                sheet2.write(rowx, colx, value, data_xfs[colx])
         book.save(file_name)
 
     def handle(self, **options):
@@ -162,7 +186,7 @@ LEFT JOIN
             excel_file_path = \
                 os.path.join(os.path.join(os.path.join(UREPORT_ROOT,
                                                        'static'), 'spreadsheets'),
-                             'ureporters.xlsx')
+                             'ureporters.xls')
             export_data_list = []
 
             # messages=Message.objects.select_related(depth=1)
@@ -206,7 +230,7 @@ LEFT JOIN
             data_xfs = [kind_to_xf_map[k] for k in kinds]
             # ExcelResponse(rows, output_name=excel_file_path,
             #               write_to_file=True)
-            print rows
+            #print rows
             self.write_xls(excel_file_path, 'ureporters', row_0, rows, data_xfs)
         except Exception, exc:
 
