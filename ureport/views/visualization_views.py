@@ -27,15 +27,21 @@ def best_visualization(request, poll_id=None):
     if 'module' in request.GET:
         module = True
     polls = retrieve_poll(request, poll_id)
-    poll = polls[0]
+    try:
+        poll = polls[0]
+    except IndexError:
+        poll = get_object_or_404(Poll, poll_id or request.GET.get('pks', None))
 
     #    if poll_id:
     #        poll = Poll.objects.get(pk=poll_id)
     #    else:
     #        poll = Poll.objects.latest('start_date')
+    try:
+        rate = poll.responses.count() * 100 / poll.contacts.count()
+    except ZeroDivisionError:
+        rate = 0
 
-    rate = poll.responses.count() * 100 / poll.contacts.count()
-    dict = {
+    dict_to_render = {
         'poll': poll,
         'polls': [poll],
         'unlabeled': True,
@@ -47,7 +53,7 @@ def best_visualization(request, poll_id=None):
                     'responses': _get_responses(poll),
                     'poll_id': poll.pk})
     return render_to_response('ureport/partials/viz/best_visualization.html'
-                              , dict,
+                              , dict_to_render,
                               context_instance=RequestContext(request))
 
 
