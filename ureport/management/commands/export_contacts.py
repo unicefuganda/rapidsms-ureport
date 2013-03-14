@@ -165,7 +165,7 @@ FROM
  "rapidsms_contact"
 LEFT JOIN
  "locations_location"
-    ON "rapidsms_contact"."reporting_location_id" = "locations_location"."id";
+    ON "rapidsms_contact"."reporting_location_id" = "locations_location"."id" limit 40;
          """ \
         % year_now
 
@@ -215,7 +215,7 @@ LEFT JOIN
             excel_file_path = \
                 os.path.join(os.path.join(os.path.join(UREPORT_ROOT,
                                                        'static'), 'spreadsheets'),
-                             'ureporters.xls')
+                             'ureporters.xlsx')
             export_data_list = []
 
             # messages=Message.objects.select_related(depth=1)
@@ -229,6 +229,7 @@ LEFT JOIN
             cursor = connection.connection.cursor(name='contacts')
             cursor.execute(self.sql)
             row_0 = [
+                        (
                          'Id',
                          'Language',
                          'Autoreg Join Date',
@@ -246,9 +247,10 @@ LEFT JOIN
                          'Number Of Responses',
                          'Number Of Questions Asked',
                          'Number of Incoming',
+                        )
                      ]
 
-            rows = cursor.fetchall()
+            rows = row_0 + cursor.fetchall()
             kinds = "int text date date text int text text text text text text text text text text text".split()
             kind_to_xf_map = {
                 'date': ezxf(num_format_str='yyyy-mm-dd'),
@@ -257,17 +259,17 @@ LEFT JOIN
                 }
 
             data_xfs = [kind_to_xf_map[k] for k in kinds]
-            # ExcelResponse(rows, output_name=excel_file_path,
-            #               write_to_file=True)
+            ExcelResponse(rows, output_name=excel_file_path,
+                          write_to_file=True)
             #print rows
-            self.write_xls(excel_file_path, 'ureporters', row_0, rows, data_xfs)
+            # self.write_xls(excel_file_path, 'ureporters', row_0, rows, data_xfs)
         except Exception, exc:
 
             print traceback.format_exc(exc)
 
         # export the last 2 polls
 
-        polls = Poll.objects.order_by('-pk')[0:10]
+        polls = Poll.objects.order_by('-pk')[0:1]
         print "doxing"
         for poll in polls:
             if poll.responses.exists():
@@ -276,7 +278,7 @@ LEFT JOIN
                 excel_file_path = \
                     os.path.join(os.path.join(os.path.join(UREPORT_ROOT,
                                                            'static'), 'spreadsheets'),
-                                 'poll_%d.xls' % poll.pk)
+                                 'poll_%d.xlsx' % poll.pk)
                 for response in responses:
 
                     response_export_data = SortedDict()
