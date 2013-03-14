@@ -13,6 +13,8 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         path = options["path"]
+        if not path:
+            raise RuntimeError("File not Found")
         csv_rows = csv.reader(open(path, 'rU'), delimiter=",")
         for row in csv_rows:
             try:
@@ -20,7 +22,7 @@ class Command(BaseCommand):
                 contact = connection.contact
                 contact.village_name = row[1]
                 contact.save()
-
+                print "Added", row[0], "to", row[1]
             except Connection.DoesNotExist:
 
                 print "Number", row[0], "not Found"
