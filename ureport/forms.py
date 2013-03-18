@@ -139,7 +139,7 @@ class SearchResponsesForm(FilterForm):
                                                            % search)
                                    | Q(message__connection__contact__reporting_location__name__iregex=".*\m(%s)\y.*"
                                                                                                       % search)
-                                   | Q(message__connection__identity__iregex=".*\m(%s)\y.*"
+                                   | Q(message__connection_id__iregex=".*\m(%s)\y.*"
                                                                              % search))
 
         elif search == "'=numerical value()'":
@@ -150,14 +150,14 @@ class SearchResponsesForm(FilterForm):
             search = search[1:-1]
             return queryset.filter(Q(message__text__iexact=search)
                                    | Q(message__connection__contact__reporting_location__name__iexact=search)
-                                   | Q(message__connection__identity__iexact=search))
+                                   | Q(message__connection_id__iexact=search))
         elif search == "=numerical value()":
             return queryset.filter(message__text__iregex="(-?\d+(\.\d+)?)")
         else:
 
             return queryset.filter(Q(message__text__icontains=search)
                                    | Q(message__connection__contact__reporting_location__name__icontains=search)
-                                   | Q(message__connection__identity__icontains=search))
+                                   | Q(message__connection_id__icontains=search))
 
 
 class SearchMessagesForm(FilterForm):
@@ -178,7 +178,7 @@ class SearchMessagesForm(FilterForm):
                                                   % search)
                                    | Q(connection__contact__reporting_location__name__iregex=".*\m(%s)\y.*"
                                                                                              % search)
-                                   | Q(connection__identity__iregex=".*\m(%s)\y.*"
+                                   | Q(connection__pk__iregex=".*\m(%s)\y.*"
                                                                     % search))
 
         elif search == "'=numerical value()'":
@@ -189,14 +189,14 @@ class SearchMessagesForm(FilterForm):
             search = search[1:-1]
             return queryset.filter(Q(text__iexact=search)
                                    | Q(connection__contact__reporting_location__name__iexact=search)
-                                   | Q(connection__identity__iexact=search))
+                                   | Q(connection__pk__iexact=search))
         elif search == "=numerical value()":
             return queryset.filter(text__iregex="(-?\d+(\.\d+)?)")
         else:
 
             return queryset.filter(Q(text__icontains=search)
                                    | Q(connection__contact__reporting_location__name__icontains=search)
-                                   | Q(connection__identity__icontains=search))
+                                   | Q(connection__pk__icontains=search))
 
 
 class AssignToPollForm(ActionForm):
@@ -574,14 +574,12 @@ class UreporterSearchForm(FilterForm):
             return queryset
         elif searchx[0] in ["'", '"'] and searchx[-1] in ["'", '"']:
             searchx = searchx[1:-1]
-            return queryset.filter(Q(name__iregex=".*\m(%s)\y.*" % searchx)
-                                   | Q(district__iregex=".*\m(%s)\y.*" % searchx)
-                                   | Q(mobile__iregex=".*\m(%s)\y.*" % searchx))
+            return queryset.filter(Q(district__iregex=".*\m(%s)\y.*" % searchx)
+                                   | Q(id__iregex=".*\m(%s)\y.*" % searchx))
 
         else:
-            return queryset.filter(Q(name__icontains=searchx)
-                                   | Q(district__icontains=searchx)
-                                   | Q(mobile__icontains=searchx))
+            return queryset.filter(Q(district__icontains=searchx)
+                                   | Q(id__icontains=searchx))
 
 
 class AgeFilterForm(FilterForm):

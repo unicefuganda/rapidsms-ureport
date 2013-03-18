@@ -11,11 +11,11 @@ from django.utils.datastructures import SortedDict
 from poll.models import Poll
 import datetime
 from django.db import connection
+
 ezxf = xlwt.easyxf
 
 from openpyxl.workbook import Workbook
 from openpyxl.writer.excel import ExcelWriter
-
 
 
 class Command(BaseCommand):
@@ -169,7 +169,7 @@ LEFT JOIN
          """ \
         % year_now
 
-    def write_with_openpyxl(self,filename, headers, data):
+    def write_with_openpyxl(self, filename, headers, data):
         wb = Workbook()
         ws = wb.worksheets[0]
         ws.title = 'Ureporters'
@@ -185,10 +185,11 @@ LEFT JOIN
         """ Yield successive n-sized chunks from l.
         """
         for i in xrange(0, len(l), n):
-            yield l[i:i+n]
+            yield l[i:i + n]
 
 
-    def write_xls(self, file_name, sheet_name, headings, data, data_xfs, heading_xf=ezxf('font: bold on; align: wrap on, vert centre, horiz center')):
+    def write_xls(self, file_name, sheet_name, headings, data, data_xfs,
+                  heading_xf=ezxf('font: bold on; align: wrap on, vert centre, horiz center')):
         data = self.chunks(data, 65000)
         book = xlwt.Workbook()
         sn = 0
@@ -229,26 +230,26 @@ LEFT JOIN
             cursor = connection.connection.cursor(name='contacts')
             cursor.execute(self.sql)
             row_0 = [
-                        (
-                         'Id',
-                         'Language',
-                         'Autoreg Join Date',
-                         'Quit Date',
-                         'District',
-                         'Age',
-                         'Gender',
-                         'Health Facility',
-                         'Village',
-                         'Subcounty',
-                         'Group 1',
-                         'Group 2',
-                         'Group 3',
-                         'How did you hear about ureport?',
-                         'Number Of Responses',
-                         'Number Of Questions Asked',
-                         'Number of Incoming',
-                        )
-                     ]
+                (
+                    'Id',
+                    'Language',
+                    'Autoreg Join Date',
+                    'Quit Date',
+                    'District',
+                    'Age',
+                    'Gender',
+                    'Health Facility',
+                    'Village',
+                    'Subcounty',
+                    'Group 1',
+                    'Group 2',
+                    'Group 3',
+                    'How did you hear about ureport?',
+                    'Number Of Responses',
+                    'Number Of Questions Asked',
+                    'Number of Incoming',
+                )
+            ]
 
             rows = row_0 + cursor.fetchall()
             kinds = "int text date date text int text text text text text text text text text text text".split()
@@ -256,7 +257,7 @@ LEFT JOIN
                 'date': ezxf(num_format_str='yyyy-mm-dd'),
                 'int': ezxf(num_format_str='#,##0'),
                 'text': ezxf(),
-                }
+            }
 
             data_xfs = [kind_to_xf_map[k] for k in kinds]
             ExcelResponse(rows, output_name=excel_file_path,
@@ -289,12 +290,6 @@ LEFT JOIN
 
                     response_export_data['message_pk'] = response.message.pk
 
-                    if response.contact and response.contact.name:
-                        response_export_data['contact_name'] = \
-                            response.contact.name
-                    else:
-                        response_export_data['contact_name'] = 'N/A'
-
                     if response.contact and response.contact.language:
                         response_export_data['language'] = response.contact.language
                     else:
@@ -305,12 +300,6 @@ LEFT JOIN
                             response.contact.gender
                     else:
                         response_export_data['sex'] = 'N/A'
-                    if response.contact \
-                        and response.contact.default_connection:
-                        response_export_data['mobile'] = \
-                            response.contact.default_connection.identity
-                    else:
-                        response_export_data['mobile'] = 'N/A'
                     if response.contact and response.contact.birthdate:
 
                         response_export_data['age'] = \
@@ -379,9 +368,7 @@ LEFT JOIN
                     if response.categories.all().exists():
                         response_export_data['category'] = response.categories.all()[0].category.name
                     else:
-                        response_export_data['category'] ="uncategorized"
-
-
+                        response_export_data['category'] = "uncategorized"
 
                     response_data_list.append(response_export_data)
 
