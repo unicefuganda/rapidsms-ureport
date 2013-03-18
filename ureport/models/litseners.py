@@ -67,7 +67,7 @@ def autoreg(**kwargs):
                             except ValueError:
                                 try:
                                     contact.groups.add(Group.objects.get(name=group_pk))
-                                except ValueError:
+                                except ValueError, Group.DoesNotExist:
                                     pass
                             gr_matched=True
             except AssertionError:
