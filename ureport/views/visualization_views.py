@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from ureport.models import IgnoredTags
 from django.contrib.auth.decorators import login_required
 from ureport.utils import retrieve_poll
@@ -30,7 +30,7 @@ def best_visualization(request, poll_id=None):
     try:
         poll = polls[0]
     except IndexError:
-        poll = get_object_or_404(Poll, poll_id or request.GET.get('pks', None))
+        raise Http404
 
     #    if poll_id:
     #        poll = Poll.objects.get(pk=poll_id)
