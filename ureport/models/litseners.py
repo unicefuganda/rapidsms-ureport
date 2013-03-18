@@ -62,7 +62,13 @@ def autoreg(**kwargs):
                 for group_pk, word_list in word_dict.items():
                     for word in word_list.split(","):
                         if word in group_to_match.split():
-                            contact.groups.add(Group.objects.get(pk=group_pk))
+                            try:
+                                contact.groups.add(Group.objects.get(pk=group_pk))
+                            except ValueError:
+                                try:
+                                    contact.groups.add(Group.objects.get(name=group_pk))
+                                except ValueError:
+                                    pass
                             gr_matched=True
             except AssertionError:
                 pass
