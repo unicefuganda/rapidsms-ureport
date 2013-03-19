@@ -20,7 +20,7 @@ from django.conf import settings
 from ureport.forms import AssignToPollForm, SearchResponsesForm, AssignResponseGroupForm, ReplyTextForm, DeleteSelectedForm
 from django.contrib.sites.models import Site
 from ureport import tasks
-from ureport.utils import get_polls, get_script_polls
+from ureport.utils import get_polls, get_script_polls, get_access
 from generic.sorters import SimpleSorter
 from ureport.views.utils.paginator import ureport_paginate
 from ureport.tasks import reprocess_responses
@@ -365,14 +365,18 @@ def poll_dashboard(request):
 
 @login_required
 def ureport_polls(request):
+    access = get_access(request)
     columns = [('Name', True, 'name', SimpleSorter()),
                ('Question', True, 'question', SimpleSorter(),),
                ('Start Date', True, 'start_date', SimpleSorter(),),
                ('Closing Date', True, 'end_date', SimpleSorter()),
                ('', False, '', None)]
+    queryset = get_polls(request=request)
+    if access:
+        queryset = queryset.filter(user=access.user)
     return generic(request,
                    model=Poll,
-                   queryset=get_polls,
+                   queryset=queryset,
                    objects_per_page=10,
                    selectable=False,
                    partial_row='ureport/partials/polls/poll_admin_row.html',

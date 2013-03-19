@@ -193,7 +193,7 @@ def alerts(request):
         ))
 
     if access:
-        message_list = message_list.filter(connection__contact__groups__in=access.groups)
+        message_list = message_list.filter(connection__contact__groups__in=access.groups.all())
     (capture_status, _) = \
         Settings.objects.get_or_create(attribute='alerts')
     (rate, _) = MessageAttribute.objects.get_or_create(name='rating')
@@ -268,7 +268,7 @@ def alerts(request):
                                       direction='I'
         ).filter(date__gte=date).exclude(pk__in=prev)
         if access:
-            msgs = msgs.filter(connection__contact__groups__in=access.groups)
+            msgs = msgs.filter(connection__contact__groups__in=access.groups.all())
         request.session['prev'] = list(msgs.values_list('pk',
                                                         flat=True))
         msgs_list = []

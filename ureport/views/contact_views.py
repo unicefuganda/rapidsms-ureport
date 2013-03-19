@@ -26,7 +26,7 @@ from django.conf import settings
 from rapidsms.contrib.locations.models import Location
 from django.contrib.auth.models import Group
 from ureport.views.utils.excel import handle_excel_file
-from ureport.utils import get_contacts, get_contacts2
+from ureport.utils import get_contacts, get_contacts2, get_access
 from contact.forms import MultipleDistictFilterForm, GenderFilterForm, FilterGroupsForm, AssignGroupForm, RemoveGroupForm
 from unregister.forms import BlacklistForm
 from ureport.models import Ureporter, UreportContact
@@ -345,6 +345,7 @@ def delete(request, pk):
 
 @login_required
 def ureporters(request):
+    access = get_access(request)
     download_form = DownloadForm(request.POST or None)
     if request.POST and request.POST.get('download', None):
         if download_form.is_valid():
@@ -367,9 +368,13 @@ def ureporters(request):
         ('quit date', True, 'quit_date', SimpleSorter(),),
     ]
 
+    queryset = get_contacts2(request=request)
+    if access:
+        groups = ",".join(list(access.groups.values_list('name', flat=True)))
+        queryset = queryset.filter(group__icontains=groups)
     return generic(request,
                    model=UreportContact,
-                   queryset=get_contacts2,
+                   queryset=queryset,
                    download_form=download_form,
                    results_title='uReporters',
                    filter_forms=[UreporterSearchForm, GenderFilterForm, AgeFilterForm, MultipleDistictFilterForm,

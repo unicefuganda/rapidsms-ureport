@@ -45,9 +45,9 @@ def messages(request):
                 SimpleSorter()), ('Type', True, 'application',
                                   SimpleSorter()), ('Response', False, 'response', None)]
 
-    queryset = get_messages()
+    queryset = get_messages(request=request)
     if access:
-        queryset = queryset.filter(connection__contact__groups__in=access.groups)
+        queryset = queryset.filter(connection__contact__groups__in=access.groups.all())
     return generic(
         request,
         model=Message,
@@ -80,9 +80,9 @@ def autoreg_messages(request):
                 SimpleSorter()), ('Type', True, 'application',
                                   SimpleSorter()), ('Response', False, 'response', None)]
 
-    queryset = get_autoreg_messages()
+    queryset = get_autoreg_messages(request=request)
     if access:
-        queryset = queryset.filter(connection__contact__groups__in=access.groups)
+        queryset = queryset.filter(connection__contact__groups__in=access.groups.all())
     return generic(
         request,
         model=Message,
@@ -115,9 +115,9 @@ def unsolicitized_messages(request):
                 SimpleSorter()), ('Type', True, 'application',
                                   SimpleSorter()), ('Response', False, 'response', None)]
 
-    queryset = get_unsolicitized_messages()
+    queryset = get_unsolicitized_messages(request=request)
     if access:
-        queryset = queryset.filter(connection__contact__groups__in=access.groups)
+        queryset = queryset.filter(connection__contact__groups__in=access.groups.all())
     return generic(
         request,
         model=Message,
@@ -150,9 +150,9 @@ def poll_messages(request):
                 SimpleSorter()), ('Type', True, 'application',
                                   SimpleSorter()), ('Response', False, 'response', None)]
 
-    queryset = get_poll_messages()
+    queryset = get_poll_messages(request=request)
     if access:
-        queryset = queryset.filter(connection__contact__groups__in=access.groups)
+        queryset = queryset.filter(connection__contact__groups__in=access.groups.all())
     return generic(
         request,
         model=Message,
@@ -185,9 +185,9 @@ def quit_messages(request):
                 SimpleSorter()), ('Type', True, 'application',
                                   SimpleSorter()), ('Response', False, 'response', None)]
 
-    queryset = get_quit_messages()
+    queryset = get_quit_messages(request=request)
     if access:
-        queryset = queryset.filter(connection__contact__groups__in=access.groups)
+        queryset = queryset.filter(connection__contact__groups__in=access.groups.all())
     return generic(
         request,
         model=Message,
@@ -210,14 +210,13 @@ def quit_messages(request):
 def mass_messages(request):
     access = get_access(request)
     columns = [('Message', True, 'text', TupleSorter(0)),
-               ('Identifier', True, 'connection__pk', SimpleSorter()),
                ('Time', True, 'date', TupleSorter(1)), ('User', True, 'user', TupleSorter(2)),
                ('Recipients', True, 'response', TupleSorter(3)),
                ('Type', True, 'type', TupleSorter(4))]
 
-    queryset = get_mass_messages()
+    queryset = get_mass_messages(request=request)
     if access:
-        queryset = queryset.filter(connection__contact__groups__in=access.groups)
+        queryset = queryset.filter(user=access.user)
     return generic(
         request,
         model=MassText,
