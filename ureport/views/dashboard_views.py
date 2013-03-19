@@ -20,15 +20,14 @@ from unregister.models import Blacklist
 from poll.models import Translation, Poll
 from ureport.models import MessageAttribute, AlertsExport, Settings, \
     MessageDetail
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import EmptyPage, PageNotAnInteger
 import datetime
 from ureport.views.utils.paginator import UreportPaginator
-from django.db import transaction
-from contact.models import Flag, MessageFlag
+from contact.models import Flag
 from django.db.models import Q
 from ureport.settings import UREPORT_ROOT
-import os, sys
-from itertools import chain
+from ureport.utils import get_access
+import os
 
 
 @login_required
@@ -160,7 +159,7 @@ def mp_dashboard(request):
 
 @login_required
 def alerts(request):
-    select_poll = SelectPoll()
+    access = get_access(request)
     poll_form = NewPollForm()
     range_form = rangeForm()
     poll_form.updateTypes()
@@ -173,7 +172,7 @@ def alerts(request):
     if district_form.is_valid():
         request.session['districts']=[c.pk for c in district_form.cleaned_data['districts']]
 
-    groupform = AssignResponseGroupForm(request=request)
+    groupform = AssignResponseGroupForm(request=request, access=access)
     if request.method == 'POST' and request.POST.get('groups', None):
         g_form = AssignResponseGroupForm(request.POST, request=request)
         if g_form.is_valid():
@@ -193,7 +192,8 @@ def alerts(request):
         message_list = message_list.filter(connection__contact__groups__in=request.session.get('groups'
         ))
 
-
+    if access:
+        message_list = message_list.filter(connection__contact__groups__in=access.groups)
     (capture_status, _) = \
         Settings.objects.get_or_create(attribute='alerts')
     (rate, _) = MessageAttribute.objects.get_or_create(name='rating')
@@ -201,7 +201,7 @@ def alerts(request):
     # message_list=[Message.objects.latest('date')]
     # use more efficient count
 
-    if request.GET.get('download', None):
+    if request.GET.get('download', None) and access is None:
         range_form = rangeForm(request.POST)
         if range_form.is_valid():
             start = range_form.cleaned_data['startdate']
@@ -267,6 +267,8 @@ def alerts(request):
         msgs = Message.objects.filter(details__attribute__name='alert',
                                       direction='I'
         ).filter(date__gte=date).exclude(pk__in=prev)
+        if access:
+            msgs = msgs.filter(connection__contact__groups__in=access.groups)
         request.session['prev'] = list(msgs.values_list('pk',
                                                         flat=True))
         msgs_list = []

@@ -450,6 +450,7 @@ class AssignResponseGroupForm(ActionForm):
     # This does, however, also make the polling app independent of authsites.
     def __init__(self, data=None, **kwargs):
         self.request = kwargs.pop('request')
+        self.access = kwargs.pop('access')
         if data:
             forms.Form.__init__(self, data, **kwargs)
         else:
@@ -461,6 +462,8 @@ class AssignResponseGroupForm(ActionForm):
                     required=False)
             else:
                 self.fields['groups'] = forms.ModelMultipleChoiceField(queryset=Group.objects.all(), required=False)
+            if self.access:
+                self.fields['groups'] = forms.ModelChoiceField(queryset=self.access.groups.all())
 
     def perform(self, request, results):
         groups = self.cleaned_data['groups']
