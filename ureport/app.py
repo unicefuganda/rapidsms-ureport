@@ -1,12 +1,6 @@
-import rapidsms
-import datetime
-
 from rapidsms.apps.base import AppBase
 from contact.models import Flag, MessageFlag
-from poll.models import Poll
-from django.db.models import Q
 from script.models import Script, ScriptProgress
-from rapidsms.models import Contact
 import re
 from django.conf import settings
 from ureport.models import MessageAttribute,MessageDetail,Settings
