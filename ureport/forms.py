@@ -139,7 +139,7 @@ class SearchResponsesForm(FilterForm):
                                                            % search)
                                    | Q(message__connection__contact__reporting_location__name__iregex=".*\m(%s)\y.*"
                                                                                                       % search)
-                                   | Q(message__connection_id__iregex=".*\m(%s)\y.*"
+                                   | Q(message__connection__pk__iregex=".*\m(%s)\y.*"
                                                                              % search))
 
         elif search == "'=numerical value()'":
@@ -150,14 +150,14 @@ class SearchResponsesForm(FilterForm):
             search = search[1:-1]
             return queryset.filter(Q(message__text__iexact=search)
                                    | Q(message__connection__contact__reporting_location__name__iexact=search)
-                                   | Q(message__connection_id__iexact=search))
+                                   | Q(message__connection__pk__iexact=search))
         elif search == "=numerical value()":
             return queryset.filter(message__text__iregex="(-?\d+(\.\d+)?)")
         else:
 
             return queryset.filter(Q(message__text__icontains=search)
                                    | Q(message__connection__contact__reporting_location__name__icontains=search)
-                                   | Q(message__connection_id__icontains=search))
+                                   | Q(message__connection__pk__icontains=search))
 
 
 class SearchMessagesForm(FilterForm):
