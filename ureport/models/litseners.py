@@ -25,15 +25,11 @@ def autoreg(**kwargs):
         script = progress.script
         youthgrouppoll = script.steps.get(order=1).poll
         districtpoll = script.steps.get(order=2).poll
-        namepoll = script.steps.get(order=3).poll
         agepoll = script.steps.get(order=4).poll
         genderpoll = script.steps.get(order=5).poll
         villagepoll = script.steps.get(order=6).poll
         contact = connection.contact
         word_dict=dict(AutoregGroupRules.objects.exclude(values=None).values_list('group__name','values'))
-        name = find_best_response(session, namepoll)
-        if name:
-            contact.name = name[:100]
 
         contact.reporting_location = find_best_response(session, districtpoll)
 
