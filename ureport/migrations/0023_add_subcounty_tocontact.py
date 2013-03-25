@@ -8,7 +8,8 @@ class Migration(DataMigration):
 
     def forwards(self, orm):
         "Write your forwards methods here."
-        db.add_column('rapidsms_contact','subcounty', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='subcounties', null=True, to=orm['locations.Location']))
+        # db.add_column('rapidsms_contact','subcounty', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='subcounties', null=True, to=orm['locations.Location']))
+        pass
 
 
     def backwards(self, orm):

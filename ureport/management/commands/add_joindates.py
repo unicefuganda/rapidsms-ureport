@@ -5,7 +5,7 @@ from rapidsms.models import Connection
 
 class Command(BaseCommand):
     def handle(self,**options):
-        for con in Connection.objects.exclude(contact=None)[:25]:
+        for con in Connection.objects.exclude(contact=None):
             try:
                 created_on = con.messages.order_by('date')[0].date
             except models.ObjectDoesNotExist:
