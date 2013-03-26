@@ -25,19 +25,7 @@ class Command(BaseCommand):
         """    SELECT
 "rapidsms_contact"."id",
 "rapidsms_contact"."language",
-
-
-(SELECT
- DATE("script_scriptsession"."start_time")
-FROM
- "script_scriptsession"
-INNER JOIN
- "rapidsms_connection"
-    ON (
-       "script_scriptsession"."connection_id" = "rapidsms_connection"."id"
-    )
-WHERE
- "rapidsms_connection"."contact_id" = "rapidsms_contact"."id"   LIMIT 1) as autoreg_join_date,
+"rapidsms_contact"."created_on",
 
 
 (SELECT
@@ -233,7 +221,7 @@ LEFT JOIN
                 (
                     'Id',
                     'Language',
-                    'Autoreg Join Date',
+                    'Join Date',
                     'Quit Date',
                     'District',
                     'Age',
