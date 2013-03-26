@@ -580,11 +580,12 @@ class UreporterSearchForm(FilterForm):
         elif searchx[0] in ["'", '"'] and searchx[-1] in ["'", '"']:
             searchx = searchx[1:-1]
             return queryset.filter(Q(district__iregex=".*\m(%s)\y.*" % searchx)
-                                   | Q(id__iregex=".*\m(%s)\y.*" % searchx))
+                                   | Q(connection_pk__icontains=".*\m(%s)\y.*" % searchx))
 
         else:
+            print 'search:', searchx
             return queryset.filter(Q(district__icontains=searchx)
-                                   | Q(id__icontains=searchx))
+                                   | Q(connection_pk__icontains=searchx))
 
 
 class AgeFilterForm(FilterForm):
