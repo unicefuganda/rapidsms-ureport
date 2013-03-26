@@ -7,8 +7,9 @@ class Command(BaseCommand):
     def handle(self,**options):
         for con in Connection.objects.exclude(contact=None):
             try:
-                created_on = con.messages.order_by('date')[0].date
-            except models.ObjectDoesNotExist:
+                created_on = con.messages.filter(direction__iexact='o').order_by('date')[0].date
+            except IndexError:
+                print 'No contacts'
                 continue
 
             con.created_on = created_on
