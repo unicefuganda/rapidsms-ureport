@@ -7,7 +7,7 @@ from rapidsms.models import Connection
 
 class Command(BaseCommand):
     def handle(self,**options):
-        for con in Connection.objects.exclude(contact=None):
+        for con in Connection.objects.filter(created_on=None).exclude(contact=None):
             try:
                 created_on = con.messages.filter(direction__iexact='o').order_by('date')[0].date
             except IndexError:
