@@ -1,5 +1,7 @@
 from django.contrib.gis.db import models
 from django.core.management import BaseCommand
+from django.db import transaction
+from django.db.utils import DatabaseError
 from rapidsms.models import Connection
 
 
@@ -11,7 +13,12 @@ class Command(BaseCommand):
             except IndexError:
                 print 'No contacts'
                 continue
-
+            except DatabaseError:
+                try:
+                    transaction.rollback()
+                except:
+                    pass
+                continue
             con.created_on = created_on
             con.save()
             print con.identity, "Joined on", con.created_on

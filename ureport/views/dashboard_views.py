@@ -234,21 +234,21 @@ def alerts(request):
                                                               % search)
                                                | Q(connection__contact__reporting_location__name__iregex=".*\m(%s)\y.*"
                                                                                                          % search)
-                                               | Q(connection__identity__iregex=".*\m(%s)\y.*"
+                                               | Q(connection__pk__iregex=".*\m(%s)\y.*"
                                                                                 % search))
         elif search[0] == "'" and search[-1] == "'":
 
             search = search[1:-1]
             message_list = message_list.filter(Q(text__iexact=search)
                                                | Q(connection__contact__reporting_location__name__iexact=search)
-                                               | Q(connection__identity__iexact=search))
+                                               | Q(connection__pk__iexact=search))
         elif search == "=numerical value()":
             message_list = message_list.filter(text__iregex="(-?\d+(\.\d+)?)")
         else:
 
             message_list = message_list.filter(Q(text__icontains=search)
                                                | Q(connection__contact__reporting_location__name__icontains=search)
-                                               | Q(connection__identity__icontains=search))
+                                               | Q(connection__pk__icontains=search))
 
     if request.GET.get('capture', None):
         (s, _) = Settings.objects.get_or_create(attribute='alerts')
