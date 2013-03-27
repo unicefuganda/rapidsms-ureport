@@ -10,13 +10,16 @@ class Command(BaseCommand):
         for con in Connection.objects.filter(created_on=None).exclude(contact=None):
             try:
                 created_on = con.messages.filter(direction__iexact='o').order_by('date')[0].date
-            except IndexError:
+            except IndexError, e:
+                print e
                 print 'No contacts'
                 continue
             except DatabaseError:
                 try:
                     transaction.rollback()
-                except:
+                except Exception, e:
+                    print 'Big Error'
+                    print e
                     pass
                 continue
             con.created_on = created_on
