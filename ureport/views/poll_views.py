@@ -126,13 +126,13 @@ def view_poll(request, pk):
     }, context_instance=RequestContext(request))
 
 
-@permission_required('poll.can_poll')
+
 @login_required
 @transaction.commit_on_success
 def new_poll(req):
     if req.method == 'POST':
-        form = NewPollForm(req.POST)
-        groups_form = GroupsFilter(req.POST)
+        form = NewPollForm(req.POST, request=req)
+        groups_form = GroupsFilter(req.POST, request=req)
         form.updateTypes()
         if form.is_valid() and groups_form.is_valid():
             # create our XForm
@@ -197,8 +197,8 @@ def new_poll(req):
             return redirect(reverse('ureport.views.view_poll', args=[poll.pk]))
 
     else:
-        form = NewPollForm()
-        groups_form = GroupsFilter()
+        form = NewPollForm(request=req)
+        groups_form = GroupsFilter(request=req)
         form.updateTypes()
 
     return render_to_response('ureport/new_poll.html', {'form': form, 'groups_form': groups_form},

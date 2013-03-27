@@ -26,8 +26,7 @@ from .models import AutoregGroupRules
 from uganda_common.utils import ExcelResponse
 from ureport.models import MessageAttribute, MessageDetail
 from django.utils.safestring import mark_safe
-
-import subprocess
+from uganda_common.models import Access
 
 
 class EditReporterForm(forms.ModelForm):
@@ -419,12 +418,22 @@ class NewPollForm(forms.Form): # pragma: no cover
     # to optionally have groups (i.e., poll doesn't explicitly depend on the rapidsms-auth
     # app.
     def __init__(self, data=None, **kwargs):
+        queryset = Group.objects.order_by('name')
+        if 'request' in kwargs:
+            request = kwargs.pop('request')
         if data:
             forms.Form.__init__(self, data, **kwargs)
         else:
             forms.Form.__init__(self, **kwargs)
+        try:
+            access = Access.objects.get(user=request.user)
+            queryset = access.groups.order_by('name')
+        except Access.DoesNotExist:
+            pass
+        except UnboundLocalError:
+            pass
         if hasattr(Contact, 'groups'):
-            self.fields['groups'] = forms.ModelMultipleChoiceField(queryset=Group.objects.all(), required=False)
+            self.fields['groups'] = forms.ModelMultipleChoiceField(queryset=queryset, required=False)
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -710,6 +719,20 @@ class TemplateMessage(ActionForm):
 
 
 class GroupsFilter(forms.Form):
-    group_list = forms.ModelMultipleChoiceField(queryset=
-                                                Group.objects.order_by('name'), required=False)
+    def __init__(self, *args, **kwargs):
+        if 'request' in kwargs:
+            request = kwargs.pop('request')
+        super(GroupsFilter, self).__init__(*args, **kwargs)
+        try:
+            access = Access.objects.get(user=request.user)
+            self.fields['group_list'] = forms.ModelMultipleChoiceField(queryset=access.groups.order_by('name'),
+                                                                       required=False)
+        except Access.DoesNotExist, e:
+            print e
+            self.fields['group_list'] = forms.ModelMultipleChoiceField(queryset=Group.objects.order_by('name'),
+                                                                       required=False)
+        except UnboundLocalError, e:
+            print e
+            self.fields['group_list'] = forms.ModelMultipleChoiceField(queryset=Group.objects.order_by('name'),
+                                                                       required=False)
 
