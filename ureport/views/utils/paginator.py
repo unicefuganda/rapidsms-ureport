@@ -1,6 +1,6 @@
 from django.core.paginator import  Paginator,QuerySetPaginator,Page,InvalidPage
 import math
-from django.db import connection, transaction
+from django.db import connection
 from django.db.utils import DatabaseError
 from ureport.models import UreportContact
 
@@ -83,8 +83,8 @@ class UreportPaginator(Paginator):
 
 
         # easier access
-        num_pages, body, tail, padding, margin =\
-        self.num_pages, self.body, self.tail, self.padding, self.margin
+        num_pages, body, tail, padding, margin = \
+            self.num_pages, self.body, self.tail, self.padding, self.margin
 
         # put active page in middle of main range
         main_range = map(int, [
@@ -133,7 +133,7 @@ class UreportPaginator(Paginator):
         page.leading_range = leading
         page.trailing_range = trailing
         page.page_range = reduce(lambda x, y: x+((x and y) and [False])+y,
-            [page.leading_range, page.main_range, page.trailing_range])
+                                 [page.leading_range, page.main_range, page.trailing_range])
 
         page.__class__ = CustomPage
         return page
@@ -161,17 +161,14 @@ class CustomPage(Page):
             " ".join(map(str, self.leading_range)),
             " ".join(map(str, self.main_range)),
             " ".join(map(str, self.trailing_range))]))
-@transaction.commit_manually
+
 def ureport_paginate(objects_list,perpage,page,p):
-    transaction.commit()
     paginator = UreportPaginator(objects_list, perpage, body=12, padding=2)
     filtered_list = paginator.page(page).object_list
-    transaction.commit()
+
     try:
         count=objects_list.count()
-        transaction.commit()
     except:
         count=len(objects_list)
-        transaction.commit()
 
     return dict(total=count,count=len(filtered_list),paginator=paginator,c_page= paginator.page(page),page=page,object_list=filtered_list)
