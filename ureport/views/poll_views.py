@@ -220,6 +220,7 @@ def poll_summary(request):
 
 
 @login_required
+@transaction.commit_on_success
 def view_responses(req, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
 
@@ -328,7 +329,7 @@ def create_rule(request, pk):
         rule = rule_form.save(commit=False)
         rule.category = category
         rule.save()
-        reprocess_responses.delay(category.poll)
+        tasks.reprocess_responses.delay(category.poll)
         if rule.rule == 1:
             r = "Contains all of"
         else:
