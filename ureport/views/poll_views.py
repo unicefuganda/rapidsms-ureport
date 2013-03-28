@@ -23,7 +23,6 @@ from ureport import tasks
 from ureport.utils import get_polls, get_script_polls, get_access
 from generic.sorters import SimpleSorter
 from ureport.views.utils.paginator import ureport_paginate
-from ureport.tasks import reprocess_responses
 from django.db import transaction
 from django.contrib.auth.models import Group
 from ureport.models import UPoll
@@ -37,7 +36,7 @@ def view_poll(request, pk):
     category = None
     if request.GET.get('poll'):
         if request.GET.get('start'):
-            poll=Poll.objects.get(pk=pk)
+            poll = Poll.objects.get(pk=pk)
             tasks.start_poll.delay(poll)
             res = """ <a href="?stop=True&poll=True" data-remote=true  id="poll_action" class="btn">Close Poll</a> """
             return HttpResponse(res)
@@ -126,7 +125,6 @@ def view_poll(request, pk):
     }, context_instance=RequestContext(request))
 
 
-
 @login_required
 @transaction.commit_on_success
 def new_poll(req):
@@ -180,7 +178,7 @@ def new_poll(req):
             poll_type = (Poll.TYPE_TEXT if p_type
                                            == NewPollForm.TYPE_YES_NO else p_type)
 
-            poll = Poll.create_with_bulk( \
+            poll = Poll.create_with_bulk(
                 name,
                 poll_type,
                 question,
@@ -256,9 +254,10 @@ def view_responses(req, poll_id):
     #     typedef['report_columns']:
     #     columns.append((column, sortable, db_field, sorter))
     columns = (
-               ('Date', True, 'date', SimpleSorter()),
-               ('Text', False, 'text', None),
-            )
+        ('Date', True, 'date', SimpleSorter()),
+        ('Text', True, 'text', SimpleSorter()),
+        ('Category', True, 'category', SimpleSorter())
+    )
 
     return generic(
         req,
