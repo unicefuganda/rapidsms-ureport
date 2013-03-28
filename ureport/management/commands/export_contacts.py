@@ -258,7 +258,7 @@ LEFT JOIN
 
         # export the last 2 polls
 
-        polls = Poll.objects.order_by('-pk')[0:10]
+        polls = Poll.objects.order_by('-pk')[0:30]
         print "doxing"
         for poll in polls:
             if poll.responses.exists():
