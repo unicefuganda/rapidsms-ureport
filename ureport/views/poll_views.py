@@ -256,7 +256,7 @@ def view_responses(req, poll_id):
     columns = (
         ('Date', True, 'date', SimpleSorter()),
         ('Text', True, 'text', SimpleSorter()),
-        ('Category', True, 'category', SimpleSorter())
+        ('Category', True, 'categories', SimpleSorter())
     )
 
     return generic(
