@@ -19,6 +19,7 @@ class Command(BaseCommand):
         poll =Poll.objects.get(pk=int(options['p']))
         
         if poll.responses.exists():
+            print 'Working'
             responses = poll.responses.all()
             response_data_list = []
             excel_file_path = \
