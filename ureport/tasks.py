@@ -31,10 +31,11 @@ def process_message(pk,ignore_result=True,**kwargs):
 
 
 @task
-def reprocess_groups(group,ignore_result=True):
+def reprocess_groups(group, ignore_result=True):
     try:
         scripts=Script.objects.filter(pk__in=['ureport_autoreg', 'ureport_autoreg_luo','ureport_autoreg2', 'ureport_autoreg_luo2'])
         ar=AutoregGroupRules.objects.get(group=group)
+        print 'here'
         if ar.rule_regex:
             regex = re.compile(ar.rule_regex, re.IGNORECASE)
             for script in scripts:
@@ -42,7 +43,9 @@ def reprocess_groups(group,ignore_result=True):
                 for response in responses:
                     if regex.search(response.message.text):
                         response.contact.groups.add(group)
+            print 'finished'
     except:
+        print 'failed'
         pass
 
 

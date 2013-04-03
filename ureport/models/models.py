@@ -182,7 +182,7 @@ class AutoregGroupRules(models.Model):
     group = models.ForeignKey(Group, related_name="rules")
     rule = models.IntegerField(max_length=10,
                                choices=((contains_all_of, "contains_all_of"), (contains_one_of, "contains_one_of"),),
-                               null=True)
+                               null=True, blank= True)
     values = models.TextField(default=None, null=True)
     closed = models.NullBooleanField(default=False)
     rule_regex = models.CharField(max_length=700, null=True)
