@@ -2,12 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from ureport.models import IgnoredTags
-
-import textwrap
 import random
 import types
-from ureport.settings import drop_words,tag_cloud_size
-from poll.models import Poll,Response
+from ureport.settings import drop_words, tag_cloud_size
+from poll.models import Poll, Response
 from django.db import connection
 from django.conf import settings
 from django.core.paginator import Paginator
@@ -15,6 +13,7 @@ from django.core.paginator import Paginator
 
 TAG_CLASSES = ['tag14', 'tag13', 'tag12', 'tag11', 'tag10', 'tag9', 'tag8', 'tag7', 'tag6', 'tag5', 'tag4', 'tag3',
                'tag2', 'tag1']
+
 
 def dictinvert(dict):
     inv = {}
@@ -25,12 +24,8 @@ def dictinvert(dict):
 
 
 def _get_tags(polls):
-    words = ''
     word_count = {}
-    counts_dict = {}
-    used_words_list = []
-    drops = "'" + "','".join(drop_words) + "'"
-    if type(polls) == types.ListType:
+    if isinstance(polls, types.ListType):
         p_list = [poll.pk for poll in polls]
         poll_pks = str(Poll.objects.filter(pk__in=p_list).values_list('pk', flat=True))[1:-1]
     else:
@@ -62,10 +57,6 @@ def _get_tags(polls):
            wo
         order by
            c DESC limit 200;   """ % {'polls': poll_pks}
-    # poll question
-
-    poll_qn = 'Qn:' + ' '.join(textwrap.wrap(polls[0].question.rsplit('?'
-    )[0])) + '?'
 
     cursor = connection.cursor()
     cursor.execute(sql)
@@ -123,13 +114,14 @@ def generate_tag_cloud(
 
     return tags
 
+
 def _get_responses(poll):
     bad_words = getattr(settings, 'BAD_WORDS', [])
     responses = Response.objects.filter(poll=poll)
     for helldamn in bad_words:
         responses = responses.exclude(message__text__icontains=' %s '
-        % helldamn).exclude(message__text__istartswith='%s '
-        % helldamn)
+                                                               % helldamn).exclude(message__text__istartswith='%s '
+                                                                                                              % helldamn)
     paginator = Paginator(responses, 8)
     responses = paginator.page(1).object_list
     return responses
