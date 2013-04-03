@@ -42,14 +42,22 @@ class Command(BaseCommand):
                         contact = Contact.objects.create(name=name)
                 else:
                     contact = Contact.objects.create(name=name)
+
+                print "Contact ===>", contact.name
                 contact.save()
                 if group:
                     contact.groups.add(group)
                 district = Location.objects.get(name=district, type__name='district')
-                print "District===>", district, type(district)
                 contact.reporting_location = district
+                print "District===>", district, type(district)
                 contact.village_name = village
+                print "Village===>", village
+                if gender.lower().startswith('m'):
+                    gender = 'm'
+                else:
+                    gender = 'f'
                 contact.gender = gender
+                print "Gender===>", gender
                 contact.birthdate = self.birth_date(int(age))
                 print "Birth date====>", contact.birthdate
 
