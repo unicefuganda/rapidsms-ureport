@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from django.db import transaction
 
 from django.shortcuts import render_to_response, HttpResponse
 from django.template import RequestContext
@@ -54,6 +55,7 @@ def set_autoreg_rules(request, pk=None):
         group_form = GroupRules(request.POST, instance=gr)
         if group_form.is_valid():
             gf = group_form.save()
+            transaction.commit()
             reprocess_groups.delay(gf.group)
             return HttpResponse('Awesome')
         print group_form.errors
