@@ -258,7 +258,7 @@ def view_responses(req, poll_id):
     #     columns.append((column, sortable, db_field, sorter))
     columns = (
         ('Date', True, 'date', SimpleSorter()),
-        ('Text', True, 'text', SimpleSorter()),
+        ('Text', True, 'poll__question', SimpleSorter()),
         ('Category', True, 'categories', SimpleSorter())
     )
 

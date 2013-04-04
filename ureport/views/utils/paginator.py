@@ -1,8 +1,9 @@
-from django.core.paginator import  Paginator,QuerySetPaginator,Page,InvalidPage
+from django.core.paginator import Paginator, QuerySetPaginator, Page, InvalidPage
 import math
 from django.db import connection
 from django.db.utils import DatabaseError
 from ureport.models import UreportContact
+
 
 class UreportPaginator(Paginator):
     """
@@ -60,10 +61,10 @@ class UreportPaginator(Paginator):
         self.align_left = kwargs.pop('align_left', False)
         self.margin = kwargs.pop('margin', 4)  # TODO: make the default relative to body?
         # validate padding value
-        max_padding = int(math.ceil(self.body/2.0)-1)
+        max_padding = int(math.ceil(self.body / 2.0) - 1)
         self.padding = kwargs.pop('padding', min(4, max_padding))
         if self.padding > max_padding:
-            raise ValueError('padding too large for body (max %d)'%max_padding)
+            raise ValueError('padding too large for body (max %d)' % max_padding)
         super(UreportPaginator, self).__init__(*args, **kwargs)
 
     def page(self, number, *args, **kwargs):
@@ -76,7 +77,7 @@ class UreportPaginator(Paginator):
             number = int(number) # we know this will work
         except InvalidPage, e:
             page = super(UreportPaginator, self).page(1, *args, **kwargs)
-            number=1
+            number = 1
 
 
 
@@ -88,13 +89,13 @@ class UreportPaginator(Paginator):
 
         # put active page in middle of main range
         main_range = map(int, [
-            math.floor(number-body/2.0)+1,  # +1 = shift odd body to right
-            math.floor(number+body/2.0)])
+            math.floor(number - body / 2.0) + 1, # +1 = shift odd body to right
+            math.floor(number + body / 2.0)])
         # adjust bounds
         if main_range[0] < 1:
-            main_range = map(abs(main_range[0]-1).__add__, main_range)
+            main_range = map(abs(main_range[0] - 1).__add__, main_range)
         if main_range[1] > num_pages:
-            main_range = map((num_pages-main_range[1]).__add__, main_range)
+            main_range = map((num_pages - main_range[1]).__add__, main_range)
 
         # Determine leading and trailing ranges,
         # Example:
@@ -103,24 +104,24 @@ class UreportPaginator(Paginator):
         #     total pages=100, page=4, body=5, padding=1
         #     1 2 3 [4] 5 ... 99 100
 
-        if main_range[0] <= tail+margin:
+        if main_range[0] <= tail + margin:
             leading = []
-            main_range = [1, max(body, min(number+padding, main_range[1]))]
+            main_range = [1, max(body, min(number + padding, main_range[1]))]
             main_range[0] = 1
         else:
-            leading = range(1, tail+1)
+            leading = range(1, tail + 1)
             # basically same for trailing range, but not in ``left_align`` mode
         if self.align_left:
             trailing = []
         else:
-            if main_range[1] >= num_pages-(tail+margin)+1:
+            if main_range[1] >= num_pages - (tail + margin) + 1:
                 trailing = []
                 if not leading:
                     main_range = [1, num_pages]
                 else:
-                    main_range = [min(num_pages-body+1, max(number-padding, main_range[0])), num_pages]
+                    main_range = [min(num_pages - body + 1, max(number - padding, main_range[0])), num_pages]
             else:
-                trailing = range(num_pages-tail+1, num_pages+1)
+                trailing = range(num_pages - tail + 1, num_pages + 1)
 
         # finally, normalize values that are out of bound; this basically
         # fixes all the things the above code screwed up in the simple case
@@ -129,10 +130,10 @@ class UreportPaginator(Paginator):
 
         # make the result of our calculations available as custom ranges
         # on the ``Page`` instance.
-        page.main_range = range(main_range[0], main_range[1]+1)
+        page.main_range = range(main_range[0], main_range[1] + 1)
         page.leading_range = leading
         page.trailing_range = trailing
-        page.page_range = reduce(lambda x, y: x+((x and y) and [False])+y,
+        page.page_range = reduce(lambda x, y: x + ((x and y) and [False]) + y,
                                  [page.leading_range, page.main_range, page.trailing_range])
 
         page.__class__ = CustomPage
@@ -147,13 +148,15 @@ class UreportPaginator(Paginator):
         if self._count is None:
             try:
                 self._count = self.object_list.count()
-            except (AttributeError, TypeError,DatabaseError):
+            except (AttributeError, TypeError, DatabaseError):
                 # AttributeError if object_list has no count() method.
                 # TypeError if object_list.count() requires arguments
                 # (i.e. is of type list).
                 self._count = len(self.object_list)
         return self._count
+
     count = property(_get_count)
+
 
 class CustomPage(Page):
     def __str__(self):
@@ -162,13 +165,15 @@ class CustomPage(Page):
             " ".join(map(str, self.main_range)),
             " ".join(map(str, self.trailing_range))]))
 
-def ureport_paginate(objects_list,perpage,page,p):
+
+def ureport_paginate(objects_list, perpage, page, p):
     paginator = UreportPaginator(objects_list, perpage, body=12, padding=2)
     filtered_list = paginator.page(page).object_list
 
     try:
-        count=objects_list.count()
+        count = objects_list.count()
     except:
-        count=len(objects_list)
+        count = len(objects_list)
 
-    return dict(total=count,count=len(filtered_list),paginator=paginator,c_page= paginator.page(page),page=page,object_list=filtered_list)
+    return dict(total=count, count=len(filtered_list), paginator=paginator, c_page=paginator.page(page), page=page,
+                object_list=filtered_list)

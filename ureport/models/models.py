@@ -182,7 +182,7 @@ class AutoregGroupRules(models.Model):
     group = models.ForeignKey(Group, related_name="rules")
     rule = models.IntegerField(max_length=10,
                                choices=((contains_all_of, "contains_all_of"), (contains_one_of, "contains_one_of"),),
-                               null=True, blank= True)
+                               null=True, blank=True)
     values = models.TextField(default=None, null=True)
     closed = models.NullBooleanField(default=False)
     rule_regex = models.CharField(max_length=700, null=True)
@@ -245,7 +245,7 @@ class UPoll(Poll):
         for attr in PollAttribute.objects.all():
             if not getattr(self, attr.key, None):
                 setattr(self, attr.key, attr.get_default())
-        #Attach PollAttribute to object ie, poll.randomkey = 'some value'
+            #Attach PollAttribute to object ie, poll.randomkey = 'some value'
         for attr, value in self._get_set_attr().items():
             setattr(self, attr.key, value)
 
@@ -255,7 +255,6 @@ class UPoll(Poll):
         value = PollAttributeValue.objects.get_or_create(value=value, poll=self)[0]
         attr.values.add(value)
         attr.save()
-
 
 
     def save(self, force_insert=False, force_update=False, using=None):
