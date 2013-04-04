@@ -122,15 +122,6 @@ class TestViews(TestCase):
         response = self.client.get(reverse('responses',kwargs={'poll_id':self.poll.pk}))
         self.assertEqual(response.status_code, 200)
 
-
-
-
-    def test_pollresults(self):
-        
-        response = self.client.get(reverse('polls-summary'))
-        self.assertEqual(response.status_code, 200)
-
-        
     def test_bestviz(self):
         
         response = self.client.get(reverse('best-viz',kwargs={'poll_id':self.poll.pk}))
