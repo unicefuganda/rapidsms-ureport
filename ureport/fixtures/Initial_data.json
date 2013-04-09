@@ -1,4 +1,21 @@
 [
+
+    {"pk": 1,
+        "model": "auth.user",
+        "fields": {
+            "username": "admin",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": true,
+            "is_staff": true,
+            "last_login": "2012-10-05 14:24:47",
+            "password": "sha1$050e9$8b8fefa9a0f695ae01e2150108d1ffbe77ff1db3",
+            "email": "",
+            "date_joined": "2011-12-05 11:45:09"
+        }
+    },
+
     {"pk": 2, "model": "sites.site", "fields": {"domain": "ureport.rapidsms.org", "name": "uReport"}},
 
     {

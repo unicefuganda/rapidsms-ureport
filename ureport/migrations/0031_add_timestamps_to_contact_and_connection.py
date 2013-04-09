@@ -1,23 +1,30 @@
+from django.db.utils import DatabaseError
 from south.v2 import SchemaMigration
 from south.db import db
 
 
 class Migration(SchemaMigration):
     def forwards(self, orm):
-        db.add_column('rapidsms_contact', 'created_on',
-                      self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, null=True))
-        db.add_column('rapidsms_connection', 'created_on',
-                      self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, null=True))
-        db.add_column('rapidsms_contact', 'modified_on',
-                      self.gf('django.db.models.fields.DateTimeField')(auto_now=True, null=True))
-        db.add_column('rapidsms_connection', 'modified_on',
-                      self.gf('django.db.models.fields.DateTimeField')(auto_now=True, null=True))
+        try:
+            db.add_column('rapidsms_contact', 'created_on',
+                          self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, null=True))
+            db.add_column('rapidsms_connection', 'created_on',
+                          self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, null=True))
+            db.add_column('rapidsms_contact', 'modified_on',
+                          self.gf('django.db.models.fields.DateTimeField')(auto_now=True, null=True))
+            db.add_column('rapidsms_connection', 'modified_on',
+                          self.gf('django.db.models.fields.DateTimeField')(auto_now=True, null=True))
+        except DatabaseError:
+            pass
 
     def backwards(self, orm):
-        db.delete_column('rapidsms_contact', 'created_on')
-        db.delete_column('rapidsms_contact', 'modified_on')
-        db.delete_column('rapidsms_connection', 'created_on')
-        db.delete_column('rapidsms_connection', 'modified_on')
+        try:
+            db.delete_column('rapidsms_contact', 'created_on')
+            db.delete_column('rapidsms_contact', 'modified_on')
+            db.delete_column('rapidsms_connection', 'created_on')
+            db.delete_column('rapidsms_connection', 'modified_on')
+        except DatabaseError:
+            pass
 
     models = {
         'auth.group': {

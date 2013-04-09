@@ -163,20 +163,19 @@ def alerts(request):
     poll_form = NewPollForm()
     range_form = rangeForm()
     poll_form.updateTypes()
-    assign_polls=Poll.objects.exclude(start_date=None).order_by('-pk')[0:5]
-    district_form=DistrictForm(request.POST or None)
-    if request.GET.get('reset_districts',None):
-        request.session['districts']=None
-        request.session['groups']=None
+    assign_polls = Poll.objects.exclude(start_date=None).order_by('-pk')[0:5]
+    district_form = DistrictForm(request.POST or None)
+    if request.GET.get('reset_districts', None):
+        request.session['districts'] = None
+        request.session['groups'] = None
 
     if district_form.is_valid():
-        request.session['districts']=[c.pk for c in district_form.cleaned_data['districts']]
+        request.session['districts'] = [c.pk for c in district_form.cleaned_data['districts']]
 
     groupform = AssignResponseGroupForm(request=request, access=access)
     if request.method == 'POST' and request.POST.get('groups', None):
         g_form = AssignResponseGroupForm(request.POST, request=request)
         if g_form.is_valid():
-
             request.session['groups'] = g_form.cleaned_data['groups']
 
     template = 'ureport/polls/alerts.html'
@@ -184,11 +183,11 @@ def alerts(request):
         message_list = \
             Message.objects.filter(details__attribute__name='alert'
 
-                                   ).filter(connection__contact__reporting_location__in=request.session.get('districts'))
+            ).filter(connection__contact__reporting_location__in=request.session.get('districts'))
     else:
-        message_list =Message.objects.filter(details__attribute__name='alert')
+        message_list = Message.objects.filter(details__attribute__name='alert')
 
-    if  request.session.get('groups', None):
+    if request.session.get('groups', None):
         message_list = message_list.filter(connection__contact__groups__in=request.session.get('groups'
         ))
 
@@ -235,7 +234,7 @@ def alerts(request):
                                                | Q(connection__contact__reporting_location__name__iregex=".*\m(%s)\y.*"
                                                                                                          % search)
                                                | Q(connection__pk__iregex=".*\m(%s)\y.*"
-                                                                                % search))
+                                                                          % search))
         elif search[0] == "'" and search[-1] == "'":
 
             search = search[1:-1]
@@ -349,9 +348,8 @@ def alerts(request):
         'rate': rate,
         'district_form': district_form,
         'range_form': range_form,
-        'groupform':groupform,
-        }, context_instance=RequestContext(request))
-
+        'groupform': groupform,
+    }, context_instance=RequestContext(request))
 
 
 def remove_captured_ind(request, pk):

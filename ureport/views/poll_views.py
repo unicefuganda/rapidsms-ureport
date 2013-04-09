@@ -72,7 +72,7 @@ def view_poll(request, pk):
             res['Cache-Control'] = 'no-store'
             return res
     xf, _ = XFormField.objects.get_or_create(name='latest_poll')
-    response = StubScreen.objects.get(slug='question_response')
+    response = StubScreen.objects.get_or_create(slug='question_response')
     template = 'ureport/polls/view_poll.html'
     categories = poll.categories.all()
     category_form = CategoryForm()
