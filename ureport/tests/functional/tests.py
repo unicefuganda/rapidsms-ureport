@@ -5,7 +5,7 @@ from rapidsms_httprouter.models import Message, MessageBatch
 from poll.models import Poll
 from ureport.tests.functional.login_page import login_succeeds_with_super_user, login_fails_without_user
 from ureport.tests.functional.about_page import about_ureport_page
-from ureport.tests.functional.create_poll import start_poll_queues_messages_in_table
+from ureport.tests.functional.create_poll_for_tests import start_poll_queues_messages_in_table
 from ureport.tests.functional.join_page import join_page
 from ureport.tests.functional.home_page import home_page, home_page_visualisation, home_page_map, best_viz
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase

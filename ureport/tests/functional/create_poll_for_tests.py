@@ -14,7 +14,7 @@ def create_poll(driver, poll_name, question, group_name):
 def start_poll_queues_messages_in_table(driver):
     group_name = 'groupFT'
     group = Group.objects.create(name=group_name)
-    user1 = User.objects.get(username="ureport")
+    user1 = User.objects.create(username="foo", email='foo@bar.com')
     user1.groups.add(group)
     user1.save()
 
