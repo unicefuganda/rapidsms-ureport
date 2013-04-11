@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from script.models import ScriptStep
@@ -8,9 +7,8 @@ from django.contrib.auth.decorators import login_required
 from generic.views import generic
 from django.views.decorators.cache import cache_control, never_cache
 from django.core.urlresolvers import reverse
-from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponse
-from rapidsms_xforms.models import XFormField
+from rapidsms_xforms.models import XFormField, XForm
 from ussd.models import StubScreen
 from poll.models import Poll, Category, Rule, Translation, Response
 from poll.forms import CategoryForm, RuleForm2
@@ -18,13 +16,13 @@ from rapidsms.models import Contact
 from ureport.forms import NewPollForm, GroupsFilter
 from django.conf import settings
 from ureport.forms import AssignToPollForm, SearchResponsesForm, AssignResponseGroupForm, ReplyTextForm, DeleteSelectedForm
-from django.contrib.sites.models import Site
+from django.contrib.sites.models import Site, get_current_site
 from ureport import tasks
 from ureport.utils import get_polls, get_script_polls, get_access
 from generic.sorters import SimpleSorter
 from ureport.views.utils.paginator import ureport_paginate
 from django.db import transaction
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from ureport.models import UPoll
 
 
@@ -71,7 +69,9 @@ def view_poll(request, pk):
                 '(\'?viewable=True&poll=True\')">Show On Home page</a>')
             res['Cache-Control'] = 'no-store'
             return res
-    xf, _ = XFormField.objects.get_or_create(name='latest_poll')
+    x = XForm.objects.get(name='poll')
+    xf, _ = XFormField.objects.get_or_create(name='latest_poll', xform=x, field_type=XFormField.TYPE_TEXT,
+                                             command="poll_%d" % poll.pk)
     response = StubScreen.objects.get_or_create(slug='question_response')
     template = 'ureport/polls/view_poll.html'
     categories = poll.categories.all()

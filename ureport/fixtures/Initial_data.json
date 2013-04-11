@@ -1,6 +1,7 @@
 [
 
-    {"pk": 1,
+    {
+        "pk": 1,
         "model": "auth.user",
         "fields": {
             "username": "admin",
@@ -16,7 +17,35 @@
         }
     },
 
-    {"pk": 2, "model": "sites.site", "fields": {"domain": "ureport.rapidsms.org", "name": "uReport"}},
+    {
+        "pk": 2,
+        "model": "sites.site",
+        "fields": {
+            "domain": "ureport.rapidsms.org",
+            "name": "uReport"
+        }
+    },
+
+    {
+        "pk": 34,
+        "model": "rapidsms_xforms.xform",
+        "fields": {
+            "name": "poll",
+            "keyword": "poll",
+            "created": "2012-02-20 22:17:38",
+            "restrict_message": null,
+            "modified": "2012-02-20 22:40:22",
+            "site": 1,
+            "owner": 1,
+            "separator": null,
+            "restrict_to": [],
+            "active": true,
+            "command_prefix": "+",
+            "response": "thanks for your response",
+            "keyword_prefix": null,
+            "description": ""
+        }
+    },
 
     {
         "pk": 122,

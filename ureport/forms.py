@@ -139,7 +139,7 @@ class SearchResponsesForm(FilterForm):
                                    | Q(message__connection__contact__reporting_location__name__iregex=".*\m(%s)\y.*"
                                                                                                       % search)
                                    | Q(message__connection__pk__iregex=".*\m(%s)\y.*"
-                                                                             % search))
+                                                                       % search))
 
         elif search == "'=numerical value()'":
             return queryset.filter(message__text__iregex="^[0-9]+$")
@@ -178,7 +178,7 @@ class SearchMessagesForm(FilterForm):
                                    | Q(connection__contact__reporting_location__name__iregex=".*\m(%s)\y.*"
                                                                                              % search)
                                    | Q(connection__pk__iregex=".*\m(%s)\y.*"
-                                                                    % search))
+                                                              % search))
 
         elif search == "'=numerical value()'":
             return queryset.filter(text__iregex="^[0-9]+$")
@@ -728,11 +728,15 @@ class GroupsFilter(forms.Form):
             self.fields['group_list'] = forms.ModelMultipleChoiceField(queryset=access.groups.order_by('name'),
                                                                        required=False)
         except Access.DoesNotExist, e:
-            print e
+            print "Access DoesNotExist", e
             self.fields['group_list'] = forms.ModelMultipleChoiceField(queryset=Group.objects.order_by('name'),
                                                                        required=False)
         except UnboundLocalError, e:
-            print e
+            print "UnboundLocalError:", e
+            self.fields['group_list'] = forms.ModelMultipleChoiceField(queryset=Group.objects.order_by('name'),
+                                                                       required=False)
+        except Exception, e:
+            print "General Exception: ", e
             self.fields['group_list'] = forms.ModelMultipleChoiceField(queryset=Group.objects.order_by('name'),
                                                                        required=False)
 

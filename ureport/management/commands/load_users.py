@@ -6,7 +6,6 @@ from django.contrib.auth.models import Group
 from django.core.management import BaseCommand
 from uganda_common.utils import assign_backend
 from rapidsms.models import Connection, Contact
-from rapidsms.contrib.locations.models import Location
 
 
 class Command(BaseCommand):
@@ -16,13 +15,14 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         path = options["path"]
-        group = Group.objects.get(name="War Child UK")
+        group = Group.objects.get(name="CODES  Kyanamukaka")
+        print "Groups ===============>", group.name
         csv_rows = csv.reader(open(path, 'rU'), delimiter=",")
         rnum = 0
         for row in csv_rows:
-
+            rnum += 1
             try:
-                name, number, district, village, age, gender = tuple(row)
+                name, number, village, age, gender = tuple(row)
                 num = number.replace('-', '').strip()
                 name = name.strip().replace("\"", '').replace('\'', "").replace("  ", " ")
             except:
@@ -47,9 +47,6 @@ class Command(BaseCommand):
                 contact.save()
                 if group:
                     contact.groups.add(group)
-                district = Location.objects.get(name=district, type__name='district')
-                contact.reporting_location = district
-                print "District===>", district, type(district)
                 contact.village_name = village
                 print "Village===>", village
                 if gender.lower().startswith('m'):
@@ -66,6 +63,7 @@ class Command(BaseCommand):
                 contact.save()
             else:
                 print 'Number Error:', row
+        print rnum, "================>", group.name
 
     def clean_number(self, num):
         num = num.strip().replace('+', '').replace('-', '').replace(" ", '')
