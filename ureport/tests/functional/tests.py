@@ -24,11 +24,7 @@ class UreportTest(SplinterTestCase):
         self.open('/account/logout')
 
     def test_should_match_poll_question_to_message_text(self):
-        sql_text = "select text from rapidsms_httprouter_message where status='Q'"
         self.poll_id, self.contacts_count = start_poll_queues_messages_in_table(self)
-        self.cursor = connection.cursor()
-
-        self.cursor.execute(sql_text)
         newly_added_poll = Poll.objects.get(id=self.poll_id)
 
         self.assertEquals(newly_added_poll.messages.count(),2)
