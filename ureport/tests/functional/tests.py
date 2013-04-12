@@ -11,6 +11,8 @@ from ureport.tests.functional.home_page import home_page, home_page_visualisatio
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
 from django.db import connection
 
+import time
+
 BROWSER = Browser('firefox')
 
 
@@ -26,6 +28,8 @@ class UreportTest(SplinterTestCase):
     def test_should_match_poll_question_to_message_text(self):
         self.poll_id, self.contacts_count = start_poll_queues_messages_in_table(self)
         newly_added_poll = Poll.objects.get(id=self.poll_id)
+
+        time.sleep(3)
 
         self.assertEquals(newly_added_poll.messages.count(),2)
         self.assertEquals(newly_added_poll.messages.all()[0].text,newly_added_poll.question)
