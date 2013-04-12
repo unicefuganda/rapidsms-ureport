@@ -123,7 +123,7 @@ def update_latest_poll(sender, **kwargs):
     poll = kwargs['instance']
     if poll.categories.filter(name__in=['yes', 'no']):
         try:
-            xf = XFormField.objects.get(name='latest_poll')
+            xf = XFormField.objects.get(name='latest_poll', command="poll_" + str(poll.pk))
             xf.question = poll.question
             xf.command = "poll_" + str(poll.pk)
             xf.save()

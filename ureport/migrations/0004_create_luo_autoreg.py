@@ -9,6 +9,7 @@ from django.core import management
 class Migration(DataMigration):
     depends_on = (
         ("rapidsms_xforms", "0001_initial"),
+        ("ussd", "0001_initial")
     )
 
     def forwards(self, orm):

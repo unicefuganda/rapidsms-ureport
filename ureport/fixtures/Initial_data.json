@@ -48,6 +48,221 @@
     },
 
     {
+        "pk": "res31",
+        "model": "ussd.menu",
+        "fields": {}
+    },
+    {
+        "pk": "res3",
+        "model": "ussd.menu",
+        "fields": {}
+    },
+    {
+        "pk": "res21",
+        "model": "ussd.menu",
+        "fields": {}
+    },
+    {
+        "pk": "res2",
+        "model": "ussd.menu",
+        "fields": {}
+    },
+    {
+        "pk": "res11",
+        "model": "ussd.menu",
+        "fields": {}
+    },
+    {
+        "pk": "res1",
+        "model": "ussd.menu",
+        "fields": {}
+    },
+    {
+        "pk": "ussd_root3",
+        "model": "ussd.menu",
+        "fields": {}
+    },
+    {
+        "pk": "ussd_root",
+        "model": "ussd.menu",
+        "fields": {}
+    },
+    {
+        "pk": "ussd_root2",
+        "model": "ussd.menu",
+        "fields": {}
+    },
+
+    {
+        "pk": "weekly_poll",
+        "model": "ussd.screen",
+        "fields": {
+            "rght": 3,
+            "parent": "ussd_root",
+            "level": 1,
+            "label": "This Week's Poll",
+            "lft": 2,
+            "tree_id": 1,
+            "order": 1
+        }
+    },
+    {
+        "pk": "res31",
+        "model": "ussd.screen",
+        "fields": {
+            "rght": 7,
+            "parent": "res3",
+            "level": 3,
+            "label": "no:72% unknown:9% yes:17%",
+            "lft": 6,
+            "tree_id": 1,
+            "order": 1
+        }
+    },
+    {
+        "pk": "res3",
+        "model": "ussd.screen",
+        "fields": {
+            "rght": 8,
+            "parent": "ussd_root3",
+            "level": 2,
+            "label": "PCV - Immunisation",
+            "lft": 5,
+            "tree_id": 1,
+            "order": 3
+        }
+    },
+    {
+        "pk": "res21",
+        "model": "ussd.screen",
+        "fields": {
+            "rght": 11,
+            "parent": "res2",
+            "level": 3,
+            "label": "no:17% Other:5% yes:76%",
+            "lft": 10,
+            "tree_id": 1,
+            "order": 1
+        }
+    },
+    {"pk": "res2",
+        "model": "ussd.screen",
+        "fields": {
+            "rght": 12,
+            "parent": "ussd_root3",
+            "level": 2,
+            "label": "VAC #1",
+            "lft": 9,
+            "tree_id": 1,
+            "order": 2
+        }
+    },
+    {
+        "pk": "res11",
+        "model": "ussd.screen",
+        "fields": {
+            "rght": 15,
+            "parent": "res1",
+            "level": 3,
+            "label": "0 responses",
+            "lft": 14,
+            "tree_id": 1,
+            "order": 1
+        }
+    },
+    {
+        "pk": "res1",
+        "model": "ussd.screen",
+        "fields": {
+            "rght": 16,
+            "parent": "ussd_root3",
+            "level": 2,
+            "label": "CODES-Kyanamukaka",
+            "lft": 13,
+            "tree_id": 1,
+            "order": 1
+        }
+    },
+    {
+        "pk": "ussd_root3",
+        "model": "ussd.screen",
+        "fields": {
+            "rght": 17,
+            "parent": "ussd_root",
+            "level": 1,
+            "label": "Poll Results",
+            "lft": 4,
+            "tree_id": 1,
+            "order": 2
+        }
+    },
+    {
+        "pk": "send_report",
+        "model": "ussd.screen",
+        "fields": {
+            "rght": 19,
+            "parent": "ussd_root",
+            "level": 1,
+            "label": "Send Report",
+            "lft": 18,
+            "tree_id": 1,
+            "order": 3
+        }
+    },
+    {
+        "pk": "ussd_root",
+        "model": "ussd.screen",
+        "fields": {
+            "rght": 20,
+            "parent": null,
+            "level": 0,
+            "label": "Ignored",
+            "lft": 1,
+            "tree_id": 1,
+            "order": 1
+        }
+    },
+    {
+        "pk": "question_response",
+        "model": "ussd.screen",
+        "fields": {
+            "rght": 2,
+            "parent": null,
+            "level": 0,
+            "label": "thanks",
+            "lft": 1,
+            "tree_id": 2,
+            "order": 0
+        }
+    },
+    {
+        "pk": "report_response",
+        "model": "ussd.screen",
+        "fields": {
+            "rght": 2,
+            "parent": null,
+            "level": 0,
+            "label": "",
+            "lft": 1,
+            "tree_id": 3,
+            "order": 0
+        }
+    },
+    {
+        "pk": "ussd_root2",
+        "model": "ussd.screen",
+        "fields": {
+            "rght": 2,
+            "parent": null,
+            "level": 0,
+            "label": "Thanks For your response",
+            "lft": 1,
+            "tree_id": 4,
+            "order": 0
+        }
+    },
+
+    {
         "pk": 122,
         "model": "poll.poll",
         "fields": {
@@ -60,23 +275,6 @@
             "sites": [],
             "user": 1,
             "type": "district",
-            "start_date": null,
-            "response_type": "a"
-        }
-    },
-    {
-        "pk": 123,
-        "model": "poll.poll",
-        "fields": {
-            "default_response": "",
-            "name": "contactname",
-            "end_date": null,
-            "contacts": [],
-            "messages": [],
-            "question": "Best responses may be shared!Send us your name,or if you prefer a nickname so we can give u recognition for good replies by sharing them in the media!",
-            "sites": [],
-            "user": 1,
-            "type": "t",
             "start_date": null,
             "response_type": "a"
         }
@@ -333,22 +531,6 @@
         }
     },
     {
-        "pk": 75,
-        "model": "script.scriptstep",
-        "fields": {
-            "script": "ureport_autoreg",
-            "retry_offset": 3600,
-            "rule": "R",
-            "email": null,
-            "num_tries": 1,
-            "start_offset": 60,
-            "message": "",
-            "poll": 123,
-            "order": 5,
-            "giveup_offset": 3600
-        }
-    },
-    {
         "pk": 76,
         "model": "script.scriptstep",
         "fields": {
@@ -498,22 +680,6 @@
             "message": "",
             "poll": 122,
             "order": 3,
-            "giveup_offset": 3600
-        }
-    },
-    {
-        "pk": 85,
-        "model": "script.scriptstep",
-        "fields": {
-            "script": "ureport_autoreg_luo",
-            "retry_offset": 3600,
-            "rule": "R",
-            "email": null,
-            "num_tries": 1,
-            "start_offset": 60,
-            "message": "",
-            "poll": 123,
-            "order": 5,
             "giveup_offset": 3600
         }
     },

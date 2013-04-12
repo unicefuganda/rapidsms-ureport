@@ -15,7 +15,7 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         path = options["path"]
-        group = Group.objects.get(name="CODES  Kyanamukaka")
+        group = Group.objects.get(name="CODES Bukakata")
         print "Groups ===============>", group.name
         csv_rows = csv.reader(open(path, 'rU'), delimiter=",")
         rnum = 0

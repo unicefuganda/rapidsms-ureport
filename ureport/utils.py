@@ -78,7 +78,7 @@ def retrieve_poll(request, pks=None):
         pks = request.GET.get('pks', '')
     not_showing = list(
         PollAttribute.objects.filter(key='viewable', values__value='false').values_list('values__poll_id', flat=True))
-    not_showing = [366, 420, 419, 297, 296, 349, 350] + not_showing
+    not_showing = not_showing
     if pks == 'l':
         return [Poll.objects.exclude(pk__in=script_polls).exclude(pk__in=not_showing).latest('start_date')]
 

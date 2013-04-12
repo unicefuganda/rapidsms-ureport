@@ -24,19 +24,24 @@ def update_poll_results():
 
     res1.label=latest_polls[0].name
     res1.save()
-    res2=Menu.objects.get(slug="res2")
-    res2.label=latest_polls[1].name
-    res2.save()
-    res3=Menu.objects.get(slug="res3")
-    res3.label=latest_polls[2].name
-    res3.save()
     res11=Menu.objects.get(slug="res11")
     res11.label=get_results(latest_polls[0])
     res11.save()
-    res21=Menu.objects.get(slug="res21")
-    res21.label=get_results(latest_polls[1])
-    res21.save()
+    try:
+        #We don't know that there is going to be more than one poll in ureport
+        #Todo Get a better way to do all this
+        res2=Menu.objects.get(slug="res2")
+        res2.label=latest_polls[1].name
+        res2.save()
+        res3=Menu.objects.get(slug="res3")
+        res3.label=latest_polls[2].name
+        res3.save()
+        res21=Menu.objects.get(slug="res21")
+        res21.label=get_results(latest_polls[1])
+        res21.save()
 
-    res31=Menu.objects.get(slug="res31")
-    res31.label=get_results(latest_polls[2])
-    res31.save()
+        res31=Menu.objects.get(slug="res31")
+        res31.label=get_results(latest_polls[2])
+        res31.save()
+    except IndexError:
+        pass

@@ -107,22 +107,6 @@
         }
     },
     {
-        "pk": 85,
-        "model": "script.scriptstep",
-        "fields": {
-            "script": "ureport_autoreg_luo",
-            "retry_offset": 3600,
-            "rule": "R",
-            "email": null,
-            "num_tries": 1,
-            "start_offset": 60,
-            "message": "",
-            "poll": 123,
-            "order": 5,
-            "giveup_offset": 3600
-        }
-    },
-    {
         "pk": 86,
         "model": "script.scriptstep",
         "fields": {
