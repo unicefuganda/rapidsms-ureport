@@ -15,7 +15,7 @@ class Migration(DataMigration):
     def forwards(self, orm):
         "create luo autoreg"
         #make sure we have the polls and stuff
-        management.call_command('loaddata', 'Initial_data.json')
+        management.call_command('loaddata', '0004_migration_initial_data.json')
         management.call_command('loaddata', 'script_luo.json')
 
     def backwards(self, orm):

@@ -25,7 +25,7 @@ from script.utils.outgoing import check_progress
 from django.core.management import call_command
 
 class ModelTest(TestCase): #pragma: no cover
-    fixtures = ['test_fix.json','Initial_data.json','luo_translation.json','script2.json','script_luo.json','ussd.json'] 
+    fixtures = ['test_fix.json','0004_migration_initial_data.json','luo_translation.json','script2.json','script_luo.json','ussd.json']
     def setUp(self):
         """
         Create a dummy connection

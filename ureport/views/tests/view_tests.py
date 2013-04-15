@@ -12,7 +12,7 @@ import datetime
 from contact.models import Flag, MessageFlag
 
 class TestViews(TestCase):
-    fixtures = ['test_fix.json','Initial_data.json','luo_translation.json','script2.json','script_luo.json','ussd.json']
+    fixtures = ['test_fix.json','0004_migration_initial_data.json','luo_translation.json','script2.json','script_luo.json','ussd.json']
     def setUp(self):
         self.user,created = User.objects.get_or_create(username='admin')
 
