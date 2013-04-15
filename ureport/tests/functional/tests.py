@@ -17,7 +17,7 @@ BROWSER = Browser('firefox')
 
 
 class UreportTest(SplinterTestCase):
-
+    fixtures = ['0004_migration_initial_data.json']
     def setUp(self):
         self.browser = BROWSER
         self.open('/')
