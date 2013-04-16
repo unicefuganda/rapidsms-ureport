@@ -345,7 +345,9 @@ def delete(request, pk):
 
 @login_required
 def ureporters(request):
+    print request.user
     access = get_access(request)
+    print access
     download_form = DownloadForm(request.POST or None)
     if request.POST and request.POST.get('download', None):
         if download_form.is_valid():
@@ -369,7 +371,7 @@ def ureporters(request):
     ]
 
     queryset = get_contacts2(request=request)
-    if access:
+    if access is not None:
         groups = ",".join(list(access.groups.values_list('name', flat=True)))
         queryset = queryset.filter(group__icontains=groups)
     return generic(request,

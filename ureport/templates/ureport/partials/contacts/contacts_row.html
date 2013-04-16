@@ -1,7 +1,7 @@
 {% extends 'generic/partials/partial_row.html' %}
 {% block remaining_row_content %}
     <td>
-       {{ object.connection_pk }}
+       <a href="{% url profile object.connection_pk %}"> {{ object.connection_pk }}</a>
     </td>
     <td>
     {{  object.age }}
