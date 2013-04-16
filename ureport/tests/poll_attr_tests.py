@@ -11,7 +11,7 @@ __author__ = 'kenneth'
 class PollAttributeTest(TestCase):
     def setUp(self):
         user = User.objects.create_user('test', 'test@pollattr.ken', password='testpassword')
-        number, backend = assign_backend('2567982888221')
+        number, backend = assign_backend('256798288221')
         connection = Connection.objects.create(identity=number, backend=backend)
         contact = Contact.objects.create(name='Test Contact')
         connection.contact = contact
