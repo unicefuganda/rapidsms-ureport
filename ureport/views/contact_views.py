@@ -106,8 +106,7 @@ def ureporter_profile(request, connection_pk):
                 status_message_type='success',
                 results_title='Message History',
                 selectable=False,
-                partial_row='ureport/partials/messages/message_history_row.html'
-                ,
+                partial_row='ureport/partials/messages/message_history_row.html',
                 base_template='ureport/message_history_base.html',
                 action_forms=[ReplyTextForm],
                 columns=columns,
