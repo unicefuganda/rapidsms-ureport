@@ -26,11 +26,10 @@ from django.contrib.auth.models import Group, User
 from ureport.models import UPoll
 import logging
 
-log = logging.getLogger('django')
+log = logging.getLogger(__name__)
 
 
 def start_poll_single_tx(poll):
-    print "GET IN ME LOG!!!"
     log.info("[start-poll-single-tx] Sending task to celery...")
     tasks.start_poll.delay(poll)
     log.info("[start-poll-single-tx] Sent to Celery Ok.")

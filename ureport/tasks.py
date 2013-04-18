@@ -6,7 +6,7 @@ from script.models import Script
 
 import logging
 
-log = logging.getLogger('django')
+log = logging.getLogger(__name__)
 
 
 @task
