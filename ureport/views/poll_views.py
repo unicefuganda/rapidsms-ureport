@@ -35,7 +35,7 @@ def view_poll(request, pk):
     if request.GET.get('poll'):
         if request.GET.get('start'):
             poll = Poll.objects.get(pk=pk)
-            if not settings.USE_NEW_START_POLL:
+            if not getattr(settings, 'USE_NEW_START_POLL', False):
                 tasks.start_poll.delay(poll)
             else:
                 poll.start_poll_and_then_send_messages()

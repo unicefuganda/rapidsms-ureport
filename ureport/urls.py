@@ -27,7 +27,7 @@ urlpatterns = patterns('',
                        url(r'^reporter/(?P<reporter_pk>\d+)/edit', editReporter, name="edit-reporter"),
                        url(r'^reporter/(?P<reporter_pk>\d+)/delete', deleteReporter, name="delete-reporter"),
                        url(r'^reporter/(?P<pk>\d+)/show', login_required(generic_row),
-                           {'model': UreportContact, 'partial_row': 'ureport/partials/contacts/contacts_row.html'},
+                           {'model': Contact, 'partial_row': 'ureport/partials/contacts/generic_contact_row.html'},
                            name="reporter-profile"),
                        # poll management views using generic (rather than built-in poll views
                        url(r'^mypolls/$', ureport_polls, name="ureport-polls"),

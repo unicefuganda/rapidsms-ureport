@@ -1,0 +1,48 @@
+{% extends 'generic/partials/partial_row.html' %}
+{% block remaining_row_content %}
+    <td>
+        <a href="{% url profile object.default_connection.pk %}"> {{ object.default_connection.pk }}</a>
+    </td>
+    <td>
+        {{  object.age }}
+    </td>
+    <td>
+        {% if object.gender %}
+            {{ object.gender }}
+        {% endif %}
+    </td>
+    <td>
+        {% if object.language == '' %}
+            en
+        {% else %}
+            {{ object.language }}
+        {% endif %}
+    </td>
+    <td id="row_{{ object.pk }}">{{ object.reporting_location }}</td>
+    <td>
+
+        {{ object.groups.all }}
+    </td>
+
+    <td>{{ object.questions }}</td>
+    <td>{{ object.responses.all }}</td>
+    <td>{{ object.incoming }}</td>
+    <td>
+        {% if object.is_caregiver %}
+            Yes
+        {%else%}
+            No
+        {%endif %}
+    </td>
+    <td>{{ object.created_on }}</td>
+    <td>
+        {% if object.quit_date %}
+            {{ object.quit_date.date }}
+        {%else%}
+            N/A
+        {%endif%}
+
+    </td>
+
+
+{% endblock %}
