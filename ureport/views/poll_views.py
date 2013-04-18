@@ -147,6 +147,7 @@ def view_poll(request, pk):
 @transaction.commit_on_success
 def new_poll(req):
     if req.method == 'POST':
+        log.info("[new-poll] - request recieved to create a poll")
         form = NewPollForm(req.POST, request=req)
         groups_form = GroupsFilter(req.POST, request=req)
         form.updateTypes()
@@ -159,12 +160,16 @@ def new_poll(req):
             if hasattr(Contact, 'groups'):
                 groups = form.cleaned_data['groups']
 
+            log.info("[new-poll] - finding all contacts for this poll...")
             if len(districts):
                 contacts = Contact.objects.filter(reporting_location__in=districts).filter(groups__in=groups).exclude(
                     groups__in=excluded_groups)
             else:
                 contacts = Contact.objects.filter(groups__in=groups).exclude(groups__in=excluded_groups)
 
+            log.info("[new-poll] - found all contacts ok.")
+
+            log.info("[new-poll] - setting up translations...")
             name = form.cleaned_data['name']
             p_type = form.cleaned_data['type']
             response_type = form.cleaned_data['response_type']
@@ -193,6 +198,8 @@ def new_poll(req):
                                                       field=form.cleaned_data['question_en'],
                                                       value=form.cleaned_data['question_kdj'])
 
+            log.info("[new-poll] - translations ok.")
+
             poll_type = (Poll.TYPE_TEXT if p_type
                                            == NewPollForm.TYPE_YES_NO else p_type)
 
@@ -205,11 +212,14 @@ def new_poll(req):
                 req.user)
 
             if p_type == NewPollForm.TYPE_YES_NO:
+                log.info("[new-poll] - is Y/N poll so adding categories...")
                 poll.add_yesno_categories()
+                log.info("[new-poll] - categories added ok.")
 
             if settings.SITE_ID:
                 poll.sites.add(Site.objects.get_current())
 
+            log.info("[new-poll] - poll created ok.")
             return redirect(reverse('ureport.views.view_poll', args=[poll.pk]))
 
     else:
