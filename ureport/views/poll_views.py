@@ -24,7 +24,22 @@ from ureport.views.utils.paginator import ureport_paginate
 from django.db import transaction
 from django.contrib.auth.models import Group, User
 from ureport.models import UPoll
+import logging
 
+log = logging.getLogger('django')
+
+
+def start_poll_single_tx(poll):
+    print "GET IN ME LOG!!!"
+    log.info("[start-poll-single-tx] Sending task to celery...")
+    tasks.start_poll.delay(poll)
+    log.info("[start-poll-single-tx] Sent to Celery Ok.")
+
+# Right now this is a duplicate of the single_tx so we can test our feature toggle
+def start_poll_multi_tx(poll):
+    log.info("[start-poll-multi-tx] Sending task to celery...")
+    tasks.start_poll.delay(poll)
+    log.info("[start-poll-multi-tx] Sent to Celery Ok.")
 
 @never_cache
 @login_required
@@ -35,10 +50,11 @@ def view_poll(request, pk):
     if request.GET.get('poll'):
         if request.GET.get('start'):
             poll = Poll.objects.get(pk=pk)
-            if not getattr(settings, 'USE_NEW_START_POLL', False):
-                tasks.start_poll.delay(poll)
+            if getattr(settings, 'START_POLL_MULTI_TX', False):
+                start_poll_multi_tx(poll)
             else:
-                poll.start_poll_and_then_send_messages()
+                start_poll_single_tx(poll)
+
             res = """ <a href="?stop=True&poll=True" data-remote=true  id="poll_action" class="btn">Close Poll</a> """
             return HttpResponse(res)
         if request.GET.get('stop'):

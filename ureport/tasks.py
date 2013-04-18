@@ -4,16 +4,22 @@ from rapidsms_httprouter.models import Message
 from ureport.models import *
 from script.models import Script
 
+import logging
+
+log = logging.getLogger('django')
+
+
 @task
 def ping(ignore_result=True):
+    log.info("[ping-task] pong.")
     print "pong"
 
 @task
 def start_poll(poll,ignore_result=True):
-    print "[current-flow] Starting poll [" + str(poll.pk) + "] ..."
+    log.info("[start-poll-task] Starting poll [" + str(poll.pk) + "] ...")
     if not poll.start_date:
         poll.start()
-    print "[current-flow] Poll start complete."
+    log.info("[start-poll-task] Poll start complete.")
 
 @task
 def reprocess_responses(poll,ignore_result=True):
