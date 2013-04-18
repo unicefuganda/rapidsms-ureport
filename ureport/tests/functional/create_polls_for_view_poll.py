@@ -41,5 +41,9 @@ def create_eleven_polls_for_view_polls():
     create_connection(identity='0794339344',contact=contact1,backend=backend)
     create_connection(identity='0794339427',contact=contact2,backend=backend)
 
-    for poll_id in range(0, 10):
-        create_poll(contacts, user1)
+    polls = []
+    for poll in range(0, 10):
+        poll = create_poll(contacts, user1)
+        polls.append(poll)
+
+    return polls

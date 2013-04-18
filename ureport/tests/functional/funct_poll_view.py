@@ -1,3 +1,4 @@
+import time
 from splinter import Browser
 from rapidsms.models import Contact
 from rapidsms.models import Connection
@@ -20,4 +21,9 @@ class PollViewTest(SplinterTestCase):
         self.browser.quit()
 
     def test_should_show_only_ten_polls_on_view_polls_initially(self):
-        create_eleven_polls_for_view_polls()
+        polls = create_eleven_polls_for_view_polls()
+
+        for poll in polls:
+            poll.start()
+            assert(poll.messages.count() > 0)
+
