@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 def ping(ignore_result=True):
     log.info("[ping-task] pong.")
     print "pong"
+    return "pong"
 
 @task
 def start_poll(poll,ignore_result=True):
