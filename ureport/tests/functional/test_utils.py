@@ -1,6 +1,8 @@
+from splinter import Browser
 from django.contrib.auth.models import Group, User
 from rapidsms.models import Connection
 from poll.models import Poll
+from rapidsms_httprouter.models import Message
 from rapidsms_httprouter.router import get_router
 
 
@@ -38,4 +40,9 @@ def add_contacts_to_poll(poll, contacts):
 
 def create_fake_response(connection, incoming_message):
     router = get_router()
-    return router.handle_incoming(connection.backend.name, connection.identity, incoming_message)
+    incoming = router.handle_incoming(connection.backend.name, connection.identity, incoming_message)
+    return incoming
+
+
+def get_browser():
+    return Browser('firefox')

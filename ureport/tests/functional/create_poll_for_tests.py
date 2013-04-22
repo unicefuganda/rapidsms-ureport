@@ -21,7 +21,7 @@ def start_poll_queues_messages_in_table(driver):
     poll = create_poll(user2)
     add_contacts_to_poll(poll, contacts)
 
-    driver.create_and_sign_in_admin("argha","a")
+    driver.create_and_sign_in_admin("argha", "a")
 
     driver.open("/view_poll/%s" % poll.id)
     driver.browser.find_link_by_text('Start Poll').first.click()

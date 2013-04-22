@@ -21,10 +21,10 @@
 </div>
 <a name="poll_results"></a>
 <div class="poll_list">
-<ul>
+<ul id="list_of_polls">
     {% for p in polls %}
     {% if p.start_date and p.viewable %}
-        <li>
+        <li id="poll_record">
             <span class="poll-date">{{ p.start_date|date:"d/M/Y" }}</span> :
             {{ p.question }}
             <a href="javascript:void(0)" 
