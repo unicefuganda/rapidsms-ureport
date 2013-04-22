@@ -528,6 +528,11 @@ class SendMessageForm(forms.Form):
     text = forms.CharField(required=True, widget=SMSInput())
 
 
+class ForwardMessageForm(forms.Form):
+    recipients = forms.CharField(label="recepient(s)", required=True, help_text="enter numbers commas separated")
+    text = forms.CharField(required=True, widget=SMSInput())
+
+
 class rangeForm(forms.Form):
     startdate = forms.DateField(('%d/%m/%Y',), label='Start Date', required=False,
                                 widget=forms.DateTimeInput(format='%d/%m/%Y', attrs={

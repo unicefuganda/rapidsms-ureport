@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response
 from django.shortcuts import get_object_or_404
 from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
+from django.views.decorators.cache import never_cache
 from ureport.utils import get_flagged_messages
 from uganda_common.utils import ExcelResponse
 from rapidsms_httprouter.views import receive
@@ -16,7 +17,7 @@ from generic.sorters import SimpleSorter
 from rapidsms.models import Connection
 from contact.models import Flag, MessageFlag
 
-from ureport.forms import SendMessageForm, SearchMessagesForm
+from ureport.forms import SendMessageForm, SearchMessagesForm, ForwardMessageForm
 from ureport.models import MessageAttribute, MessageDetail
 from contact.forms import FlaggedMessageForm
 from ureport.views.utils.tags import _get_responses
@@ -236,18 +237,19 @@ def mass_messages(request):
 
 @login_required
 @transaction.commit_on_success
+@never_cache
 def send_message(request, template='ureport/partials/forward.html'):
     if not request.method == 'POST':
         send_message_form = SendMessageForm()
 
         if request.GET.get('forward', None):
+            # import pdb; pdb.set_trace()
             msg = request.GET.get('msg')
 
             template = 'ureport/partials/forward.html'
             message = Message.objects.get(pk=int(msg))
             send_message_form = \
-                SendMessageForm(data={'text': message.text,
-                                      'recipients': ''})
+                ForwardMessageForm(data={'text': message.text})
             request.session['mesg'] = message
         if request.GET.get('reply', None):
             msg = request.GET.get('msg')
