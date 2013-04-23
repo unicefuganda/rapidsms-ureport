@@ -14,7 +14,7 @@ class UreportAccessLogMiddleware:
 
 
     def process_request(self, request):
-        log.info(request.method + " \t: " + request.path)
+        log.info('{:6s} : {}'.format(request.method, request.path))
 
 
 
