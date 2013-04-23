@@ -33,6 +33,8 @@ class PollStatusTest(SplinterTestCase):
         self.poll = create_poll(user2)
         add_contacts_to_poll(self.poll, contacts)
 
+        self.poll.add_yesno_categories()
+
         self.create_and_sign_in_admin("argha", "a")
 
         self.open("/poll_status/%s" % self.poll.id)
@@ -44,3 +46,11 @@ class PollStatusTest(SplinterTestCase):
     def test_should_show_the_status_page(self):
         self.assertTrue(self.browser.is_element_present_by_css("div[id=poll-status]"))
         self.assertTrue(str(self.poll.id) in self.browser.find_by_css("div[id=poll-status]").text)
+
+        self.assertEqual(self.browser.find_by_id('contact-count').text, "2")
+        self.assertEqual(self.browser.find_by_id('category-count').text, "3")
+        self.assertEqual(self.browser.find_by_id('is-yesno').text, "yes")
+
+        
+
+

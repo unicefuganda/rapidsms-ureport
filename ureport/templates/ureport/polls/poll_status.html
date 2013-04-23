@@ -5,7 +5,36 @@
 
 
 <div id="poll-status">
-    <p>Ok, here we are going to display lots of things about the poll with id {{ poll.pk }}</p>
+    <h1>Poll {{ poll.pk }} : "{{ poll.name }}" </h1>
+
+    <table>
+        <thead>
+            <th>Stat</th><th>Value</th>
+        </thead>
+        <tbody>
+            <tr><td>#Contacts</td><td id="contact-count">{{ poll.contacts.count }}</td></tr>
+            <tr><td>#Categories</td><td id="category-count">{{ poll.categories.count }}</td></tr>
+            <tr><td>Yes / No Poll?</td><td id="is-yesno">{{ poll.is_yesno_poll|yesno }}  </td></tr>
+        </tbody>
+    </table>
+
+    <div>
+        <h2>Categories</h2>
+        <ul>
+            {% for category in poll.categories.all %}
+            <li class='category'>
+                CATEGORY: {{ category.name }}, {{ category.priority }}
+                <ul>
+                    {% for rule in category.rules.all %}
+                        <li class='rule'> RULE: {{ rule.regex }}, {{ rule.rule_type }}, {{ rule.rule_string }}</li>
+                    {% endfor %}
+                </ul>
+            </li>
+            {% endfor %}
+
+        </ul>
+    </div>
+
 </div>
 
 {% endblock %}

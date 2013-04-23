@@ -43,7 +43,7 @@ def start_poll_multi_tx(poll):
 @never_cache
 @login_required
 def poll_status(request, pk):
-    poll = get_object_or_404(UPoll, pk=pk)
+    poll = get_object_or_404(Poll, pk=pk)
     template = 'ureport/polls/poll_status.html'
     return render_to_response(template, {
         'poll': poll,
