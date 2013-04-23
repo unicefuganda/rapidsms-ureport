@@ -146,6 +146,7 @@ def view_poll(request, pk):
 @login_required
 @transaction.commit_on_success
 def new_poll(req):
+    log.info("[new_poll] TRANSACTION START")
     if req.method == 'POST':
         log.info("[new-poll] - request recieved to create a poll")
         form = NewPollForm(req.POST, request=req)
@@ -217,9 +218,12 @@ def new_poll(req):
                 log.info("[new-poll] - categories added ok.")
 
             if settings.SITE_ID:
+                log.info("[new-poll] - SITE_ID is set, so adding the site to the poll")
                 poll.sites.add(Site.objects.get_current())
+                log.info("[new-poll] - site added ok")
 
             log.info("[new-poll] - poll created ok.")
+            log.info("[new_poll] TRANSACTION COMMIT")
             return redirect(reverse('ureport.views.view_poll', args=[poll.pk]))
 
     else:
@@ -227,6 +231,7 @@ def new_poll(req):
         groups_form = GroupsFilter(request=req)
         form.updateTypes()
 
+    log.info("[new_poll] TRANSACTION COMMIT")
     return render_to_response('ureport/new_poll.html', {'form': form, 'groups_form': groups_form},
                               context_instance=RequestContext(req))
 
