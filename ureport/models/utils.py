@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+from rapidsms_httprouter.models import Message, STATUS_CHOICES
 from ussd.models import Menu
 from poll.models import Poll
+import datetime
 
 
 def get_results(poll):
@@ -45,3 +47,15 @@ def update_poll_results():
         res31.save()
     except IndexError:
         pass
+
+def recent_message_stats(start_date, since_days_ago):
+    query_date = start_date - datetime.timedelta(days=since_days_ago)
+
+    stats = {}
+
+    for status in STATUS_CHOICES:
+        code=status[0]
+        name=status[1]
+        stats[name] = Message.objects.filter(date__gt=query_date, direction='O', status=code).count()
+
+    return stats

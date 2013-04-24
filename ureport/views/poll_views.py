@@ -9,6 +9,7 @@ from django.views.decorators.cache import cache_control, never_cache
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from rapidsms_xforms.models import XFormField, XForm
+from ureport.models.utils import recent_message_stats
 from ussd.models import StubScreen
 from poll.models import Poll, Category, Rule, Translation, Response
 from poll.forms import CategoryForm, RuleForm2
@@ -22,9 +23,9 @@ from ureport.utils import get_polls, get_script_polls, get_access
 from generic.sorters import SimpleSorter
 from ureport.views.utils.paginator import ureport_paginate
 from django.db import transaction
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group, User, Message
 from ureport.models import UPoll
-import logging
+import logging, datetime
 
 log = logging.getLogger(__name__)
 
@@ -44,9 +45,24 @@ def start_poll_multi_tx(poll):
 @login_required
 def poll_status(request, pk):
     poll = get_object_or_404(Poll, pk=pk)
+
+    startDate = datetime.datetime.now()
+    if 'startDate' in request.GET:
+        startDate = datetime.datetime.strptime(request.GET.get('startDate'), "%Y-%m-%d")
+
+    age_in_days = long(request.GET.get('age', '7'))
+
     template = 'ureport/polls/poll_status.html'
+
+    message_stats = recent_message_stats(startDate, age_in_days)
+
+
     return render_to_response(template, {
         'poll': poll,
+
+        'message_stats_start_date' : startDate,
+        'message_stats_age_days' : age_in_days,
+        'message_stats' : message_stats,
         }, context_instance=RequestContext(request))
 
 

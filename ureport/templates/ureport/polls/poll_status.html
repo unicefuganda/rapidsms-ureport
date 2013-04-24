@@ -9,9 +9,11 @@
 
     <table>
         <thead>
-            <th>Stat</th><th>Value</th>
+            <th>Attribute</th><th>Value</th>
         </thead>
         <tbody>
+            <tr><td>Start Date</td><td id="contact-count">{{ poll.start_date }}</td></tr>
+            <tr><td>End Date</td><td id="contact-count">{{ poll.end_date }}</td></tr>
             <tr><td>#Contacts</td><td id="contact-count">{{ poll.contacts.count }}</td></tr>
             <tr><td>#Categories</td><td id="category-count">{{ poll.categories.count }}</td></tr>
             <tr><td>Yes / No Poll?</td><td id="is-yesno">{{ poll.is_yesno_poll|yesno }}  </td></tr>
@@ -33,6 +35,20 @@
             {% endfor %}
 
         </ul>
+    </div>
+
+    <div>
+        <h2>Message Stats for the {{ message_stats_age_days }} days since {{ message_stats_start_date }}</h2>
+        <table>
+            <thead>
+                <th>Status</th><th>Message count</th>
+            </thead>
+            <tbody>
+            {% for key, value in message_stats.items %}
+                <tr><td>{{ key }}</td><td>{{ value }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 
 </div>

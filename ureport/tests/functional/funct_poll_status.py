@@ -51,6 +51,6 @@ class PollStatusTest(SplinterTestCase):
         self.assertEqual(self.browser.find_by_id('category-count').text, "3")
         self.assertEqual(self.browser.find_by_id('is-yesno').text, "yes")
 
-        
+
 
 
