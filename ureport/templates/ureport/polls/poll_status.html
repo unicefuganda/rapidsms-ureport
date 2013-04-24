@@ -12,8 +12,8 @@
             <th>Attribute</th><th>Value</th>
         </thead>
         <tbody>
-            <tr><td>Start Date</td><td id="contact-count">{{ poll.start_date }}</td></tr>
-            <tr><td>End Date</td><td id="contact-count">{{ poll.end_date }}</td></tr>
+            <tr><td>Start Date</td><td id="start-date">{{ poll.start_date }}</td></tr>
+            <tr><td>End Date</td><td id="end-date">{{ poll.end_date }}</td></tr>
             <tr><td>#Contacts</td><td id="contact-count">{{ poll.contacts.count }}</td></tr>
             <tr><td>#Categories</td><td id="category-count">{{ poll.categories.count }}</td></tr>
             <tr><td>Yes / No Poll?</td><td id="is-yesno">{{ poll.is_yesno_poll|yesno }}  </td></tr>
