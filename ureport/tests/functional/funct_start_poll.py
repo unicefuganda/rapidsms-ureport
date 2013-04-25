@@ -5,8 +5,8 @@ from rapidsms.models import Contact
 from rapidsms.models import Connection
 from poll.models import Poll
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
-from ureport.tests.functional.test_utils import get_browser
 from ureport_project.rapidsms_ureport.ureport.tests.functional.create_poll_for_tests import start_poll_queues_messages_in_table
+from ureport_project.rapidsms_ureport.ureport.tests.functional.create_poll_utils import get_browser
 
 
 class UreportTest(SplinterTestCase):
