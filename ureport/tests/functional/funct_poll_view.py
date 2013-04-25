@@ -3,7 +3,7 @@ from rapidsms.models import Contact
 from rapidsms.models import Connection
 import time
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
-from ureport.tests.functional.test_utils import get_browser, create_fake_response
+from ureport_project.rapidsms_ureport.ureport.tests.functional.create_poll_utils import get_browser, create_fake_response
 from ureport_project.rapidsms_ureport.ureport.tests.functional.create_polls_for_view_poll import create_polls_with_fake_responses
 
 
