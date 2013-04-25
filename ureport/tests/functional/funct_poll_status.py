@@ -5,7 +5,6 @@ from rapidsms.models import Contact
 from rapidsms.models import Connection
 from datetime import datetime
 
-from ureport.tests.functional.create_polls_for_view_poll import create_polls
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
 
 BROWSER = Browser('firefox')
