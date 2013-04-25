@@ -4,7 +4,7 @@ from ureport.tests.functional.test_utils import create_group, create_user, creat
     create_fake_response, add_contacts_to_poll
 
 
-def create_polls_with_fake_resposes(number_of_polls):
+def create_polls_with_fake_responses(number_of_polls):
     group = create_group(group_name='Pagination Group')
     user1 = create_user(username="foo", email='foo@bar.com', group=group)
     user2 = create_user(username='fred', email='shaggy@scooby.com', group=group)

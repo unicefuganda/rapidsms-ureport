@@ -1,7 +1,9 @@
 from datetime import datetime
+import time
 from rapidsms.models import Contact,Connection, Backend
-from ureport.tests.functional.test_utils import create_group, create_user, create_connection, create_poll,\
+from ureport.tests.functional.create_poll_utils import create_group, create_user, create_connection, create_poll,\
     add_contacts_to_poll
+from poll.models import Poll
 
 
 def start_poll_queues_messages_in_table(driver):
