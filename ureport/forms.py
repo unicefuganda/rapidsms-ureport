@@ -27,6 +27,7 @@ from uganda_common.utils import ExcelResponse
 from ureport.models import MessageAttribute, MessageDetail
 from django.utils.safestring import mark_safe
 from uganda_common.models import Access
+import tasks
 
 
 class EditReporterForm(forms.ModelForm):
@@ -745,3 +746,12 @@ class GroupsFilter(forms.Form):
             self.fields['group_list'] = forms.ModelMultipleChoiceField(queryset=Group.objects.order_by('name'),
                                                                        required=False)
 
+
+class PushToMtracForm(ActionForm):
+    action_label = "Push Selected Messages to Mtrac"
+
+    def perform(self, request, results):
+        import pdb; pdb.set_trace()
+        results = set([r.pk for r in results])
+        tasks.push_to_mtrac.delay(results)
+        return "%d Messages were pushed to mtrac" % len(results), "success"
