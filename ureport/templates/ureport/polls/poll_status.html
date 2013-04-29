@@ -12,6 +12,7 @@
             <th>Attribute</th><th>Value</th>
         </thead>
         <tbody>
+            <tr><td>Viewable?</td><td id="viewable">{{ poll.viewable|yesno }}</td></tr>
             <tr><td>Start Date</td><td id="start-date">{{ poll.start_date }}</td></tr>
             <tr><td>End Date</td><td id="end-date">{{ poll.end_date }}</td></tr>
             <tr><td>#Contacts</td><td id="contact-count">{{ poll.contacts.count }}</td></tr>
