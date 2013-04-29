@@ -78,10 +78,12 @@ def push_to_mtrac(messages):
         except Exception, e:
             print "Error:", str(e)
             messages.append(message)
+            print "Added message back to queue"
             continue
         if f.getcode() != 200:
             print "Error(%d):" % f.getcode(), f.read()
             messages.append(message)
+            print "Added message back to queue"
             continue
         n += 1
     print "Pushed %d messages to Mtrac" % n
