@@ -70,7 +70,7 @@ def push_to_mtrac(messages):
     n = 0
     while len(messages) > 0:
         message = messages.pop(0)
-        params = urllib.urlencode({'message': message.text, 'sender': message.connection.identity,
+        params = urllib.urlencode({'message': message.text.enconde('utf-8'), 'sender': message.connection.identity,
                                    'backend': getattr(settings, 'MTRAC_PUSH_BACKEND'),
                                    'password': getattr(settings, 'MTRAC_ROUTER_PASSWORD')})
         try:
