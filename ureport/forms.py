@@ -751,7 +751,6 @@ class PushToMtracForm(ActionForm):
     action_label = "Push Selected Messages to Mtrac"
 
     def perform(self, request, results):
-        import pdb; pdb.set_trace()
         results = set([r.pk for r in results])
         tasks.push_to_mtrac.delay(results)
         return "%d Messages were pushed to mtrac" % len(results), "success"
