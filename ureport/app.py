@@ -4,8 +4,14 @@ from script.models import Script, ScriptProgress
 import re
 from django.conf import settings
 from ureport.models import MessageAttribute,MessageDetail,Settings
+
+import logging
+log = logging.getLogger(__name__)
+
 class App(AppBase):
     def handle (self, message):
+        if message.connection is not None and message.db_message is not None:
+            log.debug("[ureport-app] [{}] Handling incoming message [pk={}]...".format(message.connection.identity, message.db_message.pk))
         one_template = r"(.*\b(%s)\b.*)"
         OPT_IN_WORDS_LUO = getattr(settings, 'OPT_IN_WORDS_LUO', None)
         OPT_IN_WORDS_EN = getattr(settings, 'OPT_IN_WORDS', None)
@@ -20,6 +26,7 @@ class App(AppBase):
         ScriptProgress.objects.filter(script__slug__in=['ureport_autoreg2', 'ureport_autoreg_luo2','ureport_autoreg_kdj'],\
             connection=message.connection).exists():
 
+            log.debug("[ureport-app] [%s] No contact found, adding to registration" % message.connection.identity)
             luo_match = opt_reg_luo.search(message.text.lower())
             kdj_match = opt_reg_kdj.search(message.text.lower())
 
@@ -43,6 +50,8 @@ class App(AppBase):
             return True
             #ignore subsequent join messages
         elif message.text.lower().strip() in OPT_IN_WORDS_LUO+OPT_IN_WORDS_EN:
+            if message.connection is not None:
+                log.debug("[ureport-app] [%s] Contact has already registered, ignoring message" % message.connection.identity)
             return True
         #        else:
         #            return False
@@ -53,15 +62,19 @@ class App(AppBase):
 
             if message.connection.contact:
                 alert_setting,_=Settings.objects.get_or_create(attribute="alerts")
+
                 if alert_setting.value=="true":
+                    log.debug("[ureport-app] [%s] because 'alerts' is true and this is Not a registration or a poll message, creating MessageDetail alert..." % message.connection.identity)
                     alert,_=MessageAttribute.objects.get_or_create(name="alert")
                     msg_a=MessageDetail.objects.create(message=message.db_message,attribute=alert,value='true')
             if message.connection.contact and message.connection.contact.language == "ach" and message.text.lower() == "english":
+                log.debug("[ureport-app] [%s] Changing language to en because contact language was 'ach'" % message.connection.identity)
                 contact=message.connection.contact
                 contact.language="en"
                 contact.save()
                 return True
-
+        if message.connection is not None:
+            log.debug("[ureport-app] [%s] Checking for flags..." % message.connection.identity)
         flags=Flag.objects.exclude(rule=None).exclude(rule_regex=None)
 
         pattern_list=[[re.compile(flag.rule_regex, re.IGNORECASE),flag] for flag in flags if flag.rule ]
@@ -93,4 +106,8 @@ class App(AppBase):
                 except (Flag.DoesNotExist, IndexError):
                     flag = None
                 MessageFlag.objects.create(message=db_message, flag=flag)
+                if message.connection is not None:
+                    log.debug("[ureport-app] [{}] Created MessageFlag".format(message.connection.identity))
+        if message.connection is not None:
+            log.debug("[ureport-app] [%s] Completed handling of incoming message." % message.connection.identity)
         return False
