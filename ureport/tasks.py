@@ -1,9 +1,13 @@
+# -*- coding: utf-8 -*-
+
+import re
 import urllib
 from celery.task import Task, task
 from celery.registry import tasks
 from django.conf import settings
+import time
 from rapidsms_httprouter.models import Message
-from ureport.models import *
+from ureport.models import SentToMtrac, AutoregGroupRules, MessageDetail, MessageAttribute, Settings
 from script.models import Script
 
 import logging
@@ -70,22 +74,33 @@ def push_to_mtrac(messages):
     n = 0
     while len(messages) > 0:
         message = messages.pop(0)
-        params = urllib.urlencode({'message': str(message.text), 'sender': message.connection.identity,
+        try:
+            message = message.senttomtrac
+            log.info("Already Sent message to Mtrac on %s" % message.senttomtrac.sent_on)
+            continue
+        except SentToMtrac.DoesNotExist:
+            pass
+        params = urllib.urlencode({'message': message.text, 'sender': message.connection.identity,
                                    'backend': getattr(settings, 'MTRAC_PUSH_BACKEND'),
                                    'password': getattr(settings, 'MTRAC_ROUTER_PASSWORD')})
         try:
             f = urllib.urlopen("%s?%s" % (getattr(settings, 'MTRAC_ROUTER_URL'), params))
         except Exception, e:
-            print "Error:", str(e)
+            log.error(str(e))
             messages.append(message)
-            print "Added message back to queue"
+            log.info("Added message back to queue")
+            log.info("Trying again after 20 seconds")
+            time.sleep(20)
             continue
         if f.getcode() != 200:
-            print "Error(%d):" % f.getcode(), f.read()
+            log.error("Status Mtrac returned (%d):" % f.getcode())
             messages.append(message)
-            print "Added message back to queue"
+            log.info("Added message back to queue")
+            log.info("Trying again after 3 minutes")
+            time.sleep(60*3)
             continue
         n += 1
-    print "Pushed %d messages to Mtrac" % n
+        SentToMtrac.objects.create(message=message)
+    log.info("Pushed %d messages to Mtrac" % n)
 
 

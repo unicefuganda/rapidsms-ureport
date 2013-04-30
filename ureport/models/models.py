@@ -329,3 +329,11 @@ class PollAttribute(models.Model):
             return int(default)
         else:
             return default
+
+
+class SentToMtrac(models.Model):
+    message = models.OneToOneField(Message)
+    sent_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        app_label = 'ureport'
