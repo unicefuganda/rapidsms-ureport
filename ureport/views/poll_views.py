@@ -54,7 +54,7 @@ def poll_status(request, pk):
 
     template = 'ureport/polls/poll_status.html'
 
-    message_stats = recent_message_stats(startDate, age_in_days)
+    message_stats = recent_message_stats(poll, startDate, age_in_days)
 
 
     return render_to_response(template, {

@@ -48,14 +48,15 @@ def update_poll_results():
     except IndexError:
         pass
 
-def recent_message_stats(start_date, since_days_ago):
+def recent_message_stats(poll, start_date, since_days_ago):
     query_date = start_date - datetime.timedelta(days=since_days_ago)
 
     stats = {}
 
+    stats['Total'] = len(poll.messages.all())
     for status in STATUS_CHOICES:
         code=status[0]
         name=status[1]
-        stats[name] = Message.objects.filter(date__gt=query_date, direction='O', status=code).count()
+        stats[name] = poll.messages.filter(date__gt=query_date, direction='O', status=code).count()
 
     return stats
