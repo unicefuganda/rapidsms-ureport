@@ -344,9 +344,7 @@ def delete(request, pk):
 
 @login_required
 def ureporters(request):
-    print request.user
     access = get_access(request)
-    print access
     download_form = DownloadForm(request.POST or None)
     if request.POST and request.POST.get('download', None):
         if download_form.is_valid():

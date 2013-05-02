@@ -133,17 +133,6 @@ class SearchResponsesForm(FilterForm):
         search = self.cleaned_data['search'].strip()
         if search == '':
             return queryset
-        elif search[0] == '"' and search[-1] == '"':
-            search = search[1:-1]
-            return queryset.filter(Q(message__text__iregex=".*\m(%s)\y.*"
-                                                           % search)
-                                   | Q(message__connection__contact__reporting_location__name__iregex=".*\m(%s)\y.*"
-                                                                                                      % search)
-                                   | Q(message__connection__pk__iregex=".*\m(%s)\y.*"
-                                                                       % search))
-
-        elif search == "'=numerical value()'":
-            return queryset.filter(message__text__iregex="^[0-9]+$")
 
         elif search[0] == "'" and search[-1] == "'":
 
@@ -610,9 +599,8 @@ class UreporterSearchForm(FilterForm):
                                    | Q(connection_pk__icontains=".*\m(%s)\y.*" % searchx))
 
         else:
-            print 'search:', searchx
             return queryset.filter(Q(district__icontains=searchx)
-                                   | Q(connection_pk__icontains=searchx))
+                                   | Q(connection_pk=searchx))
 
 
 class AgeFilterForm(FilterForm):
