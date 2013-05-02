@@ -449,6 +449,18 @@ class NewPollForm(forms.Form): # pragma: no cover
 
         return cleaned_data
 
+    def clean_default_response_en(self):
+        return self._cleaned_default_response(self.data['default_response_en'])
+
+    def clean_default_response_luo(self):
+        return self._cleaned_default_response(self.data['default_response_luo'])
+
+    def clean_default_response_kdj(self):
+        return self._cleaned_default_response(self.cleaned_data['default_response_kdj'])
+
+    def _cleaned_default_response(self, default_response):
+        return default_response.replace('%', '%%')
+
 
 class AssignResponseGroupForm(ActionForm):
     action_label = 'Assign to group(s)'

@@ -71,9 +71,7 @@ def reprocess_groups(group, ignore_result=True):
 @task
 def push_to_mtrac(messages):
     messages = list(Message.objects.filter(pk__in=messages))
-    n = 0
-    while len(messages) > 0:
-        message = messages.pop(0)
+    for message in messages:
         try:
             message = message.senttomtrac
             log.info("Already Sent message to Mtrac on %s" % message.senttomtrac.sent_on)
@@ -87,20 +85,11 @@ def push_to_mtrac(messages):
             f = urllib.urlopen("%s?%s" % (getattr(settings, 'MTRAC_ROUTER_URL'), params))
         except Exception, e:
             log.error(str(e))
-            messages.append(message)
-            log.info("Added message back to queue")
-            log.info("Trying again after 20 seconds")
-            time.sleep(20)
             continue
         if f.getcode() != 200:
             log.error("Status Mtrac returned (%d):" % f.getcode())
-            messages.append(message)
-            log.info("Added message back to queue")
-            log.info("Trying again after 3 minutes")
-            time.sleep(60*3)
             continue
-        n += 1
         SentToMtrac.objects.create(message=message)
-    log.info("Pushed %d messages to Mtrac" % n)
+    log.info("Pushed messages to Mtrac")
 
 
