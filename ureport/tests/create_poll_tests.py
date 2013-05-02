@@ -1,6 +1,3 @@
-__author__ = 'kenneth'
-
-
 from django.test import TestCase
 from ureport.forms import NewPollForm
 
