@@ -80,8 +80,20 @@ def view_poll(request, pk):
             else:
                 start_poll_single_tx(poll)
 
+            if getattr(settings, "FEATURE_PREPARE_SEND_POLL", False):
+                res = """ <a href="?send=True&poll=True" data-remote=true  id="poll_action" class="btn">Send Poll</a> """
+            else:
+                res = """ <a href="?stop=True&poll=True" data-remote=true  id="poll_action" class="btn">Close Poll</a> """
+
+            return HttpResponse(res)
+
+        if request.GET.get('send'):
+            log.info("[send-poll] queuing...")
+            poll.queue_message_batches_to_send()
+            log.info("[send-poll] done.")
             res = """ <a href="?stop=True&poll=True" data-remote=true  id="poll_action" class="btn">Close Poll</a> """
             return HttpResponse(res)
+
         if request.GET.get('stop'):
             poll.end()
             res = HttpResponse(
@@ -166,6 +178,7 @@ def view_poll(request, pk):
         'rule_form': rule_form,
         'category': category,
         'groups': groups,
+        'FEATURE_PREPARE_SEND_POLL' : getattr(settings, "FEATURE_PREPARE_SEND_POLL", False)
     }, context_instance=RequestContext(request))
 
 
