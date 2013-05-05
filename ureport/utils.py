@@ -111,6 +111,7 @@ def get_poll_messages(**kwargs):
 
 def get_autoreg_messages(**kwargs):
     return Message.objects.filter(application="script", direction="I")
+    
 
 
 def create_poll(name, type, question, default_response, contacts, user, start_immediately=False):
