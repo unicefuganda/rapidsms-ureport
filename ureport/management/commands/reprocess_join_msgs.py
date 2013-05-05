@@ -42,7 +42,7 @@ class Command(BaseCommand):
 #            log_file = "/Users/asseym/ureport_joins.txt"
             log_file = "/Users/asseym/test_assey.txt"
         if not code:
-            code = '8500'
+            code = '6262'
 
         file_handle=open(log_file)
         lines=file_handle.readlines()
@@ -63,7 +63,7 @@ class Command(BaseCommand):
 #                    res = urllib.urlopen('http://localhost:8000/router/receive/?', params)
 #                    res = urllib.urlopen('http://test.ureport.unicefuganda.org/router/receive/?', params)
                     params = {'password':password, 'backend': backend_str,'sender': identity_str,'message': msg_str}
-                    res = client.get('http://ureport.ug/router/receive/', params)
+                    res = client.get('http://locahhost/router/receive/', params)
                     if ScriptProgress.objects.filter(connection__identity=identity_str, connection__backend__name=backend_str, script__slug__in=['ureport_autoreg2', 'ureport_autoreg_luo2']):
                         print 'Added %s to autoreg...' % identity_str
                     else:

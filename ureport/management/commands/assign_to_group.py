@@ -43,7 +43,7 @@ class Command(BaseCommand):
                 if not matched:
                     for g in re.findall(r'\w+', txt):
                         group = find_closest_match(g, Group.objects)
-                        if group and group in User.objects.get(username="js123powell").groups.all():
+                        if group and group in User.objects.get(username="ureport").groups.all():
                             if response.contact and  group not in response.contact.groups.all():
                                 response.contact.groups.add(group)
                                 print "handled"

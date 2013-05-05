@@ -11,7 +11,11 @@ __author__ = 'kenneth'
 class PollAttributeTest(TestCase):
     def setUp(self):
         user = User.objects.create_user('test', 'test@pollattr.ken', password='testpassword')
+<<<<<<< HEAD
         number, backend = assign_backend('256798288221')
+=======
+        number, backend = assign_backend('+211927194678')
+>>>>>>> commiting rapidsms_ureport
         connection = Connection.objects.create(identity=number, backend=backend)
         contact = Contact.objects.create(name='Test Contact')
         connection.contact = contact

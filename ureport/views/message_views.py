@@ -399,9 +399,9 @@ def message_feed(request, pks):
                               context_instance=RequestContext(request))
 
 
-def clickatell_wrapper(request):
+def Agregator1_wrapper(request):
     request.GET = request.GET.copy()
-    request.GET.update({'backend': 'clickatell',
+    request.GET.update({'backend': 'Agregator1',
                         'sender': request.GET['from'],
                         'message': request.GET['text']})
     return receive(request)

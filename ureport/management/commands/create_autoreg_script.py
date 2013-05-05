@@ -9,7 +9,7 @@ class Command(BaseCommand):
                 slug="ureport_autoreg",
                 name="uReport autoregistration script",
         )
-        user = User.objects.get(username="admin")
+        user = User.objects.get(username="ureport")
         script.sites.add(Site.objects.get_current())
         script.steps.add(ScriptStep.objects.create(
             script=script,

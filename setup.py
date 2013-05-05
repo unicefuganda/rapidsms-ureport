@@ -39,10 +39,10 @@ setup(
 
     scripts=["ureport-admin.py", "ureport-install.sh"],
 
-    description='The uReport social advocacy program deployed in Uganda.',
+    description='The uReport social advocacy program deployed in South Sudan.',
     long_description=open('README.rst').read(),
-    author='David McCann',
-    author_email='david.a.mccann@gmail.com',
+    author='Engulu Paul',
+    author_email='askpaul82@gmail.com',
 
     url='http://github.com/unicefuganda/rapidsms-ureport',
     download_url='http://github.com/unicefuganda/rapidsms-ureport/downloads',

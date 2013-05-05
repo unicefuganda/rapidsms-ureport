@@ -1,4 +1,8 @@
 [
+<<<<<<< HEAD:ureport/fixtures/0004_migration_initial_data.json
+=======
+    {"pk": 2, "model": "sites.site", "fields": {"domain": "ureport-southsudan.com", "name": "uReport"}},
+>>>>>>> commiting rapidsms_ureport:ureport/fixtures/Initial_data.json
 
     {
         "pk": 1,
@@ -420,7 +424,7 @@
         "pk": 2,
         "model": "sites.site",
         "fields": {
-            "domain": "ureport.rapidsms.org",
+            "domain": "ureport-southsudan.com",
             "name": "uReport"
         }
     },
@@ -863,6 +867,7 @@
     {
         "pk": 230,
         "model": "poll.poll",
+<<<<<<< HEAD:ureport/fixtures/0004_migration_initial_data.json
         "fields": {
             "default_response": "",
             "name": "blacklist",
@@ -876,6 +881,9 @@
             "start_date": null,
             "response_type": "a"
         }
+=======
+        "fields": {"default_response": "", "name": "blacklist", "end_date": null, "contacts": [], "messages": [], "question": "Your U-Report opt out is confirmed.Please dont forget to tell us the reason for quitting.you can always text join to reactivate.", "sites": [], "user": 1, "type": "t", "start_date": null, "response_type": "a"}
+>>>>>>> commiting rapidsms_ureport:ureport/fixtures/Initial_data.json
     },
 
     {

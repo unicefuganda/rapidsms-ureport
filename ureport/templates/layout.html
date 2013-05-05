@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Ureport - {% block page_title %}Voice Matters{% endblock %}</title>
+    <title>U-report - {% block page_title %}Your Voice Counts{% endblock %}</title>
 
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/base.css">
  
@@ -40,7 +40,7 @@
         <div class="banner">
             <a href="/">
             <span class="brand">UReport</span>
-            <span class="tagline">VOICE MATTERS</span>
+            <span class="tagline">Your Voice Counts</span>
             </a>
             {% load humanize %}
             <span id="span_info"><span id="span_total">{{ total_ureporters|intcomma }}</span> members to date</span>
@@ -55,8 +55,13 @@
 	                   <li><a href="{% url messagelog %}">MESSAGE LOG</a></li>
 	                   <li><a href="{% url ureport-contact %}">UREPORTERS</a></li>
 	                   <li><a href="{% url flaggedmessages %}">FLAGGED MESSAGES</a></li>
+<<<<<<< HEAD
                          <li><a href="{% url mp_dashboard %}">MP BARAZA</a></li>
                         <li><a href="{% url classifier %}">A-CLASS</a></li>
+=======
+                         <li><a href="{% url mp_dashboard %}">MP DASHBOARD</a></li>
+                        <li><a href="{% url classifier %}">MESSAGE CLASSIFICATION</a></li>
+>>>>>>> commiting rapidsms_ureport
                         <li><a href="{% url alerts %}">Real Time</a></li>
 	                {% else %}
 	                   <li><a href="/accounts/login">LOGIN</a></li>
@@ -73,11 +78,15 @@
 	       <div class="sponsors">
 	           Supported by:
 	           <img src="{{ MEDIA_URL }}ureport/images/unicef_logo.png"/>
-	           <img src="{{ MEDIA_URL }}ureport/images/brac_logo.png"/>
+
 	           <img src="{{ MEDIA_URL }}ureport/images/scouts_logo.png"/>
+<<<<<<< HEAD
 	           <img src="{{ MEDIA_URL }}ureport/images/cou_logo.png"/>
 	           <img src="{{ MEDIA_URL }}ureport/images/gem_logo.png"/>
                <img src="{{ MEDIA_URL }}ureport/images/ibm_logo.jpg" />
+=======
+	           
+>>>>>>> commiting rapidsms_ureport
 	       </div>
 	       <div class="footerlinks">
 	           <div class="nav-bottom">
@@ -93,16 +102,27 @@
 	                   <li><a href="{% url messagelog %}">MESSAGE LOG</a></li>
 	                   <li><a href="{% url ureport-contact %}">UREPORTERS</a></li>
 	                   <li><a href="{% url flaggedmessages %}">FLAGGED MESSAGES</a></li>
+<<<<<<< HEAD
                         <li><a href="{% url mp_dashboard %}">MP BARAZA</a></li>
                          <li><a href="{% url classifier %}">A-CLASS</a></li>
                     <li><a href="{% url alerts %}">REAL TIME</a></li>
+=======
+                        <li><a href="{% url mp_dashboard %}">MP DASHBOARD</a></li>
+                         <li><a href="{% url classifier %}">MESSAGE CLASSIFICATION</a></li>
+                    <li><a href="{% url alerts %}">Real Time</a></li>
+>>>>>>> commiting rapidsms_ureport
 	                {% else %}
 	                   <li><a href="/accounts/login">LOGIN</a></li>
 	                {% endif %}
                 </ul>
 	           </div>
+<<<<<<< HEAD
 	           <p>Copyright &copy; 2010 - 2012 UNICEF et al.</p>
 	           <p>RapidSMS and Ureport are available under the BSD license.</p>
+=======
+	           <p>Copyright &copy; 2010 - 2011 UNICEF et al.</p>
+	           <p>RapidSMS and U-report are available under the BSD license.</p>
+>>>>>>> commiting rapidsms_ureport
 	        </div>
 	    </div>
 

@@ -33,7 +33,7 @@ def _get_incoming_message(connection, message):
 class TestSpreadSheetUtils(TestCase):
     def test_excel_dump_report_for_poll(self):
         backend = Backend.objects.create(name='test_backend')
-        connection = Connection.objects.create(identity='7798987102',backend=backend)
+        connection = Connection.objects.create(identity='6262',backend=backend)
         contact = Contact.objects.create(name='test_contact')
         connection.contact = contact
         connection.save()

@@ -35,8 +35,8 @@ class ModelTest(TestCase): #pragma: no cover
 
 
         self.backend = Backend.objects.create(name='test')
-        self.connection = Connection.objects.create(identity='11235811', backend=self.backend)
-        self.connection1 = Connection.objects.create(identity='4162549', backend=self.backend)
+        self.connection = Connection.objects.create(identity='2119271946678', backend=self.backend)
+        self.connection1 = Connection.objects.create(identity='6262', backend=self.backend)
         self.connection2 = Connection.objects.create(identity='82764125', backend=self.backend)
         self.connection3 = Connection.objects.create(identity='256777773260', backend=self.backend)
         self.user,created=User.objects.get_or_create(username="admin")

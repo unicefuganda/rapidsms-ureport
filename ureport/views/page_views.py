@@ -40,7 +40,7 @@ def ureport_content(
 @login_required
 def kannel_status(request):
     conn = httplib2.Http()
-    (resp, content) = conn.request('http://ureport.ug:13000/status',
+    (resp, content) = conn.request('http://localhost:13000/status',
                                    request.method)
     return HttpResponse(content, content_type='text/html')
 
