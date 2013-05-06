@@ -19,7 +19,7 @@ from django.core.mail import send_mail
 def autoreg(**kwargs):
     connection = kwargs['connection']
     progress = kwargs['sender']
-    if progress.script.slug in progress.script.slug in ['ureport_autoreg2', 'ureport_autoreg_luo2']:
+    if progress.script.slug and progress.script.slug in ['ureport_autoreg2', 'ureport_autoreg_luo2']:
         connection.contact = Contact.objects.create(name='Anonymous User')
         connection.save()
         session = ScriptSession.objects.filter(script=progress.script, connection=connection).order_by('-end_time')[0]
