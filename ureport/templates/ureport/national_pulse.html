@@ -34,6 +34,11 @@
 
     <div class="clearfix"></div>
 
+    <div id="national-pie-chart" class="donut control">
+        <strong>Showing </strong>
+        <a class="reset" href="javascript:nationalPieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+    </div>
     <div>
         <a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a>
     </div>
@@ -45,7 +50,7 @@
 
     var ugChart = dc.geoChoroplethChart("#ug-chart");
 		var totalsChart = dc.bubbleChart("#totals-chart");
-		var totalsBarChart = dc.barChart("#totals-bar-chart");
+        var nationalPieChart = dc.pieChart("#national-pie-chart")
 
 		var width = 700,
 				height = 960;
@@ -68,6 +73,8 @@
 		var data;
 		var districts;
 		var shapes;
+        var data1;
+        var categories;
 
 		var pollDistricts = [];
 		var mapDistricts = [];
@@ -75,9 +82,10 @@
 		queue()
 			.defer(d3.json, "{{ MEDIA_URL }}ureport/data/districts.json")
 			.defer(d3.tsv, "{{ MEDIA_URL }}ureport/data/pulseout.tsv")
+            .defer(d3.json, "{{ MEDIA_URL }}ureport/data/category.json")
 			.await(ready);
 
-		function ready(error, ug, poll) {
+		function ready(error, ug, poll, category) {
 				// TODO handle error!
 				// TODO maybe rework so that fgmPoll.tsv is organized like this?
 				// District Answer Number
@@ -91,6 +99,14 @@
 				// TODO toggle between results from more than one poll
         data = crossfilter(_.map(poll, function(p) {return _.defaults(p, {'poll': 'fgm'});}));
 				shapes = ug;
+
+            data1 = crossfilter(_.map(category, function(p){return _.defaults(p, {'category': 'irrelevant'})}))
+            categories = data1.dimension(function(d){
+               return d['category']
+            });
+            caseTypes = _.unique(_.pluck(categories.top(1000), 'category'));
+            categoriesGroup = categories.group().reduceSum(function(d){return d.total});
+            categoryColor = d3.scale.category20();
 
 				// debug info for comparing districts from map and from poll results
 				pollDistricts = _.pluck(poll, 'District');
@@ -204,6 +220,8 @@
                 }
         );
 
+
+
 				ugChart.width(width)
 								.height(height)
 								.dimension(districts)
@@ -292,6 +310,19 @@
             totalsChart.xAxis().tickFormat(function (s) {
                 return s;
             });
+
+            nationalPieChart
+              .width(300)
+              .height(200)
+              .transitionDuration(500)
+              .colors(categoryColor)
+              .colorAccessor(function(d, i){return _.indexOf(caseTypes, d.data.key); })
+              .radius(90)
+              .innerRadius(40)
+              .dimension(categories)
+              .group(categoriesGroup)
+              .renderLabel(true)
+              .renderTitle(true);
 
             dc.renderAll();
     };
