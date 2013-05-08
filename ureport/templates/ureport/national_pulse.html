@@ -1,0 +1,300 @@
+{% extends "ureport_layout.html" %}
+{% block page_title %} National Pulse {% endblock %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/dc.css"/>
+{% endblock %}
+
+{% block top_js %}
+<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/d3.min.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/crossfilter.min.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/queue.min.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/dc.min.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/colorbrewer.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/underscore-min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div id="ug-chart">
+        <h3>Colors Range From Yellow - Green - Blue. that reflects the percentage of most dominant category over<br/> the  contribution From Low - High </h3>
+        <a class="reset" href="javascript:ugChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+        <span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
+
+        <div class="clearfix"></div>
+    </div>
+
+    <div id="totals-chart">
+        <strong>By Percent Dominant Category: (Y-Axis: number of responses, X-Axis: percent dominant out of total,<br/> Radius: number of dominant responses)</strong>
+        <a class="reset" href="javascript:totalsChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+        <div class="clearfix"></div>
+    </div>
+
+    <div class="clearfix"></div>
+
+    <div>
+        <a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    var numberFormat = d3.format(".2f");
+
+    var ugChart = dc.geoChoroplethChart("#ug-chart");
+		var totalsChart = dc.bubbleChart("#totals-chart");
+		var totalsBarChart = dc.barChart("#totals-bar-chart");
+
+		var width = 700,
+				height = 960;
+
+		var projection = d3.geo.albers()
+				.center([33, 0])
+				// ug is slanted on albers projection,
+				// so adjust pitch and roll
+				// such that bottom of ug straight
+				// (its straight on mercator projections,
+				// which is what most people are used to)
+				// [yaw, pitch, roll] AKA [lat, long, roll]
+				.rotate([-1, 11.5, -16.4])
+				.parallels([25, 35])
+				.scale(6000)
+				.translate([width / 2, height / 2]);
+
+		// declare some vars here so they are available
+		// in the browser console for debugging
+		var data;
+		var districts;
+		var shapes;
+
+		var pollDistricts = [];
+		var mapDistricts = [];
+
+		queue()
+			.defer(d3.json, "{{ MEDIA_URL }}ureport/data/districts.json")
+			.defer(d3.tsv, "{{ MEDIA_URL }}ureport/data/pulseout.tsv")
+			.await(ready);
+
+		function ready(error, ug, poll) {
+				// TODO handle error!
+				// TODO maybe rework so that fgmPoll.tsv is organized like this?
+				// District Answer Number
+				// District1 yes 22
+				// District1 no 11
+				// i *think* that this sort of structure
+				// would make it simpler to group by answer, so you could
+				// easily toggle between mapping percentYes to percentNo, etc
+				//
+				// add poll name to each result record
+				// TODO toggle between results from more than one poll
+        data = crossfilter(_.map(poll, function(p) {return _.defaults(p, {'poll': 'fgm'});}));
+				shapes = ug;
+
+				// debug info for comparing districts from map and from poll results
+				pollDistricts = _.pluck(poll, 'District');
+				mapDistricts = _.map(ug.features, function(d) { return d.properties.name });
+				console.log('have results, no map', _.difference(pollDistricts, mapDistricts));
+				console.log(_.difference(pollDistricts, mapDistricts).length)
+				console.log('on map, not results', _.difference(mapDistricts, pollDistricts));
+				console.log(_.difference(mapDistricts, pollDistricts).length)
+
+				// crossfilter dimension for districts
+        districts = data.dimension(function (d) {
+            return d["District"];
+        });
+
+				// crossfilter group (map-reduce) for poll result counts and stats by district
+				// see https://github.com/square/crossfilter/wiki/API-Reference#wiki-group_reduce
+        var totalAnswersByDistrict = districts.group().reduce(
+                function(p, v) {
+										// add function
+										// reduce by sum
+                    p.totalHealth += +v.health;
+                    p.totalEducation += +v.education;
+                    p.totalEmergency += +v.emergency;
+                    p.totalOvc += +v.ovc;
+                    p.totalWater += +v.water;
+                    p.totalViolenceAgainstChildren += +v.violenceAgainstChildren;
+										// sum sums
+										p.totalAnswers = p.totalHealth + p.totalEducation + p.totalEmergency +
+                                                p.totalEmployment + p.totalOvc + p.totalWater + p.totalViolenceAgainstChildren;
+
+										// calculate percentages
+                    p.percentHealth = p.totalHealth/ p.totalAnswers * 100;
+                    p.percentEducation = p.totalEducation/ p.totalAnswers * 100;
+                    p.percentEmergency = p.totalEmergency / p.totalAnswers * 100;
+                    p.percentOvc = p.totalOvc / p.totalAnswers * 100;
+                    p.percentWater = p.totalWater / p.totalAnswers * 100;
+                    p.percentViolenceAgainstChildren = p.totalViolenceAgainstChildren / p.totalAnswers * 100;
+
+                    var array = [p.totalHealth, p.totalEducation, p.totalEmergency, p.totalOvc,
+                        p.totalWater, p.totalViolenceAgainstChildren];
+
+                    p.largest = _.max(array);
+                    p.percentLargest = p.largest / p.totalAnswers * 100;
+                    if (p.largest == p.totalEducation){
+                        p.dominant = "Education"
+                    } else if(p.largest == p.totalEmergency){
+                        p.dominant = "Emergency"
+                    }else if(p.largest == p.totalHealth){
+                        p.dominant = "Health"
+                    }else if(p.largest == p.totalOvc){
+                        p.dominant = "OVC"
+                    }else if(p.largest == p.totalViolenceAgainstChildren){
+                        p.dominant = "Violence Against Child"
+                    }else if(p.largest == p.totalWater){
+                        p.dominant = "Water"
+                    }
+                    return p;
+                },
+                function(p, v) {
+										// remove function (used for incremental updates as records are filtered)
+                    p.totalHealth -= +v.health;
+                    p.totalEducation -= +v.education;
+                    p.totalEmergency -= +v.emergency;
+                    p.totalOvc -= +v.ovc;
+                    p.totalWater -= +v.water;
+                    p.totalViolenceAgainstChildren -= +v.violenceAgainstChildren;
+										// sum sums
+										p.totalAnswers = p.totalHealth + p.totalEducation + p.totalEmergency +
+                                                p.totalEmployment + p.totalOvc + p.totalWater + p.totalViolenceAgainstChildren;
+
+										// calculate percentages
+                    p.percentHealth = p.totalHealth/ p.totalAnswers * 100;
+                    p.percentEducation = p.totalEducation/ p.totalAnswers * 100;
+                    p.percentEmergency = p.totalEmergency / p.totalAnswers * 100;
+                    p.percentOvc = p.totalOvc / p.totalAnswers * 100;
+                    p.percentWater = p.totalWater / p.totalAnswers * 100;
+                    p.percentViolenceAgainstChildren = p.totalViolenceAgainstChildren / p.totalAnswers * 100;
+
+                    var array = [p.totalHealth, p.totalEducation, p.totalEmergency, p.totalOvc,
+                        p.totalWater, p.totalViolenceAgainstChildren];
+
+                    p.largest = _.max(array);
+                    p.percentLargest = p.largest / p.totalAnswers * 100;
+                    if (p.largest == p.totalEducation){
+                        p.dominant = "Education"
+                    } else if(p.largest == p.totalEmergency){
+                        p.dominant = "Emergency"
+                    }else if(p.largest == p.totalHealth){
+                        p.dominant = "Health"
+                    }else if(p.largest == p.totalOvc){
+                        p.dominant = "OVC"
+                    }else if(p.largest == p.totalViolenceAgainstChildren){
+                        p.dominant = "Violence Against Child"
+                    }else if(p.largest == p.totalWater){
+                        p.dominant = "Water"
+                    }
+
+                    return p;
+                },
+                function() {
+										// initial function
+                    return {
+												totalHealth: 0, totalEducation: 0, totalEmergency: 0, totalEmployment: 0,
+                                                totalEnergy: 0, totalFamilyAndRelationships: 0, totalIrrelevant: 0,
+                        totalOvc: 0, totalSocialPolicy: 0, totalUreport: 0, totalWater: 0, totalViolenceAgainstChildren: 0,
+                        percentHealth: 0, percentEducation: 0, percentEmergency: 0, percentEmployment: 0,
+                                                percentEnergy: 0, percentFamilyAndRelationships: 0, percentIrrelevant: 0,
+                        percentOvc: 0, percentSocialPolicy: 0, percentUreport: 0, percentWater: 0, percentViolenceAgainstChildren: 0,
+                        largest: 0, dominant: "Health"
+                    };
+                }
+        );
+
+				ugChart.width(width)
+								.height(height)
+								.dimension(districts)
+								.projection(projection)
+                .group(totalAnswersByDistrict)
+								.valueAccessor(function (p) {
+										return p.value.percentLargest;
+								})
+								// TODO look into patching dc.js so we can
+								// use topojson instead of geojson (topojson files are much smaller)
+								.overlayGeoJson(ug.features, "district", function (d) {
+										if (_.find(pollDistricts, function(x){ return x == d.properties.name; })){
+											// if district name from map is the same
+											// as district name in results, use it
+											return d.properties.name;
+										}
+										else if (d.properties.name_alt !== null){
+											// otherwise see if map district has alternates
+											var alternates = d.properties.name_alt.split('|');
+											for (n in alternates){
+												if (_.find(pollDistricts, function(x){ return x == alternates[n]; })){
+													// if alternate district name from map is the same
+													// as district name in results, use it
+													console.log('subsituting ', alternates[n], ' for ', d.properties.name);
+													return alternates[n];
+												}
+											}
+										}
+										// print debug info if district cannont be reconciled with map
+										console.log('no district named ', d.properties.name);
+										return d.properties.name;
+								})
+								// color across yellow-green-blue range
+								// with a domain of 0% yes to 100% yes
+								.colors(colorbrewer.YlGnBu[9])
+								.colorDomain([0, 100])
+								.title(function (d) {
+										return "District: " + d.key + "\n Highest: " + (d.value ? d.value.toFixed(2) : 0) + "%";
+								});
+
+            totalsChart.width((width))
+                    .height(height/1.5)
+                    .margins({top: 10, right: 50, bottom: 30, left: 60})
+                    .dimension(districts)
+										// FIXME colors shown on chart don't make sense. WTF
+										.colors(colorbrewer.YlGnBu[9])
+										.colorDomain([0, 100])
+                    .group(totalAnswersByDistrict)
+                    .keyAccessor(function (p) {
+                        return p.value.totalAnswers;
+                    })
+                    .valueAccessor(function (p) {
+                        return p.value.percentLargest;
+                    })
+                    .radiusValueAccessor(function (p) {
+                        return p.value.largest;
+                    })
+										// TODO calculate these domains
+                    .x(d3.scale.linear().domain([0, 5000]))
+                    .r(d3.scale.linear().domain([0, 4000]))
+                    .minRadiusWithLabel(11)
+                    .elasticY(true)
+                    .yAxisPadding(5)
+                    .elasticX(true)
+                    .xAxisPadding(200)
+                    .maxBubbleRelativeSize(0.07)
+                    .renderHorizontalGridLines(true)
+                    .renderVerticalGridLines(true)
+                    .renderLabel(true)
+                    .renderTitle(true)
+                    .title(function (p) {
+                        return p.key
+                                + "\n"
+                                + "Dominant: " + p.value.dominant + "(" + p.value.largest +"/"+ p.value.percentLargest.toFixed(2) + "%)\n"
+                                + "Health: " + p.value.totalHealth+ " (" + p.value.percentHealth.toFixed(2) + "%)\n"
+                                + "Education: " + p.value.totalEducation+  " (" + p.value.percentEducation.toFixed(2) + "%)\n"
+                                + "Emergency: " + p.value.totalEmergency +  " (" + p.value.percentEmergency.toFixed(2) + "%)\n"
+                                + "OVC: " + p.value.totalOvc +  " (" + p.value.percentOvc.toFixed(2) + "%)\n"
+                                + "Violence: " + p.value.totalViolenceAgainstChildren +  " (" + p.value.percentViolenceAgainstChildren.toFixed(2) + "%)\n"
+                                + "Water: " + p.value.totalWater +  " (" + p.value.percentWater.toFixed(2) + "%)\n"
+																+ "total answers: " + p.value.totalAnswers;
+                    });
+            totalsChart.yAxis().tickFormat(function (s) {
+                return s + "%";
+            });
+            totalsChart.xAxis().tickFormat(function (s) {
+                return s;
+            });
+
+            dc.renderAll();
+    };
+</script>
+{% endblock %}
+

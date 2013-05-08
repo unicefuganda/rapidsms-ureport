@@ -54,6 +54,7 @@
                 <li><a href="/#poll_results">POLL RESULTS</a></li>
                 <li><a href="/about_ureport/">ABOUT UREPORT</a></li>
                 <li><a href="/join/">HOW TO JOIN</a></li>
+                <li><a href="{% url pulse %}">NATIONAL PULSE</a> </li>
                 </ul>
             </div>
 
@@ -107,8 +108,7 @@
 	                <li><a href="/#poll_results">POLL RESULTS</a></li>
 	                <li><a href="about_ureport">ABOUT UREPORT</a></li>
 	                <li><a href="/join/">HOW TO JOIN</a></li>
-	                <!-- <li><a href="#">SITE MAP</a></li>
-	                <li><a href="#">CONTACT US</a></li> -->
+                    <li><a href="{% url pulse %}">NATIONAL PULSE</a> </li>
 	                {% if user.is_authenticated %}
 	                   <li><a href="{% url ureport-polls %}">POLL ADMIN</a></li>
 	                   <li><a href="{% url messagelog %}">MESSAGE LOG</a></li>
