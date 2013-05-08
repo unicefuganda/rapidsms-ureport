@@ -12,7 +12,7 @@ class ContextProcessorTest(TestCase):
         self.clear_settings()
         self.assertFalse(has_valid_pagination_limit(settings))
 
-    def test_should_fail_if_pagination_limit_is_no_a_number(self):
+    def test_should_fail_if_pagination_limit_is_not_a_number(self):
         settings.PAGINATION_LIMIT = 'text'
         self.assertFalse(has_valid_pagination_limit(settings))
 
