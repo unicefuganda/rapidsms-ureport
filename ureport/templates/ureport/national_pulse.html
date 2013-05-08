@@ -4,6 +4,29 @@
 {% block stylesheets %}
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/dc.css"/>
+    <style>
+      .control {
+        position: fixed;
+        float: none;
+        right: 10px;
+      }
+      .donut {
+        right: -20px;
+      }
+      #risks-pie-chart {
+        top: 200px;
+      }
+      .legend {
+        width: 4em;
+        list-style-type: none;
+        float: left;
+        padding: 0px;
+      }
+      .legend > li {
+        color: #CCC;
+        text-align: center;
+      }
+    </style>
 {% endblock %}
 
 {% block top_js %}
@@ -35,7 +58,6 @@
     <div class="clearfix"></div>
 
     <div id="national-pie-chart" class="donut control">
-        <strong>Showing </strong>
         <a class="reset" href="javascript:nationalPieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 
     </div>
@@ -75,7 +97,7 @@
 		var shapes;
         var data1;
         var categories;
-
+        var dominant = "";
 		var pollDistricts = [];
 		var mapDistricts = [];
 
@@ -106,7 +128,9 @@
             });
             caseTypes = _.unique(_.pluck(categories.top(1000), 'category'));
             categoriesGroup = categories.group().reduceSum(function(d){return d.total});
-            categoryColor = d3.scale.category20();
+            categoryColor = d3.scale.ordinal()
+                    .domain(caseTypes)
+                    .range(["#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"]);
 
 				// debug info for comparing districts from map and from poll results
 				pollDistricts = _.pluck(poll, 'District');
@@ -151,18 +175,19 @@
                     p.largest = _.max(array);
                     p.percentLargest = p.largest / p.totalAnswers * 100;
                     if (p.largest == p.totalEducation){
-                        p.dominant = "Education"
+                        p.dominant = "education"
                     } else if(p.largest == p.totalEmergency){
-                        p.dominant = "Emergency"
+                        p.dominant = "emergency"
                     }else if(p.largest == p.totalHealth){
-                        p.dominant = "Health"
+                        p.dominant = "health & nutrition"
                     }else if(p.largest == p.totalOvc){
-                        p.dominant = "OVC"
+                        p.dominant = "ovc"
                     }else if(p.largest == p.totalViolenceAgainstChildren){
-                        p.dominant = "Violence Against Child"
+                        p.dominant = "violence against children"
                     }else if(p.largest == p.totalWater){
-                        p.dominant = "Water"
+                        p.dominant = "water"
                     }
+                    dominant = p.dominant;
                     return p;
                 },
                 function(p, v) {
@@ -191,19 +216,19 @@
                     p.largest = _.max(array);
                     p.percentLargest = p.largest / p.totalAnswers * 100;
                     if (p.largest == p.totalEducation){
-                        p.dominant = "Education"
+                        p.dominant = "education"
                     } else if(p.largest == p.totalEmergency){
-                        p.dominant = "Emergency"
+                        p.dominant = "emergency"
                     }else if(p.largest == p.totalHealth){
-                        p.dominant = "Health"
+                        p.dominant = "health & nutrition"
                     }else if(p.largest == p.totalOvc){
-                        p.dominant = "OVC"
+                        p.dominant = "ovc"
                     }else if(p.largest == p.totalViolenceAgainstChildren){
-                        p.dominant = "Violence Against Child"
+                        p.dominant = "violence against children"
                     }else if(p.largest == p.totalWater){
-                        p.dominant = "Water"
+                        p.dominant = "water"
                     }
-
+                    dominant = p.dominant;
                     return p;
                 },
                 function() {
@@ -220,6 +245,9 @@
                 }
         );
 
+            function get_dominant(district, percentage){
+
+            }
 
 
 				ugChart.width(width)
