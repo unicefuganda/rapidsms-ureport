@@ -100,6 +100,8 @@
         var dominant = "";
 		var pollDistricts = [];
 		var mapDistricts = [];
+        var debug = true;
+        var total;
 
 		queue()
 			.defer(d3.json, "{{ MEDIA_URL }}ureport/data/districts.json")
@@ -119,13 +121,17 @@
 				//
 				// add poll name to each result record
 				// TODO toggle between results from more than one poll
-        data = crossfilter(_.map(poll, function(p) {return _.defaults(p, {'poll': 'fgm'});}));
-				shapes = ug;
+        //data = crossfilter(_.map(poll, function(p) {return _.defaults(p, {'poll': 'fgm'});}));
+        shapes = ug;
 
-            data1 = crossfilter(_.map(category, function(p){return _.defaults(p, {'category': 'irrelevant'})}))
-            categories = data1.dimension(function(d){
+            data = crossfilter(_.map(category, function(p){return _.defaults(p, {'category': 'irrelevant'})}))
+            categories = data.dimension(function(d){
                return d['category']
             });
+            districts = data.dimension(function (d) {
+                return d["district"];
+            });
+            caseDistricts = _.unique(_.pluck(districts, 'district'));
             caseTypes = _.unique(_.pluck(categories.top(1000), 'category'));
             categoriesGroup = categories.group().reduceSum(function(d){return d.total});
             categoryColor = d3.scale.ordinal()
@@ -141,9 +147,7 @@
 				console.log(_.difference(mapDistricts, pollDistricts).length)
 
 				// crossfilter dimension for districts
-        districts = data.dimension(function (d) {
-            return d["District"];
-        });
+
 
 				// crossfilter group (map-reduce) for poll result counts and stats by district
 				// see https://github.com/square/crossfilter/wiki/API-Reference#wiki-group_reduce
@@ -151,104 +155,51 @@
                 function(p, v) {
 										// add function
 										// reduce by sum
-                    p.totalHealth += +v.health;
-                    p.totalEducation += +v.education;
-                    p.totalEmergency += +v.emergency;
-                    p.totalOvc += +v.ovc;
-                    p.totalWater += +v.water;
-                    p.totalViolenceAgainstChildren += +v.violenceAgainstChildren;
-										// sum sums
-										p.totalAnswers = p.totalHealth + p.totalEducation + p.totalEmergency +
-                                                p.totalEmployment + p.totalOvc + p.totalWater + p.totalViolenceAgainstChildren;
-
-										// calculate percentages
-                    p.percentHealth = p.totalHealth/ p.totalAnswers * 100;
-                    p.percentEducation = p.totalEducation/ p.totalAnswers * 100;
-                    p.percentEmergency = p.totalEmergency / p.totalAnswers * 100;
-                    p.percentOvc = p.totalOvc / p.totalAnswers * 100;
-                    p.percentWater = p.totalWater / p.totalAnswers * 100;
-                    p.percentViolenceAgainstChildren = p.totalViolenceAgainstChildren / p.totalAnswers * 100;
-
-                    var array = [p.totalHealth, p.totalEducation, p.totalEmergency, p.totalOvc,
-                        p.totalWater, p.totalViolenceAgainstChildren];
-
-                    p.largest = _.max(array);
-                    p.percentLargest = p.largest / p.totalAnswers * 100;
-                    if (p.largest == p.totalEducation){
-                        p.dominant = "education"
-                    } else if(p.largest == p.totalEmergency){
-                        p.dominant = "emergency"
-                    }else if(p.largest == p.totalHealth){
-                        p.dominant = "health & nutrition"
-                    }else if(p.largest == p.totalOvc){
-                        p.dominant = "ovc"
-                    }else if(p.largest == p.totalViolenceAgainstChildren){
-                        p.dominant = "violence against children"
-                    }else if(p.largest == p.totalWater){
-                        p.dominant = "water"
+                    p.total += +v.total;
+                    if (v.total !== 0){
+                        p.categories.push(v.category);
                     }
-                    dominant = p.dominant;
+                    p.counts = _.chain(p.categories).reduce(function(counts, category){
+                        counts[category] = (counts[category] || 0) + 1;
+                        return counts
+                    }, {})
+                            .value();
+
+                    p.countList = _.sortBy(_.pairs(p.counts), function(d){return d[1];});
+                    total = p;
                     return p;
                 },
                 function(p, v) {
-										// remove function (used for incremental updates as records are filtered)
-                    p.totalHealth -= +v.health;
-                    p.totalEducation -= +v.education;
-                    p.totalEmergency -= +v.emergency;
-                    p.totalOvc -= +v.ovc;
-                    p.totalWater -= +v.water;
-                    p.totalViolenceAgainstChildren -= +v.violenceAgainstChildren;
-										// sum sums
-										p.totalAnswers = p.totalHealth + p.totalEducation + p.totalEmergency +
-                                                p.totalEmployment + p.totalOvc + p.totalWater + p.totalViolenceAgainstChildren;
-
-										// calculate percentages
-                    p.percentHealth = p.totalHealth/ p.totalAnswers * 100;
-                    p.percentEducation = p.totalEducation/ p.totalAnswers * 100;
-                    p.percentEmergency = p.totalEmergency / p.totalAnswers * 100;
-                    p.percentOvc = p.totalOvc / p.totalAnswers * 100;
-                    p.percentWater = p.totalWater / p.totalAnswers * 100;
-                    p.percentViolenceAgainstChildren = p.totalViolenceAgainstChildren / p.totalAnswers * 100;
-
-                    var array = [p.totalHealth, p.totalEducation, p.totalEmergency, p.totalOvc,
-                        p.totalWater, p.totalViolenceAgainstChildren];
-
-                    p.largest = _.max(array);
-                    p.percentLargest = p.largest / p.totalAnswers * 100;
-                    if (p.largest == p.totalEducation){
-                        p.dominant = "education"
-                    } else if(p.largest == p.totalEmergency){
-                        p.dominant = "emergency"
-                    }else if(p.largest == p.totalHealth){
-                        p.dominant = "health & nutrition"
-                    }else if(p.largest == p.totalOvc){
-                        p.dominant = "ovc"
-                    }else if(p.largest == p.totalViolenceAgainstChildren){
-                        p.dominant = "violence against children"
-                    }else if(p.largest == p.totalWater){
-                        p.dominant = "water"
+										// add function
+										// reduce by sum
+                    p.total -= +v.total;
+                    if (v.total !== 0){
+                        p.categories.push(v.category);
                     }
-                    dominant = p.dominant;
+                    p.counts = _.chain(p.categories).reduce(function(counts, category){
+                        counts[category] = (counts[category] || 0) + 1;
+                        return counts
+                    }, {})
+                            .value();
+
+                    p.countList = _.sortBy(_.pairs(p.counts), function(d){return d[1];});
+                    total = p;
                     return p;
                 },
                 function() {
-										// initial function
-                    return {
-												totalHealth: 0, totalEducation: 0, totalEmergency: 0, totalEmployment: 0,
-                                                totalEnergy: 0, totalFamilyAndRelationships: 0, totalIrrelevant: 0,
-                        totalOvc: 0, totalSocialPolicy: 0, totalUreport: 0, totalWater: 0, totalViolenceAgainstChildren: 0,
-                        percentHealth: 0, percentEducation: 0, percentEmergency: 0, percentEmployment: 0,
-                                                percentEnergy: 0, percentFamilyAndRelationships: 0, percentIrrelevant: 0,
-                        percentOvc: 0, percentSocialPolicy: 0, percentUreport: 0, percentWater: 0, percentViolenceAgainstChildren: 0,
-                        largest: 0, dominant: "Health"
-                    };
+                    return {total: 0, counts: {}, countsList: [], categories: []};
                 }
-        );
+            );
 
-            function get_dominant(district, percentage){
+            maxCategories = _.max(totalAnswersByDistrict.top(1000), function(p) {return p.value.total;}).value.total;
+            maxRiskTypes = _.unique(_.max(totalAnswersByDistrict.top(1000), function(p) {return _.unique(p.value.risks).length;}).value.risks).length;
 
+            function enumerateCountsForDatumTitle(d) {
+                  var countsText = _.map(d.value.countsList, function(x) {return x[0] + ":\t " + x[1] + "\n";}).join('');
+                  return d.key
+                          + "\n"
+                          + countsText;
             }
-
 
 				ugChart.width(width)
 								.height(height)
@@ -256,38 +207,28 @@
 								.projection(projection)
                 .group(totalAnswersByDistrict)
 								.valueAccessor(function (p) {
-										return p.value.percentLargest;
+										return p.value.total;
 								})
 								// TODO look into patching dc.js so we can
 								// use topojson instead of geojson (topojson files are much smaller)
 								.overlayGeoJson(ug.features, "district", function (d) {
-										if (_.find(pollDistricts, function(x){ return x == d.properties.name; })){
-											// if district name from map is the same
-											// as district name in results, use it
-											return d.properties.name;
-										}
-										else if (d.properties.name_alt !== null){
-											// otherwise see if map district has alternates
-											var alternates = d.properties.name_alt.split('|');
-											for (n in alternates){
-												if (_.find(pollDistricts, function(x){ return x == alternates[n]; })){
-													// if alternate district name from map is the same
-													// as district name in results, use it
-													console.log('subsituting ', alternates[n], ' for ', d.properties.name);
-													return alternates[n];
-												}
-											}
-										}
-										// print debug info if district cannont be reconciled with map
-										console.log('no district named ', d.properties.name);
-										return d.properties.name;
-								})
+                                    if (_.find(caseDistricts, function(x){ return x == d.properties.name; })){
+                                      // if district name from map is the same
+                                      // as district name in cases, use it
+                                      return d.properties.name;
+                                    }
+                                    // print debug info if district cannont be reconciled with map
+                                    if (debug) {
+                                      console.log('no district named ', d.properties.name);
+                                    }
+                                    return d.properties.name;
+                                })
 								// color across yellow-green-blue range
 								// with a domain of 0% yes to 100% yes
 								.colors(colorbrewer.YlGnBu[9])
-								.colorDomain([0, 100])
+								.colorDomain([0, maxCategories])
 								.title(function (d) {
-										return "District: " + d.key + "\n Highest: " + (d.value ? d.value.toFixed(2) : 0) + "%";
+										return "District: " + d.key + "\n Total Messages: " + (d.value ? d.value : 0) + " messages";
 								});
 
             totalsChart.width((width))
@@ -299,17 +240,17 @@
 										.colorDomain([0, 100])
                     .group(totalAnswersByDistrict)
                     .keyAccessor(function (p) {
-                        return p.value.totalAnswers;
+                        return p.value.total;
                     })
                     .valueAccessor(function (p) {
-                        return p.value.percentLargest;
+                        return _.unique(p.value.categories).length;
                     })
                     .radiusValueAccessor(function (p) {
-                        return p.value.largest;
+                        return p.value.total;
                     })
 										// TODO calculate these domains
-                    .x(d3.scale.linear().domain([0, 5000]))
-                    .r(d3.scale.linear().domain([0, 4000]))
+                    .x(d3.scale.linear().domain([0, (2 + maxCategories)]))
+                    .r(d3.scale.linear().domain([0, maxCategories]))
                     .minRadiusWithLabel(11)
                     .elasticY(true)
                     .yAxisPadding(5)
@@ -321,19 +262,10 @@
                     .renderLabel(true)
                     .renderTitle(true)
                     .title(function (p) {
-                        return p.key
-                                + "\n"
-                                + "Dominant: " + p.value.dominant + "(" + p.value.largest +"/"+ p.value.percentLargest.toFixed(2) + "%)\n"
-                                + "Health: " + p.value.totalHealth+ " (" + p.value.percentHealth.toFixed(2) + "%)\n"
-                                + "Education: " + p.value.totalEducation+  " (" + p.value.percentEducation.toFixed(2) + "%)\n"
-                                + "Emergency: " + p.value.totalEmergency +  " (" + p.value.percentEmergency.toFixed(2) + "%)\n"
-                                + "OVC: " + p.value.totalOvc +  " (" + p.value.percentOvc.toFixed(2) + "%)\n"
-                                + "Violence: " + p.value.totalViolenceAgainstChildren +  " (" + p.value.percentViolenceAgainstChildren.toFixed(2) + "%)\n"
-                                + "Water: " + p.value.totalWater +  " (" + p.value.percentWater.toFixed(2) + "%)\n"
-																+ "total answers: " + p.value.totalAnswers;
+                        return enumerateCountsForDatumTitle(p)
                     });
             totalsChart.yAxis().tickFormat(function (s) {
-                return s + "%";
+                return s ;
             });
             totalsChart.xAxis().tickFormat(function (s) {
                 return s;
