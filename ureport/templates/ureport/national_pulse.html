@@ -97,19 +97,15 @@
 		var shapes;
         var data1;
         var categories;
-        var dominant = "";
-		var pollDistricts = [];
-		var mapDistricts = [];
         var debug = true;
         var total;
 
 		queue()
 			.defer(d3.json, "{{ MEDIA_URL }}ureport/data/districts.json")
-			.defer(d3.tsv, "{{ MEDIA_URL }}ureport/data/pulseout.tsv")
             .defer(d3.json, "{{ MEDIA_URL }}ureport/data/category.json")
 			.await(ready);
 
-		function ready(error, ug, poll, category) {
+		function ready(error, ug, category) {
 				// TODO handle error!
 				// TODO maybe rework so that fgmPoll.tsv is organized like this?
 				// District Answer Number
@@ -136,15 +132,7 @@
             categoriesGroup = categories.group().reduceSum(function(d){return d.total});
             categoryColor = d3.scale.ordinal()
                     .domain(caseTypes)
-                    .range(["#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"]);
-
-				// debug info for comparing districts from map and from poll results
-				pollDistricts = _.pluck(poll, 'District');
-				mapDistricts = _.map(ug.features, function(d) { return d.properties.name });
-				console.log('have results, no map', _.difference(pollDistricts, mapDistricts));
-				console.log(_.difference(pollDistricts, mapDistricts).length)
-				console.log('on map, not results', _.difference(mapDistricts, pollDistricts));
-				console.log(_.difference(mapDistricts, pollDistricts).length)
+                    .range(["#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"])
 
 				// crossfilter dimension for districts
 
