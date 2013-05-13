@@ -45,9 +45,9 @@ class Command(BaseCommand):
                 message = urllib2.unquote(query_parts[4]).replace('+', ' ')
                 if connection.endswith('&message'):
 #                    if not http_status in ['200', '400']:
-                    if backend_name in ['dmark', 'zain']:
+                    if backend_name in ['Agregator1']:
                         identity = connection[3:15] if connection.startswith('%') else connection[:12]
-                        if not identity == 'Warid&messag':
+                        if not identity == 'Zain&messag':
                             try:
                                 conn = Connection.objects.get(identity=identity, backend__name=backend_name)
                                 msg = Message.objects.filter(connection=conn, text='txt', direction="I")

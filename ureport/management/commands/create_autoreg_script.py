@@ -13,13 +13,13 @@ class Command(BaseCommand):
         script.sites.add(Site.objects.get_current())
         script.steps.add(ScriptStep.objects.create(
             script=script,
-            message="Welcome to Ureport, where you can SPEAK UP and BE HEARD on what is happening in your community-it's FREE! ",
+            message="Welcome to U-report!, U-report is a FREE service that helps youth speak out on issues in their communities using SMS. SPEAK UP and BE HEARD! ",
             order=0,
             rule=ScriptStep.WAIT_MOVEON,
             start_offset=0,
             giveup_offset=60,
         ))
-        poll = Poll.create_freeform("youthgroup", "How did you hear about U REPORT?", "", [], user)
+        poll = Poll.create_freeform("youthgroup", "Now we are going to ask a few questions to finish your registration as a U-reporter. Please reply with the name of your PAYAM", "", [], user)
         script.steps.add(ScriptStep.objects.create(
             script=script,
             poll=poll,
@@ -68,7 +68,7 @@ class Command(BaseCommand):
             retry_offset=86400,
             giveup_offset=86400,
         ))
-        poll5 = Poll.create_numeric("contactage", "What is your age?", "", [], user)
+        poll5 = Poll.create_numeric("contactage", "What is your AGE? Please reply with only the number", "", [], user)
         script.steps.add(ScriptStep.objects.create(
             script=script,
             poll=poll5,
@@ -114,7 +114,7 @@ class Command(BaseCommand):
         ))
         script.steps.add(ScriptStep.objects.create(
             script=script,
-            message="CONGRATULATIONS!!! You are now a registered member of Ureport! With Ureport, you can make a real difference!  Speak Up and Be Heard! from UNICEF",
+            message="CONGRATULATIONS!!! You are now a registered member of U-report! With U-report, Your Voice counts! We will send the first U-report Poll soon!",
             order=9,
             rule=ScriptStep.WAIT_MOVEON,
             start_offset=60,

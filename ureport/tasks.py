@@ -51,10 +51,15 @@ def process_message(pk, ignore_result=True, **kwargs):
 @task
 def reprocess_groups(group, ignore_result=True):
     try:
+<<<<<<< HEAD
         scripts = Script.objects.filter(
             pk__in=['ureport_autoreg', 'ureport_autoreg_luo', 'ureport_autoreg2', 'ureport_autoreg_luo2'])
         ar = AutoregGroupRules.objects.get(group=group)
         print 'here'
+=======
+        scripts=Script.objects.filter(pk__in=['ureport_autoreg','ureport_autoreg2'])
+        ar=AutoregGroupRules.objects.get(group=group)
+>>>>>>> [Argha/DJ][Paul] moving local customisations for South Sudan over to a branch
         if ar.rule_regex:
             regex = re.compile(ar.rule_regex, re.IGNORECASE)
             for script in scripts:

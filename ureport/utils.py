@@ -97,7 +97,7 @@ def get_quit_messages(**kwargs):
     OPT_OUT_WORDS = getattr(settings, 'OPT_OUT_WORDS')
     opt_words = "|".join(OPT_OUT_WORDS)
     return Message.objects.filter(text__iregex=".*\m(%s)\y.*" % opt_words).exclude(
-        text__iregex=".*\m(%s)\y.*" % "what|uganda|sex|Because|why|which|how|\?|community|Children|where|yes|no")
+        text__iregex=".*\m(%s)\y.*" % "what|sudan|sex|Because|why|which|how|\?|community|Children|where|yes|no")
 
 
 def get_unsolicitized_messages(**kwargs):
