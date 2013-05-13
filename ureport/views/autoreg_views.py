@@ -5,6 +5,9 @@ from django.db import transaction
 from django.shortcuts import render_to_response, HttpResponse
 from django.template import RequestContext
 from django.views.decorators.cache import never_cache
+from rapidsms.models import Connection
+from rapidsms_httprouter_src.rapidsms_httprouter.models import Message
+from rapidsms_httprouter_src.rapidsms_httprouter.views import MessageTable
 from ureport.models import AutoregGroupRules
 from ureport.forms import GroupRules
 from django.contrib.auth.models import Group
@@ -65,4 +68,17 @@ def set_autoreg_rules(request, pk=None):
                               {'group_form': group_form},
                               context_instance=RequestContext(request))
 
+@never_cache
+@login_required
+def user_registration_status(request, connection):
+    connection_object = Connection.objects.filter(identity=connection)
+    outgoing_messages = []
+    if connection_object.exists():
+        outgoing_messages=Message.objects.filter(connection=connection_object[0],direction="O").order_by('-id')
+    template = 'ureport/user_registration_status.html'
+
+    return render_to_response(template, {
+        'connection' : connection_object[0] if connection_object.exists() else None,
+        'messages' : MessageTable(outgoing_messages),
+        }, context_instance=RequestContext(request))
 

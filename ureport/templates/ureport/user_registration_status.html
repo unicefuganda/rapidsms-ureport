@@ -1,0 +1,24 @@
+{% extends "polls/layout.html" %}
+{% block title %}Poll Status{% endblock %}
+{% block content %}
+    <div id="registration_status">
+       <table class="results">
+
+        <thead>
+            {% if connection != None %}
+                <th>Registration status for {{ connection.identity }}</th>
+            {% else %}
+                <th> This number is not a registered U-Reporter. </th>
+            {%  endif %}
+        </thead>
+
+
+        <tbody>
+            <tr>
+                <th>Messages Received by User : </th>
+            </tr>
+            {{ messages.as_html }}
+        </tbody>
+       </table>
+    </div>
+{%  endblock %}
