@@ -40,6 +40,10 @@
 
 {% block content %}
 <div class="container">
+    <div>
+        <a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a>
+    </div>
+    <ol class="legend"></ol>
     <div id="ug-chart">
         <h3>Colors Range From Yellow - Green - Blue. Number of messages sent by a district<br/> the  contribution From Low - High </h3>
         <a class="reset" href="javascript:ugChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
@@ -60,9 +64,6 @@
     <div id="national-pie-chart" class="donut control">
         <a class="reset" href="javascript:nationalPieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 
-    </div>
-    <div>
-        <a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a>
     </div>
 
 </div>
@@ -102,7 +103,7 @@
 
 		queue()
 			.defer(d3.json, "{{ MEDIA_URL }}ureport/data/districts.json")
-            .defer(d3.json, "{{ MEDIA_URL }}ureport/data/category.json")
+            .defer(d3.json, "{% url pulse_json %}")
 			.await(ready);
 
 		function ready(error, ug, category) {
@@ -175,7 +176,7 @@
                     return p;
                 },
                 function() {
-                    return {total: 0, counts: {}, countsList: [], categories: []};
+                    return {total: 0, counts: {}, countList: [], categories: []};
                 }
             );
 
@@ -183,8 +184,9 @@
             maxRiskTypes = _.unique(_.max(totalAnswersByDistrict.top(1000), function(p) {return _.unique(p.value.risks).length;}).value.risks).length;
 
             function enumerateCountsForDatumTitle(d) {
-                  var countsText = _.map(d.value.countsList, function(x) {return x[0] + ":\t " + x[1] + "\n";}).join('');
+                  var countsText = _.map(d.value.countList, function(x) {return x[0] + ":\t " + x[1] + "\n";}).join('');
                   return d.key
+                          + "Categories"
                           + "\n"
                           + countsText;
             }
@@ -250,7 +252,10 @@
                     .renderLabel(true)
                     .renderTitle(true)
                     .title(function (p) {
-                        return enumerateCountsForDatumTitle(p)
+                        var countsText = _.map(p.value.countList, function(x) {return x[0] + ":\t " + x[1] + "\n";}).join('');
+                        return p.key
+                          + "\n"
+                          + countsText;
                     });
             totalsChart.yAxis().tickFormat(function (s) {
                 return s ;
@@ -273,7 +278,30 @@
               .renderTitle(true);
 
             dc.renderAll();
-    };
+
+
+            mapLegendColors = d3.scale.linear()
+            .domain(d3.range(0,9))
+            .range(colorbrewer.YlOrRd[9]);
+
+            var legend = d3.select('.legend')
+            .attr("style", function(d){return "margin-top: " + mapLegendColors(d[0]) + ";"});
+
+            var legendItems = legend.selectAll('.legend-item')
+            .data(_.zip(mapLegendColors.domain(), mapLegendColors.range()));
+
+            legendItems.enter().append('li')
+              .attr("style", function (d) { return "background-color: " + mapLegendColors(d[0]) + ";"; })
+              .html(function(d) {
+                if (d[0] === 0){
+                  return d[0] + " category";
+                };
+                if (d[0] === 8){
+                    return maxCategories + " categories";
+                };
+                return "&nbsp;";
+              });
+    }
 </script>
 {% endblock %}
 
