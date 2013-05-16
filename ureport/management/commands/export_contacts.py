@@ -272,7 +272,7 @@ LEFT JOIN
 
                     response_export_data = SortedDict()
                     if response.contact:
-                        response_export_data['contact_pk'] = response.contact.pk
+                        response_export_data['contact_pk'] = response.contact.default_connection.pk
                     else:
                         response_export_data['contact_pk'] = ""
 
