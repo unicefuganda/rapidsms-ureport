@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+from logging import getLogger
 from contact.models import MessageFlag
 from rapidsms.models import Contact
 from poll.models import ResponseCategory
 from ureport.models.models import UPoll as Poll, PollAttribute
-from script.models import ScriptStep
+from script.models import ScriptStep, Script
 from django.db.models import Count
 from .models import Ureporter, UreportContact
 from unregister.models import Blacklist
@@ -17,6 +18,8 @@ import datetime
 import re
 from uganda_common.models import Access
 
+module_name = __name__
+logger = getLogger(module_name)
 
 def get_access(request):
     try:
@@ -253,3 +256,19 @@ def fb(req, poll):
 
         toret = urllib2.urlopen(post_question_url)
         return toret
+
+def configure_messages_for_script(script_name,messages_dict):
+    try:
+        script = Script.objects.get(slug=script_name)
+        for step in script.steps.order_by('order'):
+            message_for_step = messages_dict.get(step.order)
+            if step.message and message_for_step:
+                step.message = message_for_step
+            elif message_for_step:
+                step.poll.question = message_for_step
+                step.poll.save()
+            step.save()
+        script.save()
+    except Script.DoesNotExist:
+        logger.debug("[%s] Script object with slug name %s not found." % (module_name,script_name))
+
