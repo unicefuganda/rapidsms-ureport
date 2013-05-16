@@ -145,16 +145,12 @@
 										// add function
 										// reduce by sum
                     p.total += +v.total;
+                    p.totals[v.category] = v.total;
                     if (v.total !== 0){
                         p.categories.push(v.category);
                     }
-                    p.counts = _.chain(p.categories).reduce(function(counts, category){
-                        counts[category] = (counts[category] || 0) + 1;
-                        return counts
-                    }, {})
-                            .value();
 
-                    p.countList = _.sortBy(_.pairs(p.counts), function(d){return d[1];});
+                    p.countList = _.sortBy(_.pairs(p.totals), function(d){return d[1];});
                     total = p;
                     return p;
                 },
@@ -162,31 +158,26 @@
 										// add function
 										// reduce by sum
                     p.total -= +v.total;
+                    p.totals[v.category] = v.total;
                     if (v.total !== 0){
                         p.categories.push(v.category);
                     }
-                    p.counts = _.chain(p.categories).reduce(function(counts, category){
-                        counts[category] = (counts[category] || 0) + 1;
-                        return counts
-                    }, {})
-                            .value();
 
-                    p.countList = _.sortBy(_.pairs(p.counts), function(d){return d[1];});
+                    p.countList = _.sortBy(_.pairs(p.totals), function(d){return d[1];});
                     total = p;
                     return p;
                 },
                 function() {
-                    return {total: 0, counts: {}, countList: [], categories: []};
+                    return {total: 0, counts: {}, countList: [], categories: [], totals: {}};
                 }
             );
 
             maxCategories = _.max(totalAnswersByDistrict.top(1000), function(p) {return p.value.total;}).value.total;
-            maxRiskTypes = _.unique(_.max(totalAnswersByDistrict.top(1000), function(p) {return _.unique(p.value.risks).length;}).value.risks).length;
 
             function enumerateCountsForDatumTitle(d) {
                   var countsText = _.map(d.value.countList, function(x) {return x[0] + ":\t " + x[1] + "\n";}).join('');
-                  return d.key
-                          + "Categories"
+                  return d.key + ":" + d.value.total
+                          + "\nCategories"
                           + "\n"
                           + countsText;
             }
@@ -247,15 +238,12 @@
                     .elasticX(true)
                     .xAxisPadding(200)
                     .maxBubbleRelativeSize(0.07)
-                    .renderHorizontalGridLines(true)
+                    .renderHorizontalGridLines(false)
                     .renderVerticalGridLines(true)
                     .renderLabel(true)
                     .renderTitle(true)
                     .title(function (p) {
-                        var countsText = _.map(p.value.countList, function(x) {return x[0] + ":\t " + x[1] + "\n";}).join('');
-                        return p.key
-                          + "\n"
-                          + countsText;
+                        return enumerateCountsForDatumTitle(p);
                     });
             totalsChart.yAxis().tickFormat(function (s) {
                 return s ;
@@ -282,10 +270,10 @@
 
             mapLegendColors = d3.scale.linear()
             .domain(d3.range(0,9))
-            .range(colorbrewer.YlOrRd[9]);
+            .range(colorbrewer.YlGnBu[9]);
 
             var legend = d3.select('.legend')
-            .attr("style", function(d){return "margin-top: " + mapLegendColors(d[0]) + ";"});
+                .attr("style", function (d) { return "margin-top: " + (height / 4) + "px;"; });
 
             var legendItems = legend.selectAll('.legend-item')
             .data(_.zip(mapLegendColors.domain(), mapLegendColors.range()));
@@ -294,10 +282,10 @@
               .attr("style", function (d) { return "background-color: " + mapLegendColors(d[0]) + ";"; })
               .html(function(d) {
                 if (d[0] === 0){
-                  return d[0] + " category";
+                  return d[0] + " messages";
                 };
                 if (d[0] === 8){
-                    return maxCategories + " categories";
+                    return maxCategories + " messages";
                 };
                 return "&nbsp;";
               });

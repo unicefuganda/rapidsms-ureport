@@ -30,7 +30,10 @@ class Command(BaseCommand):
 
                 response_export_data = SortedDict()
                 if response.contact:
-                    response_export_data['contact_pk'] = response.contact.pk
+                    try:
+                        response_export_data['contact_pk'] = response.contact.connection_set.all()[0].pk
+                    except IndexError:
+                        response_export_data['contact_pk'] = ""
                 else:
                     response_export_data['contact_pk'] = ""
 

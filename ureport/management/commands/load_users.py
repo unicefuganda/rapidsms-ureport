@@ -16,15 +16,16 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         path = options["path"]
-        group = Group.objects.get(name="CODES Kyango")
+        group = Group.objects.get(name="CODES Bukango")
         district = Location.objects.get(name='Bukomansimbi', type__name='district')
         print "Groups ===============>", group.name
         csv_rows = csv.reader(open(path, 'rU'), delimiter=",")
         rnum = 0
         for row in csv_rows:
+            print row
             rnum += 1
             try:
-                name, age, gender, number, village, dist = tuple(row)
+                name, number, gender, age, village, dist, g = tuple(row)
                 num = number.replace('-', '').strip()
                 name = name.strip().replace("\"", '').replace('\'', "").replace("  ", " ")
             except:
