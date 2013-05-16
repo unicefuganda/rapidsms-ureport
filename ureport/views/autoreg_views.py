@@ -74,7 +74,7 @@ def user_registration_status(request, connection):
     connection_object = Connection.objects.filter(identity=connection)
     outgoing_messages = []
     if connection_object.exists():
-        outgoing_messages=Message.objects.filter(connection=connection_object[0],direction="O").order_by('-id')
+        outgoing_messages=Message.objects.filter(connection=connection_object[0]).order_by('-id')
     template = 'ureport/user_registration_status.html'
 
     return render_to_response(template, {
