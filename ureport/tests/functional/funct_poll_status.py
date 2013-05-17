@@ -6,11 +6,10 @@ from rapidsms.models import Connection
 from datetime import datetime
 
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
+from rapidsms_ureport.ureport.tests.functional.create_poll_utils import create_group, create_user, create_connection, create_poll, add_contacts_to_poll
 
 BROWSER = Browser('firefox')
 
-from ureport.tests.functional.test_utils import create_group, create_user, create_connection, create_poll,\
-    add_contacts_to_poll
 
 class PollStatusTest(SplinterTestCase):
     def setUp(self):
