@@ -65,7 +65,7 @@ class TestUreportUtils(TestCase):
         ScriptStep.objects.create(script=self.script,order=2, poll=poll1)
         ScriptStep.objects.create(script=self.script,order=3, poll=poll2)
 
-        message_dict = {0:'changed_to_message1',1:'changed_to_message2'}
+        message_dict = {0:'changed_to_message0', 1:'changed_to_message1', 2:'changed_to_message2', 3:'changed_to_message3'}
 
         configure_messages_for_script(self.script_name, message_dict)
 
@@ -74,7 +74,8 @@ class TestUreportUtils(TestCase):
 
         self.assertEquals(script_steps[0].message, message_dict.get(0))
         self.assertEquals(script_steps[1].message, message_dict.get(1))
-        self.assertEquals(script_steps)
+        self.assertEquals(script_steps[2].poll.question, message_dict.get(2))
+        self.assertEquals(script_steps[3].poll.question, message_dict.get(3))
 
     def test_should_raise_exception_if_there_is_no_script(self):
         self.assertRaises(Script.DoesNotExist,configure_messages_for_script("should_fail", {}))
