@@ -25,7 +25,7 @@ class UreportTest(SplinterTestCase):
 
         newly_added_poll = Poll.objects.get(id=self.poll_id)
 
-        time.sleep(3)
+        time.sleep(5)
 
         self.assertEquals(newly_added_poll.messages.count(), 2)
         self.assertEquals(newly_added_poll.messages.all()[0].text, newly_added_poll.question)

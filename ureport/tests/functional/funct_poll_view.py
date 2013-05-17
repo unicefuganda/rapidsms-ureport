@@ -2,8 +2,8 @@ from splinter import Browser
 from rapidsms.models import Contact
 from rapidsms.models import Connection
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
-from ureport_project.rapidsms_ureport.ureport.tests.functional.create_poll_utils import get_browser, create_fake_response
-from ureport_project.rapidsms_ureport.ureport.tests.functional.create_polls_for_view_poll import create_polls_with_fake_responses
+from rapidsms_ureport.ureport.tests.functional.create_poll_utils import create_fake_response, get_browser
+from rapidsms_ureport.ureport.tests.functional.create_polls_for_view_poll import create_polls_with_fake_responses
 
 
 class PollViewTest(SplinterTestCase):

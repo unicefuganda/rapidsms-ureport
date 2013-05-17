@@ -1,7 +1,6 @@
 from datetime import datetime
 from rapidsms.models import Connection, Contact, Backend
-from ureport.tests.functional.test_utils import create_group, create_user, create_connection, create_poll,\
-    create_fake_response, add_contacts_to_poll
+from rapidsms_ureport.ureport.tests.functional.create_poll_utils import create_group, create_user, create_connection, create_poll, add_contacts_to_poll, create_fake_response
 
 
 def create_polls_with_fake_responses(number_of_polls):
