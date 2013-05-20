@@ -336,7 +336,7 @@ def blacklist(request, pk):
 def delete(request, pk):
     try:
         contact = Contact.objects.get(pk=int(pk))
-        contact.connection_set.clear()
+        contact.delete()
     except Contact.DoesNotExist:
         pass
     return HttpResponseRedirect("/reporter")

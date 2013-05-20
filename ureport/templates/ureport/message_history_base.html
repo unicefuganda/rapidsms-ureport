@@ -19,6 +19,13 @@
             $('#div_action_0').find('a').html("Send Message");
         });
 
+        $('#delete_ureporter').click(function(e){
+            var conf = confirm("Are you sure you want to delete this Ureporter?");
+            if (conf != true){
+                e.preventDefault();
+            }
+        });
+
     </script>
 {% endblock %}
 {% block content %}
@@ -131,10 +138,11 @@
                 <td><a href="?download=True" class="btn">Download History</a></td>
                 <td><a class="btn" href="/contact/{{ contact.pk }}/blacklist/" data-remote=true
                        data-disable-with="blacklisting...">Blacklist</a></td>
-                <td><a class="btn" href="/contact/{{ contact.pk }}/delete/" >Delete</a></td>
+                <td><a class="btn" href="{% url delete_contact contact.pk %}" id="delete_ureporter">Delete</a></td>
 
             </tr>
         </table>
+
 
         <div class="modal hide" id="edit_reporter">
             <form method="post" id="message_form" action="/reporter/{{contact.pk}}/edit/" data-remote=true>
