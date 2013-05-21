@@ -82,6 +82,7 @@ def push_to_mtrac(messages):
                                    'backend': getattr(settings, 'MTRAC_PUSH_BACKEND'),
                                    'password': getattr(settings, 'MTRAC_ROUTER_PASSWORD')})
         try:
+            f = None
             # f = urllib.urlopen("%s?%s" % (getattr(settings, 'MTRAC_ROUTER_URL'), params))
             pass
         except Exception, e:
