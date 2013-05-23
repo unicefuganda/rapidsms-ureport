@@ -100,6 +100,20 @@
         var categories;
         var debug = true;
         var total;
+        var caseTypes;
+
+        function max_of(obj){
+                var n = 0;
+                var x;
+                var key;
+                for (x in obj){
+                    if (obj[x] > n){
+                        n = obj[x];
+                        key = x;
+                    }
+                }
+                return key;
+            }
 
 		queue()
 			.defer(d3.json, "{{ MEDIA_URL }}ureport/data/districts.json")
@@ -133,7 +147,19 @@
             categoriesGroup = categories.group().reduceSum(function(d){return d.total});
             categoryColor = d3.scale.ordinal()
                     .domain(caseTypes)
-                    .range(["#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"])
+                    .range(["#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"]);
+
+            var dominant_mapper = {"no messages":0, "water":1, "violence against children":2, "ovc":6, "health & nutrition":3, "emergency":5, "education":4};
+            function category_of(value){
+                var n;
+                var x;
+                for (x in dominant_mapper){
+                    if (value == dominant_mapper[x]){
+                        n = x;
+                    }
+                }
+                return n;
+            }
 
 				// crossfilter dimension for districts
 
@@ -149,7 +175,8 @@
                     if (v.total !== 0){
                         p.categories.push(v.category);
                     }
-
+                    p.dominant_name = max_of(p.totals);
+                    p.dominant = dominant_mapper[p.dominant_name];
                     p.countList = _.sortBy(_.pairs(p.totals), function(d){return d[1];});
                     total = p;
                     return p;
@@ -162,13 +189,14 @@
                     if (v.total !== 0){
                         p.categories.push(v.category);
                     }
-
+                    p.dominant_name = max_of(p.totals);
+                    p.dominant = dominant_mapper[p.dominant_name];
                     p.countList = _.sortBy(_.pairs(p.totals), function(d){return d[1];});
                     total = p;
                     return p;
                 },
                 function() {
-                    return {total: 0, counts: {}, countList: [], categories: [], totals: {}};
+                    return {total: 0, counts: {}, countList: [], categories: [], totals: {}, dominant_name:"", dominant:0};
                 }
             );
 
@@ -188,7 +216,7 @@
 								.projection(projection)
                 .group(totalAnswersByDistrict)
 								.valueAccessor(function (p) {
-										return p.value.total;
+										return p.value.dominant;
 								})
 								// TODO look into patching dc.js so we can
 								// use topojson instead of geojson (topojson files are much smaller)
@@ -206,10 +234,10 @@
                                 })
 								// color across yellow-green-blue range
 								// with a domain of 0% yes to 100% yes
-								.colors(colorbrewer.YlGnBu[9])
-								.colorDomain([0, maxCategories])
+								.colors(["#FFFFFF", "#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"])
+								.colorAccessor(function(d, i){return d})
 								.title(function (d) {
-										return "District: " + d.key + "\n Total Messages: " + (d.value ? d.value : 0) + " messages";
+										return "District: " + d.key + "\n Dominant Category: " + category_of((d.value ? d.value : 0));
 								});
 
             totalsChart.width((width))
@@ -269,8 +297,8 @@
 
 
             mapLegendColors = d3.scale.linear()
-            .domain(d3.range(0,9))
-            .range(colorbrewer.YlGnBu[9]);
+            .domain(d3.range(0,7))
+            .range(["#FFFFFF", "#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"]);
 
             var legend = d3.select('.legend')
                 .attr("style", function (d) { return "margin-top: " + (height / 4) + "px;"; });
@@ -281,13 +309,7 @@
             legendItems.enter().append('li')
               .attr("style", function (d) { return "background-color: " + mapLegendColors(d[0]) + ";"; })
               .html(function(d) {
-                if (d[0] === 0){
-                  return d[0] + " messages";
-                };
-                if (d[0] === 8){
-                    return maxCategories + " messages";
-                };
-                return "&nbsp;";
+                    return " " + category_of(d[0]);
               });
     }
 </script>
