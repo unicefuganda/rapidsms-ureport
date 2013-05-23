@@ -1,0 +1,2649 @@
+[ { "category" : "violence against children",
+    "district" : "Moyo",
+    "total" : 47
+  },
+  { "category" : "violence against children",
+    "district" : "Gulu",
+    "total" : 125
+  },
+  { "category" : "ovc",
+    "district" : "Koboko",
+    "total" : 71
+  },
+  { "category" : "water",
+    "district" : "Rubirizi",
+    "total" : 4
+  },
+  { "category" : "violence against children",
+    "district" : "Mukono",
+    "total" : 63
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kisoro",
+    "total" : 60
+  },
+  { "category" : "violence against children",
+    "district" : "Kabale",
+    "total" : 42
+  },
+  { "category" : "ovc",
+    "district" : "Kaberamaido",
+    "total" : 50
+  },
+  { "category" : "emergency",
+    "district" : "Pader",
+    "total" : 10
+  },
+  { "category" : "violence against children",
+    "district" : "Kaabong",
+    "total" : 12
+  },
+  { "category" : "violence against children",
+    "district" : "Nebbi",
+    "total" : 68
+  },
+  { "category" : "water",
+    "district" : "Ibanda",
+    "total" : 18
+  },
+  { "category" : "violence against children",
+    "district" : "Gomba",
+    "total" : 18
+  },
+  { "category" : "ovc",
+    "district" : "Buikwe",
+    "total" : 49
+  },
+  { "category" : "health & nutrition",
+    "district" : "Lira",
+    "total" : 402
+  },
+  { "category" : "emergency",
+    "district" : "Amuru",
+    "total" : 6
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kamuli",
+    "total" : 101
+  },
+  { "category" : "health & nutrition",
+    "district" : "Abim",
+    "total" : 85
+  },
+  { "category" : "water",
+    "district" : "Mayuge",
+    "total" : 12
+  },
+  { "category" : "emergency",
+    "district" : "Ngora",
+    "total" : 4
+  },
+  { "category" : "education",
+    "district" : "Mubende",
+    "total" : 14
+  },
+  { "category" : "emergency",
+    "district" : "Namutumba",
+    "total" : 1
+  },
+  { "category" : "health & nutrition",
+    "district" : "Amuru",
+    "total" : 130
+  },
+  { "category" : "emergency",
+    "district" : "Lira",
+    "total" : 17
+  },
+  { "category" : "emergency",
+    "district" : "Kamuli",
+    "total" : 3
+  },
+  { "category" : "water",
+    "district" : "Katakwi",
+    "total" : 9
+  },
+  { "category" : "ovc",
+    "district" : "Busia",
+    "total" : 133
+  },
+  { "category" : "health & nutrition",
+    "district" : "Dokolo",
+    "total" : 107
+  },
+  { "category" : "water",
+    "district" : "Soroti",
+    "total" : 26
+  },
+  { "category" : "violence against children",
+    "district" : "Kween",
+    "total" : 10
+  },
+  { "category" : "health & nutrition",
+    "district" : "Ngora",
+    "total" : 66
+  },
+  { "category" : "emergency",
+    "district" : "Abim",
+    "total" : 1
+  },
+  { "category" : "health & nutrition",
+    "district" : "Namutumba",
+    "total" : 38
+  },
+  { "category" : "violence against children",
+    "district" : "Kanungu",
+    "total" : 15
+  },
+  { "category" : "violence against children",
+    "district" : "Kibuku",
+    "total" : 11
+  },
+  { "category" : "ovc",
+    "district" : "Nwoya",
+    "total" : 35
+  },
+  { "category" : "ovc",
+    "district" : "Kibaale",
+    "total" : 19
+  },
+  { "category" : "education",
+    "district" : "Manafwa",
+    "total" : 44
+  },
+  { "category" : "water",
+    "district" : "Iganga",
+    "total" : 30
+  },
+  { "category" : "emergency",
+    "district" : "Kisoro",
+    "total" : 5
+  },
+  { "category" : "health & nutrition",
+    "district" : "Pader",
+    "total" : 121
+  },
+  { "category" : "water",
+    "district" : "Ntoroko",
+    "total" : 5
+  },
+  { "category" : "water",
+    "district" : "Oyam",
+    "total" : 56
+  },
+  { "category" : "ovc",
+    "district" : "Bugiri",
+    "total" : 58
+  },
+  { "category" : "violence against children",
+    "district" : "Budaka",
+    "total" : 15
+  },
+  { "category" : "violence against children",
+    "district" : "Bundibugyo",
+    "total" : 25
+  },
+  { "category" : "violence against children",
+    "district" : "Nakaseke",
+    "total" : 11
+  },
+  { "category" : "emergency",
+    "district" : "Mpigi",
+    "total" : 8
+  },
+  { "category" : "water",
+    "district" : "Kamwenge",
+    "total" : 21
+  },
+  { "category" : "education",
+    "district" : "Mbale",
+    "total" : 122
+  },
+  { "category" : "ovc",
+    "district" : "Zombo",
+    "total" : 47
+  },
+  { "category" : "health & nutrition",
+    "district" : "Bukwo",
+    "total" : 23
+  },
+  { "category" : "education",
+    "district" : "Ntungamo",
+    "total" : 26
+  },
+  { "category" : "education",
+    "district" : "Kumi",
+    "total" : 26
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kalangala",
+    "total" : 26
+  },
+  { "category" : "violence against children",
+    "district" : "Buyende",
+    "total" : 9
+  },
+  { "category" : "water",
+    "district" : "Bushenyi",
+    "total" : 21
+  },
+  { "category" : "emergency",
+    "district" : "Buliisa",
+    "total" : 14
+  },
+  { "category" : "water",
+    "district" : "Alebtong",
+    "total" : 7
+  },
+  { "category" : "ovc",
+    "district" : "Kitgum",
+    "total" : 80
+  },
+  { "category" : "education",
+    "district" : "Jinja",
+    "total" : 51
+  },
+  { "category" : "ovc",
+    "district" : "Moroto",
+    "total" : 20
+  },
+  { "category" : "ovc",
+    "district" : "Bukomansimbi",
+    "total" : 9
+  },
+  { "category" : "health & nutrition",
+    "district" : "Mitooma",
+    "total" : 59
+  },
+  { "category" : "violence against children",
+    "district" : "Kasese",
+    "total" : 124
+  },
+  { "category" : "water",
+    "district" : "Kyenjojo",
+    "total" : 19
+  },
+  { "category" : "emergency",
+    "district" : "Kalangala",
+    "total" : 3
+  },
+  { "category" : "health & nutrition",
+    "district" : "Buliisa",
+    "total" : 38
+  },
+  { "category" : "ovc",
+    "district" : "Lyantonde",
+    "total" : 16
+  },
+  { "category" : "education",
+    "district" : "Luwero",
+    "total" : 29
+  },
+  { "category" : "emergency",
+    "district" : "Mitooma",
+    "total" : 7
+  },
+  { "category" : "water",
+    "district" : "Butambala",
+    "total" : 3
+  },
+  { "category" : "ovc",
+    "district" : "Kaliro",
+    "total" : 22
+  },
+  { "category" : "water",
+    "district" : "Nakasongola",
+    "total" : 5
+  },
+  { "category" : "health & nutrition",
+    "district" : "Mpigi",
+    "total" : 96
+  },
+  { "category" : "violence against children",
+    "district" : "Namayingo",
+    "total" : 14
+  },
+  { "category" : "violence against children",
+    "district" : "Lamwo",
+    "total" : 18
+  },
+  { "category" : "education",
+    "district" : "Kapchorwa",
+    "total" : 12
+  },
+  { "category" : "water",
+    "district" : "Adjumani",
+    "total" : 9
+  },
+  { "category" : "ovc",
+    "district" : "Amuru",
+    "total" : 53
+  },
+  { "category" : "emergency",
+    "district" : "Buikwe",
+    "total" : 5
+  },
+  { "category" : "water",
+    "district" : "Kiryandongo",
+    "total" : 19
+  },
+  { "category" : "education",
+    "district" : "Kanungu",
+    "total" : 14
+  },
+  { "category" : "education",
+    "district" : "Kibuku",
+    "total" : 87
+  },
+  { "category" : "ovc",
+    "district" : "Namutumba",
+    "total" : 16
+  },
+  { "category" : "water",
+    "district" : "Apac",
+    "total" : 12
+  },
+  { "category" : "ovc",
+    "district" : "Ngora",
+    "total" : 26
+  },
+  { "category" : "ovc",
+    "district" : "Dokolo",
+    "total" : 43
+  },
+  { "category" : "health & nutrition",
+    "district" : "Busia",
+    "total" : 227
+  },
+  { "category" : "education",
+    "district" : "Kween",
+    "total" : 118
+  },
+  { "category" : "water",
+    "district" : "Rukungiri",
+    "total" : 13
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kibaale",
+    "total" : 48
+  },
+  { "category" : "health & nutrition",
+    "district" : "Nwoya",
+    "total" : 93
+  },
+  { "category" : "violence against children",
+    "district" : "Manafwa",
+    "total" : 40
+  },
+  { "category" : "emergency",
+    "district" : "Koboko",
+    "total" : 5
+  },
+  { "category" : "education",
+    "district" : "Bundibugyo",
+    "total" : 182
+  },
+  { "category" : "education",
+    "district" : "Budaka",
+    "total" : 144
+  },
+  { "category" : "water",
+    "district" : "Ssembabule",
+    "total" : 4
+  },
+  { "category" : "water",
+    "district" : "Luuka",
+    "total" : 6
+  },
+  { "category" : "health & nutrition",
+    "district" : "Bugiri",
+    "total" : 85
+  },
+  { "category" : "emergency",
+    "district" : "Kaberamaido",
+    "total" : 6
+  },
+  { "category" : "ovc",
+    "district" : "Pader",
+    "total" : 43
+  },
+  { "category" : "water",
+    "district" : "Kyegegwa",
+    "total" : 6
+  },
+  { "category" : "ovc",
+    "district" : "Kisoro",
+    "total" : 29
+  },
+  { "category" : "health & nutrition",
+    "district" : "Koboko",
+    "total" : 179
+  },
+  { "category" : "education",
+    "district" : "Moyo",
+    "total" : 425
+  },
+  { "category" : "emergency",
+    "district" : "Nwoya",
+    "total" : 4
+  },
+  { "category" : "education",
+    "district" : "Mukono",
+    "total" : 527
+  },
+  { "category" : "emergency",
+    "district" : "Kibaale",
+    "total" : 2
+  },
+  { "category" : "education",
+    "district" : "Gulu",
+    "total" : 1499
+  },
+  { "category" : "education",
+    "district" : "Nebbi",
+    "total" : 615
+  },
+  { "category" : "water",
+    "district" : "Bukedea",
+    "total" : 16
+  },
+  { "category" : "education",
+    "district" : "Kabale",
+    "total" : 420
+  },
+  { "category" : "education",
+    "district" : "Kaabong",
+    "total" : 76
+  },
+  { "category" : "water",
+    "district" : "Kole",
+    "total" : 16
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kaberamaido",
+    "total" : 116
+  },
+  { "category" : "ovc",
+    "district" : "Kamuli",
+    "total" : 48
+  },
+  { "category" : "water",
+    "district" : "Hoima",
+    "total" : 17
+  },
+  { "category" : "water",
+    "district" : "Otuke",
+    "total" : 3
+  },
+  { "category" : "ovc",
+    "district" : "Lira",
+    "total" : 196
+  },
+  { "category" : "water",
+    "district" : "Amuria",
+    "total" : 15
+  },
+  { "category" : "health & nutrition",
+    "district" : "Buikwe",
+    "total" : 88
+  },
+  { "category" : "education",
+    "district" : "Gomba",
+    "total" : 165
+  },
+  { "category" : "emergency",
+    "district" : "Busia",
+    "total" : 13
+  },
+  { "category" : "water",
+    "district" : "Lwengo",
+    "total" : 38
+  },
+  { "category" : "ovc",
+    "district" : "Abim",
+    "total" : 43
+  },
+  { "category" : "violence against children",
+    "district" : "Mubende",
+    "total" : 12
+  },
+  { "category" : "emergency",
+    "district" : "Kitgum",
+    "total" : 9
+  },
+  { "category" : "health & nutrition",
+    "district" : "Lyantonde",
+    "total" : 30
+  },
+  { "category" : "ovc",
+    "district" : "Buliisa",
+    "total" : 15
+  },
+  { "category" : "violence against children",
+    "district" : "Luwero",
+    "total" : 26
+  },
+  { "category" : "emergency",
+    "district" : "Zombo",
+    "total" : 3
+  },
+  { "category" : "ovc",
+    "district" : "Mpigi",
+    "total" : 46
+  },
+  { "category" : "water",
+    "district" : "Maracha",
+    "total" : 12
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kaliro",
+    "total" : 35
+  },
+  { "category" : "water",
+    "district" : "Sironko",
+    "total" : 17
+  },
+  { "category" : "education",
+    "district" : "Namayingo",
+    "total" : 108
+  },
+  { "category" : "violence against children",
+    "district" : "Kapchorwa",
+    "total" : 20
+  },
+  { "category" : "education",
+    "district" : "Lamwo",
+    "total" : 200
+  },
+  { "category" : "water",
+    "district" : "Amolatar",
+    "total" : 8
+  },
+  { "category" : "violence against children",
+    "district" : "Mbale",
+    "total" : 129
+  },
+  { "category" : "ovc",
+    "district" : "Bukwo",
+    "total" : 18
+  },
+  { "category" : "water",
+    "district" : "Pallisa",
+    "total" : 21
+  },
+  { "category" : "health & nutrition",
+    "district" : "Zombo",
+    "total" : 90
+  },
+  { "category" : "education",
+    "district" : "Nakaseke",
+    "total" : 72
+  },
+  { "category" : "water",
+    "district" : "Rakai",
+    "total" : 12
+  },
+  { "category" : "water",
+    "district" : "Kabarole",
+    "total" : 36
+  },
+  { "category" : "violence against children",
+    "district" : "Kumi",
+    "total" : 17
+  },
+  { "category" : "violence against children",
+    "district" : "Ntungamo",
+    "total" : 30
+  },
+  { "category" : "emergency",
+    "district" : "Lyantonde",
+    "total" : 3
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kitgum",
+    "total" : 160
+  },
+  { "category" : "water",
+    "district" : "Kotido",
+    "total" : 5
+  },
+  { "category" : "education",
+    "district" : "Buyende",
+    "total" : 59
+  },
+  { "category" : "ovc",
+    "district" : "Kalangala",
+    "total" : 14
+  },
+  { "category" : "water",
+    "district" : "Kalungu",
+    "total" : 16
+  },
+  { "category" : "water",
+    "district" : "Kiruhura",
+    "total" : 15
+  },
+  { "category" : "ovc",
+    "district" : "Mitooma",
+    "total" : 30
+  },
+  { "category" : "education",
+    "district" : "Kasese",
+    "total" : 1048
+  },
+  { "category" : "violence against children",
+    "district" : "Jinja",
+    "total" : 63
+  },
+  { "category" : "health & nutrition",
+    "district" : "Bukomansimbi",
+    "total" : 36
+  },
+  { "category" : "health & nutrition",
+    "district" : "Moroto",
+    "total" : 57
+  },
+  { "category" : "health & nutrition",
+    "district" : "Serere",
+    "total" : 75
+  },
+  { "category" : "emergency",
+    "district" : "Sheema",
+    "total" : 3
+  },
+  { "category" : "ovc",
+    "district" : "Buvuma",
+    "total" : 3
+  },
+  { "category" : "violence against children",
+    "district" : "Kamwenge",
+    "total" : 17
+  },
+  { "category" : "education",
+    "district" : "Rakai",
+    "total" : 216
+  },
+  { "category" : "water",
+    "district" : "Nakaseke",
+    "total" : 5
+  },
+  { "category" : "education",
+    "district" : "Pallisa",
+    "total" : 384
+  },
+  { "category" : "ovc",
+    "district" : "Bulambuli",
+    "total" : 30
+  },
+  { "category" : "emergency",
+    "district" : "Kayunga",
+    "total" : 1
+  },
+  { "category" : "education",
+    "district" : "Kabarole",
+    "total" : 473
+  },
+  { "category" : "education",
+    "district" : "Kalungu",
+    "total" : 134
+  },
+  { "category" : "water",
+    "district" : "Buyende",
+    "total" : 5
+  },
+  { "category" : "education",
+    "district" : "Kotido",
+    "total" : 90
+  },
+  { "category" : "emergency",
+    "district" : "Yumbe",
+    "total" : 2
+  },
+  { "category" : "violence against children",
+    "district" : "Alebtong",
+    "total" : 17
+  },
+  { "category" : "violence against children",
+    "district" : "Bushenyi",
+    "total" : 24
+  },
+  { "category" : "emergency",
+    "district" : "Agago",
+    "total" : 4
+  },
+  { "category" : "water",
+    "district" : "Kasese",
+    "total" : 81
+  },
+  { "category" : "education",
+    "district" : "Kiruhura",
+    "total" : 180
+  },
+  { "category" : "ovc",
+    "district" : "Mityana",
+    "total" : 37
+  },
+  { "category" : "health & nutrition",
+    "district" : "Yumbe",
+    "total" : 161
+  },
+  { "category" : "health & nutrition",
+    "district" : "Masaka",
+    "total" : 77
+  },
+  { "category" : "violence against children",
+    "district" : "Kyenjojo",
+    "total" : 21
+  },
+  { "category" : "ovc",
+    "district" : "Nakapiripirit",
+    "total" : 12
+  },
+  { "category" : "health & nutrition",
+    "district" : "Agago",
+    "total" : 88
+  },
+  { "category" : "ovc",
+    "district" : "Kyankwanzi",
+    "total" : 15
+  },
+  { "category" : "ovc",
+    "district" : "Amudat",
+    "total" : 7
+  },
+  { "category" : "violence against children",
+    "district" : "Butambala",
+    "total" : 8
+  },
+  { "category" : "violence against children",
+    "district" : "Nakasongola",
+    "total" : 12
+  },
+  { "category" : "water",
+    "district" : "Namayingo",
+    "total" : 5
+  },
+  { "category" : "education",
+    "district" : "Sironko",
+    "total" : 240
+  },
+  { "category" : "education",
+    "district" : "Maracha",
+    "total" : 183
+  },
+  { "category" : "emergency",
+    "district" : "Serere",
+    "total" : 3
+  },
+  { "category" : "health & nutrition",
+    "district" : "Sheema",
+    "total" : 89
+  },
+  { "category" : "ovc",
+    "district" : "Isingiro",
+    "total" : 29
+  },
+  { "category" : "education",
+    "district" : "Amolatar",
+    "total" : 142
+  },
+  { "category" : "water",
+    "district" : "Lamwo",
+    "total" : 12
+  },
+  { "category" : "ovc",
+    "district" : "Arua",
+    "total" : 364
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kayunga",
+    "total" : 68
+  },
+  { "category" : "water",
+    "district" : "Gulu",
+    "total" : 87
+  },
+  { "category" : "water",
+    "district" : "Mukono",
+    "total" : 36
+  },
+  { "category" : "violence against children",
+    "district" : "Rubirizi",
+    "total" : 4
+  },
+  { "category" : "water",
+    "district" : "Moyo",
+    "total" : 18
+  },
+  { "category" : "health & nutrition",
+    "district" : "Tororo",
+    "total" : 375
+  },
+  { "category" : "ovc",
+    "district" : "Napak",
+    "total" : 7
+  },
+  { "category" : "education",
+    "district" : "Kyegegwa",
+    "total" : 131
+  },
+  { "category" : "water",
+    "district" : "Kaabong",
+    "total" : 1
+  },
+  { "category" : "education",
+    "district" : "Kole",
+    "total" : 288
+  },
+  { "category" : "water",
+    "district" : "Kabale",
+    "total" : 25
+  },
+  { "category" : "health & nutrition",
+    "district" : "Butaleja",
+    "total" : 52
+  },
+  { "category" : "education",
+    "district" : "Bukedea",
+    "total" : 215
+  },
+  { "category" : "water",
+    "district" : "Nebbi",
+    "total" : 41
+  },
+  { "category" : "ovc",
+    "district" : "Mbarara",
+    "total" : 122
+  },
+  { "category" : "water",
+    "district" : "Gomba",
+    "total" : 11
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kiboga",
+    "total" : 31
+  },
+  { "category" : "education",
+    "district" : "Amuria",
+    "total" : 252
+  },
+  { "category" : "violence against children",
+    "district" : "Ibanda",
+    "total" : 19
+  },
+  { "category" : "education",
+    "district" : "Hoima",
+    "total" : 188
+  },
+  { "category" : "education",
+    "district" : "Otuke",
+    "total" : 88
+  },
+  { "category" : "education",
+    "district" : "Lwengo",
+    "total" : 131
+  },
+  { "category" : "education",
+    "district" : "Kagadi",
+    "total" : 1
+  },
+  { "category" : "violence against children",
+    "district" : "Mayuge",
+    "total" : 19
+  },
+  { "category" : "health & nutrition",
+    "district" : "Buhweju",
+    "total" : 23
+  },
+  { "category" : "ovc",
+    "district" : "Wakiso",
+    "total" : 401
+  },
+  { "category" : "education",
+    "district" : "Kiryandongo",
+    "total" : 308
+  },
+  { "category" : "ovc",
+    "district" : "Kampala",
+    "total" : 595
+  },
+  { "category" : "emergency",
+    "district" : "Kiboga",
+    "total" : 1
+  },
+  { "category" : "education",
+    "district" : "Adjumani",
+    "total" : 218
+  },
+  { "category" : "violence against children",
+    "district" : "Katakwi",
+    "total" : 15
+  },
+  { "category" : "water",
+    "district" : "Kween",
+    "total" : 6
+  },
+  { "category" : "emergency",
+    "district" : "Buhweju",
+    "total" : 1
+  },
+  { "category" : "violence against children",
+    "district" : "Soroti",
+    "total" : 33
+  },
+  { "category" : "education",
+    "district" : "Apac",
+    "total" : 394
+  },
+  { "category" : "water",
+    "district" : "Kibuku",
+    "total" : 3
+  },
+  { "category" : "water",
+    "district" : "Kanungu",
+    "total" : 6
+  },
+  { "category" : "ovc",
+    "district" : "Bududa",
+    "total" : 40
+  },
+  { "category" : "emergency",
+    "district" : "Tororo",
+    "total" : 21
+  },
+  { "category" : "ovc",
+    "district" : "Masindi",
+    "total" : 45
+  },
+  { "category" : "violence against children",
+    "district" : "Iganga",
+    "total" : 36
+  },
+  { "category" : "education",
+    "district" : "Rukungiri",
+    "total" : 219
+  },
+  { "category" : "emergency",
+    "district" : "Butaleja",
+    "total" : 3
+  },
+  { "category" : "violence against children",
+    "district" : "Oyam",
+    "total" : 92
+  },
+  { "category" : "violence against children",
+    "district" : "Ntoroko",
+    "total" : 5
+  },
+  { "category" : "education",
+    "district" : "Luuka",
+    "total" : 101
+  },
+  { "category" : "education",
+    "district" : "Ssembabule",
+    "total" : 102
+  },
+  { "category" : "water",
+    "district" : "Bundibugyo",
+    "total" : 12
+  },
+  { "category" : "water",
+    "district" : "Budaka",
+    "total" : 8
+  },
+  { "category" : "health & nutrition",
+    "district" : "Amudat",
+    "total" : 21
+  },
+  { "category" : "ovc",
+    "district" : "Agago",
+    "total" : 53
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kyankwanzi",
+    "total" : 22
+  },
+  { "category" : "health & nutrition",
+    "district" : "Nakapiripirit",
+    "total" : 26
+  },
+  { "category" : "ovc",
+    "district" : "Masaka",
+    "total" : 39
+  },
+  { "category" : "health & nutrition",
+    "district" : "Mityana",
+    "total" : 71
+  },
+  { "category" : "education",
+    "district" : "Kyenjojo",
+    "total" : 222
+  },
+  { "category" : "ovc",
+    "district" : "Yumbe",
+    "total" : 55
+  },
+  { "category" : "education",
+    "district" : "Butambala",
+    "total" : 92
+  },
+  { "category" : "water",
+    "district" : "Luwero",
+    "total" : 26
+  },
+  { "category" : "health & nutrition",
+    "district" : "Isingiro",
+    "total" : 67
+  },
+  { "category" : "violence against children",
+    "district" : "Sironko",
+    "total" : 28
+  },
+  { "category" : "emergency",
+    "district" : "Buvuma",
+    "total" : 1
+  },
+  { "category" : "ovc",
+    "district" : "Sheema",
+    "total" : 41
+  },
+  { "category" : "education",
+    "district" : "Nakasongola",
+    "total" : 101
+  },
+  { "category" : "violence against children",
+    "district" : "Maracha",
+    "total" : 24
+  },
+  { "category" : "ovc",
+    "district" : "Kayunga",
+    "total" : 40
+  },
+  { "category" : "emergency",
+    "district" : "Bulambuli",
+    "total" : 6
+  },
+  { "category" : "water",
+    "district" : "Kapchorwa",
+    "total" : 6
+  },
+  { "category" : "health & nutrition",
+    "district" : "Arua",
+    "total" : 746
+  },
+  { "category" : "violence against children",
+    "district" : "Amolatar",
+    "total" : 10
+  },
+  { "category" : "water",
+    "district" : "Mbale",
+    "total" : 90
+  },
+  { "category" : "violence against children",
+    "district" : "Pallisa",
+    "total" : 37
+  },
+  { "category" : "emergency",
+    "district" : "Isingiro",
+    "total" : 3
+  },
+  { "category" : "education",
+    "district" : "Kamwenge",
+    "total" : 223
+  },
+  { "category" : "ovc",
+    "district" : "Serere",
+    "total" : 38
+  },
+  { "category" : "violence against children",
+    "district" : "Rakai",
+    "total" : 19
+  },
+  { "category" : "health & nutrition",
+    "district" : "Buvuma",
+    "total" : 9
+  },
+  { "category" : "water",
+    "district" : "Kumi",
+    "total" : 19
+  },
+  { "category" : "emergency",
+    "district" : "Arua",
+    "total" : 25
+  },
+  { "category" : "violence against children",
+    "district" : "Kabarole",
+    "total" : 70
+  },
+  { "category" : "health & nutrition",
+    "district" : "Bulambuli",
+    "total" : 62
+  },
+  { "category" : "water",
+    "district" : "Ntungamo",
+    "total" : 15
+  },
+  { "category" : "emergency",
+    "district" : "Kyankwanzi",
+    "total" : 2
+  },
+  { "category" : "education",
+    "district" : "Alebtong",
+    "total" : 154
+  },
+  { "category" : "education",
+    "district" : "Bushenyi",
+    "total" : 274
+  },
+  { "category" : "violence against children",
+    "district" : "Kotido",
+    "total" : 4
+  },
+  { "category" : "violence against children",
+    "district" : "Kalungu",
+    "total" : 14
+  },
+  { "category" : "emergency",
+    "district" : "Mityana",
+    "total" : 3
+  },
+  { "category" : "emergency",
+    "district" : "Nakapiripirit",
+    "total" : 2
+  },
+  { "category" : "violence against children",
+    "district" : "Kiruhura",
+    "total" : 24
+  },
+  { "category" : "water",
+    "district" : "Jinja",
+    "total" : 48
+  },
+  { "category" : "education",
+    "district" : "Katakwi",
+    "total" : 144
+  },
+  { "category" : "violence against children",
+    "district" : "Adjumani",
+    "total" : 18
+  },
+  { "category" : "violence against children",
+    "district" : "Kiryandongo",
+    "total" : 36
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kampala",
+    "total" : 1216
+  },
+  { "category" : "violence against children",
+    "district" : "Apac",
+    "total" : 34
+  },
+  { "category" : "health & nutrition",
+    "district" : "Bududa",
+    "total" : 78
+  },
+  { "category" : "emergency",
+    "district" : "Wakiso",
+    "total" : 30
+  },
+  { "category" : "education",
+    "district" : "Soroti",
+    "total" : 364
+  },
+  { "category" : "education",
+    "district" : "Iganga",
+    "total" : 283
+  },
+  { "category" : "violence against children",
+    "district" : "Rukungiri",
+    "total" : 24
+  },
+  { "category" : "water",
+    "district" : "Manafwa",
+    "total" : 34
+  },
+  { "category" : "health & nutrition",
+    "district" : "Masindi",
+    "total" : 79
+  },
+  { "category" : "violence against children",
+    "district" : "Luuka",
+    "total" : 13
+  },
+  { "category" : "emergency",
+    "district" : "Mbarara",
+    "total" : 11
+  },
+  { "category" : "violence against children",
+    "district" : "Ssembabule",
+    "total" : 10
+  },
+  { "category" : "education",
+    "district" : "Oyam",
+    "total" : 1034
+  },
+  { "category" : "education",
+    "district" : "Ntoroko",
+    "total" : 51
+  },
+  { "category" : "violence against children",
+    "district" : "Kyegegwa",
+    "total" : 15
+  },
+  { "category" : "health & nutrition",
+    "district" : "Napak",
+    "total" : 34
+  },
+  { "category" : "ovc",
+    "district" : "Tororo",
+    "total" : 217
+  },
+  { "category" : "education",
+    "district" : "Rubirizi",
+    "total" : 97
+  },
+  { "category" : "emergency",
+    "district" : "Masindi",
+    "total" : 8
+  },
+  { "category" : "health & nutrition",
+    "district" : "Mbarara",
+    "total" : 244
+  },
+  { "category" : "ovc",
+    "district" : "Butaleja",
+    "total" : 28
+  },
+  { "category" : "violence against children",
+    "district" : "Kole",
+    "total" : 24
+  },
+  { "category" : "violence against children",
+    "district" : "Bukedea",
+    "total" : 26
+  },
+  { "category" : "violence against children",
+    "district" : "Otuke",
+    "total" : 11
+  },
+  { "category" : "violence against children",
+    "district" : "Hoima",
+    "total" : 18
+  },
+  { "category" : "emergency",
+    "district" : "Kampala",
+    "total" : 40
+  },
+  { "category" : "education",
+    "district" : "Ibanda",
+    "total" : 214
+  },
+  { "category" : "ovc",
+    "district" : "Kiboga",
+    "total" : 11
+  },
+  { "category" : "violence against children",
+    "district" : "Amuria",
+    "total" : 27
+  },
+  { "category" : "health & nutrition",
+    "district" : "Wakiso",
+    "total" : 813
+  },
+  { "category" : "emergency",
+    "district" : "Bududa",
+    "total" : 4
+  },
+  { "category" : "ovc",
+    "district" : "Buhweju",
+    "total" : 4
+  },
+  { "category" : "violence against children",
+    "district" : "Kagadi",
+    "total" : 1
+  },
+  { "category" : "violence against children",
+    "district" : "Lwengo",
+    "total" : 15
+  },
+  { "category" : "water",
+    "district" : "Mubende",
+    "total" : 9
+  },
+  { "category" : "education",
+    "district" : "Mayuge",
+    "total" : 171
+  },
+  { "category" : "ovc",
+    "district" : "Ntungamo",
+    "total" : 48
+  },
+  { "category" : "emergency",
+    "district" : "Lamwo",
+    "total" : 4
+  },
+  { "category" : "ovc",
+    "district" : "Kumi",
+    "total" : 45
+  },
+  { "category" : "emergency",
+    "district" : "Namayingo",
+    "total" : 1
+  },
+  { "category" : "health & nutrition",
+    "district" : "Nakaseke",
+    "total" : 34
+  },
+  { "category" : "water",
+    "district" : "Serere",
+    "total" : 12
+  },
+  { "category" : "violence against children",
+    "district" : "Bukwo",
+    "total" : 7
+  },
+  { "category" : "education",
+    "district" : "Zombo",
+    "total" : 223
+  },
+  { "category" : "ovc",
+    "district" : "Mbale",
+    "total" : 262
+  },
+  { "category" : "education",
+    "district" : "Bukomansimbi",
+    "total" : 86
+  },
+  { "category" : "education",
+    "district" : "Moroto",
+    "total" : 161
+  },
+  { "category" : "ovc",
+    "district" : "Jinja",
+    "total" : 94
+  },
+  { "category" : "violence against children",
+    "district" : "Mitooma",
+    "total" : 17
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kasese",
+    "total" : 456
+  },
+  { "category" : "violence against children",
+    "district" : "Kalangala",
+    "total" : 7
+  },
+  { "category" : "health & nutrition",
+    "district" : "Buyende",
+    "total" : 24
+  },
+  { "category" : "education",
+    "district" : "Kitgum",
+    "total" : 349
+  },
+  { "category" : "ovc",
+    "district" : "Luwero",
+    "total" : 69
+  },
+  { "category" : "emergency",
+    "district" : "Kasese",
+    "total" : 48
+  },
+  { "category" : "water",
+    "district" : "Masaka",
+    "total" : 15
+  },
+  { "category" : "emergency",
+    "district" : "Buyende",
+    "total" : 2
+  },
+  { "category" : "water",
+    "district" : "Yumbe",
+    "total" : 18
+  },
+  { "category" : "violence against children",
+    "district" : "Buliisa",
+    "total" : 8
+  },
+  { "category" : "water",
+    "district" : "Agago",
+    "total" : 19
+  },
+  { "category" : "education",
+    "district" : "Lyantonde",
+    "total" : 76
+  },
+  { "category" : "health & nutrition",
+    "district" : "Lamwo",
+    "total" : 70
+  },
+  { "category" : "water",
+    "district" : "Kayunga",
+    "total" : 10
+  },
+  { "category" : "ovc",
+    "district" : "Kapchorwa",
+    "total" : 25
+  },
+  { "category" : "water",
+    "district" : "Sheema",
+    "total" : 9
+  },
+  { "category" : "health & nutrition",
+    "district" : "Namayingo",
+    "total" : 48
+  },
+  { "category" : "violence against children",
+    "district" : "Mpigi",
+    "total" : 21
+  },
+  { "category" : "education",
+    "district" : "Kaliro",
+    "total" : 115
+  },
+  { "category" : "emergency",
+    "district" : "Nakaseke",
+    "total" : 3
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kabale",
+    "total" : 163
+  },
+  { "category" : "water",
+    "district" : "Butaleja",
+    "total" : 11
+  },
+  { "category" : "education",
+    "district" : "Kaberamaido",
+    "total" : 240
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kaabong",
+    "total" : 36
+  },
+  { "category" : "emergency",
+    "district" : "Bundibugyo",
+    "total" : 4
+  },
+  { "category" : "emergency",
+    "district" : "Budaka",
+    "total" : 5
+  },
+  { "category" : "health & nutrition",
+    "district" : "Nebbi",
+    "total" : 267
+  },
+  { "category" : "health & nutrition",
+    "district" : "Moyo",
+    "total" : 174
+  },
+  { "category" : "water",
+    "district" : "Tororo",
+    "total" : 66
+  },
+  { "category" : "education",
+    "district" : "Koboko",
+    "total" : 312
+  },
+  { "category" : "health & nutrition",
+    "district" : "Gulu",
+    "total" : 621
+  },
+  { "category" : "health & nutrition",
+    "district" : "Mukono",
+    "total" : 261
+  },
+  { "category" : "violence against children",
+    "district" : "Kisoro",
+    "total" : 15
+  },
+  { "category" : "violence against children",
+    "district" : "Abim",
+    "total" : 25
+  },
+  { "category" : "water",
+    "district" : "Buhweju",
+    "total" : 3
+  },
+  { "category" : "emergency",
+    "district" : "Kween",
+    "total" : 3
+  },
+  { "category" : "ovc",
+    "district" : "Mubende",
+    "total" : 28
+  },
+  { "category" : "emergency",
+    "district" : "Kibuku",
+    "total" : 2
+  },
+  { "category" : "emergency",
+    "district" : "Kanungu",
+    "total" : 2
+  },
+  { "category" : "education",
+    "district" : "Buikwe",
+    "total" : 226
+  },
+  { "category" : "health & nutrition",
+    "district" : "Gomba",
+    "total" : 64
+  },
+  { "category" : "water",
+    "district" : "Kiboga",
+    "total" : 5
+  },
+  { "category" : "violence against children",
+    "district" : "Lira",
+    "total" : 72
+  },
+  { "category" : "violence against children",
+    "district" : "Kamuli",
+    "total" : 24
+  },
+  { "category" : "violence against children",
+    "district" : "Dokolo",
+    "total" : 16
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kween",
+    "total" : 47
+  },
+  { "category" : "education",
+    "district" : "Busia",
+    "total" : 422
+  },
+  { "category" : "violence against children",
+    "district" : "Ngora",
+    "total" : 16
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kanungu",
+    "total" : 45
+  },
+  { "category" : "violence against children",
+    "district" : "Namutumba",
+    "total" : 11
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kibuku",
+    "total" : 48
+  },
+  { "category" : "violence against children",
+    "district" : "Amuru",
+    "total" : 24
+  },
+  { "category" : "emergency",
+    "district" : "Gomba",
+    "total" : 2
+  },
+  { "category" : "emergency",
+    "district" : "Kaabong",
+    "total" : 3
+  },
+  { "category" : "violence against children",
+    "district" : "Pader",
+    "total" : 31
+  },
+  { "category" : "emergency",
+    "district" : "Kabale",
+    "total" : 7
+  },
+  { "category" : "health & nutrition",
+    "district" : "Bundibugyo",
+    "total" : 96
+  },
+  { "category" : "health & nutrition",
+    "district" : "Budaka",
+    "total" : 58
+  },
+  { "category" : "emergency",
+    "district" : "Nebbi",
+    "total" : 6
+  },
+  { "category" : "education",
+    "district" : "Bugiri",
+    "total" : 184
+  },
+  { "category" : "emergency",
+    "district" : "Mukono",
+    "total" : 7
+  },
+  { "category" : "ovc",
+    "district" : "Manafwa",
+    "total" : 122
+  },
+  { "category" : "education",
+    "district" : "Kibaale",
+    "total" : 116
+  },
+  { "category" : "emergency",
+    "district" : "Gulu",
+    "total" : 24
+  },
+  { "category" : "emergency",
+    "district" : "Moyo",
+    "total" : 7
+  },
+  { "category" : "education",
+    "district" : "Nwoya",
+    "total" : 206
+  },
+  { "category" : "health & nutrition",
+    "district" : "Luwero",
+    "total" : 132
+  },
+  { "category" : "emergency",
+    "district" : "Jinja",
+    "total" : 8
+  },
+  { "category" : "education",
+    "district" : "Buliisa",
+    "total" : 91
+  },
+  { "category" : "water",
+    "district" : "Kyankwanzi",
+    "total" : 5
+  },
+  { "category" : "water",
+    "district" : "Amudat",
+    "total" : 1
+  },
+  { "category" : "violence against children",
+    "district" : "Lyantonde",
+    "total" : 10
+  },
+  { "category" : "water",
+    "district" : "Mityana",
+    "total" : 17
+  },
+  { "category" : "water",
+    "district" : "Nakapiripirit",
+    "total" : 6
+  },
+  { "category" : "emergency",
+    "district" : "Kumi",
+    "total" : 1
+  },
+  { "category" : "water",
+    "district" : "Arua",
+    "total" : 103
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kapchorwa",
+    "total" : 51
+  },
+  { "category" : "emergency",
+    "district" : "Ntungamo",
+    "total" : 8
+  },
+  { "category" : "ovc",
+    "district" : "Lamwo",
+    "total" : 30
+  },
+  { "category" : "water",
+    "district" : "Isingiro",
+    "total" : 7
+  },
+  { "category" : "emergency",
+    "district" : "Mbale",
+    "total" : 26
+  },
+  { "category" : "ovc",
+    "district" : "Namayingo",
+    "total" : 26
+  },
+  { "category" : "education",
+    "district" : "Mpigi",
+    "total" : 187
+  },
+  { "category" : "violence against children",
+    "district" : "Kaliro",
+    "total" : 8
+  },
+  { "category" : "emergency",
+    "district" : "Kapchorwa",
+    "total" : 2
+  },
+  { "category" : "water",
+    "district" : "Bulambuli",
+    "total" : 8
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kumi",
+    "total" : 108
+  },
+  { "category" : "health & nutrition",
+    "district" : "Ntungamo",
+    "total" : 95
+  },
+  { "category" : "health & nutrition",
+    "district" : "Mbale",
+    "total" : 528
+  },
+  { "category" : "violence against children",
+    "district" : "Zombo",
+    "total" : 26
+  },
+  { "category" : "education",
+    "district" : "Bukwo",
+    "total" : 48
+  },
+  { "category" : "water",
+    "district" : "Buvuma",
+    "total" : 2
+  },
+  { "category" : "ovc",
+    "district" : "Nakaseke",
+    "total" : 17
+  },
+  { "category" : "ovc",
+    "district" : "Kasese",
+    "total" : 221
+  },
+  { "category" : "education",
+    "district" : "Mitooma",
+    "total" : 140
+  },
+  { "category" : "violence against children",
+    "district" : "Bukomansimbi",
+    "total" : 8
+  },
+  { "category" : "emergency",
+    "district" : "Luwero",
+    "total" : 5
+  },
+  { "category" : "health & nutrition",
+    "district" : "Jinja",
+    "total" : 209
+  },
+  { "category" : "violence against children",
+    "district" : "Moroto",
+    "total" : 8
+  },
+  { "category" : "violence against children",
+    "district" : "Kitgum",
+    "total" : 31
+  },
+  { "category" : "education",
+    "district" : "Kalangala",
+    "total" : 57
+  },
+  { "category" : "ovc",
+    "district" : "Buyende",
+    "total" : 19
+  },
+  { "category" : "ovc",
+    "district" : "Kibuku",
+    "total" : 16
+  },
+  { "category" : "education",
+    "district" : "Namutumba",
+    "total" : 58
+  },
+  { "category" : "water",
+    "district" : "Bududa",
+    "total" : 8
+  },
+  { "category" : "ovc",
+    "district" : "Kanungu",
+    "total" : 33
+  },
+  { "category" : "ovc",
+    "district" : "Kween",
+    "total" : 20
+  },
+  { "category" : "emergency",
+    "district" : "Mubende",
+    "total" : 8
+  },
+  { "category" : "education",
+    "district" : "Dokolo",
+    "total" : 27
+  },
+  { "category" : "violence against children",
+    "district" : "Busia",
+    "total" : 52
+  },
+  { "category" : "education",
+    "district" : "Ngora",
+    "total" : 180
+  },
+  { "category" : "education",
+    "district" : "Amuru",
+    "total" : 34
+  },
+  { "category" : "water",
+    "district" : "Kampala",
+    "total" : 215
+  },
+  { "category" : "ovc",
+    "district" : "Bundibugyo",
+    "total" : 52
+  },
+  { "category" : "ovc",
+    "district" : "Budaka",
+    "total" : 37
+  },
+  { "category" : "violence against children",
+    "district" : "Bugiri",
+    "total" : 20
+  },
+  { "category" : "education",
+    "district" : "Pader",
+    "total" : 31
+  },
+  { "category" : "violence against children",
+    "district" : "Kibaale",
+    "total" : 8
+  },
+  { "category" : "health & nutrition",
+    "district" : "Manafwa",
+    "total" : 247
+  },
+  { "category" : "violence against children",
+    "district" : "Nwoya",
+    "total" : 19
+  },
+  { "category" : "water",
+    "district" : "Masindi",
+    "total" : 7
+  },
+  { "category" : "water",
+    "district" : "Mbarara",
+    "total" : 49
+  },
+  { "category" : "ovc",
+    "district" : "Nebbi",
+    "total" : 123
+  },
+  { "category" : "ovc",
+    "district" : "Kaabong",
+    "total" : 20
+  },
+  { "category" : "ovc",
+    "district" : "Kabale",
+    "total" : 86
+  },
+  { "category" : "violence against children",
+    "district" : "Kaberamaido",
+    "total" : 24
+  },
+  { "category" : "water",
+    "district" : "Napak",
+    "total" : 5
+  },
+  { "category" : "education",
+    "district" : "Kisoro",
+    "total" : 15
+  },
+  { "category" : "ovc",
+    "district" : "Gulu",
+    "total" : 303
+  },
+  { "category" : "violence against children",
+    "district" : "Koboko",
+    "total" : 79
+  },
+  { "category" : "ovc",
+    "district" : "Mukono",
+    "total" : 143
+  },
+  { "category" : "emergency",
+    "district" : "Manafwa",
+    "total" : 21
+  },
+  { "category" : "ovc",
+    "district" : "Moyo",
+    "total" : 91
+  },
+  { "category" : "water",
+    "district" : "Wakiso",
+    "total" : 123
+  },
+  { "category" : "education",
+    "district" : "Abim",
+    "total" : 187
+  },
+  { "category" : "health & nutrition",
+    "district" : "Mubende",
+    "total" : 64
+  },
+  { "category" : "education",
+    "district" : "Kamuli",
+    "total" : 77
+  },
+  { "category" : "ovc",
+    "district" : "Gomba",
+    "total" : 29
+  },
+  { "category" : "violence against children",
+    "district" : "Buikwe",
+    "total" : 21
+  },
+  { "category" : "education",
+    "district" : "Lira",
+    "total" : 96
+  },
+  { "category" : "ovc",
+    "district" : "Bukedea",
+    "total" : 64
+  },
+  { "category" : "emergency",
+    "district" : "Ntoroko",
+    "total" : 1
+  },
+  { "category" : "emergency",
+    "district" : "Oyam",
+    "total" : 18
+  },
+  { "category" : "violence against children",
+    "district" : "Butaleja",
+    "total" : 14
+  },
+  { "category" : "ovc",
+    "district" : "Kole",
+    "total" : 63
+  },
+  { "category" : "education",
+    "district" : "Mbarara",
+    "total" : 62
+  },
+  { "category" : "health & nutrition",
+    "district" : "Rubirizi",
+    "total" : 23
+  },
+  { "category" : "violence against children",
+    "district" : "Tororo",
+    "total" : 108
+  },
+  { "category" : "water",
+    "district" : "Kisoro",
+    "total" : 10
+  },
+  { "category" : "ovc",
+    "district" : "Kyegegwa",
+    "total" : 37
+  },
+  { "category" : "emergency",
+    "district" : "Iganga",
+    "total" : 9
+  },
+  { "category" : "education",
+    "district" : "Napak",
+    "total" : 10
+  },
+  { "category" : "emergency",
+    "district" : "Soroti",
+    "total" : 7
+  },
+  { "category" : "violence against children",
+    "district" : "Buhweju",
+    "total" : 4
+  },
+  { "category" : "health & nutrition",
+    "district" : "Mayuge",
+    "total" : 88
+  },
+  { "category" : "water",
+    "district" : "Abim",
+    "total" : 11
+  },
+  { "category" : "ovc",
+    "district" : "Lwengo",
+    "total" : 36
+  },
+  { "category" : "education",
+    "district" : "Wakiso",
+    "total" : 189
+  },
+  { "category" : "violence against children",
+    "district" : "Kiboga",
+    "total" : 6
+  },
+  { "category" : "ovc",
+    "district" : "Amuria",
+    "total" : 63
+  },
+  { "category" : "water",
+    "district" : "Lira",
+    "total" : 52
+  },
+  { "category" : "health & nutrition",
+    "district" : "Ibanda",
+    "total" : 99
+  },
+  { "category" : "emergency",
+    "district" : "Katakwi",
+    "total" : 3
+  },
+  { "category" : "ovc",
+    "district" : "Hoima",
+    "total" : 44
+  },
+  { "category" : "ovc",
+    "district" : "Otuke",
+    "total" : 21
+  },
+  { "category" : "water",
+    "district" : "Kamuli",
+    "total" : 6
+  },
+  { "category" : "emergency",
+    "district" : "Mayuge",
+    "total" : 4
+  },
+  { "category" : "water",
+    "district" : "Ngora",
+    "total" : 14
+  },
+  { "category" : "water",
+    "district" : "Dokolo",
+    "total" : 10
+  },
+  { "category" : "health & nutrition",
+    "district" : "Soroti",
+    "total" : 176
+  },
+  { "category" : "education",
+    "district" : "Bududa",
+    "total" : 15
+  },
+  { "category" : "water",
+    "district" : "Namutumba",
+    "total" : 11
+  },
+  { "category" : "ovc",
+    "district" : "Apac",
+    "total" : 76
+  },
+  { "category" : "emergency",
+    "district" : "Ibanda",
+    "total" : 5
+  },
+  { "category" : "water",
+    "district" : "Amuru",
+    "total" : 9
+  },
+  { "category" : "education",
+    "district" : "Kampala",
+    "total" : 244
+  },
+  { "category" : "ovc",
+    "district" : "Kiryandongo",
+    "total" : 60
+  },
+  { "category" : "ovc",
+    "district" : "Adjumani",
+    "total" : 45
+  },
+  { "category" : "health & nutrition",
+    "district" : "Katakwi",
+    "total" : 70
+  },
+  { "category" : "water",
+    "district" : "Pader",
+    "total" : 16
+  },
+  { "category" : "health & nutrition",
+    "district" : "Oyam",
+    "total" : 447
+  },
+  { "category" : "health & nutrition",
+    "district" : "Ntoroko",
+    "total" : 25
+  },
+  { "category" : "ovc",
+    "district" : "Ssembabule",
+    "total" : 29
+  },
+  { "category" : "ovc",
+    "district" : "Luuka",
+    "total" : 19
+  },
+  { "category" : "education",
+    "district" : "Masindi",
+    "total" : 20
+  },
+  { "category" : "health & nutrition",
+    "district" : "Iganga",
+    "total" : 132
+  },
+  { "category" : "ovc",
+    "district" : "Rukungiri",
+    "total" : 41
+  },
+  { "category" : "ovc",
+    "district" : "Kabarole",
+    "total" : 123
+  },
+  { "category" : "education",
+    "district" : "Bulambuli",
+    "total" : 13
+  },
+  { "category" : "violence against children",
+    "district" : "Serere",
+    "total" : 25
+  },
+  { "category" : "ovc",
+    "district" : "Rakai",
+    "total" : 60
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kamwenge",
+    "total" : 90
+  },
+  { "category" : "education",
+    "district" : "Buvuma",
+    "total" : 23
+  },
+  { "category" : "emergency",
+    "district" : "Nakasongola",
+    "total" : 3
+  },
+  { "category" : "water",
+    "district" : "Bukwo",
+    "total" : 3
+  },
+  { "category" : "ovc",
+    "district" : "Pallisa",
+    "total" : 65
+  },
+  { "category" : "ovc",
+    "district" : "Kiruhura",
+    "total" : 54
+  },
+  { "category" : "water",
+    "district" : "Mitooma",
+    "total" : 9
+  },
+  { "category" : "emergency",
+    "district" : "Kyenjojo",
+    "total" : 6
+  },
+  { "category" : "water",
+    "district" : "Kalangala",
+    "total" : 4
+  },
+  { "category" : "ovc",
+    "district" : "Kotido",
+    "total" : 24
+  },
+  { "category" : "ovc",
+    "district" : "Kalungu",
+    "total" : 17
+  },
+  { "category" : "health & nutrition",
+    "district" : "Alebtong",
+    "total" : 69
+  },
+  { "category" : "health & nutrition",
+    "district" : "Bushenyi",
+    "total" : 109
+  },
+  { "category" : "health & nutrition",
+    "district" : "Butambala",
+    "total" : 38
+  },
+  { "category" : "violence against children",
+    "district" : "Yumbe",
+    "total" : 44
+  },
+  { "category" : "education",
+    "district" : "Nakapiripirit",
+    "total" : 71
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kyenjojo",
+    "total" : 118
+  },
+  { "category" : "violence against children",
+    "district" : "Masaka",
+    "total" : 17
+  },
+  { "category" : "education",
+    "district" : "Mityana",
+    "total" : 17
+  },
+  { "category" : "violence against children",
+    "district" : "Agago",
+    "total" : 26
+  },
+  { "category" : "education",
+    "district" : "Amudat",
+    "total" : 43
+  },
+  { "category" : "emergency",
+    "district" : "Bushenyi",
+    "total" : 8
+  },
+  { "category" : "education",
+    "district" : "Kyankwanzi",
+    "total" : 51
+  },
+  { "category" : "water",
+    "district" : "Buliisa",
+    "total" : 6
+  },
+  { "category" : "emergency",
+    "district" : "Alebtong",
+    "total" : 2
+  },
+  { "category" : "ovc",
+    "district" : "Amolatar",
+    "total" : 25
+  },
+  { "category" : "violence against children",
+    "district" : "Kayunga",
+    "total" : 14
+  },
+  { "category" : "education",
+    "district" : "Arua",
+    "total" : 160
+  },
+  { "category" : "health & nutrition",
+    "district" : "Nakasongola",
+    "total" : 37
+  },
+  { "category" : "ovc",
+    "district" : "Maracha",
+    "total" : 33
+  },
+  { "category" : "water",
+    "district" : "Mpigi",
+    "total" : 18
+  },
+  { "category" : "ovc",
+    "district" : "Sironko",
+    "total" : 51
+  },
+  { "category" : "emergency",
+    "district" : "Kamwenge",
+    "total" : 2
+  },
+  { "category" : "violence against children",
+    "district" : "Sheema",
+    "total" : 16
+  },
+  { "category" : "education",
+    "district" : "Isingiro",
+    "total" : 13
+  },
+  { "category" : "violence against children",
+    "district" : "Bududa",
+    "total" : 17
+  },
+  { "category" : "health & nutrition",
+    "district" : "Apac",
+    "total" : 167
+  },
+  { "category" : "ovc",
+    "district" : "Soroti",
+    "total" : 84
+  },
+  { "category" : "water",
+    "district" : "Busia",
+    "total" : 36
+  },
+  { "category" : "emergency",
+    "district" : "Lwengo",
+    "total" : 4
+  },
+  { "category" : "emergency",
+    "district" : "Hoima",
+    "total" : 2
+  },
+  { "category" : "emergency",
+    "district" : "Otuke",
+    "total" : 1
+  },
+  { "category" : "ovc",
+    "district" : "Katakwi",
+    "total" : 26
+  },
+  { "category" : "health & nutrition",
+    "district" : "Adjumani",
+    "total" : 74
+  },
+  { "category" : "emergency",
+    "district" : "Amuria",
+    "total" : 5
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kiryandongo",
+    "total" : 122
+  },
+  { "category" : "violence against children",
+    "district" : "Kampala",
+    "total" : 288
+  },
+  { "category" : "health & nutrition",
+    "district" : "Luuka",
+    "total" : 36
+  },
+  { "category" : "water",
+    "district" : "Bugiri",
+    "total" : 17
+  },
+  { "category" : "health & nutrition",
+    "district" : "Ssembabule",
+    "total" : 37
+  },
+  { "category" : "ovc",
+    "district" : "Ntoroko",
+    "total" : 10
+  },
+  { "category" : "ovc",
+    "district" : "Oyam",
+    "total" : 186
+  },
+  { "category" : "emergency",
+    "district" : "Bukedea",
+    "total" : 10
+  },
+  { "category" : "emergency",
+    "district" : "Kole",
+    "total" : 9
+  },
+  { "category" : "ovc",
+    "district" : "Iganga",
+    "total" : 73
+  },
+  { "category" : "health & nutrition",
+    "district" : "Rukungiri",
+    "total" : 92
+  },
+  { "category" : "emergency",
+    "district" : "Kyegegwa",
+    "total" : 2
+  },
+  { "category" : "water",
+    "district" : "Nwoya",
+    "total" : 10
+  },
+  { "category" : "violence against children",
+    "district" : "Masindi",
+    "total" : 20
+  },
+  { "category" : "water",
+    "district" : "Kibaale",
+    "total" : 9
+  },
+  { "category" : "emergency",
+    "district" : "Ssembabule",
+    "total" : 3
+  },
+  { "category" : "violence against children",
+    "district" : "Mbarara",
+    "total" : 73
+  },
+  { "category" : "emergency",
+    "district" : "Luuka",
+    "total" : 2
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kole",
+    "total" : 124
+  },
+  { "category" : "water",
+    "district" : "Kaberamaido",
+    "total" : 25
+  },
+  { "category" : "health & nutrition",
+    "district" : "Bukedea",
+    "total" : 124
+  },
+  { "category" : "education",
+    "district" : "Butaleja",
+    "total" : 12
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kyegegwa",
+    "total" : 65
+  },
+  { "category" : "emergency",
+    "district" : "Rukungiri",
+    "total" : 7
+  },
+  { "category" : "violence against children",
+    "district" : "Napak",
+    "total" : 5
+  },
+  { "category" : "water",
+    "district" : "Koboko",
+    "total" : 26
+  },
+  { "category" : "education",
+    "district" : "Tororo",
+    "total" : 86
+  },
+  { "category" : "ovc",
+    "district" : "Rubirizi",
+    "total" : 16
+  },
+  { "category" : "violence against children",
+    "district" : "Wakiso",
+    "total" : 245
+  },
+  { "category" : "emergency",
+    "district" : "Apac",
+    "total" : 3
+  },
+  { "category" : "health & nutrition",
+    "district" : "Lwengo",
+    "total" : 54
+  },
+  { "category" : "ovc",
+    "district" : "Mayuge",
+    "total" : 35
+  },
+  { "category" : "education",
+    "district" : "Buhweju",
+    "total" : 30
+  },
+  { "category" : "emergency",
+    "district" : "Adjumani",
+    "total" : 3
+  },
+  { "category" : "health & nutrition",
+    "district" : "Hoima",
+    "total" : 83
+  },
+  { "category" : "health & nutrition",
+    "district" : "Otuke",
+    "total" : 44
+  },
+  { "category" : "education",
+    "district" : "Kiboga",
+    "total" : 53
+  },
+  { "category" : "ovc",
+    "district" : "Ibanda",
+    "total" : 39
+  },
+  { "category" : "emergency",
+    "district" : "Kiryandongo",
+    "total" : 5
+  },
+  { "category" : "health & nutrition",
+    "district" : "Amuria",
+    "total" : 94
+  },
+  { "category" : "water",
+    "district" : "Buikwe",
+    "total" : 16
+  },
+  { "category" : "emergency",
+    "district" : "Kiruhura",
+    "total" : 1
+  },
+  { "category" : "ovc",
+    "district" : "Butambala",
+    "total" : 19
+  },
+  { "category" : "violence against children",
+    "district" : "Amudat",
+    "total" : 3
+  },
+  { "category" : "water",
+    "district" : "Lyantonde",
+    "total" : 5
+  },
+  { "category" : "education",
+    "district" : "Agago",
+    "total" : 22
+  },
+  { "category" : "violence against children",
+    "district" : "Kyankwanzi",
+    "total" : 9
+  },
+  { "category" : "ovc",
+    "district" : "Kyenjojo",
+    "total" : 57
+  },
+  { "category" : "violence against children",
+    "district" : "Nakapiripirit",
+    "total" : 8
+  },
+  { "category" : "education",
+    "district" : "Yumbe",
+    "total" : 28
+  },
+  { "category" : "violence against children",
+    "district" : "Mityana",
+    "total" : 25
+  },
+  { "category" : "emergency",
+    "district" : "Kalungu",
+    "total" : 3
+  },
+  { "category" : "education",
+    "district" : "Masaka",
+    "total" : 20
+  },
+  { "category" : "emergency",
+    "district" : "Kabarole",
+    "total" : 9
+  },
+  { "category" : "violence against children",
+    "district" : "Arua",
+    "total" : 250
+  },
+  { "category" : "education",
+    "district" : "Kayunga",
+    "total" : 18
+  },
+  { "category" : "health & nutrition",
+    "district" : "Amolatar",
+    "total" : 59
+  },
+  { "category" : "violence against children",
+    "district" : "Isingiro",
+    "total" : 15
+  },
+  { "category" : "emergency",
+    "district" : "Pallisa",
+    "total" : 9
+  },
+  { "category" : "water",
+    "district" : "Kaliro",
+    "total" : 6
+  },
+  { "category" : "emergency",
+    "district" : "Rakai",
+    "total" : 3
+  },
+  { "category" : "health & nutrition",
+    "district" : "Sironko",
+    "total" : 101
+  },
+  { "category" : "education",
+    "district" : "Sheema",
+    "total" : 22
+  },
+  { "category" : "ovc",
+    "district" : "Nakasongola",
+    "total" : 13
+  },
+  { "category" : "health & nutrition",
+    "district" : "Maracha",
+    "total" : 70
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kabarole",
+    "total" : 266
+  },
+  { "category" : "violence against children",
+    "district" : "Bulambuli",
+    "total" : 26
+  },
+  { "category" : "emergency",
+    "district" : "Amolatar",
+    "total" : 2
+  },
+  { "category" : "water",
+    "district" : "Zombo",
+    "total" : 8
+  },
+  { "category" : "health & nutrition",
+    "district" : "Pallisa",
+    "total" : 146
+  },
+  { "category" : "emergency",
+    "district" : "Maracha",
+    "total" : 1
+  },
+  { "category" : "education",
+    "district" : "Serere",
+    "total" : 22
+  },
+  { "category" : "ovc",
+    "district" : "Kamwenge",
+    "total" : 53
+  },
+  { "category" : "violence against children",
+    "district" : "Buvuma",
+    "total" : 3
+  },
+  { "category" : "emergency",
+    "district" : "Sironko",
+    "total" : 1
+  },
+  { "category" : "health & nutrition",
+    "district" : "Rakai",
+    "total" : 89
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kiruhura",
+    "total" : 75
+  },
+  { "category" : "water",
+    "district" : "Moroto",
+    "total" : 10
+  },
+  { "category" : "water",
+    "district" : "Bukomansimbi",
+    "total" : 6
+  },
+  { "category" : "ovc",
+    "district" : "Bushenyi",
+    "total" : 64
+  },
+  { "category" : "ovc",
+    "district" : "Alebtong",
+    "total" : 35
+  },
+  { "category" : "water",
+    "district" : "Kitgum",
+    "total" : 29
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kotido",
+    "total" : 40
+  },
+  { "category" : "health & nutrition",
+    "district" : "Kalungu",
+    "total" : 69
+  }
+]
