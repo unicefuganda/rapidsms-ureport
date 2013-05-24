@@ -13,7 +13,7 @@
       .donut {
         right: -20px;
       }
-      #risks-pie-chart {
+      #national-pie-chart {
         top: 200px;
       }
       .legend {
@@ -45,19 +45,17 @@
     </div>
     <ol class="legend"></ol>
     <div id="ug-chart">
-        <h3>Colors Range From Yellow - Green - Blue. Number of messages sent by a district<br/> the  contribution From Low - High </h3>
+        <h3 class="about_header">National Pulse</h3>
         <a class="reset" href="javascript:ugChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-        <span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
-
         <div class="clearfix"></div>
     </div>
-
-    <div id="totals-chart">
-        <strong>By Percent Dominant Category: (Y-Axis: number of responses, X-Axis: percent dominant out of total,<br/> Radius: number of dominant responses)</strong>
-        <a class="reset" href="javascript:totalsChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-
-        <div class="clearfix"></div>
-    </div>
+{#    <div class="clearfix"></div>#}
+{#    <div id="totals-chart">#}
+{#        <h3 class="about_header"></h3>#}
+{#        <a class="reset" href="javascript:totalsChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>#}
+{##}
+{#        <div class="clearfix"></div>#}
+{#    </div>#}
 
     <div class="clearfix"></div>
 
@@ -72,7 +70,7 @@
     var numberFormat = d3.format(".2f");
 
     var ugChart = dc.geoChoroplethChart("#ug-chart");
-		var totalsChart = dc.bubbleChart("#totals-chart");
+{#		var totalsChart = dc.bubbleChart("#totals-chart");#}
         var nationalPieChart = dc.pieChart("#national-pie-chart")
 
 		var width = 700,
@@ -149,7 +147,7 @@
                     .domain(caseTypes)
                     .range(["#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"]);
 
-            var dominant_mapper = {"no messages":0, "water":1, "violence against children":2, "ovc":6, "health & nutrition":3, "emergency":5, "education":4};
+            var dominant_mapper = {"No messages":0, "water":1, "violence against children":2, "ovc":6, "health & nutrition":3, "emergency":5, "education":4};
             function category_of(value){
                 var n;
                 var x;
@@ -237,48 +235,48 @@
 								.colors(["#FFFFFF", "#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"])
 								.colorAccessor(function(d, i){return d})
 								.title(function (d) {
-										return "District: " + d.key + "\n Dominant Category: " + category_of((d.value ? d.value : 0));
+										return "District: " + d.key + "\n Most talked about: " + category_of((d.value ? d.value : 0));
 								});
 
-            totalsChart.width((width))
-                    .height(height/1.5)
-                    .margins({top: 10, right: 50, bottom: 30, left: 60})
-                    .dimension(districts)
-										// FIXME colors shown on chart don't make sense. WTF
-										.colors(colorbrewer.YlGnBu[9])
-										.colorDomain([0, 100])
-                    .group(totalAnswersByDistrict)
-                    .keyAccessor(function (p) {
-                        return p.value.total;
-                    })
-                    .valueAccessor(function (p) {
-                        return _.unique(p.value.categories).length;
-                    })
-                    .radiusValueAccessor(function (p) {
-                        return p.value.total;
-                    })
-										// TODO calculate these domains
-                    .x(d3.scale.linear().domain([0, (2 + maxCategories)]))
-                    .r(d3.scale.linear().domain([0, maxCategories]))
-                    .minRadiusWithLabel(11)
-                    .elasticY(true)
-                    .yAxisPadding(5)
-                    .elasticX(true)
-                    .xAxisPadding(200)
-                    .maxBubbleRelativeSize(0.07)
-                    .renderHorizontalGridLines(false)
-                    .renderVerticalGridLines(true)
-                    .renderLabel(true)
-                    .renderTitle(true)
-                    .title(function (p) {
-                        return enumerateCountsForDatumTitle(p);
-                    });
-            totalsChart.yAxis().tickFormat(function (s) {
-                return s ;
-            });
-            totalsChart.xAxis().tickFormat(function (s) {
-                return s;
-            });
+{#            totalsChart.width((width))#}
+{#                    .height(height/1.5)#}
+{#                    .margins({top: 10, right: 50, bottom: 30, left: 60})#}
+{#                    .dimension(districts)#}
+{#										// FIXME colors shown on chart don't make sense. WTF#}
+{#										.colors(colorbrewer.YlGnBu[9])#}
+{#										.colorDomain([0, 100])#}
+{#                    .group(totalAnswersByDistrict)#}
+{#                    .keyAccessor(function (p) {#}
+{#                        return p.value.total;#}
+{#                    })#}
+{#                    .valueAccessor(function (p) {#}
+{#                        return _.unique(p.value.categories).length;#}
+{#                    })#}
+{#                    .radiusValueAccessor(function (p) {#}
+{#                        return p.value.total;#}
+{#                    })#}
+{#										// TODO calculate these domains#}
+{#                    .x(d3.scale.linear().domain([0, (2 + maxCategories)]))#}
+{#                    .r(d3.scale.linear().domain([0, maxCategories]))#}
+{#                    .minRadiusWithLabel(11)#}
+{#                    .elasticY(true)#}
+{#                    .yAxisPadding(5)#}
+{#                    .elasticX(true)#}
+{#                    .xAxisPadding(200)#}
+{#                    .maxBubbleRelativeSize(0.07)#}
+{#                    .renderHorizontalGridLines(false)#}
+{#                    .renderVerticalGridLines(true)#}
+{#                    .renderLabel(true)#}
+{#                    .renderTitle(true)#}
+{#                    .title(function (p) {#}
+{#                        return enumerateCountsForDatumTitle(p);#}
+{#                    });#}
+{#            totalsChart.yAxis().tickFormat(function (s) {#}
+{#                return s ;#}
+{#            });#}
+{#            totalsChart.xAxis().tickFormat(function (s) {#}
+{#                return s;#}
+{#            });#}
 
             nationalPieChart
               .width(300)
@@ -309,7 +307,7 @@
             legendItems.enter().append('li')
               .attr("style", function (d) { return "background-color: " + mapLegendColors(d[0]) + ";"; })
               .html(function(d) {
-                    return " " + category_of(d[0]);
+                    return category_of(d[0]);
               });
     }
 </script>
