@@ -49,7 +49,7 @@ def kannel_status(request):
 def national_pulse(request):
     l = [l.pk for l in Location.objects.filter(type='district').distinct()]
 
-    s = IbmCategory.objects.filter(ibmmsgcategory__score__gte=0.2,
+    s = IbmCategory.objects.filter(ibmmsgcategory__score__gte=0.25,
                                    ibmmsgcategory__msg__connection__contact__reporting_location__in=l).annotate(
         total=Count('ibmmsgcategory')).values('total', 'name',
                                               'ibmmsgcategory__msg__connection__contact__reporting_location__name'). \
