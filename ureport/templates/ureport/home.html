@@ -1,8 +1,8 @@
 {% extends "ureport_layout.html" %}
 
 {% block javascripts %}
-    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-    <script src="http://openlayers.org/api/2.11-rc1/OpenLayers.js?1123"></script>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3&sensor=false"></script>
+    <script src="http://openlayers.org/api/2.12/OpenLayers.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}generic/javascripts/map.js"></script>
     {{ block.super }}
 {% endblock %}
