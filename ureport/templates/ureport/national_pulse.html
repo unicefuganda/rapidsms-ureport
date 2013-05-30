@@ -40,97 +40,73 @@
 
 {% block content %}
 <div class="container">
+
     <div>
         <a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a>
     </div>
     <ol class="legend"></ol>
     <div id="ug-chart">
-        <h3 class="about_header">National Pulse</h3>
+        <h3>Colors Range From Yellow - Green - Blue. Number of messages sent by a district<br/> the  contribution From Low - High </h3>
         <a class="reset" href="javascript:ugChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+        <span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
+
         <div class="clearfix"></div>
     </div>
-{#    <div class="clearfix"></div>#}
+
 {#    <div id="totals-chart">#}
-{#        <h3 class="about_header"></h3>#}
+{#        <strong>By Percent Dominant Category: (Y-Axis: number of dominant responses, X-Axis: percent dominant out of total responses,<br/> Radius: number of total responses)</strong>#}
 {#        <a class="reset" href="javascript:totalsChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>#}
 {##}
 {#        <div class="clearfix"></div>#}
 {#    </div>#}
 
-    <div class="clearfix"></div>
-
     <div id="national-pie-chart" class="donut control">
         <a class="reset" href="javascript:nationalPieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-
     </div>
+
 
 </div>
 
 <script type="text/javascript">
-    var numberFormat = d3.format(".2f");
+   var numberFormat = d3.format(".2f");
 
     var ugChart = dc.geoChoroplethChart("#ug-chart");
-{#		var totalsChart = dc.bubbleChart("#totals-chart");#}
-        var nationalPieChart = dc.pieChart("#national-pie-chart")
+    var totalsChart = dc.bubbleChart("#totals-chart");
+    var nationalPieChart = dc.pieChart("#national-pie-chart")
 
-		var width = 700,
-				height = 960;
+    var width = 700,
+        height = 960;
 
-		var projection = d3.geo.albers()
-				.center([33, 0])
-				// ug is slanted on albers projection,
-				// so adjust pitch and roll
-				// such that bottom of ug straight
-				// (its straight on mercator projections,
-				// which is what most people are used to)
-				// [yaw, pitch, roll] AKA [lat, long, roll]
-				.rotate([-1, 11.5, -16.4])
-				.parallels([25, 35])
-				.scale(6000)
-				.translate([width / 2, height / 2]);
+    var projection = d3.geo.albers()
+        .center([33, 0])
+        // ug is slanted on albers projection,
+        // so adjust pitch and roll
+        // such that bottom of ug straight
+        // (its straight on mercator projections,
+        // which is what most people are used to)
+        // [yaw, pitch, roll] AKA [lat, long, roll]
+        .rotate([-1, 11.5, -16.4])
+        .parallels([25, 35])
+        .scale(6000)
+        .translate([width / 2, height / 2]);
 
-		// declare some vars here so they are available
-		// in the browser console for debugging
-		var data;
-		var districts;
-		var shapes;
-        var data1;
+    // declare some vars here so they are available
+    // in the browser console for debugging
+    var data;
+    var districts;
+    var shapes;
         var categories;
-        var debug = true;
+        var debug = false;
         var total;
         var caseTypes;
 
-        function max_of(obj){
-                var n = 0;
-                var x;
-                var key;
-                for (x in obj){
-                    if (obj[x] > n){
-                        n = obj[x];
-                        key = x;
-                    }
-                }
-                return key;
-            }
+    queue()
+      .defer(d3.json, "{{ MEDIA_URL }}ureport/data/districts.json")
+      .defer(d3.json, "{% url pulse_json %}")
+      .await(ready);
 
-		queue()
-			.defer(d3.json, "{{ MEDIA_URL }}ureport/data/districts.json")
-            .defer(d3.json, "{% url pulse_json %}")
-			.await(ready);
-
-		function ready(error, ug, category) {
-				// TODO handle error!
-				// TODO maybe rework so that fgmPoll.tsv is organized like this?
-				// District Answer Number
-				// District1 yes 22
-				// District1 no 11
-				// i *think* that this sort of structure
-				// would make it simpler to group by answer, so you could
-				// easily toggle between mapping percentYes to percentNo, etc
-				//
-				// add poll name to each result record
-				// TODO toggle between results from more than one poll
-        //data = crossfilter(_.map(poll, function(p) {return _.defaults(p, {'poll': 'fgm'});}));
+    function ready(error, ug, category) {
+        // TODO handle error!
         shapes = ug;
 
             data = crossfilter(_.map(category, function(p){return _.defaults(p, {'category': 'irrelevant'})}))
@@ -141,84 +117,115 @@
                 return d["district"];
             });
             caseDistricts = _.unique(_.pluck(districts, 'district'));
-            caseTypes = _.unique(_.pluck(categories.top(1000), 'category'));
+            caseTypes = _.unique(_.pluck(categories.top(10000), 'category'));
+            // add extra category for districts that lack any category data
+            caseTypes.unshift("no messages");
+
+            // some calculations used to properly format tooltips for bubble chart
+            // d3.extent returns [min, max] of the array of lengths
+            caseTextDiff = d3.extent(_.pluck(caseTypes, 'length'));
+            // see how many tabs (1 tab = 5 spaces) will make up the difference
+            // between the shortest category name and the longest
+            caseTextTabs = Math.ceil((caseTextDiff[1] - caseTextDiff[0])/5);
+
+            districtsTotals = districts.group().reduceSum(function(d) { return d.total; });
+            districtsByCategory= data.dimension(function(d) { return d.category; });
+            districtsTotalsByCategory = districtsByCategory.group().reduceSum(function(d) { return d.total; });
+
             categoriesGroup = categories.group().reduceSum(function(d){return d.total});
             categoryColor = d3.scale.ordinal()
                     .domain(caseTypes)
-                    .range(["#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"]);
+                    .range(["#FFA500", "#FFFFFF", "#0000FF", "#000000", "#808080", "#800080", "#FF0000"]);
 
-            var dominant_mapper = {"No messages":0, "water":1, "violence against children":2, "ovc":6, "health & nutrition":3, "emergency":5, "education":4};
-            function category_of(value){
-                var n;
-                var x;
-                for (x in dominant_mapper){
-                    if (value == dominant_mapper[x]){
-                        n = x;
-                    }
-                }
-                return n;
-            }
+            // d3.map converts an object into something more like a python dict
+            // that can be accessed by my_map.get('key') - its faster and more reliable
+            // in most browsers
+            // this is taking the caseTypes and making a map of {name: index}
+            // (d3.map ['create a mapping'] is very different from _.map ['map a function over an array'])
+            dominant_mapper = d3.map(_.object(_.map(caseTypes, function(d, i){ return [d, i]})));
+            // instead of a function, using a d3.map will be faster for lookups
+            // _.invert returns a copy of the object with keys and values swapped,
+            // so instead of {name: index} like in dominant_mapper, this will have
+            // a map of {index: name}
+            category_of = d3.map(_.invert(dominant_mapper));
 
-				// crossfilter dimension for districts
-
-
-				// crossfilter group (map-reduce) for poll result counts and stats by district
-				// see https://github.com/square/crossfilter/wiki/API-Reference#wiki-group_reduce
+        // crossfilter group (map-reduce) for category totals by district
+        // see https://github.com/square/crossfilter/wiki/API-Reference#wiki-group_reduce
         var totalAnswersByDistrict = districts.group().reduce(
                 function(p, v) {
-										// add function
-										// reduce by sum
+                    // add function
+                    // reduce by sum
                     p.total += +v.total;
                     p.totals[v.category] = v.total;
-                    if (v.total !== 0){
-                        p.categories.push(v.category);
-                    }
-                    p.dominant_name = max_of(p.totals);
-                    p.dominant = dominant_mapper[p.dominant_name];
-                    p.countList = _.sortBy(_.pairs(p.totals), function(d){return d[1];});
-                    total = p;
+
+                    // for speed, its better to do this type of calculation within the closure
+                    // rather than by calling a function in another scope.
+                    // _.pairs returns a list of lists of the object's key value pairs
+                    // (e.g., [[k,v],[k2,v2],...]
+                    // then call _.max with an accessor function that finds the largest list based
+                    // on the value. and then get the key
+                    //p.dominant_name = _.max(_.pairs(p.totals), function(d) {return Math.max(d[1])})[0]
+                    //p.dominant = dominant_mapper.get(p.dominant_name);
+                    // ...
+                    // but! we dont need these. the categoryList is sorted, so
+                    // _.last(p.categoryList) will be the dominant category
+                    p.categoryList = _.sortBy(_.pairs(p.totals), function(d){return d[1];});
                     return p;
                 },
                 function(p, v) {
-										// add function
-										// reduce by sum
+                    // add function
+                    // reduce by sum
                     p.total -= +v.total;
-                    p.totals[v.category] = v.total;
-                    if (v.total !== 0){
-                        p.categories.push(v.category);
-                    }
-                    p.dominant_name = max_of(p.totals);
-                    p.dominant = dominant_mapper[p.dominant_name];
-                    p.countList = _.sortBy(_.pairs(p.totals), function(d){return d[1];});
-                    total = p;
+                    p.totals[v.category] -= v.total;
+
+                    p.categoryList = _.sortBy(_.pairs(p.totals), function(d){return d[1];});
                     return p;
                 },
                 function() {
-                    return {total: 0, counts: {}, countList: [], categories: [], totals: {}, dominant_name:"", dominant:0};
+                    return {total: 0, categoryList: [], totals: {}};
                 }
             );
 
-            maxCategories = _.max(totalAnswersByDistrict.top(1000), function(p) {return p.value.total;}).value.total;
+            maxCategories = _.max(totalAnswersByDistrict.top(10000), function(p) {return p.value.total;}).value.total;
 
             function enumerateCountsForDatumTitle(d) {
-                  var countsText = _.map(d.value.countList, function(x) {return x[0] + ":\t " + x[1] + "\n";}).join('');
-                  return d.key + ":" + d.value.total
-                          + "\nCategories"
-                          + "\n"
-                          + countsText;
+              // template for formatting each line
+              var formatLine = _.template("<%= key %>: <%= tabs %><%= value %>\t (<%= percentage %>%)\n\t");
+
+              function calculateTabSpacing(v, t) {
+                // this function pads the values with tabs so they will all line up
+                var key = v[0];
+                var value = v[1];
+                // create empty array the length of needed tabs
+                // and join the array with the tab character
+                var tabs = Array(1 + (caseTextTabs - Math.floor((key.length + 1) / 5))).join("\t");
+                // turn decimal value into percent of total
+                var percentage = parseFloat((value/t)*100).toFixed(2);
+                // put it all together
+                return formatLine({key: key, tabs: tabs, value: value, percentage: percentage});
+              }
+
+              var countsText = [];
+              for (var i = 0, l = d.value.categoryList.length; i < l; i++) {
+                countsText.push(calculateTabSpacing(d.value.categoryList[i], d.value.total));
+              }
+              return d.key + ": " + d.value.total
+                      + "\nCategories"
+                      + "\n\t"
+                      + countsText.join('');
             }
 
-				ugChart.width(width)
-								.height(height)
-								.dimension(districts)
-								.projection(projection)
+        ugChart.width(width)
+                .height(height)
+                .dimension(districts)
+                .projection(projection)
                 .group(totalAnswersByDistrict)
-								.valueAccessor(function (p) {
-										return p.value.dominant;
-								})
-								// TODO look into patching dc.js so we can
-								// use topojson instead of geojson (topojson files are much smaller)
-								.overlayGeoJson(ug.features, "district", function (d) {
+                .valueAccessor(function (p) {
+                    return dominant_mapper.get(_.last(p.value.categoryList)[0]);
+                })
+                // TODO look into patching dc.js so we can
+                // use topojson instead of geojson (topojson files are much smaller)
+                .overlayGeoJson(ug.features, "district", function (d) {
                                     if (_.find(caseDistricts, function(x){ return x == d.properties.name; })){
                                       // if district name from map is the same
                                       // as district name in cases, use it
@@ -230,53 +237,50 @@
                                     }
                                     return d.properties.name;
                                 })
-								// color across yellow-green-blue range
-								// with a domain of 0% yes to 100% yes
-								.colors(["#FFFFFF", "#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"])
-								.colorAccessor(function(d, i){return d})
-								.title(function (d) {
-										return "District: " + d.key + "\n Most talked about: " + category_of((d.value ? d.value : 0));
-								});
+                .colors(categoryColor)
+                .colorAccessor(function(d, i){return d})
+                .title(function (d) {
+                    return "District: " + d.key + "\nMost Talked about: " + (caseTypes[d.value] ? caseTypes[d.value] : "no messages");
+                });
 
-{#            totalsChart.width((width))#}
-{#                    .height(height/1.5)#}
-{#                    .margins({top: 10, right: 50, bottom: 30, left: 60})#}
-{#                    .dimension(districts)#}
-{#										// FIXME colors shown on chart don't make sense. WTF#}
-{#										.colors(colorbrewer.YlGnBu[9])#}
-{#										.colorDomain([0, 100])#}
-{#                    .group(totalAnswersByDistrict)#}
-{#                    .keyAccessor(function (p) {#}
-{#                        return p.value.total;#}
-{#                    })#}
-{#                    .valueAccessor(function (p) {#}
-{#                        return _.unique(p.value.categories).length;#}
-{#                    })#}
-{#                    .radiusValueAccessor(function (p) {#}
-{#                        return p.value.total;#}
-{#                    })#}
-{#										// TODO calculate these domains#}
-{#                    .x(d3.scale.linear().domain([0, (2 + maxCategories)]))#}
-{#                    .r(d3.scale.linear().domain([0, maxCategories]))#}
-{#                    .minRadiusWithLabel(11)#}
-{#                    .elasticY(true)#}
-{#                    .yAxisPadding(5)#}
-{#                    .elasticX(true)#}
-{#                    .xAxisPadding(200)#}
-{#                    .maxBubbleRelativeSize(0.07)#}
-{#                    .renderHorizontalGridLines(false)#}
-{#                    .renderVerticalGridLines(true)#}
-{#                    .renderLabel(true)#}
-{#                    .renderTitle(true)#}
-{#                    .title(function (p) {#}
-{#                        return enumerateCountsForDatumTitle(p);#}
-{#                    });#}
-{#            totalsChart.yAxis().tickFormat(function (s) {#}
-{#                return s ;#}
-{#            });#}
-{#            totalsChart.xAxis().tickFormat(function (s) {#}
-{#                return s;#}
-{#            });#}
+            totalsChart.width((width))
+                    .height(height/1.5)
+                    .margins({top: 10, right: 50, bottom: 30, left: 60})
+                    .dimension(districtsByCategory)
+                    // FIXME colors shown on chart don't make sense. WTF
+                    .colors(categoryColor)
+                    .group(totalAnswersByDistrict)
+                    .keyAccessor(function (p) {
+                        return _.last(p.value.categoryList)[1];
+                    })
+                    .valueAccessor(function (p) {
+                        return (_.last(p.value.categoryList)[1]/p.value.total)*100;
+                    })
+                    .radiusValueAccessor(function (p) {
+                        return p.value.total;
+                    })
+                    // TODO calculate these domains
+                    .x(d3.scale.linear().domain([0, (2 + maxCategories)]))
+                    .r(d3.scale.linear().domain([0, maxCategories]))
+                    .minRadiusWithLabel(11)
+                    .elasticY(true)
+                    .yAxisPadding(5)
+                    .elasticX(true)
+                    .xAxisPadding(200)
+                    .maxBubbleRelativeSize(0.07)
+                    .renderHorizontalGridLines(false)
+                    .renderVerticalGridLines(true)
+                    .renderLabel(true)
+                    .renderTitle(true)
+                    .title(function (p) {
+                        return enumerateCountsForDatumTitle(p);
+                    });
+            totalsChart.yAxis().tickFormat(function (s) {
+                return s ;
+            });
+            totalsChart.xAxis().tickFormat(function (s) {
+                return s;
+            });
 
             nationalPieChart
               .width(300)
@@ -293,21 +297,17 @@
 
             dc.renderAll();
 
-
-            mapLegendColors = d3.scale.linear()
-            .domain(d3.range(0,7))
-            .range(["#FFFFFF", "#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"]);
-
             var legend = d3.select('.legend')
                 .attr("style", function (d) { return "margin-top: " + (height / 4) + "px;"; });
 
             var legendItems = legend.selectAll('.legend-item')
-            .data(_.zip(mapLegendColors.domain(), mapLegendColors.range()));
+              .data(_.zip(categoryColor.domain(), categoryColor.range()));
 
             legendItems.enter().append('li')
-              .attr("style", function (d) { return "background-color: " + mapLegendColors(d[0]) + ";"; })
-              .html(function(d) {
-                    return category_of(d[0]);
+              .attr("style", function (d) { return "background-color: " + categoryColor(d[0]) + "; width: 90px"; })
+              .attr("class", function (d) { return "category-" + d[0]; })
+              .text(function(d) {
+                    return category_of.get(d[0]);
               });
     }
 </script>
