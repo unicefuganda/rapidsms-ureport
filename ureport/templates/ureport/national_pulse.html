@@ -117,11 +117,8 @@
                 return d["district"];
             });
             caseDistricts = _.unique(_.pluck(districts, 'district'));
-            caseTypes = _.unique(_.pluck(categories.top(10000), 'category'));
+            caseTypes = _.sortBy(_.unique(_.pluck(categories.top(10000), 'category')), function(d){return d;});
             // add extra category for districts that lack any category data
-
-
-            caseTypes = _.sortBy(caseTypes, function(d){return d;});
             caseTypes.unshift("no messages");
 
             // some calculations used to properly format tooltips for bubble chart
