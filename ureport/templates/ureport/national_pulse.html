@@ -46,7 +46,7 @@
     </div>
     <ol class="legend"></ol>
     <div id="ug-chart">
-        <h3>Colors Range From Yellow - Green - Blue. Number of messages sent by a district<br/> the  contribution From Low - High </h3>
+        <h3 class="about_header">National Pulse</h3>
         <a class="reset" href="javascript:ugChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
         <span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
 
@@ -119,6 +119,9 @@
             caseDistricts = _.unique(_.pluck(districts, 'district'));
             caseTypes = _.unique(_.pluck(categories.top(10000), 'category'));
             // add extra category for districts that lack any category data
+
+
+            caseTypes = _.sortBy(caseTypes, function(d){return d;});
             caseTypes.unshift("no messages");
 
             // some calculations used to properly format tooltips for bubble chart
@@ -135,7 +138,7 @@
             categoriesGroup = categories.group().reduceSum(function(d){return d.total});
             categoryColor = d3.scale.ordinal()
                     .domain(caseTypes)
-                    .range(["#FFA500", "#FFFFFF", "#0000FF", "#000000", "#808080", "#800080", "#FF0000"]);
+                    .range(["#FFA500", "#FFFFFF", "#0000FF", "#000000", "#800080", "#FF0000", "#808080"]);
 
             // d3.map converts an object into something more like a python dict
             // that can be accessed by my_map.get('key') - its faster and more reliable
