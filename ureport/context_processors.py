@@ -16,6 +16,7 @@ def has_valid_pagination_limit(settings):
 
         if isinstance(pagination_limit, int):
             return True
+        return False
     except AttributeError:
         return False
 
@@ -29,25 +30,19 @@ def voices(request):
     except QuoteBox.DoesNotExist:
         quote = None
 
-    if has_valid_pagination_limit(settings):
-        return {
-            'total_ureporters': Contact.objects.exclude(
-                connection__identity__in=Blacklist.objects.values_list('connection__identity', flat=True)).count(),
-            'polls': Poll.objects.exclude(contacts=None, start_date=None).exclude(pk__in=[297, 296, 349, 350]).order_by(
-                '-start_date')[:settings.PAGINATION_LIMIT],
-            'deployment_id': settings.DEPLOYMENT_ID,
-            'quote': quote,
-            'geoserver_url': settings.GEOSERVER_URL,
-            'show_contact_info': getattr(settings, 'SHOW_CONTACT_INFO', True)
-        }
-    else:
-        return {
-            'total_ureporters': Contact.objects.exclude(
-                connection__identity__in=Blacklist.objects.values_list('connection__identity', flat=True)).count(),
-            'polls': Poll.objects.exclude(contacts=None, start_date=None).exclude(pk__in=[297, 296, 349, 350]).order_by(
+    context = {
+        'total_ureporters': Contact.objects.exclude(
+            connection__identity__in=Blacklist.objects.values_list('connection__identity', flat=True)).count(),
+        'polls': Poll.objects.exclude(contacts=None, start_date=None).exclude(pk__in=[297, 296, 349, 350]).order_by(
                 '-start_date'),
-            'deployment_id': settings.DEPLOYMENT_ID,
-            'quote': quote,
-            'geoserver_url': settings.GEOSERVER_URL,
-            'show_contact_info': getattr(settings, 'SHOW_CONTACT_INFO', True)
-        }
+        'deployment_id': settings.DEPLOYMENT_ID,
+        'quote': quote,
+        'geoserver_url': settings.GEOSERVER_URL,
+        'show_contact_info': getattr(settings, 'SHOW_CONTACT_INFO', True)
+    }
+
+    if has_valid_pagination_limit(settings):
+        context['polls'] = Poll.objects.exclude(contacts=None, start_date=None).exclude(
+            pk__in=[297, 296, 349, 350]).order_by(
+            '-start_date')[:settings.PAGINATION_LIMIT]
+    return context
