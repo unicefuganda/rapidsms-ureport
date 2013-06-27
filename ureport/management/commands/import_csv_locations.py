@@ -34,6 +34,7 @@ def add_location(loc_name, parent, location_point, type_id=None):
 def insert_all_locations_into_db(sheet, reporting_level, root_node_name):
     Location.objects.create(name=root_node_name)
     location_point = Point.objects.create(latitude=0, longitude=0)
+
     while sheet.has_next_column():
         column = sheet.get_next_column()
         cells = column.get_unique_cells()
