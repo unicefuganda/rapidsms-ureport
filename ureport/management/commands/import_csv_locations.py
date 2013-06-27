@@ -7,8 +7,9 @@ from rapidsms_ureport.ureport import csv_reader
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        if len(args) < 1:
-            print("You must pass the 0-based index of the column holding the reporting level as an argument")
+        if len(args) < 2:
+            print("You must pass the csv file holding the location hierarchy and \
+                    0-based index of the column holding the reporting level as an argument")
             exit(-1)
         else:
             reporting_level = int(args[1])
@@ -39,7 +40,6 @@ def insert_all_locations_into_db(sheet, reporting_level, root_node_name):
         type_id = None
         if column.index == reporting_level:
             type_id = 'district'
-
         if column.index == 0:
             parent = Location.objects.get(name=root_node_name)
             for cell in cells:
@@ -49,5 +49,3 @@ def insert_all_locations_into_db(sheet, reporting_level, root_node_name):
                 left = sheet.get_left_cell(cell)
                 parent = Location.objects.get(name=left.value, level=column.index)
                 add_location(cell.value, parent, location_point, type_id=type_id)
-
-
