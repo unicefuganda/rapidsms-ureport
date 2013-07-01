@@ -105,15 +105,11 @@ def autoreg(**kwargs):
             if mgr:
                 for email in mgr:
                     recipients.append(email)
-<<<<<<< HEAD
             send_mail("UReport now %d voices strong!" % total_ureporters,
                       "%s (%s) was the %dth member to finish the sign-up.  Let's welcome them!" % (
                           contact.name, connection.identity, total_ureporters), 'root@uganda.rapidsms.org', recipients,
                       fail_silently=True)
 
-=======
-            send_mail("UReport now %d voices strong!" % total_ureporters, "%s (%s) was the %dth member to finish the sign-up.  Let's welcome them!" % (contact.name, connection.identity, total_ureporters), 'askpaul82@gmail.com', recipients, fail_silently=True)
->>>>>>> commiting rapidsms_ureport
 
 def check_conn(sender, **kwargs):
     #delete bad connections
