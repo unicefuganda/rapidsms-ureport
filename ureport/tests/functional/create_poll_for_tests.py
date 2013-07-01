@@ -3,7 +3,7 @@ import time
 from rapidsms.models import Contact,Connection, Backend
 from poll.models import Poll
 from rapidsms_ureport.ureport.tests.functional.create_poll_utils import create_group, create_user, create_connection, create_poll, add_contacts_to_poll
-
+#random comment
 
 def start_poll_queues_messages_in_table(driver):
 
