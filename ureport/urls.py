@@ -99,7 +99,7 @@ urlpatterns = patterns('',
                        #    url(r'^download/(?P<file>[a-z\.]+)/$', download_contacts_template),
                        url(r'^download/(?P<f>[a-z_\.]+)', download_contacts_template, name="download"),
                        # wrapper for clickatell api callbacks
-                       url(r'^clickatell/$', clickatell_wrapper, name="clickatel"),
+                       url(r'^Agregator1/$', Agregator1_wrapper, name="Agregator1"),
                        #    url(r'^ureport/maptest/', generic_map, {
                        #        'map_layers' : [{'name':'A poll','url':'/polls/responses/48/stats/1/'},
                        #                       ],
