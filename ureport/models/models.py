@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+from dateutil.relativedelta import relativedelta
 from django.db import models
+from openpyxl import reader
 from poll.models import Poll
 from rapidsms.models import Contact, Connection
 from django.contrib.auth.models import User, Group
@@ -8,6 +10,7 @@ from script.models import ScriptSession
 from rapidsms_httprouter.models import Message
 from unregister.models import Blacklist
 from django.db.models.signals import post_save
+from uganda_common.utils import assign_backend
 from ussd.models import ussd_complete
 import datetime
 import re
@@ -245,7 +248,7 @@ class UPoll(Poll):
         for attr in PollAttribute.objects.all():
             if not getattr(self, attr.key, None):
                 setattr(self, attr.key, attr.get_default())
-            #Attach PollAttribute to object ie, poll.randomkey = 'some value'
+                #Attach PollAttribute to object ie, poll.randomkey = 'some value'
         for attr, value in self._get_set_attr().items():
             setattr(self, attr.key, value)
 
@@ -337,3 +340,93 @@ class SentToMtrac(models.Model):
 
     class Meta:
         app_label = 'ureport'
+
+
+class UploadContactException(Exception):
+    pass
+
+
+class UploadContacts(models.Model):
+    excel_file = models.FileField(upload_to="excel_contacts")
+    user = models.ForeignKey(User)
+    unprocessed = models.TextField(blank=True)
+    processed_on = models.DateTimeField(null=True)
+
+    class Meta:
+        app_label = "ureport"
+
+    def get_unprocessed(self):
+        return self.unprocessed
+
+    def process(self):
+        excel = reader.excel.load_workbook(self.excel_file.path)
+        rows = []
+        for sheet in excel.worksheets:
+            for row in sheet.rows:
+                r = []
+                for cell in row:
+                    r.append(cell.value)
+                rows.append(tuple(r))
+        with_error = []
+        for row in rows:
+            print "row -", row
+            try:
+                phone, name, language, gender, age, occupation, district, village_name, subcounty, health_facility = row
+                district = self._get_district(str(district))
+                phone = self._clean_phone(str(phone))
+                birth_date = self._birth_date(str(age))
+                gender = self._get_gender(str(gender))
+
+                connection, created = Connection.objects.get_or_create(identity=phone, backend=assign_backend(phone)[1])
+                if connection.contact is not None:
+                    contact = connection.contact
+                else:
+                    contact = Contact.objects.create(name=name)
+                    connection.contact = contact
+                    connection.save()
+
+                contact.name = name
+                contact.language = language
+                contact.gender = gender
+                contact.birthdate = birth_date
+                contact.reporting_location = district
+                contact.occupation = occupation
+                contact.village_name = village_name
+                contact.save()
+            except UploadContactException, e:
+                with_error.append((row, e))
+                continue
+        print "With Error -", with_error
+        self.unprocessed = str(with_error)
+        self.processed_on = datetime.datetime.now()
+        self.save()
+
+    def _get_district(self, district):
+        try:
+            district = Location.objects.get(name__iexact=district, type__name='district')
+            return district
+        except Location.DoesNotExist:
+            raise UploadContactException("District Name %s does not exist" % district)
+
+    def _clean_phone(self, phone):
+        num = phone.strip().replace('+', '').replace('-', '').replace(" ", '')
+        if num.startswith('0'):
+            num = '256' + num[1:]
+        if num.startswith('7') or num.startswith('4') or num.startswith('3'):
+            num = '256' + num
+        if len(num) == 12 and num.startswith('256'):
+            return num
+        raise UploadContactException("Phone number %s is invalid" % phone)
+
+    def _birth_date(self, age):
+        try:
+            return datetime.datetime.now() - relativedelta(years=int(age))
+        except:
+            raise UploadContactException("Age %s is invalid" % age)
+
+    def _get_gender(self, gender):
+        if gender.lower().startswith("m"):
+            return "m"
+        elif gender.lower().startswith("f"):
+            return "f"
+        raise UploadContactException("Gender %s is invalid" % gender)

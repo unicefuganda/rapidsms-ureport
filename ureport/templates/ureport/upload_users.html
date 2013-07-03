@@ -1,0 +1,37 @@
+{% extends "ureport_layout.html" %}
+
+{% block extra_js %}
+
+
+     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/jquery-ui.css"/>
+ <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/jquery-ui.js"></script>
+
+<script type="text/javascript">
+    $(function() {
+               $("#id_birthdate").datepicker({ dateFormat: 'dd/mm/yy' ,changeYear: true ,changeMonth: true,maxDate: new Date(1999, 1 - 1, 1) });
+            });
+    </script>
+{% endblock %}
+{% block content %}
+<div id="signup">
+<h3>Upload Contacts</h3>
+<p>Please cross check to see that the excel sheet is valid.
+    You will receive an email after the contacts have been added with the the rows that had errors</p>
+    <table>
+        {% if status_message %}
+            <tr><td> <div id="span_status_message" class="status_{{ status_message_type }}">
+        {{ status_message }}
+    <a href="javascript:void(0)" onclick="$('#span_status_message').hide();">Dismiss</a>
+    </div></td></tr>
+
+
+{% endif %}
+<form action="{% url upload_users %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+    {{ form.as_table }}
+   <tr><td> <input type="submit" value="Upload"></td></tr>
+</form>
+
+       </table>
+</div>
+
+{%endblock%}

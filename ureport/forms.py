@@ -22,7 +22,7 @@ from django.db.models.query import QuerySet
 from contact.models import MassText
 from poll.models import Poll, Translation
 from unregister.models import Blacklist
-from .models import AutoregGroupRules
+from .models import AutoregGroupRules, UploadContacts
 from uganda_common.utils import ExcelResponse
 from ureport.models import MessageAttribute, MessageDetail
 from django.utils.safestring import mark_safe
@@ -754,3 +754,13 @@ class PushToMtracForm(ActionForm):
         results = set([r.pk for r in results])
         tasks.push_to_mtrac.delay(results)
         return "%d Messages were pushed to mtrac" % len(results), "success"
+
+
+class UploadContactsForm(forms.ModelForm):
+    class Meta:
+        model = UploadContacts
+        fields = ('excel_file',)
+
+    @classmethod
+    def process(cls, upload):
+        tasks.process_uploaded_contacts.delay(upload)

@@ -1,10 +1,15 @@
 from datetime import date
 from time import strftime
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 from ureport.spreadsheet_utils import get_excel_dump_report_for_poll, \
     get_per_district_excel_report_for_yes_no_polls
 from poll.models import Poll
+from ureport.forms import UploadContactsForm
+
 
 @login_required
 def generate_poll_dump_report(request, poll_id):
@@ -35,3 +40,15 @@ def generate_per_district_report(request, poll_id):
     return HttpResponse('Sorry, the poll is not yes-no type')
 
 
+@login_required
+def upload_users(request):
+    form = UploadContactsForm()
+    if request.method == 'POST':
+        form = UploadContactsForm(request.POST, request.FILES)
+        if form.is_valid():
+            upload = form.save(commit=False)
+            upload.user = request.user
+            upload.save()
+            UploadContactsForm.process(upload)
+            return HttpResponseRedirect(reverse('upload_users'))
+    return render_to_response('ureport/upload_users.html', locals(), context_instance=RequestContext(request))
