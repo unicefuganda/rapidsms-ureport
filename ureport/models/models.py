@@ -371,11 +371,12 @@ class UploadContacts(models.Model):
         for row in rows:
             print "row -", row
             try:
-                phone, name, language, gender, age, occupation, district, village_name, subcounty, health_facility = row
+                phone, name, group, language, gender, age, occupation, district, village_name, subcounty, health_facility = row
                 district = self._get_district(str(district))
                 phone = self._clean_phone(str(phone))
                 birth_date = self._birth_date(str(age))
                 gender = self._get_gender(str(gender))
+                group = self._get_group(str(group))
 
                 connection, created = Connection.objects.get_or_create(identity=phone, backend=assign_backend(phone)[1])
                 if connection.contact is not None:
@@ -430,3 +431,9 @@ class UploadContacts(models.Model):
         elif gender.lower().startswith("f"):
             return "f"
         raise UploadContactException("Gender %s is invalid" % gender)
+
+    def _get_group(self, group):
+        try:
+            return Group.objects.get(name__iexact=group)
+        except Group.DoesNotExist:
+            raise UploadContactException("Group %s does not exist" % group)
