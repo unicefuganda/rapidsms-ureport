@@ -1,0 +1,32 @@
+diff -ru Django-1.3/django/db/models/sql/compiler.py Django-1.3-patched/django/db/models/sql/compiler.py
+--- Django-1.3/django/db/models/sql/compiler.py	2011-06-21 15:30:20.155858552 +0300
++++ Django-1.3-patched/django/db/models/sql/compiler.py	2011-06-21 15:46:53.399857085 +0300
+@@ -462,13 +462,14 @@
+                 result.append('%s%s%s' % (connector, qn(name), alias_str))
+             first = False
+         for t in self.query.extra_tables:
+-            alias, unused = self.query.table_alias(t)
++            alias, unused = self.query.table_alias(t, True)
+             # Only add the alias if it's not already present (the table_alias()
+             # calls increments the refcount, so an alias refcount of one means
+             # this is the only reference.
+             if alias not in self.query.alias_map or self.query.alias_refcount[alias] == 1:
+                 connector = not first and ', ' or ''
+-                result.append('%s%s' % (connector, qn(alias)))
++                alias_str = (alias != t and ' %s' % alias or '')
++                result.append('%s%s%s' % (connector, qn(t), alias_str))
+                 first = False
+         return result, []
+ 
+diff -ru Django-1.3/django/db/models/sql/query.py Django-1.3-patched/django/db/models/sql/query.py
+--- Django-1.3/django/db/models/sql/query.py	2011-06-21 15:30:20.159858921 +0300
++++ Django-1.3-patched/django/db/models/sql/query.py	2011-06-21 15:47:31.679857341 +0300
+@@ -643,7 +643,7 @@
+ 
+         # Create a new alias for this table.
+         if current:
+-            alias = '%s%d' % (self.alias_prefix, len(self.alias_map) + 1)
++            alias = '%s%d' % (self.alias_prefix, sum([len(li) for li in self.table_map.values()]) + 1)
+             current.append(alias)
+         else:
+             # The first occurence of a table uses the table name directly.
