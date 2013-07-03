@@ -42,7 +42,7 @@ class PollStatusTest(SplinterTestCase):
 
 
     def test_should_show_the_status_page(self):
-        self.assertTrue(self.browser.is_element_present_by_css("div[id=poll-status]"), 3)
+        self.assertTrue(self.browser.is_element_present_by_css("div[id=poll-status]", 5))
         self.assertTrue(str(self.poll.id) in self.browser.find_by_css("div[id=poll-status]").text)
 
         self.assertEqual(self.browser.find_by_id('contact-count').text, "2")
