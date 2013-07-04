@@ -6,94 +6,58 @@
 </div>
 <script defer="defer" type="text/javascript">
     var map;
-    var tiled;
-    var pureCoverage = false;
     var EVT;
-    var popups = {};
+    var response;
+    var format = 'image/png';
     // pink tile avoidance
     OpenLayers.IMAGE_RELOAD_ATTEMPTS = 5;
     OpenLayers.Util.onImageLoadErrorColor = "transparent";
     // make OL compute scale according to WMS spec
-    OpenLayers.DOTS_PER_INCH = 25.4 / 0.28;
+    var ESPG_4326_PROJECTION = new OpenLayers.Projection("EPSG:4326"); // This is the standard lon lat projection
+    var ESPG_900913_PROJECTION = new OpenLayers.Projection("EPSG:900913"); // This is google v3, or mercator projection
 
-    function init_chmap() {
-        // if this is just a coverage or a group of them, disable a few items,
-        // and default to jpeg format
-        format = 'image/png';
-
-
-        var bounds = new OpenLayers.Bounds(
-                3292022.5, -164636.828,
-                3896216.5, 471764.844
-        );
+    function lonLatPoint (lon, lat) {
+           return {lon: lon, lat: lat};
+    }
+    function lonLatBounds (bottomLeft, topRight) {
+           return {
+                bottomLeft: bottomLeft,
+                topRight:   topRight,
+                espg900913: new OpenLayers.Bounds(bottomLeft.lon, bottomLeft.lat, topRight.lon, topRight.lat)
+                                .transform(ESPG_4326_PROJECTION, ESPG_900913_PROJECTION)
+           };
+    }
+    function initializeMap() {
         var options = {
             controls: [],
-            maxExtent: bounds,
-            maxResolution: 2485.94403125,
-            projection: new OpenLayers.Projection("EPSG:900913"),
-            displayProjection: new OpenLayers.Projection("EPSG:4326"),
-            units: "m",
-            numZoomLevels: 20,
-
+            projection: ESPG_900913_PROJECTION,
+            numZoomLevels: 20
         };
-        map = new OpenLayers.Map('map_{{ poll.pk }}', options);
-
-        // setup tiled layer
-        tiled = new OpenLayers.Layer.WMS(
-                "unicef:pollcategories", "{{ geoserver_url }}unicef/wms",
-                {
-                    VIEWPARAMS: 'poll:{{poll.pk}};app:{{deployment_id}}',
-                    LAYERS: 'unicef:pollcategories',
-                    STYLES: '',
-                    format: format,
-                    tiled: true,
-                    transparent:true,
-                    tilesOrigin : map.maxExtent.left + ',' + map.maxExtent.bottom
-                },
-                {
-                    buffer: 0,
-                    displayOutsideMaxExtent: false,
-                    isBaseLayer: false,
-                    'opacity': 1.0,
-                }
-        );
-        var ghyb = new OpenLayers.Layer.Google(
-                "Google RoadMap",
-                {type: google.maps.MapTypeId.ROADMAP, numZoomLevels: 20}
-        );
-
-        map.addLayers([ ghyb,tiled ]);
-
-        // build up all controls
-        map.addControl(new OpenLayers.Control.PanZoomBar({
-            position: new OpenLayers.Pixel(2, 15)
-        }));
-        map.addControl(new OpenLayers.Control.Navigation());
-        map.addControl(new OpenLayers.Control.LayerSwitcher());
-        map.zoomToExtent(bounds);
-
-
-        // support GetFeatureInfo
+        return new OpenLayers.Map('map_{{ poll.pk }}', options);
+    }
+    function registerClickEventForMap() {
         map.events.register('click', map, function (e) {
             EVT = e;
             var params = {
                 REQUEST: "GetFeatureInfo",
-                EXCEPTIONS: "application/vnd.ogc.se_xml",
+                EXCEPTIONS: "text/plain",
                 BBOX: map.getExtent().toBBOX(),
                 SERVICE: "WMS",
                 VERSION: "1.1.1",
+
                 X: Math.round(e.xy.x),
                 Y: Math.round(e.xy.y),
                 INFO_FORMAT: 'text/html',
                 QUERY_LAYERS: map.layers[1].params.LAYERS,
                 FEATURE_COUNT: 1,
-                Viewparams: 'poll:{{poll.pk}};app:{{deployment_id}}',
-                Layers: 'unicef:pollcategories',
+                Layers: 'unicef:polls_south_sudan',
+                VIEWPARAMS: 'poll:{{poll.pk}};app:{{deployment_id}}',
                 WIDTH: map.size.w,
                 HEIGHT: map.size.h,
                 format: format,
-                styles: '',
+                styles: map.layers[1].params.STYLES,
                 srs: map.layers[1].params.SRS};
+            // merge filters
             if (map.layers[1].params.CQL_FILTER != null) {
                 params.cql_filter = map.layers[1].params.CQL_FILTER;
             }
@@ -103,9 +67,56 @@
             if (map.layers[1].params.FEATUREID) {
                 params.featureid = map.layers[1].params.FEATUREID;
             }
-            OpenLayers.loadURL("{{ geoserver_url }}unicef/wms", params, create_popup,create_popup);
+            var getRequest = {
+                url: "{{ geoserver_url }}unicef/wms",
+                params: params,
+                success: create_popup
+            }
+            OpenLayers.Request.GET(getRequest);
             OpenLayers.Event.stop(e);
         });
+    }
+    function createPollDataLayer() {
+        var params = {
+            viewparams: 'poll:{{poll.pk}};app:{{deployment_id}}',
+            layers: 'unicef:polls_south_sudan',
+            styles: '',
+            format: format,
+            transparent: true
+        };
+
+        var options = {
+            buffer: 0,
+            displayOutsideMaxExtent: false,
+            isBaseLayer: false,
+            'opacity': 1.0
+        };
+
+        return new OpenLayers.Layer.WMS("unicef:polls", "{{ geoserver_url }}unicef/wms", params, options);
+    }
+    function createGoogleBaseLayer () {
+            return new OpenLayers.Layer.Google(
+                "Google RoadMap",
+                {type: google.maps.MapTypeId.ROADMAP, numZoomLevels: 20}
+            );
+    }
+    function addControlsToMap() {
+        map.addControl(new OpenLayers.Control.PanZoomBar({
+            position: new OpenLayers.Pixel(2, 15)
+        }));
+        map.addControl(new OpenLayers.Control.Navigation());
+        map.addControl(new OpenLayers.Control.LayerSwitcher());
+    }
+    function displayMap() {
+        map = initializeMap();
+        map.addLayers([createGoogleBaseLayer(),createPollDataLayer()]);
+
+        addControlsToMap();
+
+        var bounds = lonLatBounds(lonLatPoint(22.9224, 3.0545), lonLatPoint(36.3033, 12.6503));
+        map.zoomToExtent(bounds.espg900913);
+
+        registerClickEventForMap();
     }
 
     // sets the HTML provided into the nodelist element
@@ -113,66 +124,44 @@
         var text = response.responseText
         var render_text = "";
         var data = jQuery(text).find('td');
-
-
-        var th = [];
-        th = jQuery(text).find('th');
+        var th = jQuery(text).find('th');
         jQuery.each(th, function(k, v) {
-
-
             if (String(jQuery(v).text()) == "district") {
-
-
                 render_text = render_text + "<p>District: " + String(jQuery(data[k]).text()) + "</p>";
             }
             else if (String(jQuery(v).text()) == "description") {
-
                 render_text = render_text +"<div>"+ String(jQuery(data[k]).text())+"</div>";
             }
-
         });
-
-
         var popupId = EVT.xy.x + "," + EVT.xy.y;
 
-        var popup = popups[popupId];
-        if (!popup || !popup.map) {
-            popup = new OpenLayers.Popup.FramedCloud(
-                    popupId,
-                    map.getLonLatFromPixel(EVT.xy),
-                    new OpenLayers.Size(200, 150),
-                    " ",
-                    null,
-                    true,
-                    function(evt) {
-                        delete popups[this.id];
-                        this.hide();
-                        OpenLayers.Event.stop(evt);
-                    }
-            );
-
-            popup.useInlineStyles = false;
-            popups[popupId] = popup;
-            tiled.map.addPopup(popup, true);
-
-        }
+        var popup = new OpenLayers.Popup.FramedCloud(
+            popupId,
+            map.getLonLatFromPixel(EVT.xy),
+            new OpenLayers.Size(200, 160),
+            " ",
+            null,
+            true,
+            function(evt) {
+                this.hide();
+                OpenLayers.Event.stop(evt);
+            }
+        );
+        popup.useInlineStyles = false;
+        map.addPopup(popup, true);
         popup.setContentHTML(popup.contentHTML + render_text);
-
         popup.show();
-
     }
-    $(document).ready(function() {
-        init_chmap();
-    });
 
+
+    $(document).ready(function() {
+        displayMap();
+    });
     CATEGORY_COLORS =  {% autoescape off %}{{ colors }}{% endautoescape %};
-    CATEGORY_COLOR_LOOKUP={};
-    {% for c in poll.categories.all %}
-        set_color('{{ c.name }}', CATEGORY_COLORS[{{ forloop.counter0 }}]);
-        {% if forloop.last %}
-            CATEGORY_OFFSET = {{ forloop.counter }};
-        {% endif %}
-    {% endfor %}
-    render_key();
+    CATEGORY_COLOR_LOOKUP['no'] = '#AA4643';
+    CATEGORY_COLOR_LOOKUP['yes'] = '#89A54E';
+    CATEGORY_COLOR_LOOKUP['unknown'] = '#80699B';
+    CATEGORY_COLOR_LOOKUP['uncategorized'] = '#4572A7';
+    CATEGORY_OFFSET = 4;
 </script>
 
