@@ -435,6 +435,6 @@ class UploadContacts(models.Model):
 
     def _get_group(self, group):
         try:
-            Group.objects.get(name=group)
+            return Group.objects.get(name=group)
         except Group.DoesNotExist:
             raise UploadContactException("Group %s does not exist" % group)
