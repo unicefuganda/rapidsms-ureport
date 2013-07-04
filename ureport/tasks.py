@@ -104,4 +104,4 @@ def process_uploaded_contacts(upload):
         msg = "Hi %s,\nThe Contacts that you uploaded have been added to Ureport. If there were any unprocessed " \
               "contacts, please find them below" \
               "\n%s" % (user.username, upload.get_unprocessed())
-        send_mail('Classified Message Queue Compete', msg, "", [user.email], fail_silently=False)
+        send_mail('Contacts uploaded', msg, "", [user.email], fail_silently=False)

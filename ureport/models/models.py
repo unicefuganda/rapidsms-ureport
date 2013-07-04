@@ -371,7 +371,7 @@ class UploadContacts(models.Model):
         for row in rows:
             print "row -", row
             try:
-                phone, name, group, language, gender, age, occupation, district, village_name, subcounty, health_facility = row
+                phone, group, name, language, gender, age, occupation, district, village_name, subcounty, health_facility = row
                 district = self._get_district(str(district))
                 phone = self._clean_phone(str(phone))
                 birth_date = self._birth_date(str(age))
