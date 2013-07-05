@@ -6,6 +6,7 @@ from celery.task import Task, task
 from celery.registry import tasks
 from django.conf import settings
 import time
+from django.core.mail import send_mail
 from rapidsms_httprouter.models import Message
 from ureport.models import SentToMtrac, AutoregGroupRules, MessageDetail, MessageAttribute, Settings
 from script.models import Script
@@ -96,3 +97,12 @@ def push_to_mtrac(messages):
     log.info("Pushed messages to Mtrac")
 
 
+@task
+def process_uploaded_contacts(upload):
+    upload.process()
+    user = upload.user
+    if user.email:
+        msg = "Hi %s,\nThe Contacts that you uploaded have been added to Ureport. If there were any unprocessed " \
+              "contacts, please find them below" \
+              "\n%s" % (user.username, upload.get_unprocessed())
+        send_mail('Contacts uploaded', msg, "", [user.email], fail_silently=False)

@@ -92,7 +92,7 @@ class App(AppBase):
                 else:
                     msg = message
                 mf = MessageFlag.objects.create(message=msg, flag=reg[1])
-                print mf
+                log.info(mf)
 
         #if no rule_regex default to name this is just for backward compatibility ... it will soon die an unnatural death
 
