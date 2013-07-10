@@ -50,7 +50,7 @@
                 INFO_FORMAT: 'text/html',
                 QUERY_LAYERS: map.layers[1].params.LAYERS,
                 FEATURE_COUNT: 1,
-                Layers: 'unicef:polls_south_sudan',
+                Layers: 'unicef:pollcategories_southsudan',
                 VIEWPARAMS: 'poll:{{poll.pk}};app:{{deployment_id}}',
                 WIDTH: map.size.w,
                 HEIGHT: map.size.h,
@@ -163,10 +163,13 @@
         displayMap();
     });
     CATEGORY_COLORS =  {% autoescape off %}{{ colors }}{% endautoescape %};
-    CATEGORY_COLOR_LOOKUP['no'] = '#AA4643';
-    CATEGORY_COLOR_LOOKUP['yes'] = '#89A54E';
-    CATEGORY_COLOR_LOOKUP['unknown'] = '#80699B';
-    CATEGORY_COLOR_LOOKUP['uncategorized'] = '#4572A7';
-    CATEGORY_OFFSET = 4;
+    CATEGORY_COLOR_LOOKUP={};
+    {% for c in poll.categories.all %}
+        set_color('{{ c.name }}', CATEGORY_COLORS[{{ forloop.counter0 }}]);
+        {% if forloop.last %}
+            CATEGORY_OFFSET = {{ forloop.counter }};
+        {% endif %}
+    {% endfor %}
+    render_key();
 </script>
 
