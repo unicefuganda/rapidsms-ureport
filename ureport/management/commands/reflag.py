@@ -16,6 +16,8 @@ class Command(BaseCommand):
         flags = Flag.objects.exclude(rule=None).exclude(rule_regex=None)
         pattern_list = [[re.compile(flag.rule_regex, re.IGNORECASE), flag] for flag in flags if flag.rule]
         for message in Message.objects.filter(pk__in=flag_.messages.values_list('message_id', flat=True)):
+            fm = MessageFlag.objects.filter(message=message)
+            fm.delete()
             for reg in pattern_list:
                 match = reg[0].search(message.text)
                 if match:
@@ -24,7 +26,7 @@ class Command(BaseCommand):
                     else:
                         msg = message
                     mf = MessageFlag.objects.create(message=msg, flag=reg[1])
-                    print mf
+                    print mf.message, "Flagged to ", mf.flag.name
 
             #if no rule_regex default to name this is just for backward compatibility ... it will soon die an unnatural death
 
@@ -44,3 +46,4 @@ class Command(BaseCommand):
                     except (Flag.DoesNotExist, IndexError):
                         flag = None
                     MessageFlag.objects.create(message=db_message, flag=flag)
+        print "Finished reflagging"
