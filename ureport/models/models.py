@@ -241,7 +241,6 @@ class UPoll(Poll):
                 pass
         return key_value
 
-
     def __init__(self, *args, **kwargs):
         super(UPoll, self).__init__(*args, **kwargs)
         #Attach Attribute default if no attribute set for specific poll
@@ -252,13 +251,11 @@ class UPoll(Poll):
         for attr, value in self._get_set_attr().items():
             setattr(self, attr.key, value)
 
-
     def set_attr(self, attr, value):
         attr = PollAttribute.objects.get(key=attr)
         value = PollAttributeValue.objects.get_or_create(value=value, poll=self)[0]
         attr.values.add(value)
         attr.save()
-
 
     def save(self, force_insert=False, force_update=False, using=None):
         for key in self._get_set_attr().keys():
@@ -267,20 +264,25 @@ class UPoll(Poll):
             value.save()
         super(UPoll, self).save()
 
-
     class Meta:
         proxy = True
+
+
+class PollAttributeValueManager(models.Manager):
+    def update(self, *args, **kwargs):
+        raise NotImplementedError("Unfortunately you cannot call update() on this model yet. Sorry")
 
 
 class PollAttributeValue(models.Model):
     value = models.CharField(max_length=200)
     poll = models.ForeignKey(Poll)
+    objects = PollAttributeValueManager()
 
     def get_key(self):
         try:
             return self.pollattribute_set.all()[0]
         except IndexError:
-            raise PollAttribute.DoesNotExist("%s value does not a key attached to it" % self.value)
+            raise PollAttribute.DoesNotExist("%s value does not have a key attached to it" % self.value)
 
     def __unicode__(self):
         return self.value

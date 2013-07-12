@@ -389,6 +389,8 @@ class NewPollForm(forms.Form): # pragma: no cover
     response_type = forms.ChoiceField(choices=Poll.RESPONSE_TYPE_CHOICES, widget=RadioSelect,
                                       initial=Poll.RESPONSE_TYPE_ALL)
 
+    is_urgent = forms.BooleanField(required=False)
+
     def updateTypes(self):
         self.fields['type'].widget.choices += [(choice['type'], choice['label']) for choice in
                                                Poll.TYPE_CHOICES.values()]

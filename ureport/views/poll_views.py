@@ -193,6 +193,7 @@ def new_poll(req):
         form.updateTypes()
         if form.is_valid() and groups_form.is_valid():
             # create our XForm
+            is_urgent = form.cleaned_data['is_urgent']
             question = form.cleaned_data['question_en']
             default_response = form.cleaned_data['default_response_en']
             districts = form.cleaned_data['districts']
@@ -249,7 +250,8 @@ def new_poll(req):
                 question,
                 default_response,
                 contacts,
-                req.user)
+                req.user,
+                is_urgent=is_urgent)
 
             if p_type == NewPollForm.TYPE_YES_NO:
                 log.info("[new-poll] - is Y/N poll so adding categories...")
