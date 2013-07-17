@@ -121,7 +121,8 @@
         );
         map.zoomToExtent(bounds.espg900913);
 
-        registerClickEventForMap();
+        {#Disabling drill down on districts because of a mixed SRID Postgis Error with current south sudan shape files#}
+        {#registerClickEventForMap();#}
     }
 
     // sets the HTML provided into the nodelist element
