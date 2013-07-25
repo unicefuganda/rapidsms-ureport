@@ -6,12 +6,15 @@ from celery.task import Task, task
 from celery.registry import tasks
 from django.conf import settings
 import time
+from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from openpyxl import reader
 from rapidsms_httprouter.models import Message
 from ureport.models import SentToMtrac, AutoregGroupRules, MessageDetail, MessageAttribute, Settings
 from script.models import Script
 
 import logging
+from rapidsms.models import Connection, Contact
 
 log = logging.getLogger(__name__)
 
@@ -105,3 +108,40 @@ def process_uploaded_contacts(upload):
               "contacts, please find them below" \
               "\n%s" % (user.username, upload.get_unprocessed())
         send_mail('Contacts uploaded', msg, "", [user.email], fail_silently=False)
+
+@task
+def process_assign_group(upload, group, user):
+    def check_con_or_cont(l):
+        for c in l:
+            try:
+                Connection.objects.get(pk=c)
+            except Connection.DoesNotExist:
+                return False
+            return True
+    excel = reader.excel.load_workbook(upload)
+    rows = []
+    for sheet in excel.worksheets:
+        for row in sheet.rows:
+            r = []
+            for cell in row:
+                r.append(cell.value)
+            rows.append(tuple(r))
+    with_error = []
+    con = Connection if check_con_or_cont([r[0] for r in rows]) else Contact
+    for row in rows:
+        try:
+            if hasattr(con, 'identity'):
+                c = Connection.objects.get(pk=row[0])
+                c.contact.groups.add(group)
+            else:
+                c = Contact.objects.get(pk=row[0])
+                c.groups.add(group)
+
+        except Exception, e:
+            with_error.append(("Error:", row, str(e)))
+    user = User.objects.get(username=user)
+    if user.email:
+        msg = "Hi %s,\nThe Contacts that you uploaded have been added to the group. If there were any unprocessed " \
+              "contacts, please find them below" \
+              "\n%s" % (user.username, str(with_error))
+        send_mail('Contacts Added to Group', msg, "", [user.email], fail_silently=False)

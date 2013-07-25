@@ -766,3 +766,19 @@ class UploadContactsForm(forms.ModelForm):
     @classmethod
     def process(cls, upload):
         tasks.process_uploaded_contacts.delay(upload)
+
+
+class AssignGroupForm(forms.Form):
+    group = forms.ModelChoiceField(queryset=Group.objects.all())
+    contacts = forms.FileField()
+
+    def handle_upload(self, upload):
+        from datetime import datetime
+        path = '/tmp/' + str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_")
+        with open(path, 'wb+') as excel_file:
+            for chunk in upload.chunks():
+                excel_file.write(chunk)
+        return path
+
+    def process(self, upload, username):
+        tasks.process_assign_group.delay(upload, self.cleaned_data['group'], username)

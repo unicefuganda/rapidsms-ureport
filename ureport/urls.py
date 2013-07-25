@@ -7,7 +7,7 @@ from contact.forms import FreeSearchForm, MultipleDistictFilterForm, GenderFilte
     AssignGroupForm, AgeFilterForm
 from tastypie.api import Api
 from .api import PollResponseResource, PollResource, MessageResource, ContactResource, ResponseResource
-from ureport.views.excel_reports_views import generate_poll_dump_report, generate_per_district_report, upload_users
+from ureport.views.excel_reports_views import generate_poll_dump_report, generate_per_district_report, upload_users, assign_group
 
 message_resource = MessageResource()
 
@@ -165,5 +165,6 @@ urlpatterns = patterns('',
                        url(r"^dumpreport/(\d+)/$", generate_poll_dump_report),
                        url(r"^districtreport/(\d+)/$", generate_per_district_report),
                        url(r"^pulse/$", national_pulse, name='pulse_json'),
-                       url(r"^upload-contacts", upload_users, name='upload_users')
+                       url(r"^upload-contacts", upload_users, name='upload_users'),
+                       url(r"^assign-group", assign_group, name="assign_group"),
 )

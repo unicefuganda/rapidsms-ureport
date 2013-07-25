@@ -8,7 +8,7 @@ from django.template import RequestContext
 from ureport.spreadsheet_utils import get_excel_dump_report_for_poll, \
     get_per_district_excel_report_for_yes_no_polls
 from poll.models import Poll
-from ureport.forms import UploadContactsForm
+from ureport.forms import UploadContactsForm, AssignGroupForm
 
 
 @login_required
@@ -51,4 +51,16 @@ def upload_users(request):
             upload.save()
             UploadContactsForm.process(upload)
             return HttpResponseRedirect(reverse('upload_users'))
+    return render_to_response('ureport/upload_users.html', locals(), context_instance=RequestContext(request))
+
+
+@login_required
+def assign_group(request):
+    form = AssignGroupForm()
+    if request.method == 'POST':
+        form = AssignGroupForm(request.POST, request.FILES)
+        if form.is_valid():
+            path = form.handle_upload(request.FILES['contacts'])
+            form.process(path, request.user.username)
+            return HttpResponseRedirect(reverse("assign_group"))
     return render_to_response('ureport/upload_users.html', locals(), context_instance=RequestContext(request))
