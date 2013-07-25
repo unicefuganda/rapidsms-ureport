@@ -778,6 +778,7 @@ class AssignGroupForm(forms.Form):
         with open(path, 'wb+') as excel_file:
             for chunk in upload.chunks():
                 excel_file.write(chunk)
+            excel_file.close()
         return path
 
     def process(self, upload, username):
