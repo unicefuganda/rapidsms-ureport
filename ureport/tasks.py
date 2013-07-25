@@ -8,6 +8,7 @@ from django.conf import settings
 import time
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from django.db.models import Q
 from openpyxl import reader
 from rapidsms_httprouter.models import Message
 from ureport.models import SentToMtrac, AutoregGroupRules, MessageDetail, MessageAttribute, Settings
@@ -114,10 +115,12 @@ def process_assign_group(upload, group, user):
     def check_con_or_cont(l):
         for c in l:
             try:
-                Connection.objects.get(pk=c)
+                Connection.objects.get(Q(pk=int(c)) | Q(identity=c))
             except Connection.DoesNotExist:
                 return False
-            return True
+            except ValueError:
+                continue
+        return True
     excel = reader.excel.load_workbook(upload)
     rows = []
     for sheet in excel.worksheets:
