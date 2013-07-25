@@ -253,9 +253,13 @@ class UPoll(Poll):
 
     def set_attr(self, attr, value):
         attr = PollAttribute.objects.get(key=attr)
-        value = PollAttributeValue.objects.get_or_create(value=value, poll=self)[0]
-        attr.values.add(value)
-        attr.save()
+        try:
+            _value = attr.values.get(poll=self)
+            _value.value = value
+            _value.save()
+        except PollAttributeValue.DoesNotExist:
+            _value = PollAttributeValue.objects.create(poll=self, value=value)
+            attr.values.add(_value)
 
     def save(self, force_insert=False, force_update=False, using=None):
         for key in self._get_set_attr().keys():
@@ -266,6 +270,7 @@ class UPoll(Poll):
 
     class Meta:
         proxy = True
+        app_label = 'ureport'
 
 
 class PollAttributeValueManager(models.Manager):
