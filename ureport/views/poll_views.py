@@ -108,7 +108,7 @@ def view_poll(request, pk):
             res['Cache-Control'] = 'no-store'
             return res
         if request.GET.get('viewable'):
-            poll.viewable = True
+            poll.set_attr('viewable', True)
             poll.save()
             res = HttpResponse(
                 '<a href="javascript:void(0)" id="poll_v" class="btn" onclick="loadViewable'

@@ -16,58 +16,16 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         path = options["path"]
-        group = Group.objects.get(name="CODES Bukango")
-        district = Location.objects.get(name='Bukomansimbi', type__name='district')
-        print "Groups ===============>", group.name
         csv_rows = csv.reader(open(path, 'rU'), delimiter=",")
-        rnum = 0
+        a = open('/home/kenneth/phones.csv', 'wb')
+        spam = csv.writer(a, delimiter=",", quotechar="'", quoting=csv.QUOTE_MINIMAL)
+        spam.writerow(['identity', 'Phone', 'District'])
         for row in csv_rows:
-            print row
-            rnum += 1
-            try:
-                name, number, gender, age, village, dist, g = tuple(row)
-                num = number.replace('-', '').strip()
-                name = name.strip().replace("\"", '').replace('\'', "").replace("  ", " ")
-            except:
-                print 'Row Error:', row
-                continue
+            con = Connection.objects.get(pk=row[0])
+            print "passed"
+            spam.writerow([con.pk, con.identity, con.contact.reporting_location])
+        a.close()
 
-            num = self.clean_number(num)
-            if num:
-                number, backend = assign_backend(num)
-
-                connection, created = Connection.objects.get_or_create(identity=number, backend=backend)
-
-                if not created:
-                    contact = connection.contact
-                    contact.name = name
-                    if not contact:
-                        contact = Contact.objects.create(name=name)
-                else:
-                    contact = Contact.objects.create(name=name)
-
-                print "Contact ===>", contact.name
-                contact.save()
-                if group:
-                    contact.groups.add(group)
-                contact.village_name = village
-                contact.reporting_location = district
-                print "Village: District===>", village, district
-                if gender.lower().startswith('m'):
-                    gender = 'm'
-                else:
-                    gender = 'f'
-                contact.gender = gender
-                print "Gender===>", gender
-                contact.birthdate = self.birth_date(int(age))
-                print "Birth date====>", contact.birthdate
-
-                connection.contact = contact
-                connection.save()
-                contact.save()
-            else:
-                print 'Number Error:', row
-        print rnum, "================>", group.name
 
     def clean_number(self, num):
         num = num.strip().replace('+', '').replace('-', '').replace(" ", '')
@@ -81,4 +39,7 @@ class Command(BaseCommand):
 
     def birth_date(self, years):
         return datetime.now() - relativedelta(years=years)
+
+    passE = "Heipoo0afu"
+    passS = "mai6aeQuuj"
 
