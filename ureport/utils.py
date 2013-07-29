@@ -21,12 +21,14 @@ from uganda_common.models import Access
 module_name = __name__
 logger = getLogger(module_name)
 
+
 def get_access(request):
     try:
         access = Access.objects.get(user=request.user)
     except Access.DoesNotExist:
         access = None
     return access
+
 
 def get_contacts(**kwargs):
     request = kwargs.pop('request')
@@ -80,8 +82,8 @@ def retrieve_poll(request, pks=None):
     if pks == None:
         pks = request.GET.get('pks', '')
     not_showing = list(
-        PollAttribute.objects.filter(key='viewable', values__value='false').values_list('values__poll_id', flat=True))
-    not_showing = not_showing
+        PollAttribute.objects.get(key="viewable").values.filter(value='true').values_list('poll_id', flat=True))
+    not_showing = Poll.objects.exclude(pk__in=not_showing)
     if pks == 'l':
         return [Poll.objects.exclude(pk__in=script_polls).exclude(pk__in=not_showing).latest('start_date')]
 
@@ -170,15 +172,15 @@ def add_to_poll(poll, contacts):
 
             # This is the fastest (pretty much only) was to get contacts and messages M2M into the
             # DB fast enough at scale
-        #    cursor = connection.cursor()
-        #    for language in localized_messages.keys():
-        #        raw_sql = "insert into poll_poll_contacts (poll_id, contact_id) values %s" % ','.join(\
-        #            ["(%d, %d)" % (poll.pk, c.pk) for c in localized_messages.get(language)[1].iterator()])
-        #        cursor.execute(raw_sql)
-        #
-        #        raw_sql = "insert into poll_poll_messages (poll_id, message_id) values %s" % ','.join(\
-        #            ["(%d, %d)" % (poll.pk, m.pk) for m in localized_messages.get(language)[0].iterator()])
-        #        cursor.execute(raw_sql)
+            #    cursor = connection.cursor()
+            #    for language in localized_messages.keys():
+            #        raw_sql = "insert into poll_poll_contacts (poll_id, contact_id) values %s" % ','.join(\
+            #            ["(%d, %d)" % (poll.pk, c.pk) for c in localized_messages.get(language)[1].iterator()])
+            #        cursor.execute(raw_sql)
+            #
+            #        raw_sql = "insert into poll_poll_messages (poll_id, message_id) values %s" % ','.join(\
+            #            ["(%d, %d)" % (poll.pk, m.pk) for m in localized_messages.get(language)[0].iterator()])
+            #        cursor.execute(raw_sql)
 
     return poll
 
@@ -257,7 +259,8 @@ def fb(req, poll):
         toret = urllib2.urlopen(post_question_url)
         return toret
 
-def configure_messages_for_script(script_name,messages_dict):
+
+def configure_messages_for_script(script_name, messages_dict):
     try:
         script = Script.objects.get(slug=script_name)
         for step in script.steps.order_by('order'):
@@ -270,5 +273,5 @@ def configure_messages_for_script(script_name,messages_dict):
             step.save()
         script.save()
     except Script.DoesNotExist:
-        logger.debug("[%s] Script object with slug name %s not found." % (module_name,script_name))
+        logger.debug("[%s] Script object with slug name %s not found." % (module_name, script_name))
 

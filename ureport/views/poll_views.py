@@ -108,7 +108,7 @@ def view_poll(request, pk):
             res['Cache-Control'] = 'no-store'
             return res
         if request.GET.get('viewable'):
-            poll.set_attr('viewable', True)
+            poll.viewable = True
             poll.save()
             res = HttpResponse(
                 '<a href="javascript:void(0)" id="poll_v" class="btn" onclick="loadViewable'
@@ -116,7 +116,8 @@ def view_poll(request, pk):
             res['Cache-Control'] = 'no-store'
             return res
         if request.GET.get('unviewable'):
-            poll.set_attr('viewable', False)
+            poll.viewable = False
+            poll.save()
             res = HttpResponse(
                 '<a href="javascript:void(0)" id="poll_v" class="btn" onclick="loadViewable'
                 '(\'?viewable=True&poll=True\')">Show On Home page</a>')
