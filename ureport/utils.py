@@ -81,9 +81,12 @@ def retrieve_poll(request, pks=None):
     script_polls = ScriptStep.objects.exclude(poll=None).values_list('poll', flat=True)
     if pks == None:
         pks = request.GET.get('pks', '')
-    not_showing = list(
-        PollAttribute.objects.get(key="viewable").values.filter(value='true').values_list('poll_id', flat=True))
-    not_showing = Poll.objects.exclude(pk__in=not_showing)
+    try:
+        not_showing = list(
+            PollAttribute.objects.get(key="viewable").values.filter(value='true').values_list('poll_id', flat=True))
+        not_showing = Poll.objects.exclude(pk__in=not_showing)
+    except PollAttribute.DoesNotExist:
+        not_showing = []
     if pks == 'l':
         return [Poll.objects.exclude(pk__in=script_polls).exclude(pk__in=not_showing).latest('start_date')]
 
