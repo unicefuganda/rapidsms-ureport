@@ -14,7 +14,11 @@
                                 <a class="poll_selectors"
                                    href="javascript:void(0)"
                                    id="diplay_{{ p.pk }}"
-                                   onclick="clear_layers();$('.poll_selectors').attr('disabled','');$(this).attr('disabled','disabled');$('#poll_content').load('{% url ureport.views.best_visualization p.pk %}')">
+                                   onclick="clear_layers();
+                                           $('.poll_selectors').attr('disabled','');
+                                           $(this).attr('disabled','disabled');
+                                           $('#poll_content').load('{% url ureport.views.best_visualization p.pk %}')"
+                                        >
                                 {{ p.name }}
                                 </a>
                             </li>
@@ -35,7 +39,9 @@
     </div>
 </div>
 <script language="javascript">
+$(document).ready(function(){
     $($('.poll_selectors')[0]).attr('disabled','disabled');
 	$('#poll_content').load('{% url ureport.views.best_visualization polls.0.pk %}');
+});
 </script>
 {% endblock %}
