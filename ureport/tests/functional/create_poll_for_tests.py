@@ -25,7 +25,8 @@ def start_poll_queues_messages_in_table(driver):
     driver.create_and_sign_in_admin("argha", "a")
 
     driver.open("/view_poll/%s" % poll.id)
-    driver.browser.find_link_by_text('Start Poll').first.click()
+    if driver.browser.is_text_present('Start Poll', 5):
+        driver.browser.find_link_by_text('Start Poll').first.click()
 
     assert driver.browser.is_text_present('Close Poll')
 
