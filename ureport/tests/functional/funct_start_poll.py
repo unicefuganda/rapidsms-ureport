@@ -36,14 +36,15 @@ class UreportTest(SplinterTestCase):
             self.assertEquals(newly_added_poll.messages.filter(status='Q').count(), 2)
             self.assertEquals(newly_added_poll.messages.filter(status='Q')[0].text, newly_added_poll.question)
             self.assertEquals(newly_added_poll.messages.filter(status='Q')[1].text, newly_added_poll.question)
-        except:
+        except Exception, e:
+            # could raise the exception in the finally bold of the exception handling below
             try:
                 timestamp = datetime.datetime.now().isoformat().replace(':', '')
                 filename = r'%s_failure_%s.png' % (self.id(), timestamp)
                 self.browser.driver.save_screenshot(filename)
-                print r'Dumped screenshot of failure to [%s]' % (filename,)
+                print r'Dumped screen shot of failure to [%s]' % (filename,)
             except:
                 pass
-        raise
+        raise Exception(e)
 
 
