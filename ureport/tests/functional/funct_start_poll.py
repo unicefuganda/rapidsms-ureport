@@ -28,7 +28,7 @@ class UreportTest(SplinterTestCase):
             newly_added_poll = Poll.objects.get(id=self.poll_id)
 
             time.sleep(5)
-
+            self.assertTrue(False)
             self.assertEquals(newly_added_poll.messages.count(), 2)
             self.assertEquals(newly_added_poll.messages.all()[0].text, newly_added_poll.question)
             self.assertEquals(newly_added_poll.messages.all()[1].text, newly_added_poll.question)
@@ -37,14 +37,13 @@ class UreportTest(SplinterTestCase):
             self.assertEquals(newly_added_poll.messages.filter(status='Q')[0].text, newly_added_poll.question)
             self.assertEquals(newly_added_poll.messages.filter(status='Q')[1].text, newly_added_poll.question)
         except Exception, e:
-            # could raise the exception in the finally bold of the exception handling below
             try:
                 timestamp = datetime.datetime.now().isoformat().replace(':', '')
-                filename = r'%s_failure_%s.png' % (self.id(), timestamp)
+                filename = r'/tmp/%s_failure_%s.png' % (self.id(), timestamp)
                 self.browser.driver.save_screenshot(filename)
                 print r'Dumped screen shot of failure to [%s]' % (filename,)
             except:
                 pass
-        raise Exception(e)
+            raise Exception(e)
 
 
