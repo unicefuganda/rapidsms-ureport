@@ -43,7 +43,6 @@ class PollStatusTest(SplinterTestCase):
 
     @take_screenshot_on_failure
     def test_should_show_the_status_page(self):
-        self.assertFalse(True)
         self.assertTrue(self.browser.is_element_present_by_css("div[id=poll-status]", 5))
         self.assertTrue(str(self.poll.id) in self.browser.find_by_css("div[id=poll-status]").text)
 
