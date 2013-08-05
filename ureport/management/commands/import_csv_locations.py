@@ -7,9 +7,8 @@ from rapidsms_ureport.ureport import csv_reader
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        if len(args) < 2:
-            print("You must pass the csv file holding the location hierarchy and \
-                    0-based index of the column holding the reporting level as an argument")
+        if len(args) != 2:
+            print("usage: python manage.py import_csv_locations csv_locations_file reporting_level")
             exit(-1)
         else:
             reporting_level = int(args[1])
