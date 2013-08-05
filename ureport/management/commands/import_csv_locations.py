@@ -10,6 +10,9 @@ class Command(BaseCommand):
         if len(args) != 2:
             print("usage: python manage.py import_csv_locations csv_locations_file reporting_level")
             exit(-1)
+        elif LocationType.objects.exists():
+            print("Locations already loaded. Nothing has been changed.")
+            exit(0)
         else:
             reporting_level = int(args[1])
             sheet = csv_reader.get_locations_file_as_spreadsheet(args[0])
