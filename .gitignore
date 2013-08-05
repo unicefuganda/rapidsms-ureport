@@ -2,4 +2,5 @@
 *.tmp
 *.swp
 *.pyc
+.idea/
 .DS_Store
