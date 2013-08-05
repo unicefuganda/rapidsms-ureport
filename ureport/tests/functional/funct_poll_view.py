@@ -4,6 +4,7 @@ from rapidsms.models import Connection
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
 from rapidsms_ureport.ureport.tests.functional.create_poll_utils import create_fake_response, get_browser
 from rapidsms_ureport.ureport.tests.functional.create_polls_for_view_poll import create_polls_with_fake_responses
+from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 
 
 class PollViewTest(SplinterTestCase):
@@ -16,6 +17,7 @@ class PollViewTest(SplinterTestCase):
         self.open('/account/logout')
         self.browser.quit()
 
+    @take_screenshot_on_failure
     def test_poll_view_should_show_only_ten_polls(self):
         polls = create_polls_with_fake_responses(11)
         for poll in polls:

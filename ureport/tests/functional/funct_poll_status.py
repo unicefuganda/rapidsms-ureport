@@ -7,6 +7,7 @@ from datetime import datetime
 
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
 from rapidsms_ureport.ureport.tests.functional.create_poll_utils import create_group, create_user, create_connection, create_poll, add_contacts_to_poll
+from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 
 BROWSER = Browser('firefox')
 
@@ -40,7 +41,7 @@ class PollStatusTest(SplinterTestCase):
     def tearDown(self):
         self.browser.quit()
 
-
+    @take_screenshot_on_failure
     def test_should_show_the_status_page(self):
         self.assertTrue(self.browser.is_element_present_by_css("div[id=poll-status]", 5))
         self.assertTrue(str(self.poll.id) in self.browser.find_by_css("div[id=poll-status]").text)

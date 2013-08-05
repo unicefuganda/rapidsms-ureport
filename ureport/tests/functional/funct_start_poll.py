@@ -1,11 +1,8 @@
 import time
-import datetime
 
-from splinter import Browser
-from rapidsms.models import Contact
-from rapidsms.models import Connection
 from poll.models import Poll
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
+from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 from ureport_project.rapidsms_ureport.ureport.tests.functional.create_poll_for_tests import start_poll_queues_messages_in_table
 from ureport_project.rapidsms_ureport.ureport.tests.functional.create_poll_utils import get_browser
 
@@ -21,28 +18,19 @@ class UreportTest(SplinterTestCase):
         self.open('/account/logout')
         self.browser.quit()
 
+    @take_screenshot_on_failure
     def test_should_match_poll_question_to_message_text(self):
-        try:
-            self.poll_id, self.contacts_count = start_poll_queues_messages_in_table(self)
+        self.poll_id, self.contacts_count = start_poll_queues_messages_in_table(self)
 
-            newly_added_poll = Poll.objects.get(id=self.poll_id)
+        newly_added_poll = Poll.objects.get(id=self.poll_id)
 
-            time.sleep(5)
-            self.assertEquals(newly_added_poll.messages.count(), 2)
-            self.assertEquals(newly_added_poll.messages.all()[0].text, newly_added_poll.question)
-            self.assertEquals(newly_added_poll.messages.all()[1].text, newly_added_poll.question)
+        time.sleep(5)
+        self.assertEquals(newly_added_poll.messages.count(), 2)
+        self.assertEquals(newly_added_poll.messages.all()[0].text, newly_added_poll.question)
+        self.assertEquals(newly_added_poll.messages.all()[1].text, newly_added_poll.question)
 
-            self.assertEquals(newly_added_poll.messages.filter(status='Q').count(), 2)
-            self.assertEquals(newly_added_poll.messages.filter(status='Q')[0].text, newly_added_poll.question)
-            self.assertEquals(newly_added_poll.messages.filter(status='Q')[1].text, newly_added_poll.question)
-        except Exception, e:
-            try:
-                timestamp = datetime.datetime.now().isoformat().replace(':', '')
-                filename = r'/tmp/%s_failure_%s.png' % (self.id(), timestamp)
-                self.browser.driver.save_screenshot(filename)
-                print r'Dumped screen shot of failure to [%s]' % (filename,)
-            except:
-                pass
-            raise Exception(e)
+        self.assertEquals(newly_added_poll.messages.filter(status='Q').count(), 2)
+        self.assertEquals(newly_added_poll.messages.filter(status='Q')[0].text, newly_added_poll.question)
+        self.assertEquals(newly_added_poll.messages.filter(status='Q')[1].text, newly_added_poll.question)
 
 
