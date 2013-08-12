@@ -396,7 +396,7 @@ def aids_dashboard(request, name):
     name = name.replace("_", " ")
     flag = get_object_or_404(Flag, name=name)
     messages = flag.get_messages().order_by('-date')
-    responses = Message.objects.filter(pk__in=flag.flagtracker_set.values_list("response", flat=True))
+    responses = Message.objects.filter(pk__in=flag.flagtracker_set.exclude(response=None).values_list("response", flat=True))
     messages = messages | responses
 
     if request.GET.get('download', None):
@@ -477,7 +477,7 @@ def aids_dashboard(request, name):
 
         return HttpResponse(mark_safe(response))
 
-    paginator = UreportPaginator(messages.order_by('date'), 10, body=12, padding=2)
+    paginator = UreportPaginator(messages.order_by('-date'), 10, body=12, padding=2)
     page = request.GET.get('page', 1)
     try:
         messages = paginator.page(page)
@@ -488,6 +488,7 @@ def aids_dashboard(request, name):
         messages = paginator.page(1)
 
     return render_to_response(template, {
+        'name': name,
         'messages': messages,
         'paginator': paginator,
         'capture_status': capture_status,
@@ -500,6 +501,3 @@ def schedule_alerts(request):
     mps = Contact.objects.filter(groups__name="MP")
 
     render_to_response("mp_alerts.html", dict(), context_instance=RequestContext(request))
-
-
-

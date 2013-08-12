@@ -18,7 +18,7 @@ from rapidsms.models import Connection
 from contact.models import Flag, MessageFlag
 
 from ureport.forms import SendMessageForm, SearchMessagesForm, ForwardMessageForm
-from ureport.models import MessageAttribute, MessageDetail
+from ureport.models import MessageAttribute, MessageDetail, FlagTracker
 from contact.forms import FlaggedMessageForm
 from ureport.views.utils.tags import _get_responses
 from contact.forms import FreeSearchTextForm, DistictFilterMessageForm
@@ -288,13 +288,21 @@ def send_message(request, template='ureport/partials/forward.html'):
                 message = Message.objects.create(direction='O',
                                                  text=send_message_form.cleaned_data.get('text'
                                                  ), status='Q', connection=connection)
+                if request.GET.get('flag'):
+                    tracker = FlagTracker.objects.create(
+                        flag=Flag.objects.get(name__iexact=request.GET.get('flag').replace("-", " ")), reply=message,
+                        message=Message.objects.get(pk=request.GET.get('msg')), user=request.user)
+                    print tracker
 
             return HttpResponse('Message Sent :)')
         else:
-            return HttpResponse('smothing went wrong')
-
+            return HttpResponse('something went wrong')
+    context = {'send_message_form': send_message_form}
+    if request.GET.get('flag'):
+        context['flag'] = request.GET.get('flag')
+        context['msg'] = request.GET.get('msg')
     return render_to_response(template,
-                              {'send_message_form': send_message_form},
+                              context,
                               context_instance=RequestContext(request))
 
 

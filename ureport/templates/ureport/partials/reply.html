@@ -1,4 +1,4 @@
-<form method="post" id="message_reply" action="/sendmessage/?reply=true" data-remote=true>
+<form method="post" id="message_reply" action="/sendmessage/?reply=true{% if flag %}&flag={{ flag }}&msg={{ msg }}{% endif %}" data-remote=true>
     <div class="modal-header">
         <a class="close" data-dismiss="modal" onclick='$(".modal").hide()'>×</a>
         <script type="text/javascript">

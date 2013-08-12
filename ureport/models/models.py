@@ -455,5 +455,8 @@ class FlagTracker(models.Model):
     user = models.ForeignKey(User)
     flag = models.ForeignKey(Flag)
 
+    def __unicode__(self):
+        return self.reply.text
+
     class Meta:
         app_label = 'ureport'

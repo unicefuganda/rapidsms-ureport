@@ -3,15 +3,21 @@ from contact.models import Flag, MessageFlag
 from script.models import Script, ScriptProgress
 import re
 from django.conf import settings
-from ureport.models import MessageAttribute, MessageDetail, Settings
+from ureport.models import MessageAttribute, MessageDetail, Settings, FlagTracker
 
 import logging
+from ureport_project.rapidsms_httprouter_src.rapidsms_httprouter.models import Message
 
 log = logging.getLogger(__name__)
 
 
 class App(AppBase):
     def handle(self, message):
+        """
+
+        :param message:
+        :return:
+        """
         if message.connection is not None and message.db_message is not None:
             log.debug("[ureport-app] [{}] Handling incoming message [pk={}]...".format(message.connection.identity,
                                                                                        message.db_message.pk))
@@ -116,4 +122,11 @@ class App(AppBase):
                     log.debug("[ureport-app] [{}] Created MessageFlag".format(message.connection.identity))
         if message.connection is not None:
             log.debug("[ureport-app] [%s] Completed handling of incoming message." % message.connection.identity)
+            if FlagTracker.objects.filter(response=None, message__connection=message.connection).exists():
+                tracker = FlagTracker.objects.filter(response=None, message__connection=message.connection).order_by(
+                    '-reply__date')[0]
+                if not Message.objects.filter(connection=message.connection, date__gt=tracker.reply.date,
+                                              direction='O').exists():
+                    tracker.response = message
+                    tracker.save()
         return False
