@@ -11,6 +11,7 @@ from rapidsms_httprouter.models import Message
 from unregister.models import Blacklist
 from django.db.models.signals import post_save
 from uganda_common.utils import assign_backend
+from contact.models import Flag
 from ussd.models import ussd_complete
 import datetime
 import re
@@ -445,3 +446,14 @@ class UploadContacts(models.Model):
             return Group.objects.get(name=group)
         except Group.DoesNotExist:
             raise UploadContactException("Group %s does not exist" % group)
+
+
+class FlagTracker(models.Model):
+    message = models.ForeignKey(Message, related_name="flag_track")
+    response = models.ForeignKey(Message, related_name="response_track", null=True)
+    reply = models.ForeignKey(Message, related_name="reply_track")
+    user = models.ForeignKey(User)
+    flag = models.ForeignKey(Flag)
+
+    class Meta:
+        app_label = 'ureport'

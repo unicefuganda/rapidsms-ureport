@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.shortcuts import redirect
 from django.template import RequestContext
 from django.utils import simplejson
@@ -384,8 +384,7 @@ def remove_captured(request):
 
 
 @login_required
-def aids_dashboard(request):
-    select_poll = SelectPoll()
+def aids_dashboard(request, name):
     poll_form = NewPollForm()
     range_form = rangeForm()
     poll_form.updateTypes()
@@ -394,8 +393,11 @@ def aids_dashboard(request):
     (capture_status, _) = \
         Settings.objects.get_or_create(attribute='aids')
     (rate, _) = MessageAttribute.objects.get_or_create(name='rating')
-    flag = Flag.objects.get(name="HIV")
+    name = name.replace("_", " ")
+    flag = get_object_or_404(Flag, name=name)
     messages = flag.get_messages().order_by('-date')
+    responses = Message.objects.filter(pk__in=flag.flagtracker_set.values_list("response", flat=True))
+    messages = messages | responses
 
     if request.GET.get('download', None):
         export_data = messages.values_list('connection__pk', 'text', 'connection__identity',
@@ -475,7 +477,7 @@ def aids_dashboard(request):
 
         return HttpResponse(mark_safe(response))
 
-    paginator = UreportPaginator(messages, 10, body=12, padding=2)
+    paginator = UreportPaginator(messages.order_by('date'), 10, body=12, padding=2)
     page = request.GET.get('page', 1)
     try:
         messages = paginator.page(page)

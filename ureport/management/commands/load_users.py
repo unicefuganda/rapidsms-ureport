@@ -20,10 +20,16 @@ class Command(BaseCommand):
         a = open('/home/kenneth/phones.csv', 'wb')
         spam = csv.writer(a, delimiter=",", quotechar="'", quoting=csv.QUOTE_MINIMAL)
         spam.writerow(['identity', 'Phone', 'District'])
+        n = 0
         for row in csv_rows:
-            con = Connection.objects.get(pk=row[0])
-            print "passed"
-            spam.writerow([con.pk, con.identity, con.contact.reporting_location])
+            n += 1
+            try:
+                con = Connection.objects.get(pk=row[0])
+            except ValueError:
+                pass
+            else:
+                print "passed", n
+                spam.writerow([con.pk, con.identity, con.contact.reporting_location])
         a.close()
 
 
