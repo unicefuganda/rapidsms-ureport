@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from dateutil.relativedelta import relativedelta
 from django.db import models
+from django.db.transaction import commit_on_success
 from openpyxl import reader
 from poll.models import Poll
 from rapidsms.models import Contact, Connection
@@ -252,6 +253,7 @@ class UPoll(Poll):
         for attr, value in self._get_set_attr().items():
             setattr(self, attr.key, value)
 
+    @commit_on_success
     def set_attr(self, attr, value):
         attr = PollAttribute.objects.get(key=attr)
         try:
@@ -261,12 +263,11 @@ class UPoll(Poll):
         except PollAttributeValue.DoesNotExist:
             _value = PollAttributeValue.objects.create(poll=self, value=value)
             attr.values.add(_value)
+            attr.save()
 
     def save(self, force_insert=False, force_update=False, using=None):
         for key in self._get_set_attr().keys():
-            value = key.values.get(poll=self)
-            value.value = getattr(self, key.key)
-            value.save()
+            self.set_attr(key.key, getattr(self, key.key))
         super(UPoll, self).save()
 
     class Meta:
