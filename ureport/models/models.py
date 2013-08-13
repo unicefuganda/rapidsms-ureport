@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from dateutil.relativedelta import relativedelta
-from django.db import models
-from django.db.transaction import commit_on_success
+from django.db import models, transaction
+from django.db.transaction import commit_on_success, commit_manually
 from openpyxl import reader
 from poll.models import Poll
 from rapidsms.models import Contact, Connection
@@ -245,27 +245,34 @@ class UPoll(Poll):
 
     def __init__(self, *args, **kwargs):
         super(UPoll, self).__init__(*args, **kwargs)
-        #Attach Attribute default if no attribute set for specific poll
-        for attr in PollAttribute.objects.all():
-            if not getattr(self, attr.key, None):
-                setattr(self, attr.key, attr.get_default())
-                #Attach PollAttribute to object ie, poll.randomkey = 'some value'
+        #Attach PollAttribute to object ie, poll.randomkey = 'some value'
         for attr, value in self._get_set_attr().items():
             setattr(self, attr.key, value)
+        #Attach Attribute default if no attribute set for specific poll
+        for attr in PollAttribute.objects.all():
+            if getattr(self, attr.key, None) is None:
+                setattr(self, attr.key, attr.get_default())
+                self.set_attr(attr.key, attr.get_default())
 
-    @commit_on_success
+
+    @commit_manually
     def set_attr(self, attr, value):
+        # import pdb;pdb.set_trace()
+        print value, attr
         attr = PollAttribute.objects.get(key=attr)
         try:
             _value = attr.values.get(poll=self)
             _value.value = value
             _value.save()
+            transaction.commit()
         except PollAttributeValue.DoesNotExist:
             _value = PollAttributeValue.objects.create(poll=self, value=value)
             attr.values.add(_value)
             attr.save()
+            transaction.commit()
 
     def save(self, force_insert=False, force_update=False, using=None):
+
         for key in self._get_set_attr().keys():
             self.set_attr(key.key, getattr(self, key.key))
         super(UPoll, self).save()
