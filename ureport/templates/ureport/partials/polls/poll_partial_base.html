@@ -56,7 +56,12 @@
     </div>
     {% block export %}
     <div class="buttons">
-            <a href="{{ MEDIA_URL }}ureport/spreadsheets/poll_{{object_list.0.poll.pk }}.xlsx">
+            <a href="javascript:void(0)" onclick="function start_poll_export() {
+                $.get('{% url start_poll_export poll_id %}', function(data){
+                alert('You will receive an email as soon as the export is done');
+                });
+            }
+            start_poll_export()">
             <img src="{{ MEDIA_URL }}poll/icons/silk/table_save.png" alt=""/> Export
         </a>
     </div>

@@ -167,4 +167,5 @@ urlpatterns = patterns('',
                        url(r"^pulse/$", national_pulse, name='pulse_json'),
                        url(r"^upload-contacts", upload_users, name='upload_users'),
                        url(r"^assign-group", assign_group, name="assign_group"),
+                       url(r'^start_poll_export/(\d+)/$', start_poll_export, name="start_poll_export")
 )

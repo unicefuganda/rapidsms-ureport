@@ -248,7 +248,7 @@ class UPoll(Poll):
         #Attach PollAttribute to object ie, poll.randomkey = 'some value'
         for attr, value in self._get_set_attr().items():
             setattr(self, attr.key, value)
-        #Attach Attribute default if no attribute set for specific poll
+            #Attach Attribute default if no attribute set for specific poll
         for attr in PollAttribute.objects.all():
             if getattr(self, attr.key, None) is None:
                 setattr(self, attr.key, attr.get_default())
@@ -257,7 +257,6 @@ class UPoll(Poll):
 
     @commit_manually
     def set_attr(self, attr, value):
-        # import pdb;pdb.set_trace()
         print value, attr
         attr = PollAttribute.objects.get(key=attr)
         try:
@@ -276,6 +275,9 @@ class UPoll(Poll):
         for key in self._get_set_attr().keys():
             self.set_attr(key.key, getattr(self, key.key))
         super(UPoll, self).save()
+
+    def get_export_path(self, domain):
+        return "%sstatic/ureport/spreadsheets/poll_%s.xlxs" % (str(domain), self.pk)
 
     class Meta:
         proxy = True
@@ -465,6 +467,14 @@ class FlagTracker(models.Model):
 
     def __unicode__(self):
         return self.reply.text
+
+    class Meta:
+        app_label = 'ureport'
+
+
+class ExportedPoll(models.Model):
+    poll = models.OneToOneField(Poll)
+    exported_on = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         app_label = 'ureport'

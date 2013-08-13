@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from django.core.mail import send_mail
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from script.models import ScriptStep
@@ -24,7 +25,7 @@ from generic.sorters import SimpleSorter
 from ureport.views.utils.paginator import ureport_paginate
 from django.db import transaction
 from django.contrib.auth.models import Group, User, Message
-from ureport.models import UPoll
+from ureport.models import UPoll, ExportedPoll
 import logging, datetime
 
 log = logging.getLogger(__name__)
@@ -41,6 +42,7 @@ def start_poll_multi_tx(poll):
     tasks.start_poll.delay(poll)
     log.info("[start-poll-multi-tx] Sent to Celery Ok.")
 
+
 @never_cache
 @login_required
 def poll_status(request, pk):
@@ -56,14 +58,13 @@ def poll_status(request, pk):
 
     message_stats = recent_message_stats(poll, startDate, age_in_days)
 
-
     return render_to_response(template, {
         'poll': poll,
 
-        'message_stats_start_date' : startDate,
-        'message_stats_age_days' : age_in_days,
-        'message_stats' : message_stats,
-        }, context_instance=RequestContext(request))
+        'message_stats_start_date': startDate,
+        'message_stats_age_days': age_in_days,
+        'message_stats': message_stats,
+    }, context_instance=RequestContext(request))
 
 
 @never_cache
@@ -179,7 +180,7 @@ def view_poll(request, pk):
         'rule_form': rule_form,
         'category': category,
         'groups': groups,
-        'FEATURE_PREPARE_SEND_POLL' : getattr(settings, "FEATURE_PREPARE_SEND_POLL", False)
+        'FEATURE_PREPARE_SEND_POLL': getattr(settings, "FEATURE_PREPARE_SEND_POLL", False)
     }, context_instance=RequestContext(request))
 
 
@@ -351,6 +352,7 @@ def view_responses(req, poll_id):
         filter_forms=[SearchResponsesForm],
         columns=columns,
         partial_row='ureport/partials/polls/response_row.html',
+        poll_id=poll_id,
     )
 
 
@@ -486,3 +488,20 @@ def script_polls(request):
                    auto_reg=True,
                    sort_ascending=False,
                    columns=columns)
+
+
+@login_required
+@never_cache
+def start_poll_export(request, poll_id):
+    poll = get_object_or_404(UPoll, pk=poll_id)
+    try:
+        ExportedPoll.objects.get(poll=poll)
+        user = request.user
+        if user.email:
+            msg = "Hi %s,\nThe poll(%s) has been exported and is now ready for download." \
+                  "\nPlease find it here %s\nThank You" % (
+                      user.username, poll.name, poll.get_export_path(request.get_host()))
+            send_mail('Contacts Added to Group', msg, "", [user.email], fail_silently=False)
+    except ExportedPoll.DoesNotExist:
+        tasks.export_poll.delay(poll.pk, request.get_host(), username=request.user.username)
+    return HttpResponse(status=200)

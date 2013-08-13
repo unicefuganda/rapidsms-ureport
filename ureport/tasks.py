@@ -11,11 +11,13 @@ from django.core.mail import send_mail
 from django.db.models import Q
 from openpyxl import reader
 from rapidsms_httprouter.models import Message
-from ureport.models import SentToMtrac, AutoregGroupRules, MessageDetail, MessageAttribute, Settings
+from ureport.models import SentToMtrac, AutoregGroupRules, MessageDetail, MessageAttribute, Settings, ExportedPoll
 from script.models import Script
 
 import logging
 from rapidsms.models import Connection, Contact
+from ureport_project.rapidsms_polls.poll.models import Poll
+import utils
 
 log = logging.getLogger(__name__)
 
@@ -110,6 +112,7 @@ def process_uploaded_contacts(upload):
               "\n%s" % (user.username, upload.get_unprocessed())
         send_mail('Contacts uploaded', msg, "", [user.email], fail_silently=False)
 
+
 @task
 def process_assign_group(upload, group, user):
     def check_con_or_cont(l):
@@ -121,6 +124,7 @@ def process_assign_group(upload, group, user):
             except ValueError:
                 continue
         return True
+
     excel = reader.excel.load_workbook(upload)
     rows = []
     for sheet in excel.worksheets:
@@ -148,3 +152,17 @@ def process_assign_group(upload, group, user):
               "contacts, please find them below" \
               "\n%s" % (user.username, str(with_error))
         send_mail('Contacts Added to Group', msg, "", [user.email], fail_silently=False)
+
+
+@task
+def export_poll(poll_id, host, username=None):
+    poll = Poll.objects.get(pk=poll_id)
+    ExportedPoll.objects.create(poll=poll)
+    utils.export_poll(poll)
+    if username:
+        user = User.objects.get(username=username)
+        if user.email:
+            msg = "Hi %s,\nThe poll(%s) has been exported and is now ready for download." \
+                  "\nPlease find it here %s\nThank You" % (
+                      user.username, poll.name, poll.get_export_path(host))
+            send_mail('Contacts Added to Group', msg, "", [user.email], fail_silently=False)
