@@ -18,11 +18,12 @@ def start_poll_queues_messages_in_table():
     contacts = [contact1, contact2]
 
     backend = Backend.objects.create(name='test_backend')
-    create_connection(identity='0794339344', contact=contact1, backend=backend)
-    create_connection(identity='0794339427', contact=contact2, backend=backend)
+    connections_list = []
+    connections_list.append(create_connection(identity='0794339344', contact=contact1, backend=backend))
+    connections_list.append(create_connection(identity='0794339427', contact=contact2, backend=backend))
 
     poll = create_poll(User.objects.all()[0])
     add_contacts_to_poll(poll, contacts)
 
-    return poll.id, poll.contacts.count()
+    return poll, connections_list
 
