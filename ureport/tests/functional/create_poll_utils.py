@@ -4,7 +4,7 @@ from rapidsms.models import Connection, Contact
 from poll.models import Poll
 from rapidsms_httprouter.models import Message
 from rapidsms_httprouter.router import get_router
-from ureport_project.rapidsms.lib.rapidsms.messages import IncomingMessage
+from rapidsms.messages import IncomingMessage
 
 
 def create_group(group_name):
