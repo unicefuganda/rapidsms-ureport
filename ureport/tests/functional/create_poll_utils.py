@@ -4,6 +4,7 @@ from rapidsms.models import Connection, Contact
 from poll.models import Poll
 from rapidsms_httprouter.models import Message
 from rapidsms_httprouter.router import get_router
+from ureport_project.rapidsms.lib.rapidsms.messages import IncomingMessage
 
 
 def create_group(group_name):
@@ -46,6 +47,10 @@ def create_fake_response(connection, incoming_message):
     incoming = router.handle_incoming(connection.backend.name, connection.identity, incoming_message)
     return incoming
 
-
 def get_browser():
     return Browser('firefox')
+
+def get_incoming_message(connection, message):
+    incoming_message = IncomingMessage(connection, message)
+    incoming_message.db_message = Message.objects.create(direction='I', connection=connection, text=message)
+    return incoming_message

@@ -5,8 +5,8 @@ from poll.models import Poll
 from poll.tests import TestScript
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
 from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
-from ureport_project.rapidsms_ureport.ureport.tests.functional.create_poll_for_tests import start_poll_queues_messages_in_table
-from ureport_project.rapidsms_ureport.ureport.tests.functional.poll_utils import get_incoming_message
+from ureport.tests.functional.create_poll_for_tests import start_poll_queues_messages_in_table
+from ureport.tests.functional.create_poll_utils import get_incoming_message
 
 
 class UreportTest(SplinterTestCase):
