@@ -5,7 +5,6 @@ import urllib
 from celery.task import Task, task
 from celery.registry import tasks
 from django.conf import settings
-import time
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.db.models import Q
@@ -16,7 +15,7 @@ from script.models import Script
 
 import logging
 from rapidsms.models import Connection, Contact
-from ureport_project.rapidsms_polls.poll.models import Poll
+from poll.models import Poll
 import utils
 
 log = logging.getLogger(__name__)
