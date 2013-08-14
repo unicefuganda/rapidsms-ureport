@@ -7,6 +7,7 @@ from django.template import RequestContext
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.http import HttpResponse
+from django.views.decorators.cache import cache_page
 from uganda_common.utils import ExcelResponse
 
 from rapidsms_httprouter.models import Message
@@ -31,6 +32,7 @@ import os
 
 
 @login_required
+@cache_page(60 * 60, cache='default', key_prefix="ureport")
 def mp_dashboard(request):
     from contact.forms import FilterGroupsForm, \
         MultipleDistictFilterForm, GenderFilterForm, AgeFilterForm

@@ -6,7 +6,7 @@ from django.template import RequestContext
 from script.models import ScriptStep
 from django.contrib.auth.decorators import login_required
 from generic.views import generic
-from django.views.decorators.cache import cache_control, never_cache
+from django.views.decorators.cache import cache_control, never_cache, cache_page
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from rapidsms_xforms.models import XFormField, XForm
@@ -441,6 +441,7 @@ def poll_dashboard(request):
 
 
 @login_required
+@cache_page(30*60)
 def ureport_polls(request):
     access = get_access(request)
     columns = [('Name', True, 'name', SimpleSorter()),
