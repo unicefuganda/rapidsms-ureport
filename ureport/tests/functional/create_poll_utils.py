@@ -1,9 +1,10 @@
 from splinter import Browser
 from django.contrib.auth.models import Group, User
-from rapidsms.models import Connection
+from rapidsms.models import Connection, Contact
 from poll.models import Poll
 from rapidsms_httprouter.models import Message
 from rapidsms_httprouter.router import get_router
+from rapidsms.messages import IncomingMessage
 
 
 def create_group(group_name):
@@ -16,6 +17,10 @@ def create_user(username, email, group):
     user1.groups.add(group)
     user1.save()
     return user1
+
+def create_contact(name, user, gender, birthdate, language):
+    contact = Contact.objects.create(name=name, user=user, gender=gender, birthdate=birthdate, language=language)
+    return contact
 
 
 def create_connection(identity, contact, backend):
@@ -31,7 +36,6 @@ def create_poll(user):
     poll = Poll.objects.create(name=poll_name, question=question, user=user, type=Poll.TYPE_TEXT)
     return poll
 
-
 def add_contacts_to_poll(poll, contacts):
     for contact in contacts:
         poll.contacts.add(contact)
@@ -43,6 +47,10 @@ def create_fake_response(connection, incoming_message):
     incoming = router.handle_incoming(connection.backend.name, connection.identity, incoming_message)
     return incoming
 
-
 def get_browser():
     return Browser('firefox')
+
+def get_incoming_message(connection, message):
+    incoming_message = IncomingMessage(connection, message)
+    incoming_message.db_message = Message.objects.create(direction='I', connection=connection, text=message)
+    return incoming_message

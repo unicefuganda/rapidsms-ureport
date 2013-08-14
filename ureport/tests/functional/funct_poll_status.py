@@ -43,7 +43,7 @@ class PollStatusTest(SplinterTestCase):
 
     @take_screenshot_on_failure
     def test_should_show_the_status_page(self):
-        self.assertTrue(str(self.poll.id) in self.browser.find_by_id("poll-details").text)
+        self.assertTrue(str(self.poll.id) in self.browser.find_by_id("poll-details").first.text)
         self.assertEqual(self.browser.find_by_id('contact-count').text, "2")
         self.assertEqual(self.browser.find_by_id('category-count').text, "3")
         self.assertEqual(self.browser.find_by_id('is-yesno').text, "yes")
