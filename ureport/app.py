@@ -6,7 +6,7 @@ from django.conf import settings
 from ureport.models import MessageAttribute, MessageDetail, Settings, FlagTracker
 
 import logging
-from ureport_project.rapidsms_httprouter_src.rapidsms_httprouter.models import Message
+from rapidsms_httprouter.models import Message
 
 log = logging.getLogger(__name__)
 

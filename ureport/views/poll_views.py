@@ -441,7 +441,7 @@ def poll_dashboard(request):
 
 
 @login_required
-@cache_page(30*60)
+@cache_page(30*60, cache='default', key_prefix="ureport")
 def ureport_polls(request):
     access = get_access(request)
     columns = [('Name', True, 'name', SimpleSorter()),
