@@ -10,12 +10,11 @@ from django.core.mail import send_mail
 from django.db.models import Q
 from openpyxl import reader
 from rapidsms_httprouter.models import Message
-from ureport.models import SentToMtrac, AutoregGroupRules, MessageDetail, MessageAttribute, Settings, ExportedPoll
+from ureport.models import SentToMtrac, AutoregGroupRules, MessageDetail, MessageAttribute, Settings, ExportedPoll, UPoll
 from script.models import Script
 
 import logging
 from rapidsms.models import Connection, Contact
-from poll.models import Poll
 import utils
 
 log = logging.getLogger(__name__)
@@ -155,7 +154,7 @@ def process_assign_group(upload, group, user):
 
 @task
 def export_poll(poll_id, host, username=None):
-    poll = Poll.objects.get(pk=poll_id)
+    poll = UPoll.objects.get(pk=poll_id)
     ExportedPoll.objects.create(poll=poll)
     utils.export_poll(poll)
     if username:

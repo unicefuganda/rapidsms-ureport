@@ -277,7 +277,7 @@ class UPoll(Poll):
         super(UPoll, self).save()
 
     def get_export_path(self, domain):
-        return "%sstatic/ureport/spreadsheets/poll_%s.xlxs" % (str(domain), self.pk)
+        return "%s/static/ureport/spreadsheets/poll_%s.xlxs" % (str(domain), self.pk)
 
     class Meta:
         proxy = True

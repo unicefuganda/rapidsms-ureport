@@ -17,7 +17,7 @@ class Command(BaseCommand):
     def handle(self, **options):
         path = options["path"]
         csv_rows = csv.reader(open(path, 'rU'), delimiter=",")
-        a = open('/home/kenneth/phones.csv', 'wb')
+        a = open('/home/kenneth/phones-notexist.csv', 'wb')
         spam = csv.writer(a, delimiter=",", quotechar="'", quoting=csv.QUOTE_MINIMAL)
         spam.writerow(['identity', 'Phone', 'District'])
         n = 0
@@ -27,9 +27,18 @@ class Command(BaseCommand):
                 con = Connection.objects.get(pk=row[0])
             except ValueError:
                 pass
+                continue
+            except Connection.DoesNotExist:
+                print row[0], "Does not exist", n
+                spam.writerow([row[0], "", ""])
+                continue
             else:
                 print "passed", n
-                spam.writerow([con.pk, con.identity, con.contact.reporting_location])
+                if con.contact is not None:
+                    x = unicode(con.contact.reporting_location)
+                else:
+                    x = ""
+                # spam.writerow([con.pk, con.identity, x])
         a.close()
 
 
