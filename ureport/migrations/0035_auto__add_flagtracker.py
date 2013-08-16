@@ -7,6 +7,8 @@ from django.db import models
 
 class Migration(SchemaMigration):
 
+    depends_on = (("contact", '0001_initial'),)
+
     def forwards(self, orm):
         # Adding model 'FlagTracker'
         db.create_table('ureport_flagtracker', (
