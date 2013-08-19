@@ -1,48 +1,53 @@
 {% extends 'generic/partials/partial_row.html' %}
 {% block remaining_row_content %}
     <td>
-       <a href="{% url profile object.connection_pk %}"> {{ object.connection_pk }}</a>
+        <a href="{% url profile object.connection_pk %}"> {{ object.connection_pk }}</a>
     </td>
+    {% if request.user.is_staff %}
     <td>
-    {{  object.age }}
+        {{ object.mobile }}
     </td>
-    <td>
-    {% if object.gender %}
-    {{ object.gender }}
     {% endif %}
+    <td>
+        {{  object.age }}
     </td>
     <td>
-    {% if object.language == '' %}
-        en
+        {% if object.gender %}
+            {{ object.gender }}
+        {% endif %}
+    </td>
+    <td>
+        {% if object.language == '' %}
+            en
         {% else %}
-        {{ object.language }}
-    {% endif %}
+            {{ object.language }}
+        {% endif %}
     </td>
     <td id="row_{{ object.pk }}">{{ object.district }}</td>
     <td>
 
-             {{ object.group }}
-        </td>
+        {{ object.group }}
+    </td>
 
-<td>{{ object.questions }}</td>
-<td>{{ object.responses }}</td>
-<td>{{ object.incoming }}</td>
-<td>
-    {% if object.is_caregiver %}
-    Yes
-    {%else%}
-    No
-    {%endif %}
-</td>
-<td>{{ object.autoreg_join_date }}</td>
-<td>
-    {% if object.quit_date %}
-    {{ object.quit_date.date }}
-    {%else%}
-    N/A
-    {%endif%}
+    <td>{{ object.questions }}</td>
+    <td>{{ object.responses }}</td>
+    <td>{{ object.incoming }}</td>
+    <td>
+        {% if object.is_caregiver %}
+            Yes
+        {%else%}
+            No
+        {%endif %}
+    </td>
+    <td>{{ object.autoreg_join_date }}</td>
+    <td>
+        {% if object.quit_date %}
+            {{ object.quit_date.date }}
+        {%else%}
+            N/A
+        {%endif%}
 
-</td>
+    </td>
 
 
 {% endblock %}

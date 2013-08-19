@@ -417,7 +417,7 @@ class UploadContacts(models.Model):
                 with_error.append((row, e))
                 continue
         print "With Error -", with_error
-        self.unprocessed = str(with_error)
+        self.unprocessed = self._stringfy(with_error)
         self.processed_on = datetime.datetime.now()
         self.save()
 
@@ -456,6 +456,15 @@ class UploadContacts(models.Model):
             return Group.objects.get(name=group)
         except Group.DoesNotExist:
             raise UploadContactException("Group %s does not exist" % group)
+
+    def _stringfy(self, with_error):
+        z = ""
+        for e in with_error:
+            row, exception = e
+            row = row[:11]
+            z += "Row with %s has error %s\n"%(",".join(row), str(e))
+        return z.strip()
+
 
 
 class FlagTracker(models.Model):

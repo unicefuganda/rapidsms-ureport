@@ -367,6 +367,9 @@ def ureporters(request):
         ('quit date', True, 'quit_date', SimpleSorter(),),
     ]
 
+    if request.user.is_staff:
+        columns.insert(1, ('Phone', True, 'mobile', SimpleSorter()))
+
     queryset = get_contacts2(request=request)
     if access is not None:
         groups = ",".join(list(access.groups.values_list('name', flat=True)))
