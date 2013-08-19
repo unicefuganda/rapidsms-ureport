@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.views.decorators.cache import never_cache
 from ureport.spreadsheet_utils import get_excel_dump_report_for_poll, \
     get_per_district_excel_report_for_yes_no_polls
 from poll.models import Poll
@@ -41,6 +42,7 @@ def generate_per_district_report(request, poll_id):
 
 
 @login_required
+@never_cache
 def upload_users(request):
     form = UploadContactsForm()
     if request.method == 'POST':

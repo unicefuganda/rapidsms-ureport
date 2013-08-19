@@ -388,7 +388,7 @@ class UploadContacts(models.Model):
         with_error = []
         for row in rows:
             try:
-                phone, group, name, language, gender, age, occupation, district, village_name, subcounty, health_facility = row
+                phone, group, name, language, gender, age, occupation, district, village_name, subcounty, health_facility = row[:11]
                 district = self._get_district(str(district))
                 phone = self._clean_phone(str(phone))
                 birth_date = self._birth_date(str(age))
@@ -439,6 +439,8 @@ class UploadContacts(models.Model):
         raise UploadContactException("Phone number %s is invalid" % phone)
 
     def _birth_date(self, age):
+        if not age:
+            return None
         try:
             return datetime.datetime.now() - relativedelta(years=int(age))
         except:
