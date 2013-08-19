@@ -439,8 +439,6 @@ class UploadContacts(models.Model):
         raise UploadContactException("Phone number %s is invalid" % phone)
 
     def _birth_date(self, age):
-        if not age:
-            return None
         try:
             return datetime.datetime.now() - relativedelta(years=int(age))
         except:
