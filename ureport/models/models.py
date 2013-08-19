@@ -388,7 +388,7 @@ class UploadContacts(models.Model):
         with_error = []
         for row in rows:
             try:
-                phone, group, name, language, gender, age, occupation, district, village_name, subcounty, health_facility = row[:11]
+                phone, group, name, language, gender, age, occupation, district, village_name, subcounty, health_facility = tuple(row[:11])
                 district = self._get_district(str(district))
                 phone = self._clean_phone(str(phone))
                 birth_date = self._birth_date(str(age))
