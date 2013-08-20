@@ -15,7 +15,6 @@ from django.db import connection
 ezxf = xlwt.easyxf
 
 from openpyxl.workbook import Workbook
-from openpyxl.writer.excel import ExcelWriter
 
 
 class Command(BaseCommand):
