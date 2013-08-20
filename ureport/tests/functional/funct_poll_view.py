@@ -10,7 +10,7 @@ from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 class PollViewTest(SplinterTestCase):
 
     def setUp(self):
-        self.browser = get_browser()
+        self.browser = Browser()
         self.open('/')
 
     def tearDown(self):
@@ -30,6 +30,4 @@ class PollViewTest(SplinterTestCase):
 
         self.create_and_sign_in_admin("ureport", "ureport")
 
-        poll_list = self.browser.find_by_id("poll_record")
-
-        # self.assertTrue(self.browser.is_element_present_by_id("poll_record"))
+        self.browser.find_by_id("poll_record")

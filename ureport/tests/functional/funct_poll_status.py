@@ -1,20 +1,15 @@
-import time
 from rapidsms.models import Contact,Connection, Backend
 from splinter import Browser
 from rapidsms.models import Contact
 from rapidsms.models import Connection
 from datetime import datetime
-
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
 from rapidsms_ureport.ureport.tests.functional.create_poll_utils import create_group, create_user, create_connection, create_poll, add_contacts_to_poll
 from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 
-BROWSER = Browser('firefox')
-
-
 class PollStatusTest(SplinterTestCase):
     def setUp(self):
-        self.browser = BROWSER
+        self.browser = Browser()
 
         group = create_group(group_name='poll_status_group')
 
@@ -47,7 +42,3 @@ class PollStatusTest(SplinterTestCase):
         self.assertEqual(self.browser.find_by_id('contact-count').text, "2")
         self.assertEqual(self.browser.find_by_id('category-count').text, "3")
         self.assertEqual(self.browser.find_by_id('is-yesno').text, "yes")
-
-
-
-

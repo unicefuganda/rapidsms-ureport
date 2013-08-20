@@ -1,7 +1,5 @@
 from splinter import Browser
-
 from poll.models import Poll
-
 from poll.tests import TestScript
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
 from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
@@ -14,7 +12,6 @@ class UreportTest(SplinterTestCase):
 
     def setUp(self):
         self.browser = Browser()
-        self.open('/')
         self.poll, self.connections_list = start_poll_queues_messages_in_table()
 
     def tearDown(self):
@@ -45,5 +42,14 @@ class UreportTest(SplinterTestCase):
        poll.process_response(get_incoming_message(self.connections_list[0],"yes"))
        poll.process_response(get_incoming_message(self.connections_list[1],"no"))
        self.assertEquals(poll.responses.count(), 2)
+       self.open('/mypolls/')
 
-    
+       assert self.browser.find_link_by_href('/%s/responses/' % self.poll.id)
+       assert self.browser.is_text_present(' Responses (%i)' % poll.responses.count())
+       
+
+
+
+
+
+
