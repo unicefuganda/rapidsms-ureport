@@ -110,7 +110,7 @@
 	                <li><a href="/join/">HOW TO JOIN</a></li>
                     <li><a href="{% url pulse %}">NATIONAL PULSE</a> </li>
 	                {% if user.is_authenticated %}
-	                   <li><a href="{% url ureport-polls %}">POLL ADMIN</a></li>
+	                   <li><a href="{% url ureport-polls user.username %}">POLL ADMIN</a></li>
 	                   <li><a href="{% url messagelog %}">MESSAGE LOG</a></li>
 	                   <li><a href="{% url ureport-contact %}">UREPORTERS</a></li>
 	                   <li><a href="{% url flaggedmessages %}">FLAGGED MESSAGES</a></li>
