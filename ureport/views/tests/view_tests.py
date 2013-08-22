@@ -66,7 +66,7 @@ class TestViews(TestCase):
         response = self.client.get(reverse('ureport-polls', args=[self.user.pk]))
         self.assertEqual(response.status_code, 302)
         self.client.login(username="foo", password="barbar")
-        response = self.client.get(reverse('ureport-polls'))
+        response = self.client.get(reverse('ureport-polls', args=[self.user.pk]))
         self.assertEqual(response.status_code, 200)
 
     def test_scriptpolls(self):
@@ -187,7 +187,7 @@ class TestViews(TestCase):
         response = self.client.get(reverse('alerts', args=[self.user.pk]))
         self.assertEqual(response.status_code, 302)
         self.client.login(username="foo", password="barbar")
-        response = self.client.get(reverse('alerts'))
+        response = self.client.get(reverse('alerts', args=[self.user.pk]))
         self.assertEqual(response.status_code, 200)
 
     
