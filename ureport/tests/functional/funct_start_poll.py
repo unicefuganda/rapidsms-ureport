@@ -42,7 +42,7 @@ class UreportTest(SplinterTestCase):
        poll.process_response(get_incoming_message(self.connections_list[0],"yes"))
        poll.process_response(get_incoming_message(self.connections_list[1],"no"))
        self.assertEquals(poll.responses.count(), 2)
-       self.open('/mypolls/')
+       self.open('/mypolls/12/')
 
        assert self.browser.find_link_by_href('/%s/responses/' % self.poll.id)
        assert self.browser.is_text_present(' Responses (%i)' % poll.responses.count())
