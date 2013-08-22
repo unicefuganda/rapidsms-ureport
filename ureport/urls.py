@@ -30,7 +30,7 @@ urlpatterns = patterns('',
                            {'model': Contact, 'partial_row': 'ureport/partials/contacts/generic_contact_row.html'},
                            name="reporter-profile"),
                        # poll management views using generic (rather than built-in poll views
-                       url(r'^mypolls/(?P<username>\w+)/$', ureport_polls, name="ureport-polls"),
+                       url(r'^mypolls/(?P<pk>\d+)/$', ureport_polls, name="ureport-polls"),
 
                        # poll management views using generic (rather than built-in poll views
                        url(r'^scriptpolls/$', script_polls, name="script-polls"),
@@ -120,7 +120,7 @@ urlpatterns = patterns('',
                        url(r'^rule/(?P<pk>\d+)/delete/$', delete_rule, name="delete_rule"),
                        url(r'^category/(?P<pk>\d+)/rules/view/$', view_rules, name="view_rules"),
                        url(r'^category/(?P<pk>\d+)/rules/create/$', create_rule, name="create_rule"),
-                       url(r'^alerts/$', alerts, name="alerts"),
+                       url(r'^alerts/(?P<pk>\d+)/$', alerts, name="alerts"),
                        url(r"remove_captured/$", remove_captured, name="remove captured"),
                        url(r"sendmessage/$", send_message, name="send_message"),
                        url(r"view_group_rules/$", view_autoreg_rules, name="view_group_rules"),

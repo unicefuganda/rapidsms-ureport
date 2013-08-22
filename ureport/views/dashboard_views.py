@@ -160,7 +160,7 @@ def mp_dashboard(request):
 
 
 @login_required
-def alerts(request):
+def alerts(request, pk):
     access = get_access(request)
     poll_form = NewPollForm()
     range_form = rangeForm()
