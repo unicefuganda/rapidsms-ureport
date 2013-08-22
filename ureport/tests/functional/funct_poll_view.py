@@ -11,7 +11,6 @@ class PollViewTest(SplinterTestCase):
 
     def setUp(self):
         self.browser = Browser()
-        self.open('/')
 
     def tearDown(self):
         self.open('/account/logout')
