@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from django.core.mail import send_mail
-from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.shortcuts import render_to_response, get_object_or_404, redirect, render
 from django.template import RequestContext
 from script.models import ScriptStep
 from django.contrib.auth.decorators import login_required
@@ -297,6 +297,9 @@ def poll_summary(request):
 @transaction.commit_on_success
 def view_responses(req, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
+    access = get_access(req)
+    if access and not poll.user == access.user:
+        return render(req, '403.html', status=403)
 
     script_polls = \
         ScriptStep.objects.exclude(poll=None).values_list('poll',
