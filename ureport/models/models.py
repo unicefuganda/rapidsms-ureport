@@ -388,7 +388,8 @@ class UploadContacts(models.Model):
         with_error = []
         for row in rows:
             try:
-                phone, group, name, language, gender, age, occupation, district, village_name, subcounty, health_facility = tuple(row[:11])
+                phone, group, name, language, gender, age, occupation, district, village_name, subcounty, health_facility = tuple(
+                    row[:11])
                 district = self._get_district(str(district))
                 phone = self._clean_phone(str(phone))
                 birth_date = self._birth_date(str(age))
@@ -461,9 +462,9 @@ class UploadContacts(models.Model):
         for e in with_error:
             row, exception = e
             row = row[:11]
-            z += "Row with %s has error %s\n"%(",".join(row), str(e))
+            z += "Row with %s has error %s\n" % (",".join(row), str(e))
+        z = z.split("UploadContactException")[1].replace('(', "").replace("'", "").replace(",", "").replace("))")
         return z.strip()
-
 
 
 class FlagTracker(models.Model):
