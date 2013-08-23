@@ -30,12 +30,13 @@
 {% endblock %}
 
 {% block top_js %}
-    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/d3.min.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/crossfilter.min.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/queue.min.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/dc.min.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/colorbrewer.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/underscore-min.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/d3.min.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/crossfilter.min.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/queue.min.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/dc.min.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/colorbrewer.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/underscore-min.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/d3.geo.projection.v0.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -63,48 +64,44 @@
     var numberFormat = d3.format(".2f");
 
     var ugChart = dc.geoChoroplethChart("#ug-chart");
-    var totalsChart = dc.bubbleChart("#totals-chart");
-    var nationalPieChart = dc.pieChart("#national-pie-chart")
+		var totalsChart = dc.bubbleChart("#totals-chart");
+        var nationalPieChart = dc.pieChart("#national-pie-chart")
 
-    var width = 700,
-            height = 960;
+		var width = 700,
+				height = 960;
 
-    var projection = d3.geo.albers()
-            .center([33, 0])
-        // ug is slanted on albers projection,
-        // so adjust pitch and roll
-        // such that bottom of ug straight
-        // (its straight on mercator projections,
-        // which is what most people are used to)
-        // [yaw, pitch, roll] AKA [lat, long, roll]
-            .rotate([-1, 11.5, -16.4])
-            .parallels([25, 35])
-            .scale(6000)
-            .translate([width / 2, height / 2]);
+        var raw_map_args = '{{ map_args }}';
+        var cleaned_map_args = raw_map_args.replace(/&#39;/g, "\"");
+        var map_args = JSON.parse(cleaned_map_args);
 
-    // declare some vars here so they are available
-    // in the browser console for debugging
-    var data;
-    var districts;
-    var shapes;
-    var data1;
-    var categories;
-    var debug = true;
-    var total;
-    var caseTypes;
+		var projection = d3.geo.mercator()
+                .center([map_args.center.longitude, map_args.center.latitude])
+				.scale(map_args.scale);
 
-    function max_of(obj){
-        var n = 0;
-        var x;
-        var key;
-        for (x in obj){
-            if (obj[x] > n){
-                n = obj[x];
-                key = x;
+		// declare some vars here so they are available
+		// in the browser console for debugging
+		var data;
+		var districts;
+		var shapes;
+        var data1;
+        var categories;
+        var debug = true;
+        var total;
+        var caseTypes;
+
+        function max_of(obj){
+            var n = 0;
+            var x;
+            var key;
+            for (x in obj){
+                if (obj[x] > n){
+                    n = obj[x];
+                    key = x;
+                }
             }
+            return key;
         }
-        return key;
-    }
+
 
     queue()
             .defer(d3.json, "{{ MEDIA_URL }}ureport/data/districts.json")
@@ -232,38 +229,71 @@
                 });
 
         totalsChart.width((width))
-                .height(height/1.5)
-                .margins({top: 10, right: 50, bottom: 30, left: 60})
-                .dimension(districts)
-            // FIXME colors shown on chart don't make sense. WTF
-                .colors(colorbrewer.YlGnBu[9])
-                .colorDomain([0, 100])
-                .group(totalAnswersByDistrict)
-                .keyAccessor(function (p) {
-                    return p.value.total;
-                })
-                .valueAccessor(function (p) {
-                    return _.unique(p.value.categories).length;
-                })
-                .radiusValueAccessor(function (p) {
-                    return p.value.total;
-                })
-            // TODO calculate these domains
-                .x(d3.scale.linear().domain([0, (2 + maxCategories)]))
-                .r(d3.scale.linear().domain([0, maxCategories]))
-                .minRadiusWithLabel(11)
-                .elasticY(true)
-                .yAxisPadding(5)
-                .elasticX(true)
-                .xAxisPadding(200)
-                .maxBubbleRelativeSize(0.07)
-                .renderHorizontalGridLines(false)
-                .renderVerticalGridLines(true)
-                .renderLabel(true)
-                .renderTitle(true)
-                .title(function (p) {
-                    return enumerateCountsForDatumTitle(p);
-                });
+            .height(height/1.5)
+            .margins({top: 10, right: 50, bottom: 30, left: 60})
+            .dimension(districts)
+        // FIXME colors shown on chart don't make sense. WTF
+            .colors(colorbrewer.YlGnBu[9])
+            .colorDomain([0, 100])
+            .group(totalAnswersByDistrict)
+            .valueAccessor(function (p) {
+                    return p.value.dominant;
+            })
+            // TODO look into patching dc.js so we can
+            // use topojson instead of geojson (topojson files are much smaller)
+            .overlayGeoJson(ug.features, "district", function (d) {
+                if (_.find(caseDistricts, function(x){ return x == d.properties.name; })){
+                  // if district name from map is the same
+                  // as district name in cases, use it
+                  return d.properties.name;
+                }
+                // print debug info if district cannont be reconciled with map
+                if (debug) {
+                  console.log('no district named ', d.properties.name);
+                }
+                return d.properties.name;
+            })
+            // color across yellow-green-blue range
+            // with a domain of 0% yes to 100% yes
+            .colors(["#BEBEBE", "#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"])
+            .colorAccessor(function(d, i){return d})
+            .title(function (d) {
+                    return "District: " + d.key + "\n " + category_of((d.value ? d.value : 0));
+            });
+
+        totalsChart.width((width))
+            .height(height/1.5)
+            .margins({top: 10, right: 50, bottom: 30, left: 60})
+            .dimension(districts)
+                                // FIXME colors shown on chart don't make sense. WTF
+                                .colors(colorbrewer.YlGnBu[9])
+                                .colorDomain([0, 100])
+            .group(totalAnswersByDistrict)
+            .keyAccessor(function (p) {
+                return p.value.total;
+            })
+            .valueAccessor(function (p) {
+                return _.unique(p.value.categories).length;
+            })
+            .radiusValueAccessor(function (p) {
+                return p.value.total;
+            })
+                                // TODO calculate these domains
+            .x(d3.scale.linear().domain([0, (2 + maxCategories)]))
+            .r(d3.scale.linear().domain([0, maxCategories]))
+            .minRadiusWithLabel(11)
+            .elasticY(true)
+            .yAxisPadding(5)
+            .elasticX(true)
+            .xAxisPadding(200)
+            .maxBubbleRelativeSize(0.07)
+            .renderHorizontalGridLines(false)
+            .renderVerticalGridLines(true)
+            .renderLabel(true)
+            .renderTitle(true)
+            .title(function (p) {
+                return enumerateCountsForDatumTitle(p);
+            });
         totalsChart.yAxis().tickFormat(function (s) {
             return s ;
         });
@@ -272,27 +302,26 @@
         });
 
         nationalPieChart
-                .width(300)
-                .height(200)
-                .transitionDuration(500)
-                .colors(categoryColor)
-                .colorAccessor(function(d, i){return _.indexOf(caseTypes, d.data.key); })
-                .radius(90)
-                .innerRadius(40)
-                .dimension(categories)
-                .group(categoriesGroup)
-                .renderLabel(true)
-                .renderTitle(true);
+          .width(300)
+          .height(200)
+          .transitionDuration(500)
+          .colors(categoryColor)
+          .colorAccessor(function(d, i){return _.indexOf(caseTypes, d.data.key); })
+          .radius(90)
+          .innerRadius(40)
+          .dimension(categories)
+          .group(categoriesGroup)
+          .renderLabel(true)
+          .renderTitle(true);
 
         dc.renderAll();
 
-
         mapLegendColors = d3.scale.linear()
-                .domain(d3.range(0,7))
-                .range(["#FFFFFF", "#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"]);
+        .domain(d3.range(0,7))
+        .range(["#BEBEBE", "#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"]);
 
         var legend = d3.select('.legend')
-                .attr("style", function (d) { return "margin-top: " + (height / 4) + "px;"; });
+            .attr("style", function (d) { return "margin-top: " + (height / 4) + "px;"; });
 
         var legendItems = legend.selectAll('.legend-item')
                 .data(_.zip(mapLegendColors.domain(), mapLegendColors.range()));

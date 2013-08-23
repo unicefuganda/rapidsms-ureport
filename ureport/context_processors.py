@@ -39,6 +39,7 @@ def voices(request):
         'quote': quote,
         'geoserver_url': settings.GEOSERVER_URL,
         'map_bounds': settings.MAP_BOUNDS,
+        'map_args': settings.MAP_ARGS,
         'show_contact_info': getattr(settings, 'SHOW_CONTACT_INFO', True)
     }
 
