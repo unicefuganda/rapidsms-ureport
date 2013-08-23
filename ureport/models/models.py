@@ -404,7 +404,7 @@ class UploadContacts(models.Model):
                 connection.contact = contact
                 connection.save()
 
-                contact.name = name
+                contact.name = str(phone)
                 contact.language = language
                 contact.gender = gender
                 contact.birthdate = birth_date
