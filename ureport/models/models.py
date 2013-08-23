@@ -442,14 +442,14 @@ class UploadContacts(models.Model):
         try:
             return datetime.datetime.now() - relativedelta(years=int(age))
         except:
-            raise UploadContactException("Age %s is invalid" % age)
+            return None
 
     def _get_gender(self, gender):
         if gender.lower().startswith("m"):
             return "m"
         elif gender.lower().startswith("f"):
             return "f"
-        raise UploadContactException("Gender %s is invalid" % gender)
+        return " "
 
     def _get_group(self, group):
         try:
