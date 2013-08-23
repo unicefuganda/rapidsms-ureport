@@ -76,7 +76,8 @@
 
 		var projection = d3.geo.mercator()
                 .center([map_args.center.longitude, map_args.center.latitude])
-				.scale(map_args.scale);
+				.scale(map_args.scale)
+                .translate([width / 2, height / 2]);
 
 		// declare some vars here so they are available
 		// in the browser console for debugging
