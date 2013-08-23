@@ -5,7 +5,6 @@ from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 
 class PollBase(PollAssertions):
 
-    @take_screenshot_on_failure
     def start_poll(self):
         poll_url = "/view_poll/%s" % self.poll.id
         self.create_and_sign_in_admin("argha", "a", poll_url)
