@@ -2,10 +2,11 @@ from rapidsms.models import Contact,Connection, Backend
 from splinter import Browser
 from rapidsms.models import Contact
 from rapidsms.models import Connection
-from datetime import datetime, time
+from datetime import datetime
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
 from rapidsms_ureport.ureport.tests.functional.create_poll_utils import create_group, create_user, create_connection, create_poll, add_contacts_to_poll
 from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
+import time
 
 class PollStatusTest(SplinterTestCase):
     def setUp(self):
