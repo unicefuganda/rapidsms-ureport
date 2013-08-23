@@ -2,7 +2,7 @@ from rapidsms.models import Contact,Connection, Backend
 from splinter import Browser
 from rapidsms.models import Contact
 from rapidsms.models import Connection
-from datetime import datetime
+from datetime import datetime, time
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
 from rapidsms_ureport.ureport.tests.functional.create_poll_utils import create_group, create_user, create_connection, create_poll, add_contacts_to_poll
 from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
@@ -38,6 +38,7 @@ class PollStatusTest(SplinterTestCase):
 
     @take_screenshot_on_failure
     def test_should_show_the_status_page(self):
+        time.sleep(5)
         self.assertTrue(str(self.poll.id) in self.browser.find_by_id("poll-details").first.text)
         self.assertEqual(self.browser.find_by_id('contact-count').text, "2")
         self.assertEqual(self.browser.find_by_id('category-count').text, "3")
