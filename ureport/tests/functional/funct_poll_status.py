@@ -30,7 +30,7 @@ class PollStatusTest(SplinterTestCase):
 
         self.poll.add_yesno_categories()
 
-        self.create_and_sign_in_admin("argha", "a")
+        self.create_and_sign_in_admin("argha", "a", None)
 
         self.open("/poll_status/%s" % self.poll.id)
 

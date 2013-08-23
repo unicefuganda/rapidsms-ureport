@@ -27,6 +27,6 @@ class PollViewTest(SplinterTestCase):
             assert(poll.messages.count() > 0)
             poll.end()
 
-        self.create_and_sign_in_admin("ureport", "ureport")
+        self.create_and_sign_in_admin("ureport", "ureport", None)
 
         self.browser.find_by_id("poll_record")

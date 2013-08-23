@@ -7,7 +7,7 @@ def login_fails_without_user(driver):
 
 
 def login_succeeds_with_super_user(driver):
-    user = driver.create_and_sign_in_admin("pass", "jamo")
+    user = driver.create_and_sign_in_admin("pass", "jamo", None)
     assert driver.browser.is_text_present('POLL ADMIN')
     assert driver.browser.is_text_present('MESSAGE LOG')
     assert driver.browser.is_text_present('MESSAGE CLASSIFICATION')
