@@ -11,7 +11,6 @@ def create_group(group_name):
     group = Group.objects.create(name=group_name)
     return group
 
-
 def create_user(username, email, group):
     user1 = User.objects.create(username=username, email=email)
     user1.groups.add(group)
@@ -22,13 +21,11 @@ def create_contact(name, user, gender, birthdate, language):
     contact = Contact.objects.create(name=name, user=user, gender=gender, birthdate=birthdate, language=language)
     return contact
 
-
 def create_connection(identity, contact, backend):
     connection = Connection.objects.create(identity=identity, backend=backend)
     connection.contact = contact
     connection.save()
     return connection
-
 
 def create_poll(user):
     poll_name = "functional_test"
@@ -41,14 +38,10 @@ def add_contacts_to_poll(poll, contacts):
         poll.contacts.add(contact)
     poll.save()
 
-
 def create_fake_response(connection, incoming_message):
     router = get_router()
     incoming = router.handle_incoming(connection.backend.name, connection.identity, incoming_message)
     return incoming
-
-def get_browser():
-    return Browser('firefox')
 
 def get_incoming_message(connection, message):
     incoming_message = IncomingMessage(connection, message)

@@ -17,3 +17,4 @@ class PollBase(PollAssertions):
 
     def get_poll(self, poll_id):
         return Poll.objects.get(id=poll_id)
+
