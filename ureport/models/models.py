@@ -400,7 +400,7 @@ class UploadContacts(models.Model):
                 if connection.contact is not None:
                     contact = connection.contact
                 else:
-                    contact = Contact.objects.create(name=name)
+                    contact = Contact()
                 connection.contact = contact
                 connection.save()
 
