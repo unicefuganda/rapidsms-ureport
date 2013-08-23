@@ -462,7 +462,7 @@ class UploadContacts(models.Model):
         for e in with_error:
             row, exception = e
             row = row[:11]
-            z += "Row with %s has error %s\n" % (",".join(row), str(e))
+            z += "Row with %s has error %s\n" % (",".join([str(r) for r in row]), str(e))
         z = z.split("UploadContactException")[1].replace('(', "").replace("'", "").replace(",", "").replace("))")
         return z.strip()
 
