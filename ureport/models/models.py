@@ -400,11 +400,10 @@ class UploadContacts(models.Model):
                 if connection.contact is not None:
                     contact = connection.contact
                 else:
-                    contact = Contact.objects.create(name=str(phone))
+                    contact = Contact.objects.create(name=" ")
                 connection.contact = contact
                 connection.save()
 
-                contact.name = str(phone)
                 contact.language = language
                 contact.gender = gender
                 contact.birthdate = birth_date
