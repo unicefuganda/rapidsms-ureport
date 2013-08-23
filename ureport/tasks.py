@@ -156,7 +156,7 @@ def process_assign_group(upload, group, user):
 def export_poll(poll_id, host, username=None):
     poll = UPoll.objects.get(pk=poll_id)
     utils.export_poll(poll)
-    ExportedPoll.objects.create(poll=poll)
+    ExportedPoll.objects.get_or_create(poll=poll)
     if username:
         user = User.objects.get(username=username)
         if user.email:
