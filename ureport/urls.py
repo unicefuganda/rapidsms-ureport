@@ -7,7 +7,8 @@ from contact.forms import FreeSearchForm, MultipleDistictFilterForm, GenderFilte
     AssignGroupForm, AgeFilterForm
 from tastypie.api import Api
 from .api import PollResponseResource, PollResource, MessageResource, ContactResource, ResponseResource
-from ureport.views.excel_reports_views import generate_poll_dump_report, generate_per_district_report, upload_users, assign_group
+from ureport.views.excel_reports_views import generate_poll_dump_report, generate_per_district_report, upload_users,\
+    assign_group
 
 message_resource = MessageResource()
 

@@ -32,7 +32,7 @@
     <a href="{% url ureport.views.new_poll %}" style="float:left">
       <img border="0" src="/static/rapidsms/icons/silk/add.png" alt=""/>Add New Poll
     </a>
-    {% if request.path == "/mypolls/" %}
+    {% if results_title == 'Polls' %}
 <a href="{% url script-polls %}" style="float:right" class="">View AutoReg Polls</a>
     <a href="{% url view_group_rules %}"  style="float:right" class="">View Autoreg Group Rules</a>
 {% endif %}
