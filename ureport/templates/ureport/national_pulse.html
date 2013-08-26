@@ -229,38 +229,7 @@
                     return "District: " + d.key + "\n " + category_of((d.value ? d.value : 0));
                 });
 
-        totalsChart.width((width))
-            .height(height/1.5)
-            .margins({top: 10, right: 50, bottom: 30, left: 60})
-            .dimension(districts)
-        // FIXME colors shown on chart don't make sense. WTF
-            .colors(colorbrewer.YlGnBu[9])
-            .colorDomain([0, 100])
-            .group(totalAnswersByDistrict)
-            .valueAccessor(function (p) {
-                    return p.value.dominant;
-            })
-            // TODO look into patching dc.js so we can
-            // use topojson instead of geojson (topojson files are much smaller)
-            .overlayGeoJson(ug.features, "district", function (d) {
-                if (_.find(caseDistricts, function(x){ return x == d.properties.name; })){
-                  // if district name from map is the same
-                  // as district name in cases, use it
-                  return d.properties.name;
-                }
-                // print debug info if district cannont be reconciled with map
-                if (debug) {
-                  console.log('no district named ', d.properties.name);
-                }
-                return d.properties.name;
-            })
-            // color across yellow-green-blue range
-            // with a domain of 0% yes to 100% yes
-            .colors(["#BEBEBE", "#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"])
-            .colorAccessor(function(d, i){return d})
-            .title(function (d) {
-                    return "District: " + d.key + "\n " + category_of((d.value ? d.value : 0));
-            });
+
 
         totalsChart.width((width))
             .height(height/1.5)
