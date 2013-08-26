@@ -1,6 +1,6 @@
 from poll.models import Poll
+from ureport.tests.functional.create_poll_utils import get_incoming_message
 from ureport.tests.functional.poll_assertions import PollAssertions
-from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 
 
 class PollBase(PollAssertions):
@@ -17,3 +17,6 @@ class PollBase(PollAssertions):
     def get_poll(self, poll_id):
         return Poll.objects.get(id=poll_id)
 
+    def respond_to_poll(self, poll):
+        poll.process_response(get_incoming_message(self.connections_list[0],"yes"))
+        poll.process_response(get_incoming_message(self.connections_list[1],"no"))
