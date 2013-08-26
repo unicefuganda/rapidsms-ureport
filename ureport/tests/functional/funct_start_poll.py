@@ -24,3 +24,4 @@ class UreportTest(PollBase):
 
         self.respond_to_poll(newly_added_poll)
         self.assert_that_poll_has_responses(newly_added_poll)
+

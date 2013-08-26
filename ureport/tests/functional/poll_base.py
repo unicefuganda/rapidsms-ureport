@@ -20,3 +20,10 @@ class PollBase(PollAssertions):
     def respond_to_poll(self, poll):
         poll.process_response(get_incoming_message(self.connections_list[0],"yes"))
         poll.process_response(get_incoming_message(self.connections_list[1],"no"))
+
+    def go_to_poll_report_page(self, poll):
+        self.open('/polls/%s/report/' % poll.id)
+
+
+
+

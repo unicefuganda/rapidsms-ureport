@@ -22,3 +22,21 @@ class PollAssertions(SplinterTestCase):
 
         elements = self.browser.find_link_by_href('/%s/responses/' % self.poll.id)
         assert elements.first.value == 'Responses (%i)' % poll.responses.count()
+
+    def assert_that_question_is(self, question):
+        elements = self.browser.find_by_xpath('//*[@class="question"]')
+        assert elements.first.value == question
+
+    def assert_the_number_of_participants_of_the_poll_is(self, responses):
+        elements = self.browser.find_by_xpath('//*[@class="participants"]')
+        num_participants = elements.first.value.split(' ')[0]
+
+        self.assertEquals(int(num_participants), responses.count())
+
+    def assert_that_response_location_is(self, location):
+        elements = self.browser.find_by_xpath('//*[@class="poll_table"]')
+        tbody = elements.find_by_tag('tbody')
+        trs = tbody.find_by_tag('tr')
+        tds = trs.find_by_tag('td')
+
+        self.assertEquals(tds.first.value, location)
