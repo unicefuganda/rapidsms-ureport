@@ -6,7 +6,7 @@ from rapidsms_httprouter.models import Message
 from rapidsms_httprouter.router import get_router
 from rapidsms.messages import IncomingMessage
 
-ANY_LOCATION_NAME = 'Neverland'
+ANY_LOCATION_NAME = 'Moroto'
 
 
 def create_group(group_name):
