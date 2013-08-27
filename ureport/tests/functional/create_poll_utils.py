@@ -1,4 +1,3 @@
-from splinter import Browser
 from django.contrib.auth.models import Group, User
 from rapidsms.contrib.locations.models import Location
 from rapidsms.models import Connection, Contact
