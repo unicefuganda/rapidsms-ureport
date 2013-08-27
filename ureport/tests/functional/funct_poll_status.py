@@ -25,7 +25,6 @@ class PollStatusTest(SplinterTestCase):
     def tearDown(self):
         self.browser.quit()
 
-    @take_screenshot_on_failure
     def test_should_show_the_status_page(self):
 
         self.go_to_poll_status_page(self.poll.id)
