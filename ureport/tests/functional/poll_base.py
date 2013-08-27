@@ -24,6 +24,20 @@ class PollBase(PollAssertions):
     def go_to_poll_report_page(self, poll):
         self.open('/polls/%s/report/' % poll.id)
 
+    def get_poll_response_location(self, response):
+        contact = response.message.connection.contact
+        location = contact.reporting_location
+        return location.name
+
+    def get_first_poll_response_location(self, poll):
+        responses = self.get_poll_responses(poll)
+        return self.get_poll_response_location(responses[0])
+
+    def get_poll_responses(self, poll):
+        responses = poll.responses.all()
+        return responses
+
+
 
 
 

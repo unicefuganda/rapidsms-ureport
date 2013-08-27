@@ -1,10 +1,13 @@
 from splinter import Browser
 from django.contrib.auth.models import Group, User
+from rapidsms.contrib.locations.models import Location
 from rapidsms.models import Connection, Contact
 from poll.models import Poll
 from rapidsms_httprouter.models import Message
 from rapidsms_httprouter.router import get_router
 from rapidsms.messages import IncomingMessage
+
+ANY_LOCATION_NAME = 'Neverland'
 
 
 def create_group(group_name):
@@ -18,7 +21,8 @@ def create_user(username, email, group):
     return user1
 
 def create_contact(name, user, gender, birthdate, language):
-    contact = Contact.objects.create(name=name, user=user, gender=gender, birthdate=birthdate, language=language)
+    contact = Contact.objects.create(name=name, user=user, gender=gender, birthdate=birthdate, language=language,
+                                     reporting_location= Location.objects.create(name=ANY_LOCATION_NAME))
     return contact
 
 def create_connection(identity, contact, backend):

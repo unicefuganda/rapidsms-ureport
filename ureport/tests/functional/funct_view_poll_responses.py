@@ -1,4 +1,6 @@
+from time import sleep
 from splinter import Browser
+from rapidsms.models import Contact
 from ureport.tests.functional.poll_base import PollBase
 from ureport.tests.functional.create_poll_for_tests import start_poll_queues_messages_in_table
 
@@ -21,8 +23,6 @@ class UreportTest(PollBase):
 
         self.assert_that_question_is(self.poll.question)
         self.assert_the_number_of_participants_of_the_poll_is(self.poll.responses)
-        # print "==============================="
-        # print dir(self.poll.responses.all()[0].contact.default_connection)
-        # print "==============================="
-        # exit()
-        # self.assert_that_response_location_is(self.)
+
+        location = self.get_first_poll_response_location(self.poll)
+        self.assert_that_response_location_is(location)
