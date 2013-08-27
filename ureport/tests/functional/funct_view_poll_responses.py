@@ -15,7 +15,6 @@ class UreportTest(PollBase):
         self.open('/account/logout')
         self.browser.quit()
 
-    @take_screenshot_on_failure
     def test_that_poll_responses_are_shown_up_at_report_page(self):
         self.start_poll()
         self.respond_to_poll(self.poll)
