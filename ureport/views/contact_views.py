@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from django.db.models import Q
 
 from django.shortcuts import render_to_response
 from django.shortcuts import get_object_or_404
@@ -372,8 +373,13 @@ def ureporters(request):
 
     queryset = get_contacts2(request=request)
     if access is not None:
-        groups = ",".join(list(access.groups.values_list('name', flat=True)))
-        queryset = queryset.filter(group__icontains=groups)
+        groups = list(access.groups.values_list('name', flat=True))
+        if len(groups) > 0:
+            qset = Q(group__icontains=groups[0])
+        if len(groups) > 1:
+            for group in groups[1:]:
+                qset = qset | Q(group__icontains=group)
+        queryset = queryset.filter(qset)
     return generic(request,
                    model=UreportContact,
                    queryset=queryset,
