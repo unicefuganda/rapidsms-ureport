@@ -25,3 +25,5 @@ class UreportTest(PollBase):
 
         location = self.get_first_poll_response_location(self.poll)
         self.assert_that_response_location_is(location)
+
+        self.assert_that_number_of_responses_is(self.poll.responses)

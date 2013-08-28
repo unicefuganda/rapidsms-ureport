@@ -1,8 +1,7 @@
-from ureport.tests.functional.create_poll_utils import get_incoming_message
+from time import sleep
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
 
 ANY_POLL_ID = '12'
-
 
 class PollAssertions(SplinterTestCase):
     def assert_that_poll_questions_are_sent_out_to_contacts(self, poll):
@@ -24,6 +23,7 @@ class PollAssertions(SplinterTestCase):
         assert elements.first.value == 'Responses (%i)' % poll.responses.count()
 
     def assert_that_question_is(self, question):
+
         elements = self.browser.find_by_xpath('//*[@class="question"]')
         assert elements.first.value == question
 
@@ -40,3 +40,15 @@ class PollAssertions(SplinterTestCase):
         tds = trs.find_by_tag('td')
 
         self.assertEquals(tds.first.value, location)
+
+    def assert_that_number_of_responses_is(self,responses):
+
+        elements = self.browser.find_by_xpath('//*[@class="poll_table"]')
+
+        tbody = elements.first.find_by_tag('tbody')
+        tr = tbody.find_by_tag('tr').first
+        tds = tr.find_by_tag('td')
+        total = 0
+        for td in tds[1:]:
+            total += int(td.value.split(' ')[0])
+        self.assertEquals(responses.count(), total)
