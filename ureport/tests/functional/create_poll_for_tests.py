@@ -20,6 +20,10 @@ def start_poll_queues_messages_in_table():
     connections_list.append(create_connection(identity='0794339427', contact=contact2, backend=backend))
 
     poll = create_poll(User.objects.all()[0])
+
+    poll.add_yesno_categories()
+    poll.save()
+
     add_contacts_to_poll(poll, contacts)
 
     return poll, connections_list
