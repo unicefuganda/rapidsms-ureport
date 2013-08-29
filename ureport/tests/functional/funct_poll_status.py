@@ -1,13 +1,8 @@
-from rapidsms.models import Contact,Connection, Backend
 from splinter import Browser
-from rapidsms.models import Contact
-from rapidsms.models import Connection
-from datetime import datetime
 from ureport.tests.functional.create_poll_for_tests import start_poll_queues_messages_in_table
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
-from rapidsms_ureport.ureport.tests.functional.create_poll_utils import create_group, create_user, create_connection, create_poll, add_contacts_to_poll
 from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
-import time
+
 
 class PollStatusTest(SplinterTestCase):
     def go_to_poll_status_page(self, poll_id):
@@ -16,17 +11,14 @@ class PollStatusTest(SplinterTestCase):
 
     def setUp(self):
         self.browser = Browser()
-
         self.poll, self.connections_list = start_poll_queues_messages_in_table()
-
         self.poll.add_yesno_categories()
-
 
     def tearDown(self):
         self.browser.quit()
 
+    @take_screenshot_on_failure
     def test_should_show_the_status_page(self):
-
         self.go_to_poll_status_page(self.poll.id)
 
 
