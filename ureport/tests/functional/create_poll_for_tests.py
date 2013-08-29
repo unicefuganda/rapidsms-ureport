@@ -21,8 +21,6 @@ def start_poll_queues_messages_in_table():
 
     poll = create_poll(User.objects.all()[0])
     add_contacts_to_poll(poll, contacts)
-    poll.add_yesno_categories()
-    poll.save()
 
     return poll, connections_list
 
