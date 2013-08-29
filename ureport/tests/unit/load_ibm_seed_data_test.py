@@ -93,6 +93,18 @@ class LoadIbmSeedDataTest(TestCase):
 
         self.assertEquals(self.categories_with_messages_inserted, categories)
 
+    create_seed_data_called = False
+
+    def test_should_call_create_seed_data_on_handle(self):
+        self.load_ibm_seed_data.create_seed_data = self.create_seed_data_mock
+
+        self.load_ibm_seed_data.handle()
+
+        self.assertTrue(self.create_seed_data_called)
+
+    def create_seed_data_mock(self, categories):
+        self.create_seed_data_called = True
+
     def create_backend(self):
         return self.load_ibm_seed_data.create_backend(name=self.ANY_TEXT)
 
