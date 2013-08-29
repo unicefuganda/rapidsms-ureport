@@ -9,7 +9,7 @@ class PollBase(PollAssertions):
         poll_url = "/view_poll/%s" % self.poll.id
         self.create_and_sign_in_admin("argha", "a", poll_url)
 
-        assert self.browser.is_text_present('Start Poll',10)
+        self.assertTrue(self.browser.is_text_present('Start Poll', 10))
         self.browser.find_link_by_text('Start Poll').first.click()
 
         assert self.browser.is_text_present('Close Poll')
