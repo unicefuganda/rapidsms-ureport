@@ -498,14 +498,13 @@ def script_polls(request):
 @never_cache
 def start_poll_export(request, poll_id):
     poll = get_object_or_404(UPoll, pk=poll_id)
-    try:
-        ExportedPoll.objects.get(poll=poll)
+    if ExportedPoll.objects.filter(poll__pk=poll_id).exists():
         user = request.user
         if user.email:
             msg = "Hi %s,\nThe poll(%s) has been exported and is now ready for download." \
                   "\nPlease find it here %s\nThank You" % (
                       user.username, poll.name, poll.get_export_path(request.get_host()))
             send_mail('Contacts Added to Group', msg, "", [user.email], fail_silently=False)
-    except ExportedPoll.DoesNotExist:
+    else:
         tasks.export_poll.delay(poll.pk, request.get_host(), username=request.user.username)
     return HttpResponse(status=200)

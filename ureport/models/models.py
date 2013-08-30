@@ -485,5 +485,8 @@ class ExportedPoll(models.Model):
     poll = models.OneToOneField(Poll)
     exported_on = models.DateTimeField(auto_now_add=True)
 
+    def __unicode__(self):
+        return self.poll.__unicode__()
+
     class Meta:
         app_label = 'ureport'
