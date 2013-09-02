@@ -1,4 +1,3 @@
-from time import sleep
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
 
 ANY_POLL_ID = '12'
