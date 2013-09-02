@@ -16,12 +16,11 @@ import textwrap
 import datetime
 from eav.models import Value
 
-from poll.models import ResponseCategory, Response
+from poll.models import Response
 from ureport.views.utils.tags import _get_tags, _get_responses
 from django.db import transaction
 
 
-@transaction.autocommit
 def best_visualization(request, poll_id=None):
     module = False
     if 'module' in request.GET:

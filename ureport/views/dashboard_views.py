@@ -1,18 +1,20 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from django.core.cache import cache
 
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, render
 from django.shortcuts import redirect
 from django.template import RequestContext
+from django.template.loader import render_to_string
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.http import HttpResponse
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page, never_cache
 from uganda_common.utils import ExcelResponse
 
 from rapidsms_httprouter.models import Message
 
-from ureport.forms import AssignResponseGroupForm, SelectPoll, \
+from ureport.forms import AssignResponseGroupForm, \
     NewPollForm, rangeForm, DistrictForm
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
@@ -20,7 +22,7 @@ from rapidsms.models import Contact, Connection
 from unregister.models import Blacklist
 from poll.models import Translation, Poll
 from ureport.models import MessageAttribute, AlertsExport, Settings, \
-    MessageDetail
+    MessageDetail, PollAttribute
 from django.core.paginator import EmptyPage, PageNotAnInteger
 import datetime
 from ureport.views.utils.paginator import UreportPaginator
@@ -398,7 +400,8 @@ def aids_dashboard(request, name):
     name = name.replace("_", " ")
     flag = get_object_or_404(Flag, name=name)
     messages = flag.get_messages().order_by('-date')
-    responses = Message.objects.filter(pk__in=flag.flagtracker_set.exclude(response=None).values_list("response", flat=True))
+    responses = Message.objects.filter(
+        pk__in=flag.flagtracker_set.exclude(response=None).values_list("response", flat=True))
     messages = messages | responses
 
     if request.GET.get('download', None):
@@ -502,4 +505,20 @@ def aids_dashboard(request, name):
 def schedule_alerts(request):
     mps = Contact.objects.filter(groups__name="MP")
 
-    render_to_response("mp_alerts.html", dict(), context_instance=RequestContext(request))
+    render_to_response("mp_alerts.html", locals(), context_instance=RequestContext(request))
+
+@never_cache
+def home(request):
+    latest = PollAttribute.objects.get(key='viewable').values.filter(value='true').values_list('poll',
+                                                                                                flat=True).order_by(
+        '-poll__pk')[0]
+    import pdb; pdb.set_trace()
+    if int(cache.get('latest_pk', 0)) == int(latest) and cache.get('cached_home', None) is not None:
+        print "Returning cached page"
+        rendered = cache.get('cached_home')
+    else:
+        rendered = render_to_string('ureport/home.html', context_instance=RequestContext(request))
+        print type(rendered)
+        cache.set('cached_home', rendered)
+        cache.set('latest_pk', latest)
+    return HttpResponse(rendered)

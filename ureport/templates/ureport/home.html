@@ -21,7 +21,6 @@
         <span>PREVIOUS POLLS</span>
     </div>
     <a name="poll_results"></a>
-    {% cache 1800 poll_list %}
         {% block poll_list %}
             <div class="poll_list">
                 <ul id="list_of_polls">
@@ -38,7 +37,6 @@
                 </ul>
             </div>
         {% endblock %}
-    {% endcache %}
     <div class="scrollbottom">
         &nbsp;
     </div>
