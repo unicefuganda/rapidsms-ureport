@@ -13,7 +13,7 @@ def take_screenshot_on_failure(test):
                 timestamp = datetime.datetime.now().isoformat().replace(':', '')
                 filename = r'target/reports/functional-test/screenshots/failure_%s.png' % timestamp
                 test_object.browser.driver.save_screenshot(filename)
-                print r'Dumped screen shot of failure to [%s]' % (filename,)
+                print r'Dumped screen shot of failure to [%s]' % (filename)
             except Exception, ex:
                 print ex.message
             raise Exception(e)
