@@ -1,131 +1,150 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html lang="en">
+{% load i18n %}
 <head>
-    <title>Ureport - {% block page_title %}Voice Matters{% endblock %}</title>
+    <title>Ureport - {% block page_title %}{% trans "Voice Matters" %}{% endblock %}</title>
 
     {% block stylesheets %}
         <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/ureport_home.css?11">
     {% endblock %}
     <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/jquery.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/ureport.min.js?41"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/ureport.min.js?41"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/jquery-ui.js"></script>
 
 
-         <script type="text/javascript">
+    <script type="text/javascript">
 
-              var _gaq = _gaq || [];
-              _gaq.push(['_setAccount', 'UA-23521720-1']);
-              _gaq.push(['_trackPageview']);
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-23521720-1']);
+        _gaq.push(['_trackPageview']);
 
-              (function() {
-                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-              })();
+        (function () {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
 
-            </script>
-{% block top_js %}
-{% endblock %}
+    </script>
+    {% block top_js %}
+    {% endblock %}
 
 </head>
-<body>
-    <div class="container container-fluid" style="background-color:#ffffff;">
-        <div class="banner">
-            <a href="/">
+<body  {% get_current_language as lang %}  {% ifequal lang "ar" %}dir="rtl"{% endifequal %}>
+<div class="container container-fluid" style="background-color:#ffffff;">
+    <div class="banner">
+        <a href="/">
             <span class="brand">UReport</span>
-            <span class="tagline">VOICE MATTERS</span>
-            </a>
-            {% load humanize %}
-            <span id="span_info"><span id="span_total">{{ total_ureporters|intcomma }}</span> members to date</span>
-        </div>
-        <div id="flash_container"></div>
-        <div class="content">
-            {% block content %}
-                <!--  MAIN CONTENT GOES HERE -->
-            {% endblock %}
+            <span class="tagline">{% trans "VOICE MATTERS" %}</span>
+        </a>
+
+        <form action="/i18n/setlang/" method="post">
+            {% csrf_token %}
+            <input name="next" type="hidden" value="{{ redirect_to }}"/>
+            <select name="language">
+                {% get_language_info_list for LANGUAGES as languages %}
+                {% for language in languages %}
+                    <option value="{{ language.code }}">{{ language.name_local }} ({{ language.code }})</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="{% trans "Change Language" %}"/>
+        </form>
+        {% load humanize %}
+        <span id="span_info"><span id="span_total">{{ total_ureporters|intcomma }}</span> {% trans "members to date" %}</span>
+    </div>
+    <div id="flash_container"></div>
+    <div class="content">
+        {% block content %}
+            <!--  MAIN CONTENT GOES HERE -->
+        {% endblock %}
+    </div>
+
+    <div class="sidebar">
+        <div class="nav-side">
+            <ul>
+                <li><a href="/">{% trans "HOME" %}</a></li>
+                <li><a href="/#poll_results">{% trans "POLL RESULTS" %}</a></li>
+                <li><a href="/about_ureport/">{% trans "ABOUT UREPORT" %}</a></li>
+                <li><a href="/join/">{% trans "HOW TO JOIN" %}</a></li>
+                <li><a href="{% url pulse %}">{% trans "NATIONAL PULSE" %}</a></li>
+            </ul>
         </div>
 
-        <div class="sidebar">
-            <div class="nav-side">
-                <ul>
-                <li><a href="/">HOME</a></li>
-                <li><a href="/#poll_results">POLL RESULTS</a></li>
-                <li><a href="/about_ureport/">ABOUT UREPORT</a></li>
-                <li><a href="/join/">HOW TO JOIN</a></li>
-                <li><a href="{% url pulse %}">NATIONAL PULSE</a> </li>
-                </ul>
-            </div>
-
-            {% block sidecontent %}
+        {% block sidecontent %}
 
 
             <div class="intro">
                 <p>
-                    Ureport is a free SMS-based system that allows young Ugandans to speak out on what's happening
-                    in communities across the country, and work together with other community leaders for positive change.
+                   {% blocktrans %}
+                        Ureport is a free SMS-based system that allows young Ugandans to speak out on what's happening
+                    in communities across the country, and work together with other community leaders for positive
+                    change.
+                    {% endblocktrans %}
                 </p>
             </div>
             <div class="join">
                 <a href="/signup"> <img src="{{ MEDIA_URL }}ureport/images/join_us.png"/></a>
             </div>
-                {% if quote %}
-                    <div class="quotebox">
-                        <div class="quote_head">
+            {% if quote %}
+                <div class="quotebox">
+                    <div class="quote_head">
                         <div class="title">
-                            YOUR SAY:
+                            {% trans "YOUR SAY" %}:
                         </div>
                         <div class="topquote">
                             {{ quote.question }}
                         </div>
-                            </div>
-                        <div class="bottomquote">
-                            {{ quote.quote }}
-                        </div>
-                        <div class="quoted">
-                            {{ quote.quoted }}
-                        </div>
                     </div>
-                {% endif %}
-            {% endblock %}
-        </div>
-
-	    <div class="footer">
-	       <div class="sponsors">
-	           Supported by:
-	           <img src="{{ MEDIA_URL }}ureport/images/unicef_logo.png"/>
-	           <img src="{{ MEDIA_URL }}ureport/images/brac_logo.png"/>
-	           <img src="{{ MEDIA_URL }}ureport/images/scouts_logo.png"/>
-	           <img src="{{ MEDIA_URL }}ureport/images/cou_logo.png"/>
-	           <img src="{{ MEDIA_URL }}ureport/images/gem_logo.png"/>
-               <img src="{{ MEDIA_URL }}ureport/images/ibm_logo.jpg" />
-	       </div>
-	       <div class="footerlinks">
-	           <div class="nav-bottom">
-                <ul>
-	                <li class="first"><a href="/">HOME</a></li>
-	                <li><a href="/#poll_results">POLL RESULTS</a></li>
-	                <li><a href="about_ureport">ABOUT UREPORT</a></li>
-	                <li><a href="/join/">HOW TO JOIN</a></li>
-                    <li><a href="{% url pulse %}">NATIONAL PULSE</a> </li>
-	                {% if user.is_authenticated %}
-	                   <li><a href="{% url ureport-polls user.pk %}">POLL ADMIN</a></li>
-	                   <li><a href="{% url messagelog %}">MESSAGE LOG</a></li>
-	                   <li><a href="{% url ureport-contact %}">UREPORTERS</a></li>
-	                   <li><a href="{% url flaggedmessages %}">FLAGGED MESSAGES</a></li>
-                        <li><a href="{% url classifier %}">A-CLASS</a></li>
-                    <li><a href="{% url alerts user.pk%}">REAL TIME</a></li>
-	                {% else %}
-	                   <li><a href="/accounts/login">LOGIN</a></li>
-	                {% endif %}
-                </ul>
-	           </div>
-	           <p>Copyright &copy; 2010 - 2012 UNICEF et al.</p>
-	        </div>
-	    </div>
+                    <div class="bottomquote">
+                        {{ quote.quote }}
+                    </div>
+                    <div class="quoted">
+                        {{ quote.quoted }}
+                    </div>
+                </div>
+            {% endif %}
+        {% endblock %}
     </div>
-        <script type="text/javascript" src="{{ MEDIA_URL }}rapidsms/javascripts/collapse.js"></script>
+
+    <div class="footer">
+        <div class="sponsors">
+            Supported by:
+            <img src="{{ MEDIA_URL }}ureport/images/unicef_logo.png"/>
+            <img src="{{ MEDIA_URL }}ureport/images/brac_logo.png"/>
+            <img src="{{ MEDIA_URL }}ureport/images/scouts_logo.png"/>
+            <img src="{{ MEDIA_URL }}ureport/images/cou_logo.png"/>
+            <img src="{{ MEDIA_URL }}ureport/images/gem_logo.png"/>
+            <img src="{{ MEDIA_URL }}ureport/images/ibm_logo.jpg"/>
+        </div>
+        <div class="footerlinks">
+            <div class="nav-bottom">
+                <ul>
+                    <li class="first"><a href="/">{% trans "HOME" %}</a></li>
+                    <li><a href="/#poll_results">{% trans "POLL RESULTS" %}</a></li>
+                    <li><a href="about_ureport">{% trans "ABOUT UREPORT" %}</a></li>
+                    <li><a href="/join/">{% trans "HOW TO JOIN" %}</a></li>
+                    <li><a href="{% url pulse %}">{% trans "NATIONAL PULSE" %}</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url ureport-polls user.pk %}">{% trans "POLL ADMIN" %}</a></li>
+                        <li><a href="{% url messagelog %}">{% trans "MESSAGE LOG" %}</a></li>
+                        <li><a href="{% url ureport-contact %}">{% trans "UREPORTERS" %}</a></li>
+                        <li><a href="{% url flaggedmessages %}">{% trans "FLAGGED MESSAGES" %}</a></li>
+                        <li><a href="{% url classifier %}">{% trans "A-CLASS" %}</a></li>
+                        <li><a href="{% url alerts user.pk %}">{% trans "REAL TIME" %}</a></li>
+                    {% else %}
+                        <li><a href="/accounts/login">{% trans "LOGIN" %}</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <p>{% trans "Copyright" %} &copy; 2010 - 2012 UNICEF et al.</p>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="{{ MEDIA_URL }}rapidsms/javascripts/collapse.js"></script>
 
 
 {% block javascripts %}
