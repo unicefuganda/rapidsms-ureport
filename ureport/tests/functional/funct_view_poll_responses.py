@@ -1,7 +1,6 @@
 from splinter import Browser
 from ureport.tests.functional.poll_base import PollBase
 from ureport.tests.functional.create_poll_for_tests import start_poll_queues_messages_in_table
-from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 
 
 class UreportTest(PollBase):

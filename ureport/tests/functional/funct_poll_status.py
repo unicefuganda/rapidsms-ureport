@@ -1,7 +1,7 @@
 from splinter import Browser
 from ureport.tests.functional.create_poll_for_tests import start_poll_queues_messages_in_table
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
-import time
+from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 
 class PollStatusTest(SplinterTestCase):
     def go_to_poll_status_page(self, poll_id):
@@ -19,11 +19,12 @@ class PollStatusTest(SplinterTestCase):
     def tearDown(self):
         self.browser.quit()
 
+    @take_screenshot_on_failure
     def test_should_show_the_status_page(self):
 
         self.go_to_poll_status_page(self.poll.id)
-        self.assertEqual(self.browser.is_element_present_by_id('poll-details'), True)
-        self.assertEqual(str(self.poll.id) in self.browser.find_by_id("poll-details").first.text, True)
+        self.assertTrue(self.browser.is_element_present_by_id('poll-details'))
+        self.assertTrue(str(self.poll.id) in self.browser.find_by_id("poll-details").first.text)
 
         self.assertEqual(self.browser.find_by_id('contact-count').text, "2")
         self.assertEqual(self.browser.find_by_id('category-count').text, "3")
