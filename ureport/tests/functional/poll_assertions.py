@@ -16,7 +16,6 @@ class PollAssertions(SplinterTestCase):
 
     def assert_that_poll_has_responses(self, poll):
         self.assertEquals(poll.responses.count(), 2)
-        self.open('/mypolls/%s' % ANY_POLL_ID)
 
         elements = self.browser.find_link_by_href('/%s/responses/' % self.poll.id)
         assert elements.first.value == 'Responses (%i)' % poll.responses.count()
