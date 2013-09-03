@@ -512,9 +512,11 @@ def schedule_alerts(request):
 
 @never_cache
 def home(request):
-    latest = PollAttribute.objects.get(key='viewable').values.filter(value='true').values_list('poll',
-                                                                                                flat=True).order_by(
-        '-poll__pk')[0]
+    try:
+        latest = PollAttribute.objects.get(key='viewable').values.filter(value='true').\
+        values_list('poll',flat=True).order_by('-poll__pk')[0]
+    except PollAttribute.DoesNotExist:
+        latest=0
     if int(cache.get('latest_pk', 0)) == int(latest) and cache.get('cached_home', None) is not None:
         print "Returning cached page"
         rendered = cache.get('cached_home')
