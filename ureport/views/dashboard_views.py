@@ -8,7 +8,7 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.views.decorators.cache import cache_page, never_cache
 from uganda_common.utils import ExcelResponse
 
@@ -388,7 +388,7 @@ def remove_captured(request):
 
 
 @login_required
-def aids_dashboard(request, name):
+def a_dashboard(request, name):
     poll_form = NewPollForm()
     range_form = rangeForm()
     poll_form.updateTypes()
@@ -399,6 +399,9 @@ def aids_dashboard(request, name):
     (rate, _) = MessageAttribute.objects.get_or_create(name='rating')
     name = name.replace("_", " ")
     flag = get_object_or_404(Flag, name=name)
+    access = get_access(request)
+    if access is not None and flag not in access.flags:
+        return render(request, '403.html', status=403)
     messages = flag.get_messages().order_by('-date')
     responses = Message.objects.filter(
         pk__in=flag.flagtracker_set.exclude(response=None).values_list("response", flat=True))
@@ -512,7 +515,6 @@ def home(request):
     latest = PollAttribute.objects.get(key='viewable').values.filter(value='true').values_list('poll',
                                                                                                 flat=True).order_by(
         '-poll__pk')[0]
-    import pdb; pdb.set_trace()
     if int(cache.get('latest_pk', 0)) == int(latest) and cache.get('cached_home', None) is not None:
         print "Returning cached page"
         rendered = cache.get('cached_home')
