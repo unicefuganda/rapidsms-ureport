@@ -1,9 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
+{% load i18n %}
 <html lang="en">
 <head>
-    <title>Ureport - {% block page_title %}Voice Matters{% endblock %}</title>
+    <title>Ureport - {% block page_title %}{% trans "Voice Matters" %}{% endblock %}</title>
 
     {% block stylesheets %}
         <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/ureport_home.css?11">
@@ -35,10 +35,10 @@
         <div class="banner">
             <a href="/">
             <span class="brand">UReport</span>
-            <span class="tagline">VOICE MATTERS</span>
+            <span class="tagline">{% trans "Voice Matters"|upper %}</span>
             </a>
             {% load humanize %}
-            <span id="span_info"><span id="span_total">{{ total_ureporters|intcomma }}</span> members to date</span>
+            <span id="span_info"><span id="span_total">{{ total_ureporters|intcomma }}</span> {% trans "members to date" %}</span>
         </div>
         <div id="flash_container"></div>
         <div class="content">
@@ -50,11 +50,11 @@
         <div class="sidebar">
             <div class="nav-side">
                 <ul>
-                <li><a href="/">HOME</a></li>
-                <li><a href="/#poll_results">POLL RESULTS</a></li>
-                <li><a href="/about_ureport/">ABOUT UREPORT</a></li>
-                <li><a href="/join/">HOW TO JOIN</a></li>
-                <li><a href="{% url pulse %}">NATIONAL PULSE</a> </li>
+                <li><a href="/">{% trans "HOME" %}</a></li>
+                <li><a href="/#poll_results">{% trans "POLL RESULTS" %}</a></li>
+                <li><a href="/about_ureport/">{% trans "ABOUT UREPORT" %}</a></li>
+                <li><a href="/join/">{% trans "HOW TO JOIN" %}</a></li>
+                <li><a href="{% url pulse %}">{% trans "NATIONAL PULSE" %}</a> </li>
                 </ul>
             </div>
 
@@ -63,8 +63,10 @@
 
             <div class="intro">
                 <p>
-                    Ureport is a free SMS-based system that allows young Ugandans to speak out on what's happening
+                    {% blocktrans %}
+                        Ureport is a free SMS-based system that allows young Ugandans to speak out on what's happening
                     in communities across the country, and work together with other community leaders for positive change.
+                    {% endblocktrans %}
                 </p>
             </div>
             <div class="join">
@@ -74,7 +76,7 @@
                     <div class="quotebox">
                         <div class="quote_head">
                         <div class="title">
-                            YOUR SAY:
+                            {% trans "YOUR SAY:" %}
                         </div>
                         <div class="topquote">
                             {{ quote.question }}
@@ -104,24 +106,24 @@
 	       <div class="footerlinks">
 	           <div class="nav-bottom">
                 <ul>
-	                <li class="first"><a href="/">HOME</a></li>
-	                <li><a href="/#poll_results">POLL RESULTS</a></li>
-	                <li><a href="about_ureport">ABOUT UREPORT</a></li>
-	                <li><a href="/join/">HOW TO JOIN</a></li>
-                    <li><a href="{% url pulse %}">NATIONAL PULSE</a> </li>
+	                <li class="first"><a href="/">{% trans "HOME" %}</a></li>
+	                <li><a href="/#poll_results">{% trans "POLL RESULTS" %}</a></li>
+	                <li><a href="about_ureport">{% trans "ABOUT UREPORT" %}</a></li>
+	                <li><a href="/join/">{% trans "HOW TO JOIN" %}</a></li>
+                    <li><a href="{% url pulse %}">{% trans "HOW TO JOIN" %}</a> </li>
 	                {% if user.is_authenticated %}
-	                   <li><a href="{% url ureport-polls user.pk %}">POLL ADMIN</a></li>
-	                   <li><a href="{% url messagelog %}">MESSAGE LOG</a></li>
-	                   <li><a href="{% url ureport-contact %}">UREPORTERS</a></li>
-	                   <li><a href="{% url flaggedmessages %}">FLAGGED MESSAGES</a></li>
-                        <li><a href="{% url classifier %}">A-CLASS</a></li>
-                    <li><a href="{% url alerts user.pk%}">REAL TIME</a></li>
+	                   <li><a href="{% url ureport-polls user.pk %}">{% trans "POLL ADMIN" %}</a></li>
+	                   <li><a href="{% url messagelog %}">{% trans "MESSAGE LOG" %}</a></li>
+	                   <li><a href="{% url ureport-contact %}">{% trans "UREPORTERS" %}</a></li>
+	                   <li><a href="{% url flaggedmessages %}">{% trans "FLAGGED MESSAGES" %}</a></li>
+                        <li><a href="{% url classifier %}">{% trans "A-CLASS" %}</a></li>
+                    <li><a href="{% url alerts user.pk%}">{% trans "REAL TIME" %}</a></li>
 	                {% else %}
-	                   <li><a href="/accounts/login">LOGIN</a></li>
+	                   <li><a href="/accounts/login">{% trans "LOGIN" %}</a></li>
 	                {% endif %}
                 </ul>
 	           </div>
-	           <p>Copyright &copy; 2010 - 2012 UNICEF et al.</p>
+	           <p> {% trans "&copy; 2010 - 2012 UNICEF et al." %}</p>
 	        </div>
 	    </div>
     </div>
