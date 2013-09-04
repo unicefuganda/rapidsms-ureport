@@ -64,7 +64,7 @@ def poll_status(request, pk):
         'message_stats_start_date': startDate,
         'message_stats_age_days': age_in_days,
         'message_stats': message_stats,
-    }, context_instance=RequestContext(request))
+        }, context_instance=RequestContext(request))
 
 
 @never_cache
@@ -186,6 +186,7 @@ def view_poll(request, pk):
 
 @login_required
 @transaction.commit_on_success
+@never_cache
 def new_poll(req):
     log.info("[new_poll] TRANSACTION START")
     if req.method == 'POST':
@@ -220,63 +221,66 @@ def new_poll(req):
                 and not form.cleaned_data['default_response_en'] == '':
                 (translation, created) = \
                     Translation.objects.get_or_create(language='ach',
-                                                      field=form.cleaned_data['default_response_en'],
-                                                      value=form.cleaned_data['default_response_luo'])
-            if not form.cleaned_data['default_response_kdj'] == '' \
-                and not form.cleaned_data['default_response_en'] == '':
-                (translation, created) = \
-                    Translation.objects.get_or_create(language='kdj',
-                                                      field=form.cleaned_data['default_response_en'],
-                                                      value=form.cleaned_data['default_response_kdj'])
+                                                      field=form.cleaned_data['default_response_en']
+                    )
+                translation.value = form.cleaned_data['default_response_luo']
+                translation.save()
+        if not form.cleaned_data['default_response_kdj'] == '' \
+            and not form.cleaned_data['default_response_en'] == '':
+            (translation, created) = \
+                Translation.objects.get_or_create(language='kdj',
+                                                  field=form.cleaned_data['default_response_en']
+                )
+            translation.value = form.cleaned_data['default_response_kdj']
+            translation.save()
+        if not form.cleaned_data['question_luo'] == '':
+            (translation, created) = \
+                Translation.objects.get_or_create(language='ach',
+                                                  field=form.cleaned_data['question_en']
+                )
+            translation.value = form.cleaned_data['question_luo']
+        if not form.cleaned_data['question_kdj'] == '':
+            (translation, created) = \
+                Translation.objects.get_or_create(language='kdj',
+                                                  field=form.cleaned_data['question_en']
+                )
+            translation = form.cleaned_data['question_kdj']
+        log.info("[new-poll] - translations ok.")
 
-            if not form.cleaned_data['question_luo'] == '':
-                (translation, created) = \
-                    Translation.objects.get_or_create(language='ach',
-                                                      field=form.cleaned_data['question_en'],
-                                                      value=form.cleaned_data['question_luo'])
+        poll_type = (Poll.TYPE_TEXT if p_type
+                                       == NewPollForm.TYPE_YES_NO else p_type)
 
-            if not form.cleaned_data['question_kdj'] == '':
-                (translation, created) = \
-                    Translation.objects.get_or_create(language='kdj',
-                                                      field=form.cleaned_data['question_en'],
-                                                      value=form.cleaned_data['question_kdj'])
+        poll = Poll.create_with_bulk(
+            name,
+            poll_type,
+            question,
+            default_response,
+            contacts,
+            req.user,
+            is_urgent=is_urgent)
 
-            log.info("[new-poll] - translations ok.")
+        if p_type == NewPollForm.TYPE_YES_NO:
+            log.info("[new-poll] - is Y/N poll so adding categories...")
+            poll.add_yesno_categories()
+            log.info("[new-poll] - categories added ok.")
 
-            poll_type = (Poll.TYPE_TEXT if p_type
-                                           == NewPollForm.TYPE_YES_NO else p_type)
+        if settings.SITE_ID:
+            log.info("[new-poll] - SITE_ID is set, so adding the site to the poll")
+            poll.sites.add(Site.objects.get_current())
+            log.info("[new-poll] - site added ok")
 
-            poll = Poll.create_with_bulk(
-                name,
-                poll_type,
-                question,
-                default_response,
-                contacts,
-                req.user,
-                is_urgent=is_urgent)
-
-            if p_type == NewPollForm.TYPE_YES_NO:
-                log.info("[new-poll] - is Y/N poll so adding categories...")
-                poll.add_yesno_categories()
-                log.info("[new-poll] - categories added ok.")
-
-            if settings.SITE_ID:
-                log.info("[new-poll] - SITE_ID is set, so adding the site to the poll")
-                poll.sites.add(Site.objects.get_current())
-                log.info("[new-poll] - site added ok")
-
-            log.info("[new-poll] - poll created ok.")
-            log.info("[new_poll] TRANSACTION COMMIT")
-            return redirect(reverse('ureport.views.view_poll', args=[poll.pk]))
+        log.info("[new-poll] - poll created ok.")
+        log.info("[new_poll] TRANSACTION COMMIT")
+        return redirect(reverse('ureport.views.view_poll', args=[poll.pk]))
 
     else:
         form = NewPollForm(request=req)
         groups_form = GroupsFilter(request=req)
         form.updateTypes()
 
-    log.info("[new_poll] TRANSACTION COMMIT")
-    return render_to_response('ureport/new_poll.html', {'form': form, 'groups_form': groups_form},
-                              context_instance=RequestContext(req))
+        log.info("[new_poll] TRANSACTION COMMIT")
+        return render_to_response('ureport/new_poll.html', {'form': form, 'groups_form': groups_form},
+                                  context_instance=RequestContext(req))
 
 
 @cache_control(no_cache=True, max_age=0)
@@ -356,7 +360,7 @@ def view_responses(req, poll_id):
         columns=columns,
         partial_row='ureport/partials/polls/response_row.html',
         poll_id=poll_id,
-    )
+        )
 
 
 @login_required
@@ -427,7 +431,7 @@ def poll_dashboard(request):
                ('Start Date', True, 'start_date', SimpleSorter(),),
                ('# Participants', False, 'participants', None,),
                ('Visuals', False, 'visuals', None,),
-    ]
+               ]
     return generic(request,
                    model=Poll,
                    queryset=get_polls,
@@ -444,7 +448,7 @@ def poll_dashboard(request):
 
 
 @login_required
-@cache_page(30*60, cache='default', key_prefix="ureport")
+@cache_page(30 * 60, cache='default', key_prefix="ureport")
 def ureport_polls(request, pk):
     access = get_access(request)
     columns = [('Name', True, 'name', SimpleSorter()),

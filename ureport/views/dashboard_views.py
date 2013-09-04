@@ -510,18 +510,19 @@ def schedule_alerts(request):
 
     render_to_response("mp_alerts.html", locals(), context_instance=RequestContext(request))
 
+
 @never_cache
 def home(request):
     try:
-        latest = PollAttribute.objects.get(key='viewable').values.filter(value='true').\
-        values_list('poll',flat=True).order_by('-poll__pk')[0]
+        latest = PollAttribute.objects.get(key='viewable').values.filter(value='true'). \
+            values_list('poll', flat=True).order_by('-poll__pk')[0]
     except PollAttribute.DoesNotExist:
-        latest=0
+        latest = 0
     if int(cache.get('latest_pk', 0)) == int(latest) and cache.get('cached_home', None) is not None:
         print "Returning cached page"
         rendered = cache.get('cached_home')
     else:
         rendered = render_to_string('ureport/home.html', context_instance=RequestContext(request))
-        cache.set('cached_home', rendered)
+        cache.set('cached_home', rendered, 1200)
         cache.set('latest_pk', latest)
     return HttpResponse(rendered)

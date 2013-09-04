@@ -6,6 +6,7 @@ from django.shortcuts import render_to_response
 from django.shortcuts import get_object_or_404
 from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
+from django.views.decorators.vary import vary_on_cookie
 from uganda_common.utils import ExcelResponse
 from rapidsms_httprouter.models import Message
 from django.contrib.auth.decorators import login_required
@@ -344,6 +345,7 @@ def delete(request, pk):
 
 
 @login_required
+@vary_on_cookie
 def ureporters(request):
     access = get_access(request)
     download_form = DownloadForm(request.POST or None)

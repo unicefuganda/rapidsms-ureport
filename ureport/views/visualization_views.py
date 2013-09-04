@@ -9,7 +9,7 @@ from django.http import HttpResponse, Http404
 from ureport.models import IgnoredTags
 from django.contrib.auth.decorators import login_required
 from ureport.utils import retrieve_poll
-from django.views.decorators.cache import cache_control
+from django.views.decorators.cache import cache_control, never_cache
 from poll.models import Poll
 import bisect
 import textwrap
@@ -20,7 +20,7 @@ from poll.models import Response
 from ureport.views.utils.tags import _get_tags, _get_responses
 from django.db import transaction
 
-
+@never_cache
 def best_visualization(request, poll_id=None):
     module = False
     if 'module' in request.GET:
