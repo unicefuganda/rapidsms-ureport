@@ -39,5 +39,11 @@ class UreportTest(PollBase):
     def test_that_polls_can_be_reopen(self):
         self.close_poll()
         self.log_as_admin_and_visit("/view_poll/%s" % self.poll.id)
+
         self.browser.find_link_by_text('Reopen Poll').first.click()
         self.assert_that_poll_end_date_is_none(self.get_poll(self.poll.id))
+
+    def test_that_admin_is_able_to_add_new_poll(self):
+        self.log_as_admin_and_visit('/mypolls/%s' % self.poll.id)
+
+        self.assert_that_page_has_add_poll_button()

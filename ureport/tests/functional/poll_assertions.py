@@ -53,3 +53,6 @@ class PollAssertions(SplinterTestCase):
 
     def assert_that_poll_end_date_is_none(self, poll):
         assert poll.end_date is None
+
+    def assert_that_page_has_add_poll_button(self):
+        self.assertTrue(self.browser.find_link_by_href('/createpoll/'))
