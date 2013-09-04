@@ -15,9 +15,10 @@ class UreportTest(PollBase):
         self.browser.quit()
 
     def test_that_poll_responses_are_shown_up_at_report_page(self):
+        self.log_as_admin_and_visit('/')
         self.start_poll()
         self.respond_to_poll(self.poll)
-        self.log_as_admin_and_visit('/polls/%s/report/' % self.poll.id)
+        self.open('/polls/%s/report/' % self.poll.id)
 
         self.assert_that_question_is(self.poll.question)
         self.assert_the_number_of_participants_of_the_poll_is(self.poll.responses)

@@ -28,11 +28,11 @@ class UreportTest(PollBase):
 
     @take_screenshot_on_failure
     def test_that_polls_can_be_responded(self):
+        self.log_as_admin_and_visit('/')
         self.start_poll()
         newly_added_poll = self.get_poll(self.poll.id)
 
         self.respond_to_poll(newly_added_poll)
 
-        mypolls_url = "/mypolls/%s" % self.poll.id
-        self.log_as_admin_and_visit(mypolls_url)
+        self.open("/mypolls/%s" % self.poll.id)
         self.assert_that_poll_has_responses(newly_added_poll)
