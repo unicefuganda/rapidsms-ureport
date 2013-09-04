@@ -522,7 +522,6 @@ def home(request):
         rendered = cache.get('cached_home')
     else:
         rendered = render_to_string('ureport/home.html', context_instance=RequestContext(request))
-        print type(rendered)
         cache.set('cached_home', rendered)
         cache.set('latest_pk', latest)
     return HttpResponse(rendered)
