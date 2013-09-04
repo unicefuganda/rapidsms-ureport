@@ -1,7 +1,7 @@
 from splinter import Browser
 from ureport.tests.functional.poll_base import PollBase
 from ureport.tests.functional.create_poll_for_tests import start_poll_queues_messages_in_table
-
+from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 
 class UreportTest(PollBase):
     fixtures = ['0004_migration_initial_data.json']
@@ -26,12 +26,13 @@ class UreportTest(PollBase):
 
         self.assert_that_poll_questions_are_sent_out_to_contacts(poll=newly_added_poll)
 
+    @take_screenshot_on_failure
     def test_that_polls_can_be_responded(self):
         self.start_poll()
         newly_added_poll = self.get_poll(self.poll.id)
 
         self.respond_to_poll(newly_added_poll)
 
-        mypolls_url = '/mypolls/%i' % self.poll.id
+        mypolls_url = "/mypolls/%s" % self.poll.id
         self.log_as_admin_and_visit(mypolls_url)
         self.assert_that_poll_has_responses(newly_added_poll)
