@@ -28,11 +28,16 @@ class UreportTest(PollBase):
 
     @take_screenshot_on_failure
     def test_that_polls_can_be_responded(self):
-        self.log_as_admin_and_visit('/')
         self.start_poll()
         newly_added_poll = self.get_poll(self.poll.id)
 
         self.respond_to_poll(newly_added_poll)
+        self.log_as_admin_and_visit('/mypolls/%s' % self.poll.id)
 
-        self.open("/mypolls/%s" % self.poll.id)
         self.assert_that_poll_has_responses(newly_added_poll)
+
+    def test_that_polls_can_be_reopen(self):
+        self.close_poll()
+        self.log_as_admin_and_visit("/view_poll/%s" % self.poll.id)
+        self.browser.find_link_by_text('Reopen Poll').first.click()
+        self.assert_that_poll_end_date_is_none(self.get_poll(self.poll.id))

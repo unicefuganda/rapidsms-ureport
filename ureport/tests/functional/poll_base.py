@@ -1,3 +1,5 @@
+import time
+import datetime
 from poll.models import Poll
 from ureport.tests.functional.create_poll_utils import get_incoming_message
 from ureport.tests.functional.poll_assertions import PollAssertions
@@ -18,6 +20,12 @@ class PollBase(PollAssertions):
         if self.poll.end_date is not None:
             self.poll.end_date = None
             self.poll.save()
+
+    def close_poll(self):
+        if not self.poll.start_date:
+            self.poll.start()
+        self.poll.end_date = datetime.datetime.now().date()
+        self.poll.save()
 
     def log_as_admin_and_visit(self, url):
         self.create_and_sign_in_admin("argha", "a", url)

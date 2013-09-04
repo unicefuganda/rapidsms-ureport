@@ -50,3 +50,6 @@ class PollAssertions(SplinterTestCase):
         for td in tds[1:]:
             total += int(td.value.split(' ')[0])
         self.assertEquals(responses.count(), total)
+
+    def assert_that_poll_end_date_is_none(self, poll):
+        assert poll.end_date is None
