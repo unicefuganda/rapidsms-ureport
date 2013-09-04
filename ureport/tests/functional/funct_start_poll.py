@@ -32,5 +32,6 @@ class UreportTest(PollBase):
 
         self.respond_to_poll(newly_added_poll)
 
-        self.log_as_admin_and_visit('/mypolls/%s' % self.poll.id)
+        mypolls_url = '/mypolls/%i' % self.poll.id
+        self.log_as_admin_and_visit(mypolls_url)
         self.assert_that_poll_has_responses(newly_added_poll)
