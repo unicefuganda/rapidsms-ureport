@@ -3,8 +3,7 @@ from ureport.tests.functional.poll_base import PollBase
 from ureport.tests.functional.create_poll_for_tests import start_poll_queues_messages_in_table
 
 
-class UreportTest(PollBase):
-    fixtures = ['0004_migration_initial_data.json']
+class PollResponsesTest(PollBase):
 
     def setUp(self):
         self.browser = Browser()

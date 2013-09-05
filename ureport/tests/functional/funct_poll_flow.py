@@ -1,14 +1,14 @@
 from splinter import Browser
 from ureport.tests.functional.poll_base import PollBase
 from ureport.tests.functional.create_poll_for_tests import start_poll_queues_messages_in_table
-from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 
-class UreportTest(PollBase):
+class PollFlowTest(PollBase):
     fixtures = ['0004_migration_initial_data.json']
 
     def setUp(self):
         self.browser = Browser()
         self.poll, self.connections_list = start_poll_queues_messages_in_table()
+
 
     def tearDown(self):
         self.open('/account/logout')
@@ -26,7 +26,6 @@ class UreportTest(PollBase):
 
         self.assert_that_poll_questions_are_sent_out_to_contacts(poll=newly_added_poll)
 
-    @take_screenshot_on_failure
     def test_that_polls_can_be_responded(self):
         self.start_poll()
         newly_added_poll = self.get_poll(self.poll.id)
@@ -47,3 +46,14 @@ class UreportTest(PollBase):
         self.log_as_admin_and_visit('/mypolls/%s' % self.poll.id)
 
         self.assert_that_page_has_add_poll_button()
+
+    def test_should_show_the_status_page(self):
+        self.poll.add_yesno_categories()
+        self.log_as_admin_and_visit("/poll_status/%s" % self.poll.id)
+
+        self.assertEqual(self.browser.is_element_present_by_id('poll-details'), True)
+        self.assertTrue(str(self.poll.id) in self.browser.find_by_id("poll-details").first.text)
+
+        self.assertEqual(self.browser.find_by_id('contact-count').text, "2")
+        self.assertEqual(self.browser.find_by_id('category-count').text, "3")
+        self.assertEqual(self.browser.find_by_id('is-yesno').text, "yes")
