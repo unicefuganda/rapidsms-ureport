@@ -57,7 +57,12 @@ class PollAssertions(SplinterTestCase):
     def assert_that_page_has_add_poll_button(self):
         self.assertTrue(self.browser.find_link_by_href('/createpoll/'))
 
-    def assert_that_page_has_edit_poll_button(self, poll):
+    def assert_that_page_has_edit_poll_option(self, poll):
         element = self.browser.find_link_by_href('/view_poll/%i/' % poll.id)
 
         self.assertEqual(element.first.text, "Edit")
+
+    def assert_that_page_has_report_poll_option(self, poll):
+        element = self.browser.find_link_by_href('/polls/%i/report/' % poll.id)
+
+        self.assertEqual(element.first.text, "Report")

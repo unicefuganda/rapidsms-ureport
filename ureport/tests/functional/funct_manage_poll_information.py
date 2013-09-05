@@ -20,5 +20,12 @@ class ManagePollInformationTest(PollBase):
         self.respond_to_poll(poll)
 
         self.log_as_admin_and_visit("/mypolls/%s/" % self.poll.id)
-        self.assert_that_page_has_edit_poll_button(self.poll)
+        self.assert_that_page_has_edit_poll_option(self.poll)
 
+    def test_that_admin_can_check_poll_report_option(self):
+        self.start_poll()
+        poll = self.get_poll(self.poll.id)
+        self.respond_to_poll(poll)
+
+        self.log_as_admin_and_visit("/mypolls/%s/" % self.poll.id)
+        self.assert_that_page_has_report_poll_option(self.poll)
