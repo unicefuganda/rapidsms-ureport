@@ -1,5 +1,6 @@
 {% extends "ureport_layout.html" %}
-{% block page_title %} National Pulse {% endblock %}
+{% load i18n %}
+{% block page_title %} {% trans "National Pulse" %} {% endblock %}
 
 {% block stylesheets %}
     {{ block.super }}
@@ -42,13 +43,13 @@
 {% block content %}
     <div class="container">
         <div>
-            <a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a>
+	    <a href="javascript:dc.filterAll(); dc.renderAll();">{% trans "Reset All" %}</a>
         </div>
         <ol class="legend"></ol>
         <div id="ug-chart">
-            <h3> Welcome to National Pulse where you can see what is trending within the U-report community.<br/> Click on your district to see what the young people are talking about where you live.</h3>
+	    <h3> {% blocktrans %}Welcome to National Pulse where you can see what is trending within the U-report community.{% endblocktrans %}<br/> {% blocktrans %}Click on your district to see what the young people are talking about where you live.{% endblocktrans %}</h3>
             <a class="reset" href="javascript:ugChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-            <span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
+	    <span class="reset" style="display: none;"> | {% trans "Current filter" %}: <span class="filter"></span></span>
 
             <div class="clearfix"></div>
         </div>

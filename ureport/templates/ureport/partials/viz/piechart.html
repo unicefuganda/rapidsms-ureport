@@ -1,21 +1,22 @@
+{% load i18n %}
 <div style="width:100%;height:300px;" id="pie_{{ poll.pk }}">
 </div>
 
 <div id="filter_by_gender">
-    <input type="radio" name="gender_button" value="m" onclick="get_gender_stats();"/> Male <br>
-    <input type="radio" name="gender_button" value="f" onclick="get_gender_stats();"/> Female <br>
+    <input type="radio" name="gender_button" value="m" onclick="get_gender_stats();"/> {% trans "Male" %} <br>
+    <input type="radio" name="gender_button" value="f" onclick="get_gender_stats();"/> {% trans "Female" %} <br>
 </div>
 <div style="min-width: 200px; height: 400px; margin: 0 auto" id="genderstats_{{ poll.pk }}">
 </div>
 
 <div style="padding-top: 10px;" id="filter_by_age">
-    <label for="lower">Start Age</label>
+    <label for="lower">{% trans "Start Age" %}</label>
     <input type="text" id="lower"/>
     <br>
-    <label for="upper">End Age</label>
+    <label for="upper">{% trans "End Age" %}</label>
     <input type="text" id="upper"/>
     <br>
-    <input type="button" value="Filter By Age" onclick="get_age_stats();"/>
+    <input type="button" value="{% trans "Filter By Age" %}" onclick="get_age_stats();"/>
 
 </div>
 <div style="min-width: 200px; height: 400px; margin: 0 auto" id="agestats_{{ poll.pk }}">

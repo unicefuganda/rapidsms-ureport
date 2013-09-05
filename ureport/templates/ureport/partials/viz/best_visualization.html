@@ -1,6 +1,7 @@
+{% load i18n %}
 <h4 class="poll-heading">
 <span class="poll-title">
-CURRENT POLL
+{% trans "CURRENT POLL" %}
 </span>
 <span class="poll-date">
  - {{ poll.start_date|date:"d/M/Y" }} : 
@@ -14,7 +15,7 @@ CURRENT POLL
     
 </span>
      {% load humanize %}
-    <span style="color:#00638A;font-size:16px;">{{ poll.responses.count|intcomma }}  Responses out of {{ poll.contacts.count|intcomma }} Participants ({{ rate }}%)</span>
+    <span style="color:#00638A;font-size:16px;">{{ poll.responses.count|intcomma }}  {% trans "Responses out of" %} {{ poll.contacts.count|intcomma }} {% trans "Participants" %} ({{ rate }}%)</span>
 </h4>
 {% if tags %}
 
@@ -49,5 +50,5 @@ CURRENT POLL
 
 {% endif %}
 {% if module %}
-    <a href="/pollresults/">More...</a>
+    <a href="/pollresults/">{% trans "More" %}...</a>
 {% endif %}

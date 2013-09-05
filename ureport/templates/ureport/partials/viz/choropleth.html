@@ -1,77 +1,78 @@
+{% load i18n %}
 <div id="map_{{ poll.pk }}" class="mapmodule">
 </div>
 <div id="map_layers">
     <ul class="key">
-        <li>No (50-60%)
+	<li> {% trans "No" %} (50-60%)
             <span style="width: 15px; height: 15px; background-color: #f5cbae; position: absolute; right: 0px;"
                   class="category"></span>
         </li>
 
-        <li>No (60-70%)
+	<li>{% trans "No" %} (60-70%)
             <span style="width: 15px; height: 15px; background-color: #eba988; position: absolute; right: 0px;"
                   class="category"></span>
         </li>
 
-        <li>No (70-80%)
+	<li>{% trans "No" %} (70-80%)
             <span style="width: 15px; height: 15px; background-color: #e08465; position: absolute; right: 0px;"
                   class="category"></span>
         </li>
 
-        <li>No (80-90%)
+	<li>{% trans "No" %} (80-90%)
             <span style="width: 15px; height: 15px; background-color: #d65d45; position: absolute; right: 0px;"
                   class="category"></span>
         </li>
 
-        <li>No (90-100%)
+	<li>{% trans "No" %} (90-100%)
             <span style="width: 15px; height: 15px; background-color: #c40a0a; position: absolute; right: 0px;"
                   class="category"></span>
         </li>
 
-        <li>Yes (0-10%)
+	<li> {% trans "Yes" %} (0-10%)
             <span style="width: 15px; height: 15px; background-color: #ffffcc; position: absolute; right: 0px;"
                   class="category"></span>
         </li>
-        <li>Yes (10-20%)
+	<li>{% trans "Yes" %} (10-20%)
             <span style="width: 15px; height: 15px; background-color: #f2fa58; position: absolute; right: 0px;"
                   class="category"></span>
         </li>
-        <li>Yes (20-30%)
+	<li>{% trans "Yes" %} (20-30%)
             <span style="width: 15px; height: 15px; background-color:#ccff29; position: absolute; right: 0px;"
                   class="category"></span>
         </li>
-        <li>Yes (30-40%)
+	<li>{% trans "Yes" %} (30-40%)
             <span style="width: 15px; height: 15px; background-color: #caea5d; position: absolute; right: 0px;"
                   class="category"></span>
         </li>
-        <li>Yes (40-50%)
+	<li>{% trans "Yes" %} (40-50%)
             <span style="width: 15px; height: 15px; background-color: #99cc00; position: absolute; right: 0px;"
                   class="category"></span>
         </li>
-        <li>Yes (50-60%)
+	<li>{% trans "Yes" %} (50-60%)
             <span style="width: 15px; height: 15px; background-color: #aef5cb; position: absolute; right: 0px;"
                   class="category"></span>
         </li>
 
-        <li>Yes (60-70%)
+	<li>{% trans "Yes" %} (60-70%)
             <span style="width: 15px; height: 15px; background-color: #88eba9; position: absolute; right: 0px;"
                   class="category"></span>
         </li>
 
-        <li>Yes (70-80%)
+	<li>{% trans "Yes" %} (70-80%)
             <span style="width: 15px; height: 15px; background-color: #65e084; position: absolute; right: 0px;"
                   class="category"></span>
         </li>
 
-        <li>Yes (80-90%)
+	<li>{% trans "Yes" %} (80-90%)
             <span style="width: 15px; height: 15px; background-color: #45d65d; position: absolute; right: 0px;"
                   class="category"></span>
         </li>
 
-        <li>Yes (90-100%)
+	<li>{% trans "Yes" %} (90-100%)
             <span style="width: 15px; height: 15px; background-color: #0ac40a; position: absolute; right: 0px;"
                   class="category"></span>
         </li>
-        <li>Split Results
+	<li>{% trans "Split Results" %}
             <span style="width: 15px; height: 15px; background-color: blue; position: absolute; right: 0px;"
                   class="category"></span>
         </li>
@@ -185,7 +186,7 @@
 
     }
 
-    // sets the HTML provided into the nodelist element
+    // sets the HTML provided into the {% trans "No" %}delist element
     function create_popup(response) {
         var text = response.responseText
         var render_text = "";
@@ -202,15 +203,15 @@
 
                 render_text = render_text + "<p>District: " + jQuery(data[k]).text() + "</p>";
             }
-            else if (String(jQuery(v).text()) == "yes") {
+	    else if (String(jQuery(v).text()) == "{% trans "Yes" %}") {
 
-                render_text = render_text + "<p>Yes: " + Math.round(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
+		render_text = render_text + "<p>{% trans "Yes" %}: " + Math.round(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
             }
-            else if (jQuery(v).text() == "no") {
-                render_text = render_text + "<p>No: " + Math.round(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
+	    else if (jQuery(v).text() == "{% trans "No" %}") {
+		render_text = render_text + "<p>{% trans "No" %}: " + Math.round(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
             }
-            else if (jQuery(v).text() == "unknown") {
-                render_text = render_text + "<p>unknown: " + Math.round(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
+	    else if (jQuery(v).text() == "unk{% trans "No" %}wn") {
+		render_text = render_text + "<p>unk{% trans "No" %}wn: " + Math.round(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
             }
 
 
@@ -243,7 +244,7 @@
         popup.setContentHTML(popup.contentHTML + render_text);
 
         popup.show();
-        //document.getElementById('nodelist').innerHTML = response.responseText;
+	//document.getElementById('{% trans "No" %}delist').innerHTML = response.responseText;
 
     }
 
@@ -252,9 +253,9 @@
         init_chmap();
     });
     CATEGORY_COLORS =  {% autoescape off %}{{ colors }}{% endautoescape %};
-    CATEGORY_COLOR_LOOKUP['no'] = '#AA4643';
-    CATEGORY_COLOR_LOOKUP['yes'] = '#89A54E';
-    CATEGORY_COLOR_LOOKUP['unknown'] = '#80699B';
+    CATEGORY_COLOR_LOOKUP['{% trans "No" %}'] = '#AA4643';
+    CATEGORY_COLOR_LOOKUP['{% trans "Yes" %}'] = '#89A54E';
+    CATEGORY_COLOR_LOOKUP['unk{% trans "No" %}wn'] = '#80699B';
     CATEGORY_COLOR_LOOKUP['uncategorized'] = '#4572A7';
     CATEGORY_OFFSET = 4;
 </script>

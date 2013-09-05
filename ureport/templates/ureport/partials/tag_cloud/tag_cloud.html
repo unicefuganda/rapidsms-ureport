@@ -1,3 +1,4 @@
+{% load i18n %}
 <div id="tags" class="tags">
 <style type="text/css">
 .delete-tag,.delete-tag-hover{
@@ -143,7 +144,7 @@ tt a {
 </div>
 {% if user.is_authenticated %}
 <p>
-    <a onclick="load_excluded_tags('{% url ureport.views.show_ignored_tags poll_id %}')" href="javascript:void(0)">edit excluded tags</a>
+    <a onclick="load_excluded_tags('{% url ureport.views.show_ignored_tags poll_id %}')" href="javascript:void(0)">{% trans "edit excluded tags" %}</a>
 </p>
 <div id="excluded" style="display:none">
 </div>

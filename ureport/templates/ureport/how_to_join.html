@@ -1,16 +1,16 @@
 {% extends "ureport_layout.html" %}
-
+{% load i18n %}
 {% block content %}
 <div class="how_to_join">
- <h3 class="about_header">How To Join <img class="ab_img" src="{{ MEDIA_URL }}ureport/images/shout_out.png"/></h3>
+ <h3 class="about_header">{% trans "How To Join" %} <img class="ab_img" src="{{ MEDIA_URL }}ureport/images/shout_out.png"/></h3>
 
 
 <div class="step_2 step">
 <p class="step_txt"><span class="step_name">
-    Step 2 </span>
+    {% trans "Step 2" %} </span>
 
-    You will receive a greeting message and a series of quetions , to find out more about you
-    (Ureport needs to know your District but all other quetions are optional)
+    {% blocktrans %}You will receive a greeting message and a series of quetions , to find out more about you
+    (Ureport needs to know your District but all other quetions are optional){% endblocktrans %}
 
     </p>
      <img src="{{ MEDIA_URL }}ureport/images/step2.png">
@@ -18,8 +18,8 @@
 </div>
 
     <div class="step_1 step">
-    <p class="step_txt"><span class="step_name" >Step 1 </span>Text the word Join to 8500
-    - all Ureport SMSs are free!
+    <p class="step_txt"><span class="step_name" >{% trans "Step 1" %} </span>{% blocktrans %}Text the word Join to 8500
+    - all Ureport SMSs are free!{% endblocktrans %}
 
     </p>
      <img src="{{ MEDIA_URL }}ureport/images/step1.png">
@@ -27,19 +27,19 @@
 </div>
 <div class="step_4 step">
 <p class="step_txt"><span class="step_name">
-    Step 4 </span>
+    {% trans "Step 4" %} </span>
 
-    As a Ureporter, you will get weekly poll results, and meaningful information to assist you to enact change in
-    your community.
+   {% blocktrans %} As a Ureporter, you will get weekly poll results, and meaningful information to assist you to enact change in
+    your community.{% endblocktrans %}
 
     </p>
     <img src="{{ MEDIA_URL }}ureport/images/step4.png">
 </div>
 <div class="step_3 step">
 <p class="step_txt"><span class="step_name" >
-    Step 3 </span>
+    {% trans "Step 3" %} </span>
 
-    After you answer the quetions about you, you are a member of Ureport!
+    {% blocktrans %}After you answer the quetions about you, you are a member of Ureport!{% endblocktrans %}
 
     </p>
      <img src="{{ MEDIA_URL }}ureport/images/step3.png">
