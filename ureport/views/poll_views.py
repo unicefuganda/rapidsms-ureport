@@ -64,7 +64,7 @@ def poll_status(request, pk):
         'message_stats_start_date': startDate,
         'message_stats_age_days': age_in_days,
         'message_stats': message_stats,
-        }, context_instance=RequestContext(request))
+    }, context_instance=RequestContext(request))
 
 
 @never_cache
@@ -239,12 +239,14 @@ def new_poll(req):
                                                   field=form.cleaned_data['question_en']
                 )
             translation.value = form.cleaned_data['question_luo']
+            translation.save()
         if not form.cleaned_data['question_kdj'] == '':
             (translation, created) = \
                 Translation.objects.get_or_create(language='kdj',
                                                   field=form.cleaned_data['question_en']
                 )
             translation = form.cleaned_data['question_kdj']
+            translation.save()
         log.info("[new-poll] - translations ok.")
 
         poll_type = (Poll.TYPE_TEXT if p_type
@@ -360,7 +362,7 @@ def view_responses(req, poll_id):
         columns=columns,
         partial_row='ureport/partials/polls/response_row.html',
         poll_id=poll_id,
-        )
+    )
 
 
 @login_required
@@ -431,7 +433,7 @@ def poll_dashboard(request):
                ('Start Date', True, 'start_date', SimpleSorter(),),
                ('# Participants', False, 'participants', None,),
                ('Visuals', False, 'visuals', None,),
-               ]
+    ]
     return generic(request,
                    model=Poll,
                    queryset=get_polls,

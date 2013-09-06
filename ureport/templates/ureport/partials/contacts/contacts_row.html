@@ -1,7 +1,7 @@
 {% extends 'generic/partials/partial_row.html' %}
 {% block remaining_row_content %}
     <td>
-        <a href="{% url profile object.connection_pk %}"> {{ object.connection_pk }}</a>
+        <a href="{% url profile object.connection_pk %}" target="_blank"> {{ object.connection_pk }}</a>
     </td>
     {% if request.user.is_staff %}
     <td>

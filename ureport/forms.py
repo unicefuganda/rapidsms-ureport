@@ -736,7 +736,6 @@ class GroupsFilter(forms.Form):
             self.fields['group_list'] = forms.ModelMultipleChoiceField(queryset=access.groups.order_by('name'),
                                                                        required=False)
         except Access.DoesNotExist, e:
-            print "Access DoesNotExist", e
             self.fields['group_list'] = forms.ModelMultipleChoiceField(queryset=Group.objects.order_by('name'),
                                                                        required=False)
         except UnboundLocalError, e:
