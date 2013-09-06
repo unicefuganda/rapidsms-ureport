@@ -1,7 +1,7 @@
 import datetime
 from django.contrib.auth.models import User
 from django.test import TransactionTestCase
-import settings
+from django.conf import settings
 
 
 class SplinterTestCase(TransactionTestCase):
