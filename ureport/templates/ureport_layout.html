@@ -6,7 +6,7 @@
     <title>Ureport - {% block page_title %}{% trans "Voice Matters" %}{% endblock %}</title>
 
     {% block stylesheets %}
-        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/ureport_home.css?11">
+	{% include "ureport/css.html" %}
     {% endblock %}
     <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/jquery.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/ureport.min.js?41"></script>
@@ -93,12 +93,7 @@
 	    <div class="footer">
 	       <div class="sponsors">
 	       {% trans "Supported by" %}:
-	           <img src="{{ MEDIA_URL }}ureport/images/unicef_logo.png"/>
-	           <img src="{{ MEDIA_URL }}ureport/images/brac_logo.png"/>
-	           <img src="{{ MEDIA_URL }}ureport/images/scouts_logo.png"/>
-	           <img src="{{ MEDIA_URL }}ureport/images/cou_logo.png"/>
-	           <img src="{{ MEDIA_URL }}ureport/images/gem_logo.png"/>
-               <img src="{{ MEDIA_URL }}ureport/images/ibm_logo.jpg" />
+		   {% include 'ureport/footer_links.html' %}
 	       </div>
 	       <div class="footerlinks">
 	           <div class="nav-bottom">
