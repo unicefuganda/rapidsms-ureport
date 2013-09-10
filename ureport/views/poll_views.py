@@ -245,7 +245,7 @@ def new_poll(req):
                 Translation.objects.get_or_create(language='kdj',
                                                   field=form.cleaned_data['question_en']
                 )
-            translation = form.cleaned_data['question_kdj']
+            translation.value = form.cleaned_data['question_kdj']
             translation.save()
         log.info("[new-poll] - translations ok.")
 
