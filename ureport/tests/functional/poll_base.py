@@ -27,8 +27,14 @@ class PollBase(PollAssertions):
         self.poll.end_date = datetime.datetime.now().date()
         self.poll.save()
 
+    def log_in_as_ureport(self):
+        self.open('/accounts/login')
+        self.browser.fill("username", "ureport")
+        self.browser.fill("password", "ureport")
+        self.browser.find_by_css("input[type=submit]").first.click()
+
     def log_as_admin_and_visit(self, url):
-        self.create_and_sign_in_admin("argha", "a", url)
+        self.create_and_sign_in_admin("ureport", "ureport", url)
 
     def get_poll(self, poll_id):
         return Poll.objects.get(id=poll_id)
