@@ -211,7 +211,7 @@
 		render_text = render_text + "<p>{% trans "No" %}: " + Math.round(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
             }
 	    else if (jQuery(v).text() == "unknown") {
-		render_text = render_text + "<p>unknown: " + Math.round(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
+		render_text = render_text + "<p>{% trans "unknown" %}: " + Math.round(parseFloat(jQuery(data[k]).text()) * 100) + "%</p>";
             }
 
 
