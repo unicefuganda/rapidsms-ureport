@@ -35,10 +35,22 @@ class PollFlowTest(PollBase):
 
     def create_backend(self, name):
         self.open("/admin/rapidsms/backend/add/")
+        sleep(1)
+        if not self.browser.html:
+            print "$$$$$$$$$$$"
+            print "$$$$$ OMG OMG NO HTML!!!!!!!!"
+            print "$$$$$$$$$$$"
+        #self.browser.find_by_tag('body').first.click()
         self.fill_form_and_submit({"id_name": name}, "_save")
 
     def create_contact(self, name, gender, backend_name, identity, group):
         self.open("/admin/rapidsms/contact/add/")
+        sleep(1)
+        if not self.browser.html:
+            print "$$$$$$$$$$$"
+            print "$$$$$ OMG OMG NO HTML!!!!!!!!"
+            print "$$$$$$$$$$$"
+        #self.browser.find_by_tag('body').first.click()
         form_data = {
             "id_name": name,
             "id_gender": gender,
@@ -52,15 +64,25 @@ class PollFlowTest(PollBase):
 
     def create_group(self, name):
         self.open("/admin/auth/group/add/")
+        sleep(1)
+        if not self.browser.html:
+            print "$$$$$$$$$$$"
+            print "$$$$$ OMG OMG NO HTML!!!!!!!!"
+            print "$$$$$$$$$$$"
+        #self.browser.find_by_tag('body').first.click()
         self.fill_form_and_submit({"id_name": name}, "_save")
 
     def create_user(self, name, group):
         self.open("/admin/auth/user/add/")
+        sleep(1)
+        #self.browser.find_by_tag('body').first.click()
         self.fill_form_and_submit({"id_username": name, "id_password1": name, "id_password2": name}, "_save")
         self.fill_form_and_submit({"id_groups": group}, "_save")
 
     def create_poll(self, name, type, question, group):
         self.open("/createpoll")
+        sleep(1)
+        #self.browser.find_by_tag('body').first.click()
         form_data = {
             "id_type": type,
             "id_name": name,
@@ -77,6 +99,8 @@ class PollFlowTest(PollBase):
 
     def cleanup(self, url):
         self.open(url)
+        sleep(2)
+        #self.browser.find_by_tag('body').first.click()
         self.fill_form({"action-toggle": True})
         self.fill_form_and_submit({"action": "delete_selected"}, "index", True, True)
         self.browser.find_by_value("Yes, I'm sure").first.click()
