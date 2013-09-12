@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.shortcuts import get_object_or_404
 from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
@@ -338,6 +338,9 @@ def flagged_messages(request):
 @login_required
 def view_flagged_with(request, pk):
     flag = get_object_or_404(Flag, pk=pk)
+    access = get_access(request)
+    if access and not flag in access.flags.all():
+        return render(request, '403.html', status=403)
     messages = flag.get_messages()
     if request.GET.get('export', None):
         export_data = messages.values_list('text', 'connection_id', 'date',

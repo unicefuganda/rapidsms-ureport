@@ -400,7 +400,7 @@ def a_dashboard(request, name):
     name = name.replace("_", " ")
     flag = get_object_or_404(Flag, name=name)
     access = get_access(request)
-    if access is not None and flag not in access.flags:
+    if access is not None and flag not in access.flags.all():
         return render(request, '403.html', status=403)
     messages = flag.get_messages().order_by('-date')
     responses = Message.objects.filter(
