@@ -2,7 +2,7 @@ from datetime import datetime
 from time import sleep
 from splinter import Browser
 from ureport.tests.functional.poll_base import PollBase
-
+from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 
 class PollFlowTest(PollBase):
     def fill_form(self, field_values, by_name=False, select_by_value=False):
@@ -126,6 +126,7 @@ class PollFlowTest(PollBase):
     #
     #     self.assert_that_page_has_add_poll_button()
 
+    @take_screenshot_on_failure
     def test_should_show_the_status_page(self):
         self.create_group("groupFT")
         self.create_backend("Some backend")
