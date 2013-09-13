@@ -93,6 +93,7 @@ class PollFlowTest(PollBase):
         self.browser.find_by_css(".buttons a").last.click()
         return self.browser.url.split('/')[-2]
 
+    @take_screenshot_on_failure
     def setUp(self):
         self.browser = Browser()
         self.log_in_as_ureport()
@@ -105,6 +106,7 @@ class PollFlowTest(PollBase):
         self.fill_form_and_submit({"action": "delete_selected"}, "index", True, True)
         self.browser.find_by_value("Yes, I'm sure").first.click()
 
+    @take_screenshot_on_failure
     def tearDown(self):
 
         self.cleanup("/admin/poll/poll/")
