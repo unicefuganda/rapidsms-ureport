@@ -15,6 +15,6 @@ def take_screenshot_on_failure(test):
                 test_object.browser.driver.save_screenshot(filename)
                 print r'Dumped screen shot of failure to [%s]' % filename
             except Exception, ex:
-                print ex.message
+                print ex
             raise Exception(e)
     return inner_decorator

@@ -1,8 +1,9 @@
 from datetime import datetime
 from time import sleep
 from splinter import Browser
-from ureport.tests.functional.poll_base import PollBase
 from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
+from ureport.tests.functional.poll_base import PollBase
+
 
 class PollFlowTest(PollBase):
     def fill_form(self, field_values, by_name=False, select_by_value=False):
