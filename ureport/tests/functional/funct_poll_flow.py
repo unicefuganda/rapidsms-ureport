@@ -1,5 +1,4 @@
 from datetime import datetime
-from time import sleep
 from splinter import Browser
 from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 from ureport.tests.functional.poll_base import PollBase
@@ -36,7 +35,6 @@ class PollFlowTest(PollBase):
 
     def create_backend(self, name):
         self.open("/admin/rapidsms/backend/add/")
-        sleep(1)
         if not self.browser.html:
             print "$$$$$$$$$$$"
             print "$$$$$ OMG OMG NO HTML!!!!!!!!"
@@ -46,7 +44,6 @@ class PollFlowTest(PollBase):
 
     def create_contact(self, name, gender, backend_name, identity, group):
         self.open("/admin/rapidsms/contact/add/")
-        sleep(1)
         if not self.browser.html:
             print "$$$$$$$$$$$"
             print "$$$$$ OMG OMG NO HTML!!!!!!!!"
@@ -65,7 +62,6 @@ class PollFlowTest(PollBase):
 
     def create_group(self, name):
         self.open("/admin/auth/group/add/")
-        sleep(1)
         if not self.browser.html:
             print "$$$$$$$$$$$"
             print "$$$$$ OMG OMG NO HTML!!!!!!!!"
@@ -75,14 +71,12 @@ class PollFlowTest(PollBase):
 
     def create_user(self, name, group):
         self.open("/admin/auth/user/add/")
-        sleep(1)
         #self.browser.find_by_tag('body').first.click()
         self.fill_form_and_submit({"id_username": name, "id_password1": name, "id_password2": name}, "_save")
         self.fill_form_and_submit({"id_groups": group}, "_save")
 
     def create_poll(self, name, type, question, group):
         self.open("/createpoll")
-        sleep(1)
         #self.browser.find_by_tag('body').first.click()
         form_data = {
             "id_type": type,
@@ -101,11 +95,11 @@ class PollFlowTest(PollBase):
 
     def cleanup(self, url):
         self.open(url)
-        sleep(2)
-        #self.browser.find_by_tag('body').first.click()
-        self.fill_form({"action-toggle": True})
-        self.fill_form_and_submit({"action": "delete_selected"}, "index", True, True)
-        self.browser.find_by_value("Yes, I'm sure").first.click()
+        
+        if self.browser.is_element_present_by_id("action-toggle"):
+            self.fill_form({"action-toggle": True})
+            self.fill_form_and_submit({"action": "delete_selected"}, "index", True, True)
+            self.browser.find_by_value("Yes, I'm sure").first.click()
 
     @take_screenshot_on_failure
     def tearDown(self):
@@ -115,7 +109,7 @@ class PollFlowTest(PollBase):
         self.cleanup("/admin/rapidsms/backend/")
         self.cleanup("/admin/rapidsms/contact/")
         self.cleanup("/admin/auth/group/")
-        #TODO: when deleting users don't delete the "ureport" one
+        #TODO: when deleting users don't delete the "ureport" and "admin" ones
         # self.cleanup("/admin/auth/user/")
 
         self.browser.quit()
