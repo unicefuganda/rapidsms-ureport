@@ -1,4 +1,6 @@
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
+from ureport.tests.functional.admin_helper import rows_of_table_by_class
+from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 
 ANY_POLL_ID = '12'
 
@@ -57,12 +59,21 @@ class PollAssertions(SplinterTestCase):
     def assert_that_page_has_add_poll_button(self):
         self.assertTrue(self.browser.find_link_by_href('/createpoll/'))
 
-    def assert_that_page_has_edit_poll_option(self, poll):
-        element = self.browser.find_link_by_href('/view_poll/%i/' % poll.id)
+    def assert_that_page_has_edit_poll_option(self, poll_id):
+        element = self.browser.find_link_by_href('/view_poll/%s/' % poll_id)
 
         self.assertEqual(element.first.text, "Edit")
 
-    def assert_that_page_has_report_poll_option(self, poll):
-        element = self.browser.find_link_by_href('/polls/%i/report/' % poll.id)
+    @take_screenshot_on_failure
+    def assert_that_page_has_report_poll_option(self, poll_id):
+        element = self.browser.find_link_by_href('/polls/%s/report/' % poll_id)
 
         self.assertEqual(element.first.text, "Report")
+
+    def assert_create_poll_is_present(self):
+        is_create_poll_present = self.browser.is_element_present_by_css(".buttons a")
+        self.assertTrue(is_create_poll_present)
+
+    def assert_that_number_of_responses_increase_by_one(self, number_of_responses):
+        rows_responses = rows_of_table_by_class(self.browser, "messages module")
+        self.assertEqual(len(rows_responses), number_of_responses + 1)
