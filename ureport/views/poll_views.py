@@ -64,7 +64,7 @@ def poll_status(request, pk):
         'message_stats_start_date': startDate,
         'message_stats_age_days': age_in_days,
         'message_stats': message_stats,
-    }, context_instance=RequestContext(request))
+        }, context_instance=RequestContext(request))
 
 
 @never_cache
@@ -186,7 +186,6 @@ def view_poll(request, pk):
 
 @login_required
 @transaction.commit_on_success
-@never_cache
 def new_poll(req):
     log.info("[new_poll] TRANSACTION START")
     if req.method == 'POST':
@@ -281,7 +280,7 @@ def new_poll(req):
         form.updateTypes()
 
         log.info("[new_poll] TRANSACTION COMMIT")
-        return render_to_response('ureport/new_poll.html', {'form': form, 'groups_form': groups_form},
+    return render_to_response('ureport/new_poll.html', {'form': form, 'groups_form': groups_form},
                                   context_instance=RequestContext(req))
 
 
@@ -362,7 +361,7 @@ def view_responses(req, poll_id):
         columns=columns,
         partial_row='ureport/partials/polls/response_row.html',
         poll_id=poll_id,
-    )
+        )
 
 
 @login_required
@@ -433,7 +432,7 @@ def poll_dashboard(request):
                ('Start Date', True, 'start_date', SimpleSorter(),),
                ('# Participants', False, 'participants', None,),
                ('Visuals', False, 'visuals', None,),
-    ]
+               ]
     return generic(request,
                    model=Poll,
                    queryset=get_polls,
