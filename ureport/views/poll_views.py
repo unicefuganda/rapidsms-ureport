@@ -225,55 +225,55 @@ def new_poll(req):
                     )
                 translation.value = form.cleaned_data['default_response_luo']
                 translation.save()
-        if not form.cleaned_data['default_response_kdj'] == '' \
-            and not form.cleaned_data['default_response_en'] == '':
-            (translation, created) = \
-                Translation.objects.get_or_create(language='kdj',
-                                                  field=form.cleaned_data['default_response_en']
-                )
-            translation.value = form.cleaned_data['default_response_kdj']
-            translation.save()
-        if not form.cleaned_data['question_luo'] == '':
-            (translation, created) = \
-                Translation.objects.get_or_create(language='ach',
-                                                  field=form.cleaned_data['question_en']
-                )
-            translation.value = form.cleaned_data['question_luo']
-            translation.save()
-        if not form.cleaned_data['question_kdj'] == '':
-            (translation, created) = \
-                Translation.objects.get_or_create(language='kdj',
-                                                  field=form.cleaned_data['question_en']
-                )
-            translation.value = form.cleaned_data['question_kdj']
-            translation.save()
-        log.info("[new-poll] - translations ok.")
+            if not form.cleaned_data['default_response_kdj'] == '' \
+                and not form.cleaned_data['default_response_en'] == '':
+                (translation, created) = \
+                    Translation.objects.get_or_create(language='kdj',
+                                                      field=form.cleaned_data['default_response_en']
+                    )
+                translation.value = form.cleaned_data['default_response_kdj']
+                translation.save()
+            if not form.cleaned_data['question_luo'] == '':
+                (translation, created) = \
+                    Translation.objects.get_or_create(language='ach',
+                                                      field=form.cleaned_data['question_en']
+                    )
+                translation.value = form.cleaned_data['question_luo']
+                translation.save()
+            if not form.cleaned_data['question_kdj'] == '':
+                (translation, created) = \
+                    Translation.objects.get_or_create(language='kdj',
+                                                      field=form.cleaned_data['question_en']
+                    )
+                translation.value = form.cleaned_data['question_kdj']
+                translation.save()
+            log.info("[new-poll] - translations ok.")
 
-        poll_type = (Poll.TYPE_TEXT if p_type
-                                       == NewPollForm.TYPE_YES_NO else p_type)
+            poll_type = (Poll.TYPE_TEXT if p_type
+                                           == NewPollForm.TYPE_YES_NO else p_type)
 
-        poll = Poll.create_with_bulk(
-            name,
-            poll_type,
-            question,
-            default_response,
-            contacts,
-            req.user,
-            is_urgent=is_urgent)
+            poll = Poll.create_with_bulk(
+                name,
+                poll_type,
+                question,
+                default_response,
+                contacts,
+                req.user,
+                is_urgent=is_urgent)
 
-        if p_type == NewPollForm.TYPE_YES_NO:
-            log.info("[new-poll] - is Y/N poll so adding categories...")
-            poll.add_yesno_categories()
-            log.info("[new-poll] - categories added ok.")
+            if p_type == NewPollForm.TYPE_YES_NO:
+                log.info("[new-poll] - is Y/N poll so adding categories...")
+                poll.add_yesno_categories()
+                log.info("[new-poll] - categories added ok.")
 
-        if settings.SITE_ID:
-            log.info("[new-poll] - SITE_ID is set, so adding the site to the poll")
-            poll.sites.add(Site.objects.get_current())
-            log.info("[new-poll] - site added ok")
+            if settings.SITE_ID:
+                log.info("[new-poll] - SITE_ID is set, so adding the site to the poll")
+                poll.sites.add(Site.objects.get_current())
+                log.info("[new-poll] - site added ok")
 
-        log.info("[new-poll] - poll created ok.")
-        log.info("[new_poll] TRANSACTION COMMIT")
-        return redirect(reverse('ureport.views.view_poll', args=[poll.pk]))
+            log.info("[new-poll] - poll created ok.")
+            log.info("[new_poll] TRANSACTION COMMIT")
+            return redirect(reverse('ureport.views.view_poll', args=[poll.pk]))
 
     else:
         form = NewPollForm(request=req)
