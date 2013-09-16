@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from django.contrib.auth.models import Group
 from django.core.cache import cache
 
 from django.shortcuts import render_to_response, get_object_or_404, render
@@ -10,6 +11,7 @@ from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.http import HttpResponse, Http404
 from django.views.decorators.cache import cache_page, never_cache
+from django.views.decorators.vary import vary_on_cookie
 from uganda_common.utils import ExcelResponse
 
 from rapidsms_httprouter.models import Message
@@ -26,11 +28,13 @@ from ureport.models import MessageAttribute, AlertsExport, Settings, \
 from django.core.paginator import EmptyPage, PageNotAnInteger
 import datetime
 from ureport.views.utils.paginator import UreportPaginator
-from contact.models import Flag
+from contact.models import Flag, MessageFlag
 from django.db.models import Q
 from ureport.settings import UREPORT_ROOT
 from ureport.utils import get_access
 import os
+from generic.views import generic
+from generic.sorters import SimpleSorter
 
 
 @login_required
@@ -516,13 +520,51 @@ def home(request):
     try:
         latest = PollAttribute.objects.get(key='viewable').values.filter(value='true'). \
             values_list('poll', flat=True).order_by('-poll__pk')[0]
+        count = PollAttribute.objects.get(key='viewable').values.filter(value='true').values_list('poll',
+                                                                                                  flat=True).count()
     except PollAttribute.DoesNotExist:
         latest = 0
-    if int(cache.get('latest_pk', 0)) == int(latest) and cache.get('cached_home', None) is not None:
+        count = 0
+    if int(cache.get('latest_pk', 0)) == latest and cache.get('cached_home', None) is not None and int(
+                    cache.get('poll_count', 0) == count):
         print "Returning cached page"
         rendered = cache.get('cached_home')
     else:
         rendered = render_to_string('ureport/home.html', context_instance=RequestContext(request))
         cache.set('cached_home', rendered)
         cache.set('latest_pk', latest)
+        cache.set('poll_count', count)
     return HttpResponse(rendered)
+
+
+@login_required
+@vary_on_cookie
+def flag_categories(request, name):
+    group = get_object_or_404(Group, name=name)
+    if get_access(request) and request.user not in group.user_set.all():
+        return render(request, '403.html', status=403)
+    flags = group.flags.all()
+    flagged_messages = MessageFlag.objects.filter(flag__in=flags)
+    if request.GET.get('export', None):
+        data = flagged_messages.values_list('message__connection_id', 'message__text', 'flag__name', 'message__date',
+                                            'message__connection__contact__reporting_location__name')
+        headers = ['Identifier', 'Message', 'Flag', 'Date', 'District']
+        return ExcelResponse(data=data, headers=headers)
+    return generic(
+        request,
+        model=MessageFlag,
+        queryset=flagged_messages,
+        objects_per_page=10,
+        results_title='Flagged Messages',
+        selectable=False,
+        partial_row='ureport/partials/messages/flagged_message_row.html'
+        ,
+        base_template='ureport/flagged_message_base.html',
+        columns=[('Identifier', True, 'message__connection_id', SimpleSorter()),
+                 ('Message', True, 'message__text', SimpleSorter()),
+                 ('Date', True, 'message__date', SimpleSorter()),
+                 ('Flags', False, 'message__flagged', None)],
+        sort_column='date',
+        sort_ascending=False,
+        all_flags=flags,
+    )

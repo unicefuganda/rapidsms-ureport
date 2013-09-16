@@ -1,14 +1,28 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls.defaults import *
-from ureport.views import *
+from django.conf.urls.defaults import patterns, url, include
+from ureport.views import poll_dashboard, ureporters, editReporter, deleteReporter, ureport_polls, script_polls, \
+    messages, mass_messages, quit_messages, autoreg_messages, poll_messages, unsolicitized_messages, flagged_messages, \
+    view_flagged_with, create_flags, delete_flag, view_responses, ureport_content, message_feed, poll_summary, \
+    best_visualization, tag_cloud, add_drop_word, delete_drop_word, show_ignored_tags, histogram, show_timeseries, \
+    get_all_contacts, bulk_upload_contacts, download_contacts_template, clickatell_wrapper, signup, ureporter_profile,\
+    new_poll, mp_dashboard, ussd_manager, blacklist, delete, view_poll, poll_status, edit_category, delete_category, \
+    delete_rule, view_rules, create_rule, alerts, remove_captured, send_message, view_autoreg_rules, set_autoreg_rules, \
+    user_registration_status, kannel_status, a_dashboard, flag_categories, remove_captured_ind, assign_poll,\
+    comfirm_message_sending, comfirmmessages, national_pulse, start_poll_export
 from django.contrib.auth.decorators import login_required
-from generic.views import generic_row
+from generic.views import generic_row, generic
 from contact.forms import FreeSearchForm, MultipleDistictFilterForm, GenderFilterForm, FilterGroupsForm, \
-    AssignGroupForm, AgeFilterForm
+    AssignGroupForm, AgeFilterForm, MassTextForm
 from tastypie.api import Api
 from .api import PollResponseResource, PollResource, MessageResource, ContactResource, ResponseResource
-from ureport.views.excel_reports_views import generate_poll_dump_report, generate_per_district_report, upload_users,\
+from ureport.views.excel_reports_views import generate_poll_dump_report, generate_per_district_report, upload_users, \
     assign_group
+from rapidsms.models import Contact
+from unregister.forms import BlacklistForm
+from generic.sorters import SimpleSorter
+from ureport.forms import AssignToNewPollForm
+from ureport.models import Ureporter
+from ureport.utils import get_contacts
 
 message_resource = MessageResource()
 
@@ -139,6 +153,7 @@ urlpatterns = patterns('',
                         {'post_reset_redirect': '/accounts/password/done/'}),
                        (r'^accounts/password/done/$', 'django.contrib.auth.views.password_reset_complete'),
                        url(r'^dashboard/(?P<name>\w+)/$', a_dashboard, name="aids-dashboard"),
+                       url(r'^dashboard/group/(?P<name>\w+)/$', flag_categories, name="flag-categories"),
                        url(r'^uncapture/(?P<pk>\d+)/$', remove_captured_ind, name="remove-captured_ind"),
                        url(r'^assign/(?P<pk>\d+)/(?P<poll>\d+)/$', assign_poll, name="remove-captured_ind"),
                        url(r'^reporter2/$', login_required(generic), {
