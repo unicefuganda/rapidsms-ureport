@@ -1,10 +1,10 @@
 import datetime
+from unittest import TestCase
 from django.contrib.auth.models import User
-from django.test import TransactionTestCase
 from django.conf import settings
 
 
-class SplinterTestCase(TransactionTestCase):
+class SplinterTestCase(TestCase):
     def __init__(self, methodName='runTest'):
         super(SplinterTestCase, self).__init__(methodName)
 
