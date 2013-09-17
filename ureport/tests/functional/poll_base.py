@@ -1,8 +1,8 @@
+import time
 import datetime
 from poll.models import Poll
 from ureport.tests.functional.create_poll_utils import get_incoming_message
 from ureport.tests.functional.poll_assertions import PollAssertions
-from ureport.tests.functional.admin_helper import fill_form, rows_of_table_by_class
 
 
 class PollBase(PollAssertions):
@@ -12,14 +12,14 @@ class PollBase(PollAssertions):
 
         self.assertTrue(self.browser.is_text_present('Start Poll', 10))
         self.browser.find_link_by_text('Start Poll').first.click()
-        self.assertTrue(self.browser.is_text_present('Close Poll', 10))
 
-    def start_poll(self, poll_id):
-        self.open("/view_poll/%s" % poll_id)
+    def start_poll(self):
+        if not self.poll.start_date:
+            self.poll.start()
 
-        self.assertTrue(self.browser.is_text_present('Start Poll', 10))
-        self.browser.find_link_by_text('Start Poll').first.click()
-        self.assertTrue(self.browser.is_text_present('Close Poll', 10))
+        if self.poll.end_date is not None:
+            self.poll.end_date = None
+            self.poll.save()
 
     def close_poll(self):
         if not self.poll.start_date:
@@ -56,33 +56,7 @@ class PollBase(PollAssertions):
         responses = poll.responses.all()
         return responses
 
-    def create_poll(self, name, type, question, group):
-        self.open("/createpoll")
-        form_data = {
-            "id_type": type,
-            "id_name": name,
-            "id_groups": group
-        }
-        self.browser.fill("question_en", question)
-        fill_form(self.browser, form_data)
-        self.assert_create_poll_is_present()
 
-        self.browser.find_by_css(".buttons a").last.click()
-        return self.browser.url.split('/')[-2]
-
-    def respond_to_the_started_poll(self, sender, message):
-        self.open('/router/console/')
-        rows_responses = rows_of_table_by_class(self.browser, "messages module")
-        number_of_responses = len(rows_responses)
-
-        form_data = {
-            "text": message,
-            "sender": sender
-        }
-        fill_form(self.browser, form_data, True)
-        self.browser.find_by_css("input[type=submit]").first.click()
-
-        self.assert_that_number_of_responses_increase_by_one(number_of_responses)
 
 
 
