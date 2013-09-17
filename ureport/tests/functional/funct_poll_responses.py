@@ -1,4 +1,5 @@
 from splinter import Browser
+from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 from ureport.tests.functional.admin_base import AdminBase
 from ureport.tests.functional.poll_base import PollBase
 from ureport.tests.functional.admin_helper import fill_form_and_submit, fill_form
@@ -33,6 +34,7 @@ class PollResponsesTest(PollBase, AdminBase):
 
         self.browser.quit()
 
+    @take_screenshot_on_failure
     def test_that_poll_responses_are_shown_up_at_report_page(self):
         self.create_group("groupFT")
         self.create_backend("console")
