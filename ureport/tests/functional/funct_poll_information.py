@@ -1,5 +1,4 @@
 from splinter import Browser
-from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 from ureport.tests.functional.admin_base import AdminBase
 from ureport.tests.functional.poll_base import PollBase
 from ureport.tests.functional.admin_helper import fill_form_and_submit, fill_form
@@ -31,7 +30,6 @@ class PollInformationTest(PollBase, AdminBase):
 
         self.browser.quit()
 
-    @take_screenshot_on_failure
     def test_that_admin_is_able_to_edit_a_poll(self):
         self.create_group("groupFT")
         self.create_backend("console")
@@ -45,8 +43,8 @@ class PollInformationTest(PollBase, AdminBase):
 
         self.open("/mypolls/%s/" % poll_id)
         self.assert_that_page_has_edit_poll_option(poll_id)
+        #TODO edit the poll
 
-    @take_screenshot_on_failure
     def test_that_admin_can_check_poll_report_option(self):
         self.create_group("groupFT")
         self.create_backend("console")
