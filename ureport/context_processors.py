@@ -8,6 +8,7 @@ from unregister.models import Blacklist
 from ureport.models.models import UPoll as Poll
 from django.conf import settings
 from ureport.models import QuoteBox
+from ureport.utils import get_access
 
 
 def has_valid_pagination_limit(settings):
@@ -42,6 +43,8 @@ def voices(request):
         'map_args': settings.MAP_ARGS,
         'show_contact_info': getattr(settings, 'SHOW_CONTACT_INFO', True)
     }
+    if request.user.is_authenticated():
+        context['access'] = get_access(request)
 
     if has_valid_pagination_limit(settings):
         context['polls'] = Poll.objects.exclude(contacts=None, start_date=None).exclude(

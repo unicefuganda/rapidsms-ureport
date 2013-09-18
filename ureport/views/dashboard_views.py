@@ -567,4 +567,5 @@ def flag_categories(request, name):
         sort_column='date',
         sort_ascending=False,
         all_flags=flags,
+        go_to_dashboards = True
     )

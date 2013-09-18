@@ -21,8 +21,8 @@
     <table width="100%" class="results">
     <thead><tr><td>name</td> <td>messages</td> <td></td></tr></thead>
     {% for flag in all_flags %}
-
-<tr><td>{{flag.name}}</td>  <td><a href="/flags/{{ flag.pk }}/messages/">messages</a></td>
+{% load ureport %}
+<tr><td>{{flag.name}}</td>  <td><a href={% if go_to_dashboards %}{% url aids-dashboard flag.name|cap_slugify %}{% else %}"/flags/{{ flag.pk }}/messages/"{% endif %}>messages</a></td>
     <td><a href="/flags/{{ flag.pk }}/edit/">edit</a> </td>
     <td><a href="/flags/{{ flag.pk }}/delete/">delete</a> </td>
 

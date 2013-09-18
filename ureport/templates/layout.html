@@ -5,111 +5,115 @@
     <title>Ureport - {% block page_title %}{% trans "Voice Matters" %}{% endblock %}</title>
 
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/base.css">
- 
+
 
 
     {% block stylesheets %}
-         <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/modules.css" />
+        <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/modules.css" />
 
     {% endblock %}
-  <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/jquery.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/ureport.min.js?11"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/jquery.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/ureport.min.js?11"></script>
 
-{% block top_js %}
+    {% block top_js %}
 
-{% endblock %}
+    {% endblock %}
 
 
-         <script type="text/javascript">
+    <script type="text/javascript">
 
-              var _gaq = _gaq || [];
-              _gaq.push(['_setAccount', 'UA-23521720-1']);
-              _gaq.push(['_trackPageview']);
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-23521720-1']);
+        _gaq.push(['_trackPageview']);
 
-              (function() {
-                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-              })();
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
 
-            </script>
+    </script>
 
 
 </head>
 <body>
-    <div class="container" style="background-color:#ffffff;">
-        <div class="banner">
-            <a href="/">
+<div class="container" style="background-color:#ffffff;">
+    <div class="banner">
+        <a href="/">
             <span class="brand">UReport</span>
-	    <span class="tagline">{% trans "VOICE MATTERS" %}</span>
-            </a>
-            {% load humanize %}
-	    <span id="span_info"><span id="span_total">{{ total_ureporters|intcomma }}</span> {% trans "members to date" %}</span>
-        </div>
-        <div class="content">
+            <span class="tagline">{% trans "VOICE MATTERS" %}</span>
+        </a>
+        {% load humanize %}
+        <span id="span_info"><span id="span_total">{{ total_ureporters|intcomma }}</span> {% trans "members to date" %}</span>
+    </div>
+    <div class="content">
         <div class="subnav">
 
-          <ul class="nav nav-pills">
-	   <li class="first"><a href="/">{% trans "HOME" %}</a></li>
-	                {% if user.is_authenticated %}
-			   <li><a href="{% url ureport-polls user.pk %}">{% trans "POLL ADMIN" %}</a></li>
-			   <li><a href="{% url messagelog %}">{% trans "MESSAGE LOG" %}</a></li>
-			   <li><a href="{% url ureport-contact %}">{% trans "UREPORTERS" %}</a></li>
-			   <li><a href="{% url flaggedmessages %}">{% trans "FLAGGED MESSAGES" %}</a></li>
-			 <li><a href="{% url mp_dashboard %}">{% trans "MP BARAZA" %}</a></li>
-			<li><a href="{% url classifier %}">{% trans "A-CLASS" %}</a></li>
-			<li><a href="{% url alerts user.pk %}">{% trans "Real Time" %}</a></li>
-	                {% else %}
-			   <li><a href="/accounts/login">{% trans "LOGIN" %}</a></li>
-	                {% endif %}
-          </ul>
+            <ul class="nav nav-pills">
+                <li class="first"><a href="/">{% trans "HOME" %}</a></li>
+                {% if user.is_authenticated %}
+                    {% if access %}
+                        <li><a href="/access/dashboards">{% trans "DASHBOARDS" %}</a></li>
+                    {% else %}
+                        <li><a href="{% url ureport-polls user.pk %}">{% trans "POLL ADMIN" %}</a></li>
+                        <li><a href="{% url messagelog %}">{% trans "MESSAGE LOG" %}</a></li>
+                        <li><a href="{% url ureport-contact %}">{% trans "UREPORTERS" %}</a></li>
+                        <li><a href="{% url flaggedmessages %}">{% trans "FLAGGED MESSAGES" %}</a></li>
+                        <li><a href="{% url mp_dashboard %}">{% trans "MP BARAZA" %}</a></li>
+                        <li><a href="{% url classifier %}">{% trans "A-CLASS" %}</a></li>
+                        <li><a href="{% url alerts user.pk %}">{% trans "Real Time" %}</a></li>
+                    {% endif %}
+                {% else %}
+                    <li><a href="/accounts/login">{% trans "LOGIN" %}</a></li>
+                {% endif %}
+            </ul>
         </div>
 
-            {% block content %}
-                <!--  MAIN CONTENT GOES HERE -->
-            {% endblock %}
-   </div>
+        {% block content %}
+            <!--  MAIN CONTENT GOES HERE -->
+        {% endblock %}
+    </div>
 
-	    <div class="footer">
-	       <div class="sponsors">
-	       {% trans "Supported by" %}:
-	           <img src="{{ MEDIA_URL }}ureport/images/unicef_logo.png"/>
-	           <img src="{{ MEDIA_URL }}ureport/images/brac_logo.png"/>
-	           <img src="{{ MEDIA_URL }}ureport/images/scouts_logo.png"/>
-	           <img src="{{ MEDIA_URL }}ureport/images/cou_logo.png"/>
-	           <img src="{{ MEDIA_URL }}ureport/images/gem_logo.png"/>
-               <img src="{{ MEDIA_URL }}ureport/images/ibm_logo.jpg" />
-	       </div>
-	       <div class="footerlinks">
-	           <div class="nav-bottom">
+    <div class="footer">
+        <div class="sponsors">
+            {% trans "Supported by" %}:
+            <img src="{{ MEDIA_URL }}ureport/images/unicef_logo.png"/>
+            <img src="{{ MEDIA_URL }}ureport/images/brac_logo.png"/>
+            <img src="{{ MEDIA_URL }}ureport/images/scouts_logo.png"/>
+            <img src="{{ MEDIA_URL }}ureport/images/cou_logo.png"/>
+            <img src="{{ MEDIA_URL }}ureport/images/gem_logo.png"/>
+            <img src="{{ MEDIA_URL }}ureport/images/ibm_logo.jpg" />
+        </div>
+        <div class="footerlinks">
+            <div class="nav-bottom">
                 <ul>
-			<li class="first"><a href="/">{% trans "HOME" %}</a></li>
-			<li><a href="/#poll_results">{% trans "POLL RESULTS" %}</a></li>
-			<li><a href="about_ureport">{% trans "ABOUT UREPORT" %}</a></li>
-			<li><a href="/join/">{% trans "HOW TO JOIN" %}</a></li>
-	                <!-- <li><a href="#">SITE MAP</a></li>
-	                <li><a href="#">CONTACT US</a></li> -->
-	                {% if user.is_authenticated %}
-			   <li><a href="{% url ureport-polls  user.pk %}">{% trans "POLL ADMIN" %}</a></li>
-			   <li><a href="{% url messagelog %}">{% trans "MESSAGE LOG" %}</a></li>
-			   <li><a href="{% url ureport-contact %}">{% trans "UREPORTERS" %}</a></li>
-			   <li><a href="{% url flaggedmessages %}">{% trans "FLAGGED MESSAGES" %}</a></li>
-			<li><a href="{% url mp_dashboard %}">{% trans "MP BARAZA" %}</a></li>
-			 <li><a href="{% url classifier %}">{% trans "A-CLASS" %}</a></li>
-		    <li><a href="{% url alerts user.pk %}">{% trans "REAL TIME" %}</a></li>
-	                {% else %}
-			   <li><a href="/accounts/login">{% trans "LOGIN" %}</a></li>
-	                {% endif %}
+                    <li class="first"><a href="/">{% trans "HOME" %}</a></li>
+                    <li><a href="/#poll_results">{% trans "POLL RESULTS" %}</a></li>
+                    <li><a href="about_ureport">{% trans "ABOUT UREPORT" %}</a></li>
+                    <li><a href="/join/">{% trans "HOW TO JOIN" %}</a></li>
+                    <!-- <li><a href="#">SITE MAP</a></li>
+                    <li><a href="#">CONTACT US</a></li> -->
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url ureport-polls  user.pk %}">{% trans "POLL ADMIN" %}</a></li>
+                        <li><a href="{% url messagelog %}">{% trans "MESSAGE LOG" %}</a></li>
+                        <li><a href="{% url ureport-contact %}">{% trans "UREPORTERS" %}</a></li>
+                        <li><a href="{% url flaggedmessages %}">{% trans "FLAGGED MESSAGES" %}</a></li>
+                        <li><a href="{% url mp_dashboard %}">{% trans "MP BARAZA" %}</a></li>
+                        <li><a href="{% url classifier %}">{% trans "A-CLASS" %}</a></li>
+                        <li><a href="{% url alerts user.pk %}">{% trans "REAL TIME" %}</a></li>
+                    {% else %}
+                        <li><a href="/accounts/login">{% trans "LOGIN" %}</a></li>
+                    {% endif %}
                 </ul>
-	           </div>
-		   <p>{% trans "Copyright &copy; 2010 - 2012 UNICEF et al" %}.</p>
-		   <p>{% trans "RapidSMS and Ureport are available under the BSD license" %}.</p>
-	        </div>
-	    </div>
+            </div>
+            <p>{% trans "Copyright &copy; 2010 - 2012 UNICEF et al" %}.</p>
+            <p>{% trans "RapidSMS and Ureport are available under the BSD license" %}.</p>
+        </div>
+    </div>
 
 
-        <script type="text/javascript" src="{{ MEDIA_URL }}rapidsms/javascripts/collapse.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/ureport_extras.min.js?1"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}rapidsms/javascripts/collapse.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/ureport_extras.min.js?1"></script>
     {% block javascripts %}
     {% endblock %}
     <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
@@ -118,7 +122,7 @@
     <![endif]-->
     {% block extra_js %}
 
-{% endblock %}
-    </div>
+    {% endblock %}
+</div>
 </body>
 </html>

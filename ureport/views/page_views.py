@@ -1,7 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import json
+import datetime
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Count
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 from django.views.decorators.cache import never_cache
 
 import httplib2
@@ -12,7 +16,7 @@ from generic.views import generic_dashboard
 from generic.forms import StaticModuleForm
 from generic.models import Dashboard
 from ureport.forms import PollModuleForm
-from message_classifier.models import IbmCategory
+from message_classifier.models import IbmCategory, IbmMsgCategory
 from rapidsms.contrib.locations.models import Location
 
 
@@ -45,17 +49,34 @@ def kannel_status(request):
     return HttpResponse(content, content_type='text/html')
 
 
-@never_cache
-def national_pulse(request):
+def pulse(request, period=None):
+    period_map = {'day': 1, 'month': 30, 'year': 365}
     l = [l.pk for l in Location.objects.filter(type='district').distinct()]
 
-    s = IbmCategory.objects.filter(ibmmsgcategory__score__gte=0.25,
-                                   ibmmsgcategory__msg__connection__contact__reporting_location__in=l).annotate(
-        total=Count('ibmmsgcategory')).values('total', 'name',
-                                              'ibmmsgcategory__msg__connection__contact__reporting_location__name'). \
-        exclude(name__in=['family & relationships', "energy", "u-report", "social policy", "employment"])
-
-    data = json.dumps(list(s))
+    if period:
+        print period, "is here now"
+        now = datetime.datetime.now()
+        previous_date = datetime.datetime.now() - datetime.timedelta(days=period_map[period])
+        _all = IbmMsgCategory.objects.filter(score__gte=0.5,
+                                             msg__connection__contact__reporting_location__in=l).values_list('pk', flat=True)
+        s = IbmCategory.objects.filter(ibmmsgcategory__in=_all).exclude(
+            name__in=['family & relationships', "energy", "u-report", "social policy", "employment"]).annotate(
+            total=Count('ibmmsgcategory')).values('name', 'total',
+                                                       'ibmmsgcategory__msg__connection__contact__reporting_location__name')
+        print s.query
+    else:
+        s = IbmCategory.objects.filter(ibmmsgcategory__score__gte=0.5,
+                                       ibmmsgcategory__msg__connection__contact__reporting_location__in=l).annotate(
+            total=Count('ibmmsgcategory')).values('total', 'name',
+                                                  'ibmmsgcategory__msg__connection__contact__reporting_location__name'). \
+            exclude(name__in=['family & relationships', "energy", "u-report", "social policy", "employment"])
+        print s.query
+    data = json.dumps(list(s), cls=DjangoJSONEncoder)
     return HttpResponse(data.replace('"ibmmsgcategory__msg__connection__contact__reporting_location__name"',
                                      "\"district\"").replace("\"name\"", "\"category\""),
                         content_type='application/json')
+
+
+def national_pulse(request, period=None):
+    print period
+    return render_to_response('ureport/national_pulse.html', locals(), context_instance=RequestContext(request))

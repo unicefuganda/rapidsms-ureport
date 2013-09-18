@@ -64,3 +64,8 @@ def add_get_parameter(parser, token):
     return AddGetParameter(values)
 
 register.tag('set', set_var)
+
+
+@register.filter
+def cap_slugify(value):
+    return value.replace(" ", "_").replace("/", " ")
