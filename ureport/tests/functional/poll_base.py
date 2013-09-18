@@ -1,7 +1,7 @@
-import time
 import datetime
 from poll.models import Poll
 from ureport.tests.functional.create_poll_utils import get_incoming_message
+from ureport.tests.functional.admin_helper import fill_form
 from ureport.tests.functional.poll_assertions import PollAssertions
 
 
@@ -56,6 +56,17 @@ class PollBase(PollAssertions):
         responses = poll.responses.all()
         return responses
 
+    def create_poll(self, name, type, question, group):
+        self.open("/createpoll")
+        form_data = {
+            "id_type": type,
+            "id_name": name,
+            "id_groups": group
+        }
+        self.browser.fill("question_en", question)
+        fill_form(self.browser, form_data)
+        self.browser.find_by_css(".buttons a").last.click()
+        return self.browser.url.split('/')[-2]
 
 
 
