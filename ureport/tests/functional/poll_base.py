@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from poll.models import Poll
 from ureport.tests.functional.create_poll_utils import get_incoming_message
 from ureport.tests.functional.admin_helper import fill_form
@@ -7,19 +7,11 @@ from ureport.tests.functional.poll_assertions import PollAssertions
 
 class PollBase(PollAssertions):
 
-    def start_poll_through_poll_page(self):
-        self.log_as_admin_and_visit("/view_poll/%s" % self.poll.id)
+    def start_poll(self, poll_id):
+        self.open("/view_poll/%s" % poll_id)
 
         self.assertTrue(self.browser.is_text_present('Start Poll', 10))
         self.browser.find_link_by_text('Start Poll').first.click()
-
-    def start_poll(self):
-        if not self.poll.start_date:
-            self.poll.start()
-
-        if self.poll.end_date is not None:
-            self.poll.end_date = None
-            self.poll.save()
 
     def close_poll(self):
         if not self.poll.start_date:
@@ -66,6 +58,7 @@ class PollBase(PollAssertions):
         self.browser.fill("question_en", question)
         fill_form(self.browser, form_data)
         self.browser.find_by_css(".buttons a").last.click()
+
         return self.browser.url.split('/')[-2]
 
 

@@ -1,6 +1,7 @@
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
-
+from datetime import date
 ANY_POLL_ID = '12'
+
 
 class PollAssertions(SplinterTestCase):
     def assert_that_poll_questions_are_sent_out_to_contacts(self, poll):
@@ -11,8 +12,18 @@ class PollAssertions(SplinterTestCase):
         self.assertEquals(poll.messages.filter(status='Q')[0].text, poll.question)
         self.assertEquals(poll.messages.filter(status='Q')[1].text, poll.question)
 
-    def assert_that_poll_start_date_is_not_none(self, poll):
-        assert poll.start_date is not None
+    def assert_that_poll_start_date_is_not_none(self, poll_id):
+        self.open('/mypolls/%s' % poll_id)
+
+        elements = self.browser.find_by_xpath('//*[@class="results"]')
+        tbody = elements.first.find_by_tag('tbody')
+        trs = tbody.find_by_tag('tr')
+        view_poll_link = '/view_poll/%s/' % poll_id
+        for tr in trs:
+            element = tr.find_by_xpath('//*[@href="%s"]' % view_poll_link).first
+            if element is not None:
+                start_date = date.today().strftime("%d/%m/%Y")
+                self.assertTrue(tr.find_by_value(start_date) is not None)
 
     def assert_that_poll_has_responses(self, poll):
         self.assertEquals(poll.responses.count(), 2)
