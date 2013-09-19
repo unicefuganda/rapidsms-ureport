@@ -27,29 +27,158 @@
             color: #CCC;
             text-align: center;
         }
+        #facebookG{
+            width:128px}
+
+        .facebook_blockG{
+            background-color:#FFFFFF;
+            border:3px solid #000000;
+            float:left;
+            height:91px;
+            margin-left:7px;
+            width:24px;
+            opacity:0.1;
+            -moz-animation-name:bounceG;
+            -moz-animation-duration:1.3s;
+            -moz-animation-iteration-count:infinite;
+            -moz-animation-direction:linear;
+            -moz-transform:scale(0.7);
+            -webkit-animation-name:bounceG;
+            -webkit-animation-duration:1.3s;
+            -webkit-animation-iteration-count:infinite;
+            -webkit-animation-direction:linear;
+            -webkit-transform:scale(0.7);
+            -ms-animation-name:bounceG;
+            -ms-animation-duration:1.3s;
+            -ms-animation-iteration-count:infinite;
+            -ms-animation-direction:linear;
+            -ms-transform:scale(0.7);
+            -o-animation-name:bounceG;
+            -o-animation-duration:1.3s;
+            -o-animation-iteration-count:infinite;
+            -o-animation-direction:linear;
+            -o-transform:scale(0.7);
+            animation-name:bounceG;
+            animation-duration:1.3s;
+            animation-iteration-count:infinite;
+            animation-direction:linear;
+            transform:scale(0.7);
+        }
+
+        #blockG_1{
+            -moz-animation-delay:0.39s;
+            -webkit-animation-delay:0.39s;
+            -ms-animation-delay:0.39s;
+            -o-animation-delay:0.39s;
+            animation-delay:0.39s;
+        }
+
+        #blockG_2{
+            -moz-animation-delay:0.52s;
+            -webkit-animation-delay:0.52s;
+            -ms-animation-delay:0.52s;
+            -o-animation-delay:0.52s;
+            animation-delay:0.52s;
+        }
+
+        #blockG_3{
+            -moz-animation-delay:0.65s;
+            -webkit-animation-delay:0.65s;
+            -ms-animation-delay:0.65s;
+            -o-animation-delay:0.65s;
+            animation-delay:0.65s;
+        }
+
+        @-moz-keyframes bounceG{
+            0%{
+                -moz-transform:scale(1.2);
+                opacity:1}
+
+            100%{
+                -moz-transform:scale(0.7);
+                opacity:0.1}
+
+        }
+
+        @-webkit-keyframes bounceG{
+            0%{
+                -webkit-transform:scale(1.2);
+                opacity:1}
+
+            100%{
+                -webkit-transform:scale(0.7);
+                opacity:0.1}
+
+        }
+
+        @-ms-keyframes bounceG{
+            0%{
+                -ms-transform:scale(1.2);
+                opacity:1}
+
+            100%{
+                -ms-transform:scale(0.7);
+                opacity:0.1}
+
+        }
+
+        @-o-keyframes bounceG{
+            0%{
+                -o-transform:scale(1.2);
+                opacity:1}
+
+            100%{
+                -o-transform:scale(0.7);
+                opacity:0.1}
+
+        }
+
+        @keyframes bounceG{
+            0%{
+                transform:scale(1.2);
+                opacity:1}
+
+            100%{
+                transform:scale(0.7);
+                opacity:0.1}
+
+        }
     </style>
 {% endblock %}
 
 {% block top_js %}
-<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/d3.min.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/crossfilter.min.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/queue.min.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/dc.min.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/colorbrewer.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/underscore-min.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/d3.geo.projection.v0.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/d3.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/crossfilter.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/queue.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/dc.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/colorbrewer.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/underscore-min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/d3.geo.projection.v0.min.js"></script>
 {% endblock %}
 
 {% block content %}
+    <div id="loading" style="position: fixed; top: 0; right: 45%; display: none">
+        <div id="facebookG">
+            <div id="blockG_1" class="facebook_blockG"></div>
+            <div id="blockG_2" class="facebook_blockG"></div>
+            <div id="blockG_3" class="facebook_blockG"></div>
+        </div>
+    </div>
     <div class="container">
         <div>
-	    <a href="javascript:dc.filterAll(); dc.renderAll();">{% trans "Reset All" %}</a>
+            <ul>
+                <li><a href="{% url pulse 'day' %}">Today's Pulse</a></li>
+                <li><a href="{% url pulse 'month' %}"> Month's Pulse</a></li>
+                <li><a href="{% url pulse 'year' %}"> Year's Pulse</a></li>
+            </ul></div>
+        <div>
+            <a href="javascript:dc.filterAll(); dc.renderAll();">{% trans "Reset All" %}</a>
         </div>
         <ol class="legend"></ol>
         <div id="ug-chart">
-	    <h3> {% blocktrans %}Welcome to National Pulse where you can see what is trending within the U-report community.{% endblocktrans %}<br/> {% blocktrans %}Click on your district to see what the young people are talking about where you live.{% endblocktrans %}</h3>
+            <h3> {% blocktrans %}Welcome to National Pulse where you can see what is trending within the U-report community.{% endblocktrans %}<br/> {% blocktrans %}Click on your district to see what the young people are talking about where you live.{% endblocktrans %}</h3>
             <a class="reset" href="javascript:ugChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-	    <span class="reset" style="display: none;"> | {% trans "Current filter" %}: <span class="filter"></span></span>
+            <span class="reset" style="display: none;"> | {% trans "Current filter" %}: <span class="filter"></span></span>
 
             <div class="clearfix"></div>
         </div>
@@ -65,50 +194,56 @@
     var numberFormat = d3.format(".2f");
 
     var ugChart = dc.geoChoroplethChart("#ug-chart");
-		var totalsChart = dc.bubbleChart("#totals-chart");
-        var nationalPieChart = dc.pieChart("#national-pie-chart")
+    var totalsChart = dc.bubbleChart("#totals-chart");
+    var nationalPieChart = dc.pieChart("#national-pie-chart")
 
-		var width = 700,
-				height = 960;
+    var width = 700,
+            height = 960;
 
-        var raw_map_args = '{{ map_args }}';
-        var cleaned_map_args = raw_map_args.replace(/&#39;/g, "\"");
-        var map_args = JSON.parse(cleaned_map_args);
+    var raw_map_args = '{{ map_args }}';
+    var cleaned_map_args = raw_map_args.replace(/&#39;/g, "\"");
+    var map_args = JSON.parse(cleaned_map_args);
 
-		var projection = d3.geo.mercator()
-                .center([map_args.center.longitude, map_args.center.latitude])
-				.scale(map_args.scale)
-                .translate([width / 2, height / 2]);
+    var projection = d3.geo.mercator()
+            .center([map_args.center.longitude, map_args.center.latitude])
+            .scale(map_args.scale)
+            .translate([width / 2, height / 2]);
 
-		// declare some vars here so they are available
-		// in the browser console for debugging
-		var data;
-		var districts;
-		var shapes;
-        var data1;
-        var categories;
-        var debug = true;
-        var total;
-        var caseTypes;
+    // declare some vars here so they are available
+    // in the browser console for debugging
+    var data;
+    var districts;
+    var shapes;
+    var data1;
+    var categories;
+    var debug = true;
+    var total;
+    var caseTypes;
+    var categoriesGroup;
 
-        function max_of(obj){
-            var n = 0;
-            var x;
-            var key;
-            for (x in obj){
-                if (obj[x] > n){
-                    n = obj[x];
-                    key = x;
-                }
+    function max_of(obj){
+        var n = 0;
+        var x;
+        var key;
+        for (x in obj){
+            if (obj[x] > n){
+                n = obj[x];
+                key = x;
             }
-            return key;
         }
+        return key;
+    }
 
-
+    $('#loading').show();
     queue()
             .defer(d3.json, "{{ MEDIA_URL }}ureport/data/districts.json")
-            .defer(d3.json, "{% url pulse_json %}")
+            {% if period %}
+                .defer(d3.json, "{% url pulse_json period|cut:'/' %}")
+            {% else %}
+                .defer(d3.json, "{% url pulse_json %}")
+            {% endif %}
             .await(ready);
+    $('#loading').hide();
 
     function ready(error, ug, category) {
         // TODO handle error!
@@ -224,7 +359,7 @@
                 })
             // color across yellow-green-blue range
             // with a domain of 0% yes to 100% yes
-                .colors(["#FFFFFF", "#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"])
+                .colors(["#E8FAF9", "#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"])
                 .colorAccessor(function(d, i){return d})
                 .title(function (d) {
                     return "District: " + d.key + "\n " + category_of((d.value ? d.value : 0));
@@ -233,38 +368,38 @@
 
 
         totalsChart.width((width))
-            .height(height/1.5)
-            .margins({top: 10, right: 50, bottom: 30, left: 60})
-            .dimension(districts)
-                                // FIXME colors shown on chart don't make sense. WTF
-                                .colors(colorbrewer.YlGnBu[9])
-                                .colorDomain([0, 100])
-            .group(totalAnswersByDistrict)
-            .keyAccessor(function (p) {
-                return p.value.total;
-            })
-            .valueAccessor(function (p) {
-                return _.unique(p.value.categories).length;
-            })
-            .radiusValueAccessor(function (p) {
-                return p.value.total;
-            })
-                                // TODO calculate these domains
-            .x(d3.scale.linear().domain([0, (2 + maxCategories)]))
-            .r(d3.scale.linear().domain([0, maxCategories]))
-            .minRadiusWithLabel(11)
-            .elasticY(true)
-            .yAxisPadding(5)
-            .elasticX(true)
-            .xAxisPadding(200)
-            .maxBubbleRelativeSize(0.07)
-            .renderHorizontalGridLines(false)
-            .renderVerticalGridLines(true)
-            .renderLabel(true)
-            .renderTitle(true)
-            .title(function (p) {
-                return enumerateCountsForDatumTitle(p);
-            });
+                .height(height/1.5)
+                .margins({top: 10, right: 50, bottom: 30, left: 60})
+                .dimension(districts)
+            // FIXME colors shown on chart don't make sense. WTF
+                .colors(colorbrewer.YlGnBu[9])
+                .colorDomain([0, 100])
+                .group(totalAnswersByDistrict)
+                .keyAccessor(function (p) {
+                    return p.value.total;
+                })
+                .valueAccessor(function (p) {
+                    return _.unique(p.value.categories).length;
+                })
+                .radiusValueAccessor(function (p) {
+                    return p.value.total;
+                })
+            // TODO calculate these domains
+                .x(d3.scale.linear().domain([0, (2 + maxCategories)]))
+                .r(d3.scale.linear().domain([0, maxCategories]))
+                .minRadiusWithLabel(11)
+                .elasticY(true)
+                .yAxisPadding(5)
+                .elasticX(true)
+                .xAxisPadding(200)
+                .maxBubbleRelativeSize(0.07)
+                .renderHorizontalGridLines(false)
+                .renderVerticalGridLines(true)
+                .renderLabel(true)
+                .renderTitle(true)
+                .title(function (p) {
+                    return enumerateCountsForDatumTitle(p);
+                });
         totalsChart.yAxis().tickFormat(function (s) {
             return s ;
         });
@@ -273,26 +408,26 @@
         });
 
         nationalPieChart
-          .width(300)
-          .height(200)
-          .transitionDuration(500)
-          .colors(categoryColor)
-          .colorAccessor(function(d, i){return _.indexOf(caseTypes, d.data.key); })
-          .radius(90)
-          .innerRadius(40)
-          .dimension(categories)
-          .group(categoriesGroup)
-          .renderLabel(true)
-          .renderTitle(true);
+                .width(300)
+                .height(200)
+                .transitionDuration(500)
+                .colors(categoryColor)
+                .colorAccessor(function(d, i){return _.indexOf(caseTypes, d.data.key); })
+                .radius(90)
+                .innerRadius(40)
+                .dimension(categories)
+                .group(categoriesGroup)
+                .renderLabel(true)
+                .renderTitle(true);
 
         dc.renderAll();
 
         mapLegendColors = d3.scale.linear()
-        .domain(d3.range(0,7))
-        .range(["#BEBEBE", "#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"]);
+                .domain(d3.range(0,7))
+                .range(["#BEBEBE", "#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"]);
 
         var legend = d3.select('.legend')
-            .attr("style", function (d) { return "margin-top: " + (height / 4) + "px;"; });
+                .attr("style", function (d) { return "margin-top: " + (height / 4) + "px;"; });
 
         var legendItems = legend.selectAll('.legend-item')
                 .data(_.zip(mapLegendColors.domain(), mapLegendColors.range()));

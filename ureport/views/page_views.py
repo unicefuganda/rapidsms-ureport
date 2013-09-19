@@ -54,23 +54,20 @@ def pulse(request, period=None):
     l = [l.pk for l in Location.objects.filter(type='district').distinct()]
 
     if period:
-        print period, "is here now"
         now = datetime.datetime.now()
         previous_date = datetime.datetime.now() - datetime.timedelta(days=period_map[period])
-        _all = IbmMsgCategory.objects.filter(score__gte=0.5,
-                                             msg__connection__contact__reporting_location__in=l).values_list('pk', flat=True)
-        s = IbmCategory.objects.filter(ibmmsgcategory__in=_all).exclude(
-            name__in=['family & relationships', "energy", "u-report", "social policy", "employment"]).annotate(
-            total=Count('ibmmsgcategory')).values('name', 'total',
-                                                       'ibmmsgcategory__msg__connection__contact__reporting_location__name')
-        print s.query
+        s = IbmCategory.objects.filter(ibmmsgcategory__score__gte=0.1,
+                                       ibmmsgcategory__msg__connection__contact__reporting_location__in=l,
+                                       ibmmsgcategory__msg__date__range=[previous_date, now]).annotate(
+            total=Count('ibmmsgcategory')).values('total', 'name',
+                                                  'ibmmsgcategory__msg__connection__contact__reporting_location__name'). \
+            exclude(name__in=['family & relationships', "energy", "u-report", "social policy", "employment"])
     else:
-        s = IbmCategory.objects.filter(ibmmsgcategory__score__gte=0.5,
+        s = IbmCategory.objects.filter(ibmmsgcategory__score__gte=0.1,
                                        ibmmsgcategory__msg__connection__contact__reporting_location__in=l).annotate(
             total=Count('ibmmsgcategory')).values('total', 'name',
                                                   'ibmmsgcategory__msg__connection__contact__reporting_location__name'). \
             exclude(name__in=['family & relationships', "energy", "u-report", "social policy", "employment"])
-        print s.query
     data = json.dumps(list(s), cls=DjangoJSONEncoder)
     return HttpResponse(data.replace('"ibmmsgcategory__msg__connection__contact__reporting_location__name"',
                                      "\"district\"").replace("\"name\"", "\"category\""),
