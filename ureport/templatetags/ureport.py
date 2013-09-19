@@ -1,7 +1,7 @@
 from django import template
 
 from django.template import Node, resolve_variable,Variable
-
+from django.conf import settings
 
 register = template.Library()
 
@@ -62,6 +62,10 @@ def add_get_parameter(parser, token):
         values[s[0]] = s[1]
 
     return AddGetParameter(values)
+
+@register.simple_tag
+def settings_value(name):
+    return getattr(settings, name, "")
 
 register.tag('set', set_var)
 
