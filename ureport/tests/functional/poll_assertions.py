@@ -1,29 +1,18 @@
 from ureport.tests.functional.splinter_wrapper import SplinterTestCase
 from datetime import date
+from ureport.tests.functional.admin_helper import rows_of_table_by_class
+
 ANY_POLL_ID = '12'
 
 
 class PollAssertions(SplinterTestCase):
-    def assert_that_poll_questions_are_sent_out_to_contacts(self, poll):
-        self.assertEquals(poll.messages.count(), 2)
-        self.assertEquals(poll.messages.all()[0].text, poll.question)
-        self.assertEquals(poll.messages.all()[1].text, poll.question)
-        self.assertEquals(poll.messages.filter(status='Q').count(), 2)
-        self.assertEquals(poll.messages.filter(status='Q')[0].text, poll.question)
-        self.assertEquals(poll.messages.filter(status='Q')[1].text, poll.question)
-
     def assert_that_poll_start_date_is_not_none(self, poll_id):
         self.open('/mypolls/%s' % poll_id)
 
-        elements = self.browser.find_by_xpath('//*[@class="results"]')
-        tbody = elements.first.find_by_tag('tbody')
-        trs = tbody.find_by_tag('tr')
-        view_poll_link = '/view_poll/%s/' % poll_id
-        for tr in trs:
-            element = tr.find_by_xpath('//*[@href="%s"]' % view_poll_link).first
-            if element is not None:
-                start_date = date.today().strftime("%d/%m/%Y")
-                self.assertTrue(tr.find_by_value(start_date) is not None)
+        start_date = self.browser.find_by_xpath('//*[@class="results"]/tbody/tr[2]/td[3]')
+
+        date_today = date.today().strftime("%d/%m/%Y")
+        self.assertEquals(start_date.text, date_today)
 
     def assert_that_poll_has_responses(self, poll):
         self.assertEquals(poll.responses.count(), 2)
@@ -62,8 +51,22 @@ class PollAssertions(SplinterTestCase):
             total += int(td.value.split(' ')[0])
         self.assertEquals(responses.count(), total)
 
-    def assert_that_poll_end_date_is_none(self, poll):
-        assert poll.end_date is None
+    def assert_that_poll_end_date_is_none(self, poll_id):
+        self.open('/mypolls/%s' % poll_id)
+
+        elements = self.browser.find_by_xpath('//*[@class="results"]')
+        tbody = elements.first.find_by_tag('tbody')
+        trs = tbody.find_by_tag('tr')
+        view_poll_link = '/view_poll/%s/' % poll_id
+        for tr in trs:
+            element = tr.find_by_xpath('//*[@href="%s"]' % view_poll_link).first
+            if element is not None:
+                start_date = date.today().strftime("%d/%m/%Y")
+                self.assertTrue(tr.find_by_value(start_date) is not None)
+
+
+
+
 
     def assert_that_page_has_add_poll_button(self):
         self.assertTrue(self.browser.find_link_by_href('/createpoll/'))
@@ -77,3 +80,17 @@ class PollAssertions(SplinterTestCase):
         element = self.browser.find_link_by_href('/polls/%i/report/' % poll.id)
 
         self.assertEqual(element.first.text, "Report")
+
+    def assert_that_poll_question_are_sent_out_to_contacts(self, number_of_contact_for_poll, question):
+        self.open('/router/console')
+        rows = rows_of_table_by_class(self.browser, 'messages module')
+        total = 0
+        for row in rows:
+            if row.find_by_tag('td').first.text == question:
+                total += 1
+        self.assertEqual(total, number_of_contact_for_poll)
+
+    def assert_that_number_of_responses_increase_by(self, number_of_responses, increment):
+        self.open('/router/console')
+        rows_responses = rows_of_table_by_class(self.browser, "messages module")
+        self.assertEqual(len(rows_responses), number_of_responses + increment)

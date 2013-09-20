@@ -1,8 +1,9 @@
 from datetime import datetime
 from poll.models import Poll
-from ureport.tests.functional.create_poll_utils import get_incoming_message
 from ureport.tests.functional.admin_helper import fill_form
 from ureport.tests.functional.poll_assertions import PollAssertions
+from ureport.tests.functional.admin_helper import rows_of_table_by_class
+import time
 
 
 class PollBase(PollAssertions):
@@ -12,12 +13,13 @@ class PollBase(PollAssertions):
 
         self.assertTrue(self.browser.is_text_present('Start Poll', 10))
         self.browser.find_link_by_text('Start Poll').first.click()
+        time.sleep(2) #Sending questions is an asynchronous process
 
-    def close_poll(self):
-        if not self.poll.start_date:
-            self.poll.start()
-        self.poll.end_date = datetime.datetime.now().date()
-        self.poll.save()
+    def close_poll(self, poll_id):
+        self.open("/view_poll/%s" % poll_id)
+
+        self.assertTrue(self.browser.is_text_present('Close Poll', 10))
+        self.browser.find_link_by_text('Close Poll').first.click()
 
     def log_in_as_ureport(self):
         self.open('/accounts/login')
@@ -31,9 +33,20 @@ class PollBase(PollAssertions):
     def get_poll(self, poll_id):
         return Poll.objects.get(id=poll_id)
 
-    def respond_to_poll(self, poll):
-        poll.process_response(get_incoming_message(self.connections_list[0],"yes"))
-        poll.process_response(get_incoming_message(self.connections_list[1],"no"))
+    def respond_to_the_started_poll(self, sender, message):
+        self.open('/router/console/')
+        rows_responses = rows_of_table_by_class(self.browser, "messages module")
+        number_of_responses = len(rows_responses)
+
+        form_data = {
+            "text": message,
+            "sender": sender
+        }
+        fill_form(self.browser, form_data, True)
+        self.browser.find_by_css("input[type=submit]").first.click()
+
+        self.assert_that_number_of_responses_increase_by(number_of_responses, 1)
+
 
     def get_poll_response_location(self, response):
         contact = response.message.connection.contact

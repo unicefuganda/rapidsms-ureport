@@ -3,7 +3,7 @@ from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 from ureport.tests.functional.admin_helper import fill_form_and_submit, fill_form, rows_of_table_by_class
 from ureport.tests.functional.poll_base import PollBase
 from ureport.tests.functional.admin_base import AdminBase
-import time
+
 
 class PollFlowTest(PollBase, AdminBase):
     @take_screenshot_on_failure
@@ -41,43 +41,40 @@ class PollFlowTest(PollBase, AdminBase):
         assert self.browser.is_text_present('Close Poll')
         self.assert_that_poll_start_date_is_not_none(poll_id)
 
+
     def test_that_poll_can_be_sent_out_to_contacts(self):
         poll_id = self.setup_poll()
 
         self.start_poll(poll_id)
-        time.sleep(5)
 
-        question = 'What is your name'
         number_of_contact_for_poll = 2
+        question = 'What is your name'
 
-        self.open('/router/console')
-        rows = rows_of_table_by_class(self.browser, 'messages module')
-
-        total = 0
-        for row in rows:
-            if row.find_by_tag('td').first.text == question:
-                total += 1
-        self.assertEqual(total, number_of_contact_for_poll)
+        self.assert_that_poll_question_are_sent_out_to_contacts(number_of_contact_for_poll, question)
 
 
-        # self.assert_that_poll_questions_are_sent_out_to_contacts(poll_id)
-    #
-    # def test_that_polls_can_be_responded(self):
-    #     self.start_poll()
-    #     newly_added_poll = self.get_poll(self.poll.id)
-    #
-    #     self.respond_to_poll(newly_added_poll)
-    #     self.log_as_admin_and_visit('/mypolls/%s' % self.poll.id)
-    #
-    #     self.assert_that_poll_has_responses(newly_added_poll)
-    #
-    # def test_that_polls_can_be_reopen(self):
-    #     self.close_poll()
-    #     self.log_as_admin_and_visit("/view_poll/%s" % self.poll.id)
-    #
-    #     self.browser.find_link_by_text('Reopen Poll').first.click()
-    #     self.assert_that_poll_end_date_is_none(self.get_poll(self.poll.id))
-    #
+    def test_that_polls_can_be_responded(self):
+        poll_id = self.setup_poll()
+        self.start_poll(poll_id)
+
+        self.open('/router/console/')
+        number_of_responses = len(rows_of_table_by_class(self.browser, "messages module"))
+
+        self.respond_to_the_started_poll("0794339344", "yes")
+        self.respond_to_the_started_poll("0794339345", "no")
+        increment = 2
+        self.assert_that_number_of_responses_increase_by(number_of_responses, increment)
+
+    def test_that_polls_can_be_reopen(self):
+        poll_id = self.setup_poll()
+        self.open("/view_poll/%s" % poll_id)
+        self.start_poll(poll_id)
+        self.close_poll(poll_id)
+        self.browser.find_link_by_text('Reopen Poll').first.click()
+        self.assert_that_poll_end_date_is_none(poll_id)
+
+    #############################
+
     # def test_that_admin_is_able_to_add_new_poll(self):
     #     self.log_as_admin_and_visit('/mypolls/%s' % self.poll.id)
     #
@@ -98,9 +95,9 @@ class PollFlowTest(PollBase, AdminBase):
 
     def setup_poll(self):
         self.create_group("groupFT")
-        self.create_backend("backend_test")
-        self.create_contact("FT1", "Male", "backend_test", "0794339344", "groupFT")
-        self.create_contact("FT2", "Male", "backend_test", "0794339345", "groupFT")
+        self.create_backend("console")
+        self.create_contact("FT1", "Male", "console", "0794339344", "groupFT")
+        self.create_contact("FT2", "Male", "console", "0794339345", "groupFT")
 
         poll_id = self.create_poll("Some poll", "Yes/No Question", "What is your name", "groupFT")
 
