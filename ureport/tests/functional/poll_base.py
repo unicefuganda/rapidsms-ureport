@@ -1,4 +1,3 @@
-from datetime import datetime
 from poll.models import Poll
 from ureport.tests.functional.admin_helper import fill_form
 from ureport.tests.functional.poll_assertions import PollAssertions
@@ -74,16 +73,30 @@ class PollBase(PollAssertions, AdminBase):
 
         return self.browser.url.split('/')[-2]
 
-    def setup_poll(self):
+    def setup_poll(self, question = "What is your name",number_prefix="079433934"):
         self.create_group("groupFT")
         self.create_backend("console")
-        self.create_contact("FT1", "Male", "console", "0794339344", "groupFT")
-        self.create_contact("FT2", "Male", "console", "0794339345", "groupFT")
+        self.create_contact("FT1", "Male", "console", "%s4" % number_prefix , "groupFT")
+        self.create_contact("FT2", "Male", "console", "%s5" % number_prefix, "groupFT")
 
-        question = "What is your name"
-        poll_id = self.create_poll("Some poll", "Yes/No Question", question, "groupFT")
+
+        poll_id = self.create_poll(question, "Yes/No Question", question, "groupFT")
 
         return poll_id, question
+
+    def reassign_poll_response(self, poll_id,second_poll_id):
+        self.open("/%s/responses/" % poll_id)
+        responses_all = self.browser.find_by_id("input_select_all").first
+        responses_all.check()
+        elements = self.browser.find_by_id("id_poll")
+        elements.first.find_by_value(second_poll_id).first._element.click()
+        assign_link = self.browser.find_link_by_text("Assign selected to poll")
+        assign_link.click()
+        time.sleep(5)
+
+
+
+
 
 
 

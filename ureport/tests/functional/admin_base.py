@@ -2,6 +2,9 @@ from splinter_wrapper import SplinterTestCase
 from ureport.tests.functional.admin_helper import fill_form_and_submit
 from datetime import datetime
 
+REPORTING_LOCATION_ID_KAMAIBA = "Kamaiba"
+REPORTING_LOCATION_KAMAIBA_DISTRICT = "Kasese"
+
 
 class AdminBase (SplinterTestCase):
     def create_backend(self, name):
@@ -15,6 +18,7 @@ class AdminBase (SplinterTestCase):
             "id_gender": gender,
             "id_birthdate_0": datetime.now().strftime("%Y-%m-%d"),
             "id_birthdate_1": "00:00:00",
+            "id_reporting_location": ("%s" % REPORTING_LOCATION_ID_KAMAIBA),
             "id_connection_set-0-backend": backend_name,
             "id_connection_set-0-identity": identity,
             "id_groups": group
@@ -29,3 +33,8 @@ class AdminBase (SplinterTestCase):
         self.open("/admin/auth/user/add/")
         fill_form_and_submit(self.browser, {"id_username": name, "id_password1": name, "id_password2": name}, "_save")
         fill_form_and_submit(self.browser, {"id_groups": group}, "_save")
+
+    def change_users_group(self, name):
+        self.open("/admin/auth/user")
+        self.browser.click_link_by_text("ureport")
+        fill_form_and_submit(self.browser, {"id_groups": name}, "_save")

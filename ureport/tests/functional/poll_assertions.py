@@ -25,11 +25,11 @@ class PollAssertions(SplinterTestCase):
         elements = self.browser.find_by_xpath('//*[@class="question"]')
         assert elements.first.value == question
 
-    def assert_the_number_of_participants_of_the_poll_is(self, responses):
+    def assert_the_number_of_participants_of_the_poll_is(self, responses_count):
         elements = self.browser.find_by_xpath('//*[@class="participants"]')
         num_participants = elements.first.value.split(' ')[0]
 
-        self.assertEquals(int(num_participants), responses.count())
+        self.assertEquals(int(num_participants), responses_count)
 
     def assert_that_response_location_is(self, location):
         elements = self.browser.find_by_xpath('//*[@class="poll_table"]')
@@ -39,7 +39,7 @@ class PollAssertions(SplinterTestCase):
 
         self.assertEquals(tds.first.value, location)
 
-    def assert_that_number_of_responses_is(self,responses):
+    def assert_that_number_of_responses_is(self,responses_count):
 
         elements = self.browser.find_by_xpath('//*[@class="poll_table"]')
 
@@ -49,7 +49,7 @@ class PollAssertions(SplinterTestCase):
         total = 0
         for td in tds[1:]:
             total += int(td.value.split(' ')[0])
-        self.assertEquals(responses.count(), total)
+        self.assertEquals(responses_count, total)
 
     def assert_that_poll_end_date_is_none(self, poll_id):
         self.open('/mypolls/%s' % poll_id)
@@ -90,3 +90,7 @@ class PollAssertions(SplinterTestCase):
         self.open('/router/console')
         rows_responses = rows_of_table_by_class(self.browser, "messages module")
         self.assertEqual(len(rows_responses), number_of_responses + increment)
+
+    def assert_that_responses_has_been_reassigned_to_another_poll(self):
+        self.open()
+

@@ -2,7 +2,6 @@ from splinter import Browser
 from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 from ureport.tests.functional.admin_helper import fill_form_and_submit, fill_form, rows_of_table_by_class
 from ureport.tests.functional.poll_base import PollBase
-from ureport.tests.functional.admin_base import AdminBase
 
 
 class PollFlowTest(PollBase):
@@ -89,4 +88,3 @@ class PollFlowTest(PollBase):
         self.assertEqual(self.browser.find_by_id('contact-count').text, "2")
         self.assertEqual(self.browser.find_by_id('category-count').text, "3")
         self.assertEqual(self.browser.find_by_id('is-yesno').text, "yes")
-
