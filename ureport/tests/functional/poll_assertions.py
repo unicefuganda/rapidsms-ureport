@@ -64,10 +64,6 @@ class PollAssertions(SplinterTestCase):
                 start_date = date.today().strftime("%d/%m/%Y")
                 self.assertTrue(tr.find_by_value(start_date) is not None)
 
-
-
-
-
     def assert_that_page_has_add_poll_button(self):
         self.assertTrue(self.browser.find_link_by_href('/createpoll/'))
 

@@ -4,9 +4,9 @@ from ureport.tests.functional.admin_helper import fill_form
 from ureport.tests.functional.poll_assertions import PollAssertions
 from ureport.tests.functional.admin_helper import rows_of_table_by_class
 import time
+from ureport.tests.functional.admin_base import AdminBase
 
-
-class PollBase(PollAssertions):
+class PollBase(PollAssertions, AdminBase):
 
     def start_poll(self, poll_id):
         self.open("/view_poll/%s" % poll_id)
@@ -73,6 +73,17 @@ class PollBase(PollAssertions):
         self.browser.find_by_css(".buttons a").last.click()
 
         return self.browser.url.split('/')[-2]
+
+    def setup_poll(self):
+        self.create_group("groupFT")
+        self.create_backend("console")
+        self.create_contact("FT1", "Male", "console", "0794339344", "groupFT")
+        self.create_contact("FT2", "Male", "console", "0794339345", "groupFT")
+
+        question = "What is your name"
+        poll_id = self.create_poll("Some poll", "Yes/No Question", question, "groupFT")
+
+        return poll_id, question
 
 
 
