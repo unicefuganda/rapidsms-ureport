@@ -182,7 +182,7 @@ urlpatterns = patterns('',
                        url(r"^districtreport/(\d+)/$", generate_per_district_report),
                        url(r"^pulse/$", pulse, name='pulse_json'),
                        url(r"^pulse/(?P<period>\w+)/$", pulse, name='pulse_json'),
-                       url(r'^dashboard/cloud/(?P<name>\w+)/$', cloud_dashboard, name="cloud_dashboard"),
+                       url(r'^dashboard/cloud/(?P<name>.*)/$', cloud_dashboard, name="cloud_dashboard"),
                        url(r"^upload-contacts", upload_users, name='upload_users'),
                        url(r"^assign-group", assign_group, name="assign_group"),
                        url(r'^start_poll_export/(\d+)/$', start_poll_export, name="start_poll_export")

@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from datetime import timedelta, datetime
 
 from ureport.models import IgnoredTags
 import random
@@ -126,7 +127,7 @@ def _get_responses(poll):
 
 def get_category_tags(category, date_range=None):
     word_count = {}
-    messages = IbmMsgCategory.objects.filter(category=category).order_by('msg__date')
+    messages = IbmMsgCategory.objects.filter(category=category, msg__date__gt=datetime.now()-timedelta(days=5)).order_by('msg__date')
     if date_range:
         messages = messages.filter(msg__date__range=date_range)
     message_pks = messages.values_list('pk', flat=True)[:500]

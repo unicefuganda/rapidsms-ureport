@@ -60,6 +60,11 @@ drop_words=[
 'such',
 'time',
 'thanks',
+'yes',
+'also',
+'dnt',
+'you',
+'sep'
 ]
 
 tag_cloud_size=60
