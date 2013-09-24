@@ -129,7 +129,9 @@ def get_category_tags(category, date_range=None):
     word_count = {}
     messages = IbmMsgCategory.objects.filter(category=category, msg__date__gt=datetime.now()-timedelta(days=5)).order_by('msg__date')
     if date_range:
-        messages = messages.filter(msg__date__range=date_range)
+        IbmMsgCategory.objects.filter(category=category, msg__date__range=date_range).order_by('msg__date')
+    if not messages.exists():
+        return word_count
     message_pks = messages.values_list('pk', flat=True)[:500]
     sql = """  SELECT
            (regexp_matches(lower(word),E'[a-zA-Z]+'))[1] as wo,
