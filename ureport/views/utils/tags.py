@@ -9,6 +9,7 @@ from poll.models import Poll, Response
 from django.db import connection
 from django.conf import settings
 from django.core.paginator import Paginator
+from message_classifier.models import IbmMsgCategory
 
 
 TAG_CLASSES = ['tag14', 'tag13', 'tag12', 'tag11', 'tag10', 'tag9', 'tag8', 'tag7', 'tag6', 'tag5', 'tag4', 'tag3',
@@ -78,11 +79,7 @@ def _get_tags(polls):
     return tags
 
 
-def generate_tag_cloud(
-        words,
-        counts_dict,
-        tag_classes
-):
+def generate_tag_cloud(words, counts_dict, tag_classes):
     """
         returns tag words with assosiated tag classes depending on their frequency
     @params:
@@ -125,3 +122,44 @@ def _get_responses(poll):
     paginator = Paginator(responses, 8)
     responses = paginator.page(1).object_list
     return responses
+
+
+def get_category_tags(category, date_range=None):
+    word_count = {}
+    messages = IbmMsgCategory.objects.filter(category=category).order_by('msg__date')
+    if date_range:
+        messages = messages.filter(msg__date__range=date_range)
+    message_pks = messages.values_list('pk', flat=True)[:500]
+    sql = """  SELECT
+           (regexp_matches(lower(word),E'[a-zA-Z]+'))[1] as wo,
+           count(*) as c
+        FROM
+           (SELECT
+              regexp_split_to_table("rapidsms_httprouter_message"."text",
+              E'\\\\s+') as word
+           from
+              "rapidsms_httprouter_message"
+            where
+              "id" in %s)t
+        GROUP BY
+           wo
+        order by
+           c DESC limit 500;
+               """ % str(tuple([str(pk) for pk in message_pks]))
+    cursor = connection.cursor()
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+    rows_dict = dict(rows)
+    for key in rows_dict.keys():
+        if len(key) > 2 and not key in drop_words:
+            word_count[str(key)] = int(rows_dict[key])
+
+    #gen inverted dictionary
+    counts_dict = dictinvert(word_count)
+
+    tags = generate_tag_cloud(word_count, counts_dict, TAG_CLASSES)
+
+    # randomly shuffle tags
+
+    random.shuffle(tags)
+    return tags

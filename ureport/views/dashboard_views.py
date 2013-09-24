@@ -9,7 +9,7 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse
 from django.views.decorators.cache import cache_page, never_cache
 from django.views.decorators.vary import vary_on_cookie
 from uganda_common.utils import ExcelResponse
@@ -27,7 +27,7 @@ from ureport.models import MessageAttribute, AlertsExport, Settings, \
     MessageDetail, PollAttribute
 from django.core.paginator import EmptyPage, PageNotAnInteger
 import datetime
-from ureport.views.utils.paginator import UreportPaginator
+from ureport.views.utils.paginator import UreportPaginator, ureport_paginate
 from contact.models import Flag, MessageFlag
 from django.db.models import Q
 from ureport.settings import UREPORT_ROOT
@@ -35,6 +35,8 @@ from ureport.utils import get_access
 import os
 from generic.views import generic
 from generic.sorters import SimpleSorter
+from message_classifier.models import IbmCategory, IbmMsgCategory
+from ureport_project.rapidsms_ureport.ureport.views.utils.tags import get_category_tags
 
 
 @login_required
@@ -567,5 +569,35 @@ def flag_categories(request, name):
         sort_column='date',
         sort_ascending=False,
         all_flags=flags,
-        go_to_dashboards = True
+        go_to_dashboards=True
+    )
+
+
+def cloud_dashboard(request, name):
+    name = name.replace("_", " ")
+    category = get_object_or_404(IbmCategory, name__iexact=name)
+    tags = get_category_tags(category)
+    columns = [('Identifier', True, 'message__connection_id', SimpleSorter()),
+               ('Text', True, 'msg__text', SimpleSorter()),
+               ('Date', True, 'msg__date', SimpleSorter()),
+               ('Score', True, 'score', SimpleSorter()),
+               ('Category', True, 'category', SimpleSorter(),),
+               ('Action', True, 'action', SimpleSorter(),),
+               ('Rating', False, '', None)]
+
+    return generic(
+        request,
+        model=IbmMsgCategory,
+        queryset=IbmMsgCategory.objects.filter(category=category, msg__direction='I'),
+        objects_per_page=20,
+        results_title='Classified Messages',
+        partial_row='message_classifier/message_row.html',
+        base_template='message_classifier/message_classifier_cloud_base.html',
+        paginator_template='ureport/partials/new_pagination.html',
+        paginator_func=ureport_paginate,
+        columns=columns,
+        sort_column='score',
+        sort_ascending=False,
+        tags=tags,
+        ibm_categories=IbmCategory.objects.all()
     )

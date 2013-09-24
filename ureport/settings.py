@@ -57,7 +57,9 @@ drop_words=[
 'one',
 'put',
 'may',
-'such'
+'such',
+'time',
+'thanks',
 ]
 
 tag_cloud_size=60

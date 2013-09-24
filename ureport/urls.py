@@ -8,7 +8,7 @@ from ureport.views import poll_dashboard, ureporters, editReporter, deleteReport
     new_poll, mp_dashboard, ussd_manager, blacklist, delete, view_poll, poll_status, edit_category, delete_category, \
     delete_rule, view_rules, create_rule, alerts, remove_captured, send_message, view_autoreg_rules, set_autoreg_rules, \
     user_registration_status, kannel_status, a_dashboard, flag_categories, remove_captured_ind, assign_poll,\
-    comfirm_message_sending, comfirmmessages, pulse, start_poll_export
+    comfirm_message_sending, comfirmmessages, pulse, start_poll_export, cloud_dashboard
 from django.contrib.auth.decorators import login_required
 from generic.views import generic_row, generic
 from contact.forms import FreeSearchForm, MultipleDistictFilterForm, GenderFilterForm, FilterGroupsForm, \
@@ -182,6 +182,7 @@ urlpatterns = patterns('',
                        url(r"^districtreport/(\d+)/$", generate_per_district_report),
                        url(r"^pulse/$", pulse, name='pulse_json'),
                        url(r"^pulse/(?P<period>\w+)/$", pulse, name='pulse_json'),
+                       url(r'^dashboard/cloud/(?P<name>\w+)/$', cloud_dashboard, name="cloud_dashboard"),
                        url(r"^upload-contacts", upload_users, name='upload_users'),
                        url(r"^assign-group", assign_group, name="assign_group"),
                        url(r'^start_poll_export/(\d+)/$', start_poll_export, name="start_poll_export")
