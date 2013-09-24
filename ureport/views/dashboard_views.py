@@ -36,7 +36,7 @@ import os
 from generic.views import generic
 from generic.sorters import SimpleSorter
 from message_classifier.models import IbmCategory, IbmMsgCategory
-from ureport_project.rapidsms_ureport.ureport.views.utils.tags import get_category_tags
+from ureport.views.utils.tags import get_category_tags
 
 
 @login_required
