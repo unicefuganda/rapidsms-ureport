@@ -1,10 +1,11 @@
 from splinter_wrapper import SplinterTestCase
 from ureport.tests.functional.admin_helper import fill_form_and_submit
 from datetime import datetime
+import time
 
 REPORTING_LOCATION_ID_KAMAIBA = "Kamaiba"
 REPORTING_LOCATION_KAMAIBA_DISTRICT = "Kasese"
-
+SECONDS = 3
 
 class AdminBase (SplinterTestCase):
     def create_backend(self, name):
@@ -13,6 +14,7 @@ class AdminBase (SplinterTestCase):
 
     def create_contact(self, name, gender, backend_name, identity, group):
         self.open("/admin/rapidsms/contact/add/")
+        time.sleep(SECONDS)
         form_data = {
             "id_name": name,
             "id_gender": gender,
@@ -27,14 +29,18 @@ class AdminBase (SplinterTestCase):
 
     def create_group(self, name):
         self.open("/admin/auth/group/add/")
+        time.sleep(SECONDS)
         fill_form_and_submit(self.browser, {"id_name": name}, "_save")
 
     def create_user(self, name, group):
         self.open("/admin/auth/user/add/")
+        time.sleep(SECONDS)
         fill_form_and_submit(self.browser, {"id_username": name, "id_password1": name, "id_password2": name}, "_save")
         fill_form_and_submit(self.browser, {"id_groups": group}, "_save")
 
     def change_users_group(self, name):
         self.open("/admin/auth/user")
+        time.sleep(SECONDS)
         self.browser.click_link_by_text("ureport")
+        time.sleep(SECONDS)
         fill_form_and_submit(self.browser, {"id_groups": name}, "_save")
