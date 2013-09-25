@@ -3,6 +3,7 @@ from ureport.tests.functional.poll_base import PollBase
 from ureport.tests.functional.admin_helper import fill_form_and_submit, fill_form
 from ureport.tests.functional.admin_base import AdminBase, REPORTING_LOCATION_KAMAIBA_DISTRICT
 
+
 class PollResponsesTest(PollBase, AdminBase):
 
     def setUp(self):
@@ -59,3 +60,13 @@ class PollResponsesTest(PollBase, AdminBase):
         self.reassign_poll_response(first_poll_id,second_poll_id)
         self.open('/polls/%s/report/' % second_poll_id)
         self.assert_that_number_of_responses_is(2)
+
+    def test_that_a_response_can_be_replied_to_an_ureporter(self):
+        poll_id, question = self.setup_poll()
+        self.start_poll(poll_id)
+        group_name = "groupFT"
+        message = "Hello"
+        self.change_users_group(group_name)
+        self.respond_to_the_started_poll("0794339344", "yes")
+        self.reply_poll_to_an_ureporter(poll_id, message)
+        self.assert_that_message_has_been_sent_out_to_ureporter(message)

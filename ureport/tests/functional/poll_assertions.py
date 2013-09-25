@@ -2,6 +2,7 @@ from ureport.tests.functional.splinter_wrapper import SplinterTestCase
 from datetime import date
 from ureport.tests.functional.admin_helper import rows_of_table_by_class
 
+
 ANY_POLL_ID = '12'
 
 
@@ -40,7 +41,6 @@ class PollAssertions(SplinterTestCase):
         self.assertEquals(tds.first.value, location)
 
     def assert_that_number_of_responses_is(self,responses_count):
-
         elements = self.browser.find_by_xpath('//*[@class="poll_table"]')
 
         tbody = elements.first.find_by_tag('tbody')
@@ -94,3 +94,7 @@ class PollAssertions(SplinterTestCase):
     def assert_that_responses_has_been_reassigned_to_another_poll(self):
         self.open()
 
+    def assert_that_message_has_been_sent_out_to_ureporter(self, message):
+        self.open("/router/console")
+        element =self.browser.find_by_xpath("//table/tbody/tr/td[text()='%s']" % message)
+        self.assertEquals(element.first.text, message)

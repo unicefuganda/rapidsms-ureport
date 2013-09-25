@@ -5,10 +5,11 @@ from ureport.tests.functional.admin_helper import rows_of_table_by_class
 import time
 from ureport.tests.functional.admin_base import AdminBase
 
+
 class PollBase(PollAssertions, AdminBase):
 
     def start_poll(self, poll_id):
-        self.open("/view_poll/%s" % poll_id)
+        self.open("/view_poll/%s " % poll_id)
 
         self.assertTrue(self.browser.is_text_present('Start Poll', 10))
         self.browser.find_link_by_text('Start Poll').first.click()
@@ -92,6 +93,15 @@ class PollBase(PollAssertions, AdminBase):
         elements.first.find_by_value(second_poll_id).first._element.click()
         assign_link = self.browser.find_link_by_text("Assign selected to poll")
         assign_link.click()
+        time.sleep(7)
+
+    def reply_poll_to_an_ureporter(self, poll_id, message):
+        self.open("/%s/responses/" % poll_id)
+        responses_all = self.browser.find_by_id("input_select_all").first
+        responses_all.check()
+        self.browser.fill("text", message)
+        reply_link = self.browser.find_link_by_text("Reply to selected")
+        reply_link.click()
         time.sleep(5)
 
 
