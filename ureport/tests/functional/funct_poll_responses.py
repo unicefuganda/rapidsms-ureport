@@ -2,7 +2,7 @@ from splinter import Browser
 from ureport.tests.functional.poll_base import PollBase
 from ureport.tests.functional.admin_helper import fill_form_and_submit, fill_form
 from ureport.tests.functional.admin_base import AdminBase, REPORTING_LOCATION_KAMAIBA_DISTRICT
-
+import time
 
 class PollResponsesTest(PollBase, AdminBase):
 
@@ -39,7 +39,7 @@ class PollResponsesTest(PollBase, AdminBase):
         self.respond_to_the_started_poll("0794339345", "no")
 
         self.open('/polls/%s/report/' % poll_id)
-
+        time.sleep(3)
         self.assert_that_question_is(question)
         number_of_responses = number_of_participants= 2
         self.assert_the_number_of_participants_of_the_poll_is(number_of_participants)
@@ -59,6 +59,7 @@ class PollResponsesTest(PollBase, AdminBase):
         self.start_poll(second_poll_id)
         self.reassign_poll_response(first_poll_id,second_poll_id)
         self.open('/polls/%s/report/' % second_poll_id)
+        time.sleep(3)
         self.assert_that_number_of_responses_is(2)
 
     def test_that_a_response_can_be_replied_to_an_ureporter(self):
@@ -69,4 +70,5 @@ class PollResponsesTest(PollBase, AdminBase):
         self.change_users_group(group_name)
         self.respond_to_the_started_poll("0794339344", "yes")
         self.reply_poll_to_an_ureporter(poll_id, message)
+        time.sleep(3)
         self.assert_that_message_has_been_sent_out_to_ureporter(message)
