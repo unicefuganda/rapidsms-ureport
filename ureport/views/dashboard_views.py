@@ -588,7 +588,7 @@ def cloud_dashboard(request, name):
     return generic(
         request,
         model=IbmMsgCategory,
-        queryset=IbmMsgCategory.objects.filter(category=category, msg__direction='I'),
+        queryset=IbmMsgCategory.objects.filter(category=category, msg__direction='I', score__gte=0.5),
         objects_per_page=20,
         results_title='Classified Messages',
         partial_row='message_classifier/message_row.html',
@@ -596,11 +596,13 @@ def cloud_dashboard(request, name):
         paginator_template='ureport/partials/new_pagination.html',
         paginator_func=ureport_paginate,
         columns=columns,
-        sort_column='score',
+        sort_column='msg__date',
         sort_ascending=False,
         tags=tags,
         ibm_categories=IbmCategory.objects.all()
     )
+
+
 @never_cache
 @login_required
 #This is very sketchy stuff that we have to get rid of very soon(May require rewriting the whole access architecture)
@@ -608,7 +610,7 @@ def access_dashboards(request):
     access = get_access(request)
     urls = []
     if access:
-       for url in access.allowed_urls.all():
+        for url in access.allowed_urls.all():
             print url.url
             if url.url.startswith('^flags/(?pk'):
                 for f in access.flags.all():
@@ -626,6 +628,7 @@ def access_dashboards(request):
             elif url.url.startswith('^dashboard/group/(?P<name>'):
                 for f in access.groups.all():
                     urls.append('/dashboard/group/%s/' % str(f.name))
-            elif url.url.startswith('^reporter/$'):
-                urls.append('/reporter/')
+            else:
+                if "?" not in url.url:
+                    urls.append(url.url.replace('^', '/').replace('$', ""))
     return render_to_response('ureport/access_dashboards.html', locals(), context_instance=RequestContext(request))
