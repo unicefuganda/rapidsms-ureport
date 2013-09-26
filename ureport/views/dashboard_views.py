@@ -601,3 +601,31 @@ def cloud_dashboard(request, name):
         tags=tags,
         ibm_categories=IbmCategory.objects.all()
     )
+@never_cache
+@login_required
+#This is very sketchy stuff that we have to get rid of very soon(May require rewriting the whole access architecture)
+def access_dashboards(request):
+    access = get_access(request)
+    urls = []
+    if access:
+       for url in access.allowed_urls.all():
+            print url.url
+            if url.url.startswith('^flags/(?pk'):
+                for f in access.flags.all():
+                    urls.append('/flags/%s/messages/' % str(f.pk))
+            elif url.url.startswith('^dashboard/(?P<name>'):
+                for f in access.flags.all():
+                    urls.append('/dashboard/%s/' % str(f.name))
+            elif url.url.startswith('^(?P<poll_id>\d+)/respon'):
+                for f in access.user.poll_set.all():
+                    urls.append('/%s/responses/' % str(f.pk))
+            elif url.url.startswith('^mypolls/(?P<pk>'):
+                urls.append('/mypolls/%s/' % str(request.user.pk))
+            elif url.url.startswith('^alerts/(?P<pk>'):
+                urls.append('/alerts/%s/' % str(request.user.pk))
+            elif url.url.startswith('^dashboard/group/(?P<name>'):
+                for f in access.groups.all():
+                    urls.append('/dashboard/group/%s/' % str(f.name))
+            elif url.url.startswith('^reporter/$'):
+                urls.append('/reporter/')
+    return render_to_response('ureport/access_dashboards.html', locals(), context_instance=RequestContext(request))
