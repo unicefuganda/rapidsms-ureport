@@ -1,7 +1,7 @@
 import time
 
 from splinter import Browser
-from ureport.tests.functional.admin_helper import fill_form_and_submit
+from ureport.tests.functional.admin_helper import fill_form_and_submit, fill_form
 from ureport.tests.functional.constants import WAIT_TIME_IN_SECONDS
 
 from ureport.tests.functional.poll_base import PollBase
@@ -56,6 +56,11 @@ class ManageUreporterBase(PollBase):
         fill_form_and_submit(self.browser, {"id_groups": name}, "_save")
         return self
 
+    def and_filters_by_the_group(self, group_name):
+        fill_form(self.browser,{"id_groups": group_name})
+        self.browser.click_link_by_partial_text("Update")
+        return self
+
 
 class ManageUreporterTest(ManageUreporterBase):
     def setUp(self):
@@ -83,7 +88,18 @@ class ManageUreporterTest(ManageUreporterBase):
             .when_the_admin_searches_for_the_id("999999999") \
             .then_the_admin_should_not_see_the_ureporters_id(self.ureporter_id) \
             .when_the_admin_searches_for_the_id(self.ureporter_id) \
-            .then_the_admin_should_see_the_ureporters_id(self.ureporter_id) \
+            .then_the_admin_should_see_the_ureporters_id(self.ureporter_id)
+
+    def test_admin_can_filter_by_group(self):
+        self.given_a_male_ureporter_with_the_name(self.ureporter_name) \
+            .and_the_admin_has_started_a_poll() \
+            .and_the_ureporter_responds_to_the_poll() \
+            .and_the_admin_is_part_of_the_group(self.group_name) \
+            .when_the_admin_goes_to_the_ureporters_page() \
+            .and_filters_by_the_group(self.group_name) \
+            .then_the_admin_should_see_the_ureporters_id(self.ureporter_id)
+
+
 
 
 
