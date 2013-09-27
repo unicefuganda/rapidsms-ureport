@@ -1,11 +1,17 @@
 from splinter import Browser
+from ureport.tests.functional.constants import WAIT_TIME_IN_SECONDS
 from ureport.tests.functional.poll_base import PollBase
 from ureport.tests.functional.admin_helper import fill_form_and_submit, fill_form
 from ureport.tests.functional.admin_base import AdminBase, REPORTING_LOCATION_KAMAIBA_DISTRICT
 import time
 
-class PollResponsesTest(PollBase, AdminBase):
 
+def disabled(f):
+    f.__test__ = False
+    return f
+
+
+class PollResponsesTest(PollBase):
     def setUp(self):
         self.browser = Browser()
         self.log_in_as_ureport()
@@ -19,7 +25,6 @@ class PollResponsesTest(PollBase, AdminBase):
             self.browser.find_by_value("Yes, I'm sure").first.click()
 
     def tearDown(self):
-
         self.cleanup("/admin/poll/poll/")
         self.cleanup("/admin/rapidsms/connection/")
         self.cleanup("/admin/rapidsms/backend/")
@@ -30,18 +35,16 @@ class PollResponsesTest(PollBase, AdminBase):
 
         self.browser.quit()
 
-
     def test_that_poll_responses_are_shown_up_at_report_page(self):
         poll_id, question = self.setup_poll()
 
         self.start_poll(poll_id)
         self.respond_to_the_started_poll("0794339344", "yes")
         self.respond_to_the_started_poll("0794339345", "no")
-
         self.open('/polls/%s/report/' % poll_id)
-        time.sleep(3)
+        time.sleep(WAIT_TIME_IN_SECONDS)
         self.assert_that_question_is(question)
-        number_of_responses = number_of_participants= 2
+        number_of_responses = number_of_participants = 2
         self.assert_the_number_of_participants_of_the_poll_is(number_of_participants)
 
         self.assert_that_response_location_is(REPORTING_LOCATION_KAMAIBA_DISTRICT)
@@ -57,9 +60,8 @@ class PollResponsesTest(PollBase, AdminBase):
         self.respond_to_the_started_poll("0794339345", "no")
         self.close_poll(first_poll_id)
         self.start_poll(second_poll_id)
-        self.reassign_poll_response(first_poll_id,second_poll_id)
+        self.reassign_poll_response(first_poll_id, second_poll_id)
         self.open('/polls/%s/report/' % second_poll_id)
-        time.sleep(3)
         self.assert_that_number_of_responses_is(2)
 
     def test_that_a_response_can_be_replied_to_an_ureporter(self):
@@ -70,5 +72,5 @@ class PollResponsesTest(PollBase, AdminBase):
         self.change_users_group(group_name)
         self.respond_to_the_started_poll("0794339344", "yes")
         self.reply_poll_to_an_ureporter(poll_id, message)
-        time.sleep(3)
+        time.sleep(WAIT_TIME_IN_SECONDS)
         self.assert_that_message_has_been_sent_out_to_ureporter(message)

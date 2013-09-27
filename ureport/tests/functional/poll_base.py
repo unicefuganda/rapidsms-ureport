@@ -1,13 +1,13 @@
+import time
+
 from poll.models import Poll
 from ureport.tests.functional.admin_helper import fill_form
 from ureport.tests.functional.poll_assertions import PollAssertions
 from ureport.tests.functional.admin_helper import rows_of_table_by_class
-import time
 from ureport.tests.functional.admin_base import AdminBase
 
 
 class PollBase(PollAssertions, AdminBase):
-
     def start_poll(self, poll_id):
         self.open("/view_poll/%s " % poll_id)
 
@@ -21,14 +21,6 @@ class PollBase(PollAssertions, AdminBase):
         self.assertTrue(self.browser.is_text_present('Close Poll', 10))
         self.browser.find_link_by_text('Close Poll').first.click()
 
-    def log_in_as_ureport(self):
-        self.open('/accounts/login')
-        self.browser.fill("username", "ureport")
-        self.browser.fill("password", "ureport")
-        self.browser.find_by_css("input[type=submit]").first.click()
-
-    def log_as_admin_and_visit(self, url):
-        self.create_and_sign_in_admin("ureport", "ureport", url)
 
     def get_poll(self, poll_id):
         return Poll.objects.get(id=poll_id)
@@ -74,18 +66,17 @@ class PollBase(PollAssertions, AdminBase):
 
         return self.browser.url.split('/')[-2]
 
-    def setup_poll(self, question = "What is your name",number_prefix="079433934"):
+    def setup_poll(self, question="What is your name", number_prefix="079433934"):
         self.create_group("groupFT")
         self.create_backend("console")
-        self.create_contact("FT1", "Male", "console", "%s4" % number_prefix , "groupFT")
+        self.create_contact("FT1", "Male", "console", "%s4" % number_prefix, "groupFT")
         self.create_contact("FT2", "Male", "console", "%s5" % number_prefix, "groupFT")
-
 
         poll_id = self.create_poll(question, "Yes/No Question", question, "groupFT")
 
         return poll_id, question
 
-    def reassign_poll_response(self, poll_id,second_poll_id):
+    def reassign_poll_response(self, poll_id, second_poll_id):
         self.open("/%s/responses/" % poll_id)
         responses_all = self.browser.find_by_id("input_select_all").first
         responses_all.check()

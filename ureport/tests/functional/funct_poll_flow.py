@@ -1,8 +1,10 @@
 from splinter import Browser
+from ureport.tests.functional.constants import WAIT_TIME_IN_SECONDS
 from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 from ureport.tests.functional.admin_helper import fill_form_and_submit, fill_form, rows_of_table_by_class
 from ureport.tests.functional.poll_base import PollBase
 import time
+
 
 class PollFlowTest(PollBase):
     def setUp(self):
@@ -19,7 +21,6 @@ class PollFlowTest(PollBase):
 
     @take_screenshot_on_failure
     def tearDown(self):
-
         self.cleanup("/admin/poll/poll/")
         self.cleanup("/admin/rapidsms/connection/")
         self.cleanup("/admin/rapidsms/backend/")
@@ -66,16 +67,16 @@ class PollFlowTest(PollBase):
     def test_that_polls_can_be_reopen(self):
         poll_id, question = self.setup_poll()
         self.open("/view_poll/%s" % poll_id)
+        time.sleep(WAIT_TIME_IN_SECONDS)
         self.start_poll(poll_id)
         self.close_poll(poll_id)
         self.browser.find_link_by_text('Reopen Poll').first.click()
-        time.sleep(3)
         self.assert_that_poll_end_date_is_none(poll_id)
 
     def test_that_admin_is_able_to_add_new_poll(self):
         poll_id, question = self.setup_poll()
         self.open('/mypolls/%s' % poll_id)
-        time.sleep(3)
+        time.sleep(WAIT_TIME_IN_SECONDS)
         self.assert_that_page_has_add_poll_button()
 
     def test_should_show_the_status_page(self):
@@ -83,13 +84,9 @@ class PollFlowTest(PollBase):
         self.start_poll(poll_id)
 
         self.open("/poll_status/%s" % poll_id)
-        time.sleep(3)
+        time.sleep(WAIT_TIME_IN_SECONDS)
         self.assertEqual(self.browser.is_element_present_by_id('poll-details'), True)
-        time.sleep(3)
         self.assertTrue(poll_id in self.browser.find_by_id("poll-details").first.text)
-        time.sleep(3)
         self.assertEqual(self.browser.find_by_id('contact-count').text, "2")
-        time.sleep(3)
         self.assertEqual(self.browser.find_by_id('category-count').text, "3")
-        time.sleep(3)
         self.assertEqual(self.browser.find_by_id('is-yesno').text, "yes")

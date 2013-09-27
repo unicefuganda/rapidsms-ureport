@@ -3,34 +3,33 @@ from datetime import date
 from ureport.tests.functional.admin_helper import rows_of_table_by_class
 import time
 
-SECONDS = 3
+
+from ureport.tests.functional.constants import WAIT_TIME_IN_SECONDS
 
 ANY_POLL_ID = '12'
+
 
 
 class PollAssertions(SplinterTestCase):
     def assert_that_poll_start_date_is_not_none(self, poll_id):
         self.open('/mypolls/%s' % poll_id)
         start_date = self.browser.find_by_xpath('//*[@class="results"]/tbody/tr[2]/td[3]')
-
         date_today = date.today().strftime("%d/%m/%Y")
-        time.sleep(SECONDS)
+        time.sleep(WAIT_TIME_IN_SECONDS)
         self.assertEquals(start_date.text, date_today)
 
     def assert_that_poll_has_responses(self, poll):
         self.assertEquals(poll.responses.count(), 2)
-
         elements = self.browser.find_link_by_href('/%i/responses/' % poll.id)
-
         assert elements.first.value == 'Responses (%i)' % poll.responses.count()
 
     def assert_that_question_is(self, question):
-        time.sleep(SECONDS)
+        time.sleep(WAIT_TIME_IN_SECONDS)
         elements = self.browser.find_by_xpath('//*[@class="question"]')
         assert elements.first.value == question
 
     def assert_the_number_of_participants_of_the_poll_is(self, responses_count):
-        time.sleep(SECONDS)
+        time.sleep(WAIT_TIME_IN_SECONDS)
         elements = self.browser.find_by_xpath('//*[@class="participants"]')
         num_participants = elements.first.value.split(' ')[0]
         self.assertEquals(int(num_participants), responses_count)
@@ -44,7 +43,7 @@ class PollAssertions(SplinterTestCase):
         self.assertEquals(tds.first.value, location)
 
     def assert_that_number_of_responses_is(self,responses_count):
-        time.sleep(SECONDS)
+        time.sleep(WAIT_TIME_IN_SECONDS)
         elements = self.browser.find_by_xpath('//*[@class="poll_table"]')
         tbody = elements.first.find_by_tag('tbody')
         tr = tbody.find_by_tag('tr').first
