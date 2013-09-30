@@ -617,7 +617,7 @@ def access_dashboards(request):
                     urls.append('/flags/%s/messages/' % str(f.pk))
             elif url.url.startswith('^dashboard/(?P<name>'):
                 for f in access.flags.all():
-                    urls.append('/dashboard/%s/' % str(f.name))
+                    urls.append('/dashboard/%s/' % str(f.name.replace(" ", "_")))
             elif url.url.startswith('^(?P<poll_id>\d+)/respon'):
                 for f in access.user.poll_set.all():
                     urls.append('/%s/responses/' % str(f.pk))
