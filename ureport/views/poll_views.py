@@ -342,7 +342,7 @@ def view_responses(req, poll_id):
     columns = (
         ('Date', True, 'date', SimpleSorter()),
         ('Text', True, 'poll__question', SimpleSorter()),
-        ('Category', True, 'categories', SimpleSorter())
+        ('Category', True, 'categories__category', SimpleSorter())
     )
 
     return generic(
