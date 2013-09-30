@@ -612,7 +612,7 @@ def access_dashboards(request):
     if access:
         for url in access.allowed_urls.all():
             print url.url
-            if url.url.startswith('^flags/(?pk'):
+            if url.url.startswith('^flags/(?P<pk'):
                 for f in access.flags.all():
                     urls.append('/flags/%s/messages/' % str(f.pk))
             elif url.url.startswith('^dashboard/(?P<name>'):
