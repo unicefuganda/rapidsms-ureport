@@ -1,91 +1,82 @@
 from splinter import Browser
-from ureport.tests.functional.constants import WAIT_TIME_IN_SECONDS
+from splinter_wrapper import SplinterTestCase
+from ureport.tests.functional.admin_base import AdminBase
 from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 from ureport.tests.functional.admin_helper import fill_form_and_submit, fill_form, rows_of_table_by_class
 from ureport.tests.functional.poll_base import PollBase
-import time
 
 
 class PollFlowTest(PollBase):
+
+    browser = Browser()
+    AdminBase.log_in_as_ureport(browser)
+    poll_id, question = PollBase.setup_poll(browser)
+
+    @classmethod
+    def setUpClass(cls):
+        PollBase.start_poll(cls.browser,cls.poll_id)
+
     def setUp(self):
-        self.browser = Browser()
-        self.log_in_as_ureport()
+        pass
 
-    def cleanup(self, url):
-        self.open(url)
+    @classmethod
+    def cleanup(cls, url):
+        SplinterTestCase.open(cls.browser,url)
 
-        if self.browser.is_element_present_by_id("action-toggle"):
-            fill_form(self.browser, {"action-toggle": True})
-            fill_form_and_submit(self.browser, {"action": "delete_selected"}, "index", True, True)
-            self.browser.find_by_value("Yes, I'm sure").first.click()
+        if cls.browser.is_element_present_by_id("action-toggle"):
+            fill_form(cls.browser, {"action-toggle": True})
+            fill_form_and_submit(cls.browser, {"action": "delete_selected"}, "index", True, True)
+            cls.browser.find_by_value("Yes, I'm sure").first.click()
 
     @take_screenshot_on_failure
     def tearDown(self):
-        self.cleanup("/admin/poll/poll/")
-        self.cleanup("/admin/rapidsms/connection/")
-        self.cleanup("/admin/rapidsms/backend/")
-        self.cleanup("/admin/rapidsms/contact/")
-        self.cleanup("/admin/auth/group/")
+        pass
         #TODO: when deleting users don't delete the "ureport" and "admin" ones
         # self.cleanup("/admin/auth/user/")
 
-        self.browser.quit()
+    @classmethod
+    def tearDownClass(cls):
+        cls.cleanup("/admin/poll/poll/")
+        cls.cleanup("/admin/rapidsms/connection/")
+        cls.cleanup("/admin/rapidsms/backend/")
+        cls.cleanup("/admin/rapidsms/contact/")
+        cls.cleanup("/admin/auth/group/")
 
-    # def test_that_poll_status_changes_when_started(self):
-    #     poll_id, question = self.setup_poll()
-    #
-    #     self.open("/poll_status/%s" % poll_id)
-    #     self.start_poll(poll_id)
-    #
-    #     assert self.browser.is_text_present('Close Poll')
-    #     self.assert_that_poll_start_date_is_not_none(poll_id)
-    #
-    #
-    # def test_that_poll_can_be_sent_out_to_contacts(self):
-    #     poll_id, question = self.setup_poll()
-    #
-    #     self.start_poll(poll_id)
-    #
-    #     number_of_contact_for_poll = 2
-    #     question = 'What is your name'
-    #
-    #     self.assert_that_poll_question_are_sent_out_to_contacts(number_of_contact_for_poll, question)
-    #
-    #
-    # def test_that_polls_can_be_responded(self):
-    #     poll_id, question = self.setup_poll()
-    #     self.start_poll(poll_id)
-    #
-    #     self.open('/router/console/')
-    #     number_of_responses = len(rows_of_table_by_class(self.browser, "messages module"))
-    #
-    #     self.respond_to_the_started_poll("0794339344", "yes")
-    #     self.respond_to_the_started_poll("0794339345", "no")
-    #     increment = 2
-    #     self.assert_that_number_of_responses_increase_by(number_of_responses, increment)
-    #
-    # def test_that_polls_can_be_reopen(self):
-    #     poll_id, question = self.setup_poll()
-    #     self.open("/view_poll/%s" % poll_id)
-    #     time.sleep(WAIT_TIME_IN_SECONDS)
-    #     self.start_poll(poll_id)
-    #     self.close_poll(poll_id)
-    #     self.browser.find_link_by_text('Reopen Poll').first.click()
-    #     self.assert_that_poll_end_date_is_none(poll_id)
+        cls.browser.quit()
+
+    def test_that_poll_status_changes_when_started(self):
+        SplinterTestCase.open(self.browser,"/poll_status/%s" % self.poll_id)
+        self.assert_that_poll_start_date_is_not_none(self.poll_id)
+
+
+    def test_that_poll_can_be_sent_out_to_contacts(self):
+         self.assert_that_poll_question_are_sent_out_to_contacts(2, 'What is your name')
+
+
+    def test_that_polls_can_be_responded(self):
+        SplinterTestCase.open(self.browser,'/router/console/')
+        number_of_responses = len(rows_of_table_by_class(self.browser, "messages module"))
+
+        self.respond_to_the_started_poll("0794339344", "yes")
+        self.respond_to_the_started_poll("0794339345", "no")
+        self.assert_that_number_of_responses_increase_by(number_of_responses, 2)
+
+    def test_that_polls_can_be_reopen(self):
+        SplinterTestCase.open(self.browser,"/view_poll/%s" % self.poll_id)
+        self.close_poll(self.poll_id)
+        self.browser.find_link_by_text('Reopen Poll').first.click()
+
+        self.assert_that_poll_end_date_is_none(self.poll_id)
 
     def test_that_admin_is_able_to_add_new_poll(self):
-        poll_id, question = self.setup_poll()
-        self.open('/mypolls/%s' % poll_id)
+        SplinterTestCase.open(self.browser,'/mypolls/%s' % self.poll_id)
         self.assert_that_page_has_add_poll_button()
 
-    # def test_should_show_the_status_page(self):
-    #     poll_id, question = self.setup_poll()
-    #     self.start_poll(poll_id)
-    #
-    #     self.open("/poll_status/%s" % poll_id)
-    #     time.sleep(WAIT_TIME_IN_SECONDS)
-    #     self.assertEqual(self.browser.is_element_present_by_id('poll-details'), True)
-    #     self.assertTrue(poll_id in self.browser.find_by_id("poll-details").first.text)
-    #     self.assertEqual(self.browser.find_by_id('contact-count').text, "2")
-    #     self.assertEqual(self.browser.find_by_id('category-count').text, "3")
-    #     self.assertEqual(self.browser.find_by_id('is-yesno').text, "yes")
+    def test_should_show_the_status_page(self):
+        SplinterTestCase.open(self.browser,"/poll_status/%s" % self.poll_id)
+
+        self.assertEqual(self.browser.is_element_present_by_id('poll-details'), True)
+        self.assertTrue(self.poll_id in self.browser.find_by_id("poll-details").first.text)
+        self.assertEqual(self.browser.find_by_id('contact-count').text, "2")
+        self.assertEqual(self.browser.find_by_id('category-count').text, "3")
+        self.assertEqual(self.browser.find_by_id('is-yesno').text, "yes")

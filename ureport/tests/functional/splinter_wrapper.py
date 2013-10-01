@@ -27,8 +27,9 @@ class SplinterTestCase(TestCase):
         self.browser.fill("password", password)
         self.browser.find_by_css("input[type=submit]").first.click()
 
-    def open(self, url):
-        self.browser.visit("%s%s" % (settings.TEST_SERVER_URL, url))
+    @classmethod
+    def open(cls, browser, url):
+        browser.visit("%s%s" % (settings.TEST_SERVER_URL, url))
 
     def wait_for_seconds(self, time_out_in_seconds):
         current_time = datetime.datetime.now()

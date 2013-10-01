@@ -12,10 +12,9 @@ ANY_POLL_ID = '12'
 
 class PollAssertions(SplinterTestCase):
     def assert_that_poll_start_date_is_not_none(self, poll_id):
-        self.open('/mypolls/%s' % poll_id)
+        SplinterTestCase.open(self.browser,'/mypolls/%s' % poll_id)
         start_date = self.browser.find_by_xpath('//*[@class="results"]/tbody/tr[2]/td[3]')
         date_today = date.today().strftime("%d/%m/%Y")
-        time.sleep(WAIT_TIME_IN_SECONDS)
         self.assertEquals(start_date.text, date_today)
 
     def assert_that_poll_has_responses(self, poll):
@@ -54,7 +53,7 @@ class PollAssertions(SplinterTestCase):
         self.assertEquals(responses_count, total)
 
     def assert_that_poll_end_date_is_none(self, poll_id):
-        self.open('/mypolls/%s' % poll_id)
+        SplinterTestCase.open(self.browser,'/mypolls/%s' % poll_id)
 
         elements = self.browser.find_by_xpath('//*[@class="results"]')
         tbody = elements.first.find_by_tag('tbody')
@@ -64,7 +63,6 @@ class PollAssertions(SplinterTestCase):
             element = tr.find_by_xpath('//*[@href="%s"]' % view_poll_link).first
             if element is not None:
                 start_date = date.today().strftime("%d/%m/%Y")
-                time.sleep(3)
                 self.assertTrue(tr.find_by_value(start_date) is not None)
 
     def assert_that_page_has_add_poll_button(self):
@@ -81,7 +79,7 @@ class PollAssertions(SplinterTestCase):
         self.assertEqual(element.first.text, "Report")
 
     def assert_that_poll_question_are_sent_out_to_contacts(self, number_of_contact_for_poll, question):
-        self.open('/router/console')
+        SplinterTestCase.open(self.browser,'/router/console')
         rows = rows_of_table_by_class(self.browser, 'messages module')
         total = 0
         for row in rows:
@@ -90,7 +88,7 @@ class PollAssertions(SplinterTestCase):
         self.assertEqual(total, number_of_contact_for_poll)
 
     def assert_that_number_of_responses_increase_by(self, number_of_responses, increment):
-        self.open('/router/console')
+        SplinterTestCase.open(self.browser,'/router/console')
         rows_responses = rows_of_table_by_class(self.browser, "messages module")
         self.assertEqual(len(rows_responses), number_of_responses + increment)
 

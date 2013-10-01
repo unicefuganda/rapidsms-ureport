@@ -1,3 +1,4 @@
+from django.conf import settings
 from splinter_wrapper import SplinterTestCase
 from ureport.tests.functional.admin_helper import fill_form_and_submit, fill_form
 from datetime import datetime
@@ -8,13 +9,14 @@ REPORTING_LOCATION_ID_KAMAIBA = "Kamaiba"
 REPORTING_LOCATION_KAMAIBA_DISTRICT = "Kasese"
 
 class AdminBase (SplinterTestCase):
-    def create_backend(self, name):
-        self.open("/admin/rapidsms/backend/add/")
-        fill_form_and_submit(self.browser, {"id_name": name}, "_save")
+    @classmethod
+    def create_backend(cls, browser, name):
+        SplinterTestCase.open(browser,"/admin/rapidsms/backend/add/")
+        fill_form_and_submit(browser, {"id_name": name}, "_save")
 
-    def create_contact(self, name, gender, backend_name, identity, group):
-        self.open("/admin/rapidsms/contact/add/")
-        time.sleep(WAIT_TIME_IN_SECONDS)
+    @classmethod
+    def create_contact(cls, browser, name, gender, backend_name, identity, group):
+        SplinterTestCase.open(browser,"/admin/rapidsms/contact/add/")
         form_data = {
             "id_name": name,
             "id_gender": gender,
@@ -25,12 +27,12 @@ class AdminBase (SplinterTestCase):
             "id_connection_set-0-identity": identity,
             "id_groups": group
         }
-        fill_form_and_submit(self.browser, form_data, "_save")
+        fill_form_and_submit(browser, form_data, "_save")
 
-    def create_group(self, name):
-        self.open("/admin/auth/group/add/")
-        time.sleep(WAIT_TIME_IN_SECONDS)
-        fill_form_and_submit(self.browser, {"id_name": name}, "_save")
+    @classmethod
+    def create_group(cls, browser, name):
+        SplinterTestCase.open(browser,"/admin/auth/group/add/")
+        fill_form_and_submit(browser, {"id_name": name}, "_save")
 
     def create_user(self, name, group):
         self.open("/admin/auth/user/add/")
@@ -45,11 +47,12 @@ class AdminBase (SplinterTestCase):
         time.sleep(WAIT_TIME_IN_SECONDS)
         fill_form_and_submit(self.browser, {"id_groups": name}, "_save")
 
-    def log_in_as_ureport(self):
-        self.open('/accounts/login')
-        self.browser.fill("username", "ureport")
-        self.browser.fill("password", "ureport")
-        self.browser.find_by_css("input[type=submit]").first.click()
+    @classmethod
+    def log_in_as_ureport(cls,browser):
+        SplinterTestCase.open(browser,'/accounts/login')
+        browser.fill("username", "ureport")
+        browser.fill("password", "ureport")
+        browser.find_by_css("input[type=submit]").first.click()
 
     def log_as_admin_and_visit(self, url):
         self.create_and_sign_in_admin("ureport", "ureport", url)
