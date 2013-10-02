@@ -1,5 +1,5 @@
 from splinter import Browser
-from ureport.tests.functional.splinter_wrapper import SplinterTestCase
+from ureport.tests.functional.splinter_wrapper import SplinterWrapper
 
 
 def join_page( driver):

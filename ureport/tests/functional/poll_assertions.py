@@ -1,4 +1,4 @@
-from ureport.tests.functional.splinter_wrapper import SplinterTestCase
+from ureport.tests.functional.splinter_wrapper import SplinterWrapper
 from datetime import date
 from ureport.tests.functional.admin_helper import rows_of_table_by_class
 import time
@@ -10,9 +10,9 @@ ANY_POLL_ID = '12'
 
 
 
-class PollAssertions(SplinterTestCase):
+class PollAssertions(SplinterWrapper):
     def assert_that_poll_start_date_is_not_none(self, poll_id):
-        SplinterTestCase.open(self.browser,'/mypolls/%s' % poll_id)
+        SplinterWrapper.open(self.browser,'/mypolls/%s' % poll_id)
         start_date = self.browser.find_by_xpath('//*[@class="results"]/tbody/tr[2]/td[3]')
         date_today = date.today().strftime("%d/%m/%Y")
         self.assertEquals(start_date.text, date_today)
@@ -28,7 +28,6 @@ class PollAssertions(SplinterTestCase):
         assert elements.first.value == question
 
     def assert_the_number_of_participants_of_the_poll_is(self, responses_count):
-        time.sleep(WAIT_TIME_IN_SECONDS)
         elements = self.browser.find_by_xpath('//*[@class="participants"]')
         num_participants = elements.first.value.split(' ')[0]
         self.assertEquals(int(num_participants), responses_count)
@@ -42,7 +41,6 @@ class PollAssertions(SplinterTestCase):
         self.assertEquals(tds.first.value, location)
 
     def assert_that_number_of_responses_is(self,responses_count):
-        time.sleep(WAIT_TIME_IN_SECONDS)
         elements = self.browser.find_by_xpath('//*[@class="poll_table"]')
         tbody = elements.first.find_by_tag('tbody')
         tr = tbody.find_by_tag('tr').first
@@ -53,7 +51,7 @@ class PollAssertions(SplinterTestCase):
         self.assertEquals(responses_count, total)
 
     def assert_that_poll_end_date_is_none(self, poll_id):
-        SplinterTestCase.open(self.browser,'/mypolls/%s' % poll_id)
+        SplinterWrapper.open(self.browser,'/mypolls/%s' % poll_id)
 
         elements = self.browser.find_by_xpath('//*[@class="results"]')
         tbody = elements.first.find_by_tag('tbody')
@@ -79,7 +77,7 @@ class PollAssertions(SplinterTestCase):
         self.assertEqual(element.first.text, "Report")
 
     def assert_that_poll_question_are_sent_out_to_contacts(self, number_of_contact_for_poll, question):
-        SplinterTestCase.open(self.browser,'/router/console')
+        SplinterWrapper.open(self.browser,'/router/console')
         rows = rows_of_table_by_class(self.browser, 'messages module')
         total = 0
         for row in rows:
@@ -88,14 +86,11 @@ class PollAssertions(SplinterTestCase):
         self.assertEqual(total, number_of_contact_for_poll)
 
     def assert_that_number_of_responses_increase_by(self, number_of_responses, increment):
-        SplinterTestCase.open(self.browser,'/router/console')
+        SplinterWrapper.open(self.browser,'/router/console')
         rows_responses = rows_of_table_by_class(self.browser, "messages module")
         self.assertEqual(len(rows_responses), number_of_responses + increment)
 
-    def assert_that_responses_has_been_reassigned_to_another_poll(self):
-        self.open()
-
     def assert_that_message_has_been_sent_out_to_ureporter(self, message):
-        self.open("/router/console")
+        SplinterWrapper.open(self.browser, "/router/console")
         element =self.browser.find_by_xpath("//table/tbody/tr/td[text()='%s']" % message)
         self.assertEquals(element.first.text, message)

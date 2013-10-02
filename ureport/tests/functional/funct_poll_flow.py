@@ -1,14 +1,14 @@
 from splinter import Browser
-from splinter_wrapper import SplinterTestCase
+from splinter_wrapper import SplinterWrapper
 from ureport.tests.functional.admin_base import AdminBase
-from ureport.tests.functional.take_screenshot import take_screenshot_on_failure
 from ureport.tests.functional.admin_helper import fill_form_and_submit, fill_form, rows_of_table_by_class
 from ureport.tests.functional.poll_base import PollBase
 
 
 class PollFlowTest(PollBase):
 
-    browser = Browser()
+    browser = SplinterWrapper.getBrowser()
+
     AdminBase.log_in_as_ureport(browser)
     poll_id, question = PollBase.setup_poll(browser)
 
@@ -16,36 +16,28 @@ class PollFlowTest(PollBase):
     def setUpClass(cls):
         PollBase.start_poll(cls.browser,cls.poll_id)
 
-    def setUp(self):
-        pass
-
     @classmethod
     def cleanup(cls, url):
-        SplinterTestCase.open(cls.browser,url)
+        SplinterWrapper.open(cls.browser,url)
 
         if cls.browser.is_element_present_by_id("action-toggle"):
             fill_form(cls.browser, {"action-toggle": True})
             fill_form_and_submit(cls.browser, {"action": "delete_selected"}, "index", True, True)
             cls.browser.find_by_value("Yes, I'm sure").first.click()
 
-    @take_screenshot_on_failure
-    def tearDown(self):
-        pass
-        #TODO: when deleting users don't delete the "ureport" and "admin" ones
-        # self.cleanup("/admin/auth/user/")
-
     @classmethod
     def tearDownClass(cls):
         cls.cleanup("/admin/poll/poll/")
+        cls.cleanup("/admin/poll/response/")
         cls.cleanup("/admin/rapidsms/connection/")
         cls.cleanup("/admin/rapidsms/backend/")
         cls.cleanup("/admin/rapidsms/contact/")
         cls.cleanup("/admin/auth/group/")
-
+        SplinterWrapper.open(cls.browser, '/account/logout')
         cls.browser.quit()
 
     def test_that_poll_status_changes_when_started(self):
-        SplinterTestCase.open(self.browser,"/poll_status/%s" % self.poll_id)
+        SplinterWrapper.open(self.browser,"/poll_status/%s" % self.poll_id)
         self.assert_that_poll_start_date_is_not_none(self.poll_id)
 
 
@@ -54,7 +46,7 @@ class PollFlowTest(PollBase):
 
 
     def test_that_polls_can_be_responded(self):
-        SplinterTestCase.open(self.browser,'/router/console/')
+        SplinterWrapper.open(self.browser,'/router/console/')
         number_of_responses = len(rows_of_table_by_class(self.browser, "messages module"))
 
         self.respond_to_the_started_poll("0794339344", "yes")
@@ -62,18 +54,18 @@ class PollFlowTest(PollBase):
         self.assert_that_number_of_responses_increase_by(number_of_responses, 2)
 
     def test_that_polls_can_be_reopen(self):
-        SplinterTestCase.open(self.browser,"/view_poll/%s" % self.poll_id)
+        SplinterWrapper.open(self.browser,"/view_poll/%s" % self.poll_id)
         self.close_poll(self.poll_id)
         self.browser.find_link_by_text('Reopen Poll').first.click()
 
         self.assert_that_poll_end_date_is_none(self.poll_id)
 
     def test_that_admin_is_able_to_add_new_poll(self):
-        SplinterTestCase.open(self.browser,'/mypolls/%s' % self.poll_id)
+        SplinterWrapper.open(self.browser,'/mypolls/%s' % self.poll_id)
         self.assert_that_page_has_add_poll_button()
 
     def test_should_show_the_status_page(self):
-        SplinterTestCase.open(self.browser,"/poll_status/%s" % self.poll_id)
+        SplinterWrapper.open(self.browser,"/poll_status/%s" % self.poll_id)
 
         self.assertEqual(self.browser.is_element_present_by_id('poll-details'), True)
         self.assertTrue(self.poll_id in self.browser.find_by_id("poll-details").first.text)

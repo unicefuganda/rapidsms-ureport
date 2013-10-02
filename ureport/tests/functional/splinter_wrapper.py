@@ -2,11 +2,17 @@ import datetime
 from unittest import TestCase
 from django.contrib.auth.models import User
 from django.conf import settings
+from splinter import Browser
 
+class SplinterWrapper(TestCase):
 
-class SplinterTestCase(TestCase):
+    __browser = None
+    @classmethod
+    def getBrowser(cls):
+        return Browser()
+
     def __init__(self, methodName='runTest'):
-        super(SplinterTestCase, self).__init__(methodName)
+        super(SplinterWrapper, self).__init__(methodName)
 
     def follow_link(self, text):
         (self.browser.find_element_by_link_text(text)).click()
