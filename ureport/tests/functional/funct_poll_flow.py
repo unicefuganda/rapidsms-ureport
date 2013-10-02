@@ -42,7 +42,7 @@ class PollFlowTest(PollBase):
 
 
     def test_that_poll_can_be_sent_out_to_contacts(self):
-         self.assert_that_poll_question_are_sent_out_to_contacts(2, 'What is your name')
+         self.assert_that_poll_question_are_sent_out_to_contacts(1, 'What is your name')
 
 
     def test_that_polls_can_be_responded(self):
@@ -70,6 +70,6 @@ class PollFlowTest(PollBase):
 
         self.assertEqual(self.browser.is_element_present_by_id('poll-details'), True)
         self.assertTrue(self.poll_id in self.browser.find_by_id("poll-details").first.text)
-        self.assertEqual(self.browser.find_by_id('contact-count').text, "2")
+        self.assertEqual(self.browser.find_by_id('contact-count').text, "1")
         self.assertEqual(self.browser.find_by_id('category-count').text, "3")
         self.assertEqual(self.browser.find_by_id('is-yesno').text, "yes")
