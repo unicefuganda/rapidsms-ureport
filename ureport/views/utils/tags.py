@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from datetime import timedelta, datetime
+from rapidsms.contrib.locations.models import Location
 
 from ureport.models import IgnoredTags
 import random
@@ -125,16 +126,27 @@ def _get_responses(poll):
     return responses
 
 
-def get_category_tags(category, date_range=None):
+def get_category_tags(district=None, category=None, date_range=None):
     word_count = {}
+    #Todo Make this logic sensible, These if statements just don't make sense.
     messages = IbmMsgCategory.objects.filter(category=category, msg__date__gt=datetime.now() - timedelta(days=7),
                                              msg__direction='I', score__gte=0.5).order_by('msg__date')
-    if date_range:
-        IbmMsgCategory.objects.filter(category=category, msg__date__range=date_range, msg__direction='I',
+    if date_range and district is not None:
+        messages = IbmMsgCategory.objects.filter(category=category, msg__date__range=date_range, msg__direction='I',
                                       score__gte=0.5).order_by(
+            'msg__date')
+    if district:
+        if date_range:
+            messages = IbmMsgCategory.objects.filter(msg__date__range=date_range, msg__direction='I',
+                                          score__gte=0.5, msg__connection__contact__reporting_location=district).order_by(
+            'msg__date')
+        else:
+            messages = IbmMsgCategory.objects.filter(msg__direction='I',
+                                          score__gte=0.5, msg__connection__contact__reporting_location=district).order_by(
             'msg__date')
     if not messages.exists():
         return word_count
+    print messages.count()
     message_pks = messages.values_list('pk', flat=True)[:500]
     sql = """  SELECT
            (regexp_matches(lower(word),E'[a-zA-Z]+'))[1] as wo,

@@ -576,7 +576,7 @@ def flag_categories(request, name):
 def cloud_dashboard(request, name):
     name = name.replace("_", " ")
     category = get_object_or_404(IbmCategory, name__iexact=name)
-    tags = get_category_tags(category)
+    tags = get_category_tags(category=category)
     columns = [('Identifier', True, 'message__connection_id', SimpleSorter()),
                ('Text', True, 'msg__text', SimpleSorter()),
                ('Date', True, 'msg__date', SimpleSorter()),

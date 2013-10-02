@@ -18,6 +18,7 @@ from generic.models import Dashboard
 from ureport.forms import PollModuleForm
 from message_classifier.models import IbmCategory, IbmMsgCategory
 from rapidsms.contrib.locations.models import Location
+from ureport.views import get_category_tags
 
 
 def ureport_content(
@@ -56,14 +57,14 @@ def pulse(request, period=None):
     if period:
         now = datetime.datetime.now()
         previous_date = datetime.datetime.now() - datetime.timedelta(days=period_map[period])
-        s = IbmCategory.objects.filter(ibmmsgcategory__score__gte=0.1,
+        s = IbmCategory.objects.filter(ibmmsgcategory__score__gte=0.5,
                                        ibmmsgcategory__msg__connection__contact__reporting_location__in=l,
                                        ibmmsgcategory__msg__date__range=[previous_date, now]).annotate(
             total=Count('ibmmsgcategory')).values('total', 'name',
                                                   'ibmmsgcategory__msg__connection__contact__reporting_location__name'). \
             exclude(name__in=['family & relationships', "energy", "u-report", "social policy", "employment"])
     else:
-        s = IbmCategory.objects.filter(ibmmsgcategory__score__gte=0.1,
+        s = IbmCategory.objects.filter(ibmmsgcategory__score__gte=0.5,
                                        ibmmsgcategory__msg__connection__contact__reporting_location__in=l).annotate(
             total=Count('ibmmsgcategory')).values('total', 'name',
                                                   'ibmmsgcategory__msg__connection__contact__reporting_location__name'). \
@@ -72,6 +73,25 @@ def pulse(request, period=None):
     return HttpResponse(data.replace('"ibmmsgcategory__msg__connection__contact__reporting_location__name"',
                                      "\"district\"").replace("\"name\"", "\"category\""),
                         content_type='application/json')
+
+
+@never_cache
+def map_cloud(request, district, period=None):
+    date_range = None
+    try:
+        district = Location.objects.get(name=district, type__name='district')
+    except Location.DoesNotExist:
+        return HttpResponse("Error District with name %s does not exist" % district)
+    if period:
+        if period == 'month':
+            date_range = [datetime.datetime.now() - datetime.timedelta(days=30), datetime.datetime.now()]
+        elif period == 'day':
+            date_range = [datetime.datetime.now() - datetime.timedelta(days=1), datetime.datetime.now()]
+        elif period == 'year':
+            date_range = [datetime.datetime.now() - datetime.timedelta(days=366), datetime.datetime.now()]
+    tags = get_category_tags(district=district, date_range=date_range)
+    return render_to_response("/ureport/partials/tag_cloud/tag_cloud.html", locals(),
+                              context_instance=RequestContext(request))
 
 
 def national_pulse(request, period=None):
