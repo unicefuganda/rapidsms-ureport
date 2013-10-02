@@ -57,14 +57,14 @@ def pulse(request, period=None):
     if period:
         now = datetime.datetime.now()
         previous_date = datetime.datetime.now() - datetime.timedelta(days=period_map[period])
-        s = IbmCategory.objects.filter(ibmmsgcategory__score__gte=0.5,
+        s = IbmCategory.objects.filter(ibmmsgcategory__score__gte=0.25,
                                        ibmmsgcategory__msg__connection__contact__reporting_location__in=l,
                                        ibmmsgcategory__msg__date__range=[previous_date, now]).annotate(
             total=Count('ibmmsgcategory')).values('total', 'name',
                                                   'ibmmsgcategory__msg__connection__contact__reporting_location__name'). \
             exclude(name__in=['family & relationships', "energy", "u-report", "social policy", "employment"])
     else:
-        s = IbmCategory.objects.filter(ibmmsgcategory__score__gte=0.5,
+        s = IbmCategory.objects.filter(ibmmsgcategory__score__gte=0.25,
                                        ibmmsgcategory__msg__connection__contact__reporting_location__in=l).annotate(
             total=Count('ibmmsgcategory')).values('total', 'name',
                                                   'ibmmsgcategory__msg__connection__contact__reporting_location__name'). \
