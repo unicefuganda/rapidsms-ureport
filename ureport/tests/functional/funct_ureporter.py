@@ -17,7 +17,6 @@ class TestManageUreporter(PollBase):
     def setUpClass(cls):
         AdminBase.log_in_as_ureport(cls.browser)
         poll_id, question = PollBase.setup_poll(cls.browser)
-        time.sleep(60)
         PollBase.start_poll(cls.browser,poll_id)
 
     @classmethod

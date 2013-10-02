@@ -73,8 +73,6 @@ class PollBase(PollAssertions, AdminBase):
         AdminBase.create_group(browser,"groupFT")
         AdminBase.create_backend(browser,"console")
         AdminBase.create_contact(browser,"FT1", "Male", "console", "%s4" % number_prefix, "groupFT")
-        AdminBase.create_contact(browser,"FT2", "Male", "console", "%s5" % number_prefix, "groupFT")
-
         poll_id = PollBase.create_poll(browser,question, "Yes/No Question", question, "groupFT")
 
         return poll_id, question

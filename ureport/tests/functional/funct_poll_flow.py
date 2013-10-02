@@ -48,6 +48,7 @@ class PollFlowTest(PollBase):
     def test_that_polls_can_be_responded(self):
         SplinterWrapper.open(self.browser,'/router/console/')
         number_of_responses = len(rows_of_table_by_class(self.browser, "messages module"))
+        AdminBase.create_contact(self.browser,"FT2", "Male", "console", "%s5" % "0794339345", "groupFT")
 
         self.respond_to_the_started_poll("0794339344", "yes")
         self.respond_to_the_started_poll("0794339345", "no")
