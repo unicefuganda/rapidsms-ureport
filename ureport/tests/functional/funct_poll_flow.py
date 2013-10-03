@@ -8,7 +8,6 @@ from ureport.tests.functional.poll_base import PollBase
 class PollFlowTest(PollBase):
 
     browser = SplinterWrapper.getBrowser()
-
     AdminBase.log_in_as_ureport(browser)
     poll_id, question = PollBase.setup_poll(browser)
 
@@ -53,7 +52,6 @@ class PollFlowTest(PollBase):
         SplinterWrapper.open(self.browser,'/router/console/')
         number_of_responses = len(rows_of_table_by_class(self.browser, "messages module"))
         AdminBase.create_contact(self.browser,"FT2", "Male", "console", "%s5" % "0794339345", "groupFT")
-
         self.respond_to_the_started_poll("0794339344", "yes")
         self.respond_to_the_started_poll("0794339345", "no")
         self.assert_that_number_of_responses_increase_by(number_of_responses, 2)
@@ -80,11 +78,14 @@ class PollFlowTest(PollBase):
 
     def test_admin_can_search_for_ureporter(self):
         group_name = "groupFT"
+        number_prefix="77777"
+        poll_id, question = PollBase.setup_poll(self.browser,question="Will this test pass?",number_prefix=number_prefix)
+        PollBase.start_poll(self.browser,poll_id)
+        self.respond_to_the_started_poll("%s4" % number_prefix , "yes")
         self.change_users_group(group_name)
-        self.respond_to_the_started_poll("0794339345", "no")
         SplinterWrapper.open(self.browser, '/reporter/')
         self.search_by_ureporter_group("%s" % group_name)
-        self.assertEquals(True, self.browser.is_text_present("0794339345"))
+        self.assertEquals(True, self.browser.is_text_present("777774"))
 
     def search_by_ureporter_group(self, group_name):
         element_list_macthing_option = self.browser.find_option_by_text(group_name)
