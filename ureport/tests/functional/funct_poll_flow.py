@@ -36,44 +36,44 @@ class PollFlowTest(PollBase):
         SplinterWrapper.open(cls.browser, '/account/logout')
         cls.browser.quit()
 
-    # def test_that_poll_status_changes_when_started(self):
-    #     SplinterWrapper.open(self.browser,"/poll_status/%s" % self.poll_id)
-    #     self.assert_that_poll_start_date_is_not_none(self.poll_id)
+    def test_that_poll_status_changes_when_started(self):
+        SplinterWrapper.open(self.browser,"/poll_status/%s" % self.poll_id)
+        self.assert_that_poll_start_date_is_not_none(self.poll_id)
 
 
     def test_that_poll_can_be_sent_out_to_contacts(self):
          self.assert_that_poll_question_are_sent_out_to_contacts(1, 'What is your name')
 
 
-    # def test_that_poll_can_be_sent_out_to_contacts(self):
-    #      self.assert_that_poll_question_are_sent_out_to_contacts(1, 'What is your name')
-    #
-    #
-    # def test_that_polls_can_be_responded(self):
-    #     SplinterWrapper.open(self.browser,'/router/console/')
-    #     number_of_responses = len(rows_of_table_by_class(self.browser, "messages module"))
-    #     AdminBase.create_contact(self.browser,"FT2", "Male", "console", "%s5" % "0794339345", "groupFT")
-    #
-    #     self.respond_to_the_started_poll("0794339344", "yes")
-    #     self.respond_to_the_started_poll("0794339345", "no")
-    #     self.assert_that_number_of_responses_increase_by(number_of_responses, 2)
-    #
-    # def test_that_polls_can_be_reopen(self):
-    #     SplinterWrapper.open(self.browser,"/view_poll/%s" % self.poll_id)
-    #     self.close_poll(self.poll_id)
-    #     self.browser.find_link_by_text('Reopen Poll').first.click()
-    #
-    #     self.assert_that_poll_end_date_is_none(self.poll_id)
-    #
-    # def test_that_admin_is_able_to_add_new_poll(self):
-    #     SplinterWrapper.open(self.browser,'/mypolls/%s' % self.poll_id)
-    #     self.assert_that_page_has_add_poll_button()
-    #
-    # def test_should_show_the_status_page(self):
-    #     SplinterWrapper.open(self.browser,"/poll_status/%s" % self.poll_id)
-    #
-    #     self.assertEqual(self.browser.is_element_present_by_id('poll-details'), True)
-    #     self.assertTrue(self.poll_id in self.browser.find_by_id("poll-details").first.text)
-    #     self.assertEqual(self.browser.find_by_id('contact-count').text, "1")
-    #     self.assertEqual(self.browser.find_by_id('category-count').text, "3")
-    #     self.assertEqual(self.browser.find_by_id('is-yesno').text, "yes")
+    def test_that_poll_can_be_sent_out_to_contacts(self):
+         self.assert_that_poll_question_are_sent_out_to_contacts(1, 'What is your name')
+
+
+    def test_that_polls_can_be_responded(self):
+        SplinterWrapper.open(self.browser,'/router/console/')
+        number_of_responses = len(rows_of_table_by_class(self.browser, "messages module"))
+        AdminBase.create_contact(self.browser,"FT2", "Male", "console", "%s5" % "0794339345", "groupFT")
+
+        self.respond_to_the_started_poll("0794339344", "yes")
+        self.respond_to_the_started_poll("0794339345", "no")
+        self.assert_that_number_of_responses_increase_by(number_of_responses, 2)
+
+    def test_that_polls_can_be_reopen(self):
+        SplinterWrapper.open(self.browser,"/view_poll/%s" % self.poll_id)
+        self.close_poll(self.poll_id)
+        self.browser.find_link_by_text('Reopen Poll').first.click()
+
+        self.assert_that_poll_end_date_is_none(self.poll_id)
+
+    def test_that_admin_is_able_to_add_new_poll(self):
+        SplinterWrapper.open(self.browser,'/mypolls/%s' % self.poll_id)
+        self.assert_that_page_has_add_poll_button()
+
+    def test_should_show_the_status_page(self):
+        SplinterWrapper.open(self.browser,"/poll_status/%s" % self.poll_id)
+
+        self.assertEqual(self.browser.is_element_present_by_id('poll-details'), True)
+        self.assertTrue(self.poll_id in self.browser.find_by_id("poll-details").first.text)
+        self.assertEqual(self.browser.find_by_id('contact-count').text, "1")
+        self.assertEqual(self.browser.find_by_id('category-count').text, "3")
+        self.assertEqual(self.browser.find_by_id('is-yesno').text, "yes")
