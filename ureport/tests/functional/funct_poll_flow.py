@@ -44,6 +44,10 @@ class PollFlowTest(PollBase):
     def test_that_poll_can_be_sent_out_to_contacts(self):
          self.assert_that_poll_question_are_sent_out_to_contacts(1, 'What is your name')
 
+
+    # def test_that_poll_can_be_sent_out_to_contacts(self):
+    #      self.assert_that_poll_question_are_sent_out_to_contacts(1, 'What is your name')
+    #
     #
     # def test_that_polls_can_be_responded(self):
     #     SplinterWrapper.open(self.browser,'/router/console/')
