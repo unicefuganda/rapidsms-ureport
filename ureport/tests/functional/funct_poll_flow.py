@@ -87,11 +87,6 @@ class PollFlowTest(PollBase):
         self.search_by_ureporter_group("%s" % group_name)
         self.assertEquals(True, self.browser.is_text_present("777774"))
 
-        self.respond_to_the_started_poll("0794339345", "no")
-        SplinterWrapper.open(self.browser, '/reporter/')
-        self.search_by_ureporter_group("%s" % group_name)
-        self.assertEquals(True, self.browser.is_text_present("0794339345"))
-
     def search_by_ureporter_group(self, group_name):
         element_list_macthing_option = self.browser.find_option_by_text(group_name)
         self.browser.select("groups", element_list_macthing_option.first.value)
