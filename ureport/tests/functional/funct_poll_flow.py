@@ -77,3 +77,17 @@ class PollFlowTest(PollBase):
         self.assertEqual(self.browser.find_by_id('contact-count').text, "1")
         self.assertEqual(self.browser.find_by_id('category-count').text, "3")
         self.assertEqual(self.browser.find_by_id('is-yesno').text, "yes")
+
+    def test_admin_can_search_for_ureporter(self):
+        group_name = "groupFT"
+        self.change_users_group(group_name)
+        self.respond_to_the_started_poll("0794339345", "no")
+        SplinterWrapper.open(self.browser, '/reporter/')
+        self.search_by_ureporter_group("%s" % group_name)
+        self.assertEquals(True, self.browser.is_text_present("0794339345"))
+
+    def search_by_ureporter_group(self, group_name):
+        element_list_macthing_option = self.browser.find_option_by_text(group_name)
+        self.browser.select("groups", element_list_macthing_option.first.value)
+        self.browser.click_link_by_partial_text("Update")
+        return self
