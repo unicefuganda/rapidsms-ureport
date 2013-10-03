@@ -9,6 +9,7 @@ from ureport.tests.functional.poll_base import PollBase
 class TestManageUreporter(PollBase):
     browser = SplinterWrapper.getBrowser()
 
+
     group_name = "groupFT"
     contact_identity = "4444"
     ureporter_name = "U1"
@@ -16,9 +17,7 @@ class TestManageUreporter(PollBase):
     @classmethod
     def setUpClass(cls):
         AdminBase.log_in_as_ureport(cls.browser)
-        SplinterWrapper.open(cls.browser,"/reporter/")
-        # poll_id, question = PollBase.setup_poll(cls.browser)
-        # PollBase.start_poll(cls.browser,poll_id)
+
 
     @classmethod
     def cleanup(cls, url):
@@ -49,13 +48,14 @@ class TestManageUreporter(PollBase):
 
 
     def test_admin_can_search_for_ureporter(self):
-        # self.respond_to_the_started_poll("0794339344", "No")
-        # group_name = "groupFT"
-        # self.change_users_group(group_name)
-        # SplinterWrapper.open(self.browser, '/reporter/')
-        # self.search_by_ureporter_group("%s" % group_name)
-        # self.assertEquals(True, self.browser.is_text_present("079433934"))
-        self.assertEquals(2, 1+1)
+        poll_id, question = PollBase.setup_poll(self.browser,"Are you happy today?",number_prefix="0793449")
+        PollBase.start_poll(self.browser,poll_id)
+        self.respond_to_the_started_poll("07934494", "No")
+        group_name = "groupFT"
+        self.change_users_group(group_name)
+        SplinterWrapper.open(self.browser, '/reporter/')
+        self.search_by_ureporter_group("%s" % group_name)
+        self.assertEquals(True, self.browser.is_text_present("07934494"))
     #
     # def test_admin_can_filter_by_group(self):
     #     self.given_a_male_ureporter_with_the_name(self.ureporter_name) \

@@ -56,7 +56,7 @@ class PollBase(PollAssertions, AdminBase):
 
     @classmethod
     def create_poll(cls, browser, name, type, question, group):
-        SplinterWrapper.open(browser,"/createpoll")
+        SplinterWrapper.open(browser,"/createpoll/")
         form_data = {
             "id_type": type,
             "id_name": name,
