@@ -81,6 +81,7 @@ class PollFlowTest(PollBase):
     def test_admin_can_search_for_ureporter(self):
         group_name = "groupFT"
         self.change_users_group(group_name)
+
         self.respond_to_the_started_poll("0794339345", "no")
         SplinterWrapper.open(self.browser, '/reporter/')
         self.search_by_ureporter_group("%s" % group_name)
