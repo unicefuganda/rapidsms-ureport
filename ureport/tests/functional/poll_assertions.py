@@ -4,7 +4,7 @@ from ureport.tests.functional.admin_helper import rows_of_table_by_class
 import time
 
 
-from ureport.tests.functional.constants import WAIT_TIME_IN_SECONDS
+from ureport.tests.functional.test_data import WAIT_TIME_IN_SECONDS
 
 ANY_POLL_ID = '12'
 

@@ -1,4 +1,3 @@
-from splinter import Browser
 from splinter_wrapper import SplinterWrapper
 from ureport.tests.functional.admin_base import AdminBase
 from ureport.tests.functional.admin_helper import fill_form_and_submit, fill_form, rows_of_table_by_class

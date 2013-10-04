@@ -1,5 +1,3 @@
-from splinter import Browser
-import time
 from splinter_wrapper import SplinterWrapper
 from ureport.tests.functional.admin_base import AdminBase
 from ureport.tests.functional.admin_helper import fill_form_and_submit, fill_form

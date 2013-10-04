@@ -1,10 +1,8 @@
 from splinter import Browser
 from splinter_wrapper import SplinterTestCase
-from ureport.tests.functional.constants import WAIT_TIME_IN_SECONDS
 from ureport.tests.functional.poll_base import PollBase
 from ureport.tests.functional.admin_helper import fill_form_and_submit, fill_form
-from ureport.tests.functional.admin_base import AdminBase, REPORTING_LOCATION_KAMAIBA_DISTRICT
-import time
+from ureport.tests.functional.admin_base import AdminBase
 
 
 def disabled(f):
