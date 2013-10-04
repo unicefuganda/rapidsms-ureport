@@ -27,6 +27,7 @@ from django.db import transaction
 from django.contrib.auth.models import Group, User, Message
 from ureport.models import UPoll, ExportedPoll
 import logging, datetime
+from django.utils.translation import ugettext as _
 
 log = logging.getLogger(__name__)
 
@@ -438,7 +439,7 @@ def poll_dashboard(request):
     return generic(request,
                    model=Poll,
                    queryset=get_polls,
-                   results_title='Polls',
+                   results_title=_('Polls'),
                    objects_per_page=10,
                    partial_row='ureport/partials/dashboard/poll_row.html',
                    partial_header='ureport/partials/dashboard/partial_header_dashboard.html',
@@ -454,10 +455,10 @@ def poll_dashboard(request):
 @cache_page(30 * 60, cache='default', key_prefix="ureport")
 def ureport_polls(request, pk):
     access = get_access(request)
-    columns = [('Name', True, 'name', SimpleSorter()),
-               ('Question', True, 'question', SimpleSorter(),),
-               ('Start Date', True, 'start_date', SimpleSorter(),),
-               ('Closing Date', True, 'end_date', SimpleSorter()),
+    columns = [(_('Name'), True, 'name', SimpleSorter()),
+               (_('Question'), True, 'question', SimpleSorter(),),
+               (_('Start Date'), True, 'start_date', SimpleSorter(),),
+               (_('Closing Date'), True, 'end_date', SimpleSorter()),
                ('', False, '', None)]
     queryset = get_polls(request=request)
     if access:
@@ -470,7 +471,7 @@ def ureport_polls(request, pk):
                    partial_row='ureport/partials/polls/poll_admin_row.html',
                    base_template='ureport/poll_admin_base.html',
                    paginator_template='ureport/partials/new_pagination.html',
-                   results_title='Polls',
+                   results_title=_('Polls'),
                    paginator_func=ureport_paginate,
                    sort_column='start_date',
                    sort_ascending=False,
