@@ -1,33 +1,35 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import re
+
 from django import forms
 from django.forms.util import ErrorList
-from rapidsms.models import Contact
 from django.contrib.auth.models import Group
-from poll.models import Poll, Response
-from mptt.forms import TreeNodeChoiceField
-from generic.forms import ActionForm, FilterForm, ModuleForm
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.forms.widgets import RadioSelect
-from rapidsms.contrib.locations.models import Location
 from django.forms import ValidationError
 from django.db.models import Q
-import re
+from django.db.models.query import QuerySet
+from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext as _
+
+from rapidsms.models import Contact
+from poll.models import Poll, Response
+from mptt.forms import TreeNodeChoiceField
+from generic.forms import ActionForm, FilterForm, ModuleForm
+from rapidsms.contrib.locations.models import Location
 from poll.forms import NewPollForm
 from rapidsms_httprouter.models import Message, Connection
 from uganda_common.forms import SMSInput
-from django.db.models.query import QuerySet
 from contact.models import MassText
-from poll.models import Poll, Translation
+from poll.models import Translation
 from unregister.models import Blacklist
 from .models import AutoregGroupRules, UploadContacts
 from uganda_common.utils import ExcelResponse
 from ureport.models import MessageAttribute, MessageDetail
-from django.utils.safestring import mark_safe
 from uganda_common.models import Access
-from django.utils.translation import ugettext as _
 import tasks
 
 
@@ -382,30 +384,28 @@ class NewPollForm(forms.Form): # pragma: no cover
 
     TYPE_YES_NO = 'yn'
 
-    type = forms.ChoiceField(
-        required=True,
-        choices=(
-            (TYPE_YES_NO, _('Yes/No Question')),
-        ))
+    type = forms.ChoiceField(required=True, label=_("Type"), choices=((TYPE_YES_NO, 'Yes/No Question'),))
     response_type = forms.ChoiceField(choices=Poll.RESPONSE_TYPE_CHOICES, widget=RadioSelect,
-                                      initial=Poll.RESPONSE_TYPE_ALL)
+                                      initial=Poll.RESPONSE_TYPE_ALL, label=_("Response type"))
 
-    is_urgent = forms.BooleanField(required=False)
+    is_urgent = forms.BooleanField(required=False, label=_('Is urgent'))
 
     def updateTypes(self):
         self.fields['type'].widget.choices += [(choice['type'], choice['label']) for choice in
                                                Poll.TYPE_CHOICES.values()]
 
-    name = forms.CharField(max_length=32, required=True)
-    question_en = forms.CharField(max_length=160, required=True, widget=SMSInput())
-    question_luo = forms.CharField(max_length=160, required=False, widget=SMSInput())
-    question_kdj = forms.CharField(max_length=160, required=False, widget=SMSInput())
-    default_response_en = forms.CharField(max_length=160, required=False, widget=SMSInput())
-    default_response_kdj = forms.CharField(max_length=160, required=False, widget=SMSInput())
-    default_response_luo = forms.CharField(max_length=160, required=False, widget=SMSInput())
-    districts = forms.ModelMultipleChoiceField(queryset=
-                                               Location.objects.filter(type__slug='district'
-                                               ).order_by('name'), required=False)
+    name = forms.CharField(max_length=32, required=True, label=_('Name'))
+    question_en = forms.CharField(max_length=160, required=True, widget=SMSInput(), label=_('Question en'))
+    question_luo = forms.CharField(max_length=160, required=False, widget=SMSInput(), label=_('Question luo'))
+    question_kdj = forms.CharField(max_length=160, required=False, widget=SMSInput(), label=_('Question kdj'))
+    default_response_en = forms.CharField(max_length=160, required=False, widget=SMSInput(),
+                                          label=_('Default response en'))
+    default_response_kdj = forms.CharField(max_length=160, required=False, widget=SMSInput(),
+                                           label=_('Default response kdj'))
+    districts = forms.ModelMultipleChoiceField(queryset=Location.objects.filter(type__slug='district').order_by('name'),
+                                               required=False, label=_('districts'))
+    default_response_luo = forms.CharField(max_length=160, required=False, widget=SMSInput(),
+                                           label=_('Default response luo'))
 
     # This may seem like a hack, but this allows time for the Contact model
     # to optionally have groups (i.e., poll doesn't explicitly depend on the rapidsms-auth
@@ -426,7 +426,7 @@ class NewPollForm(forms.Form): # pragma: no cover
         except UnboundLocalError:
             pass
         if hasattr(Contact, 'groups'):
-            self.fields['groups'] = forms.ModelMultipleChoiceField(queryset=queryset, required=False)
+            self.fields['groups'] = forms.ModelMultipleChoiceField(queryset=queryset, required=False, label=_('groups'))
 
     def clean(self):
         cleaned_data = self.cleaned_data

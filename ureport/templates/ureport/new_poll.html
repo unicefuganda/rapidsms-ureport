@@ -1,4 +1,5 @@
 {% extends "polls/layout.html" %}
+{% load i18n %}
 {% block title %}Polls{% endblock %}
 
 {% block content %}
@@ -9,17 +10,17 @@
 <fieldset>
 {{ form|as_uni_form }}
 
-  <div class="ctrlHolder">Excluded Groups: </div>
+  <div class="ctrlHolder">{% trans "Excluded Groups: " %}</div>
     <div class="ctrlHolder">
     {{ groups_form.group_list }}</div>
 <div class="buttons" style="float:left;margin-bottom:10px;margin-top:10px">
   <a href="{% url polls %}">
     <img src="{{ MEDIA_URL }}rapidsms/icons/silk/decline.png" alt=""/>
-    Cancel
+    {% trans "Cancel" %}
   </a>
   <a onclick="$('#newForm').submit();" href="javascript:void(0);">
     <img src="{{ MEDIA_URL }}rapidsms/icons/silk/add.png" alt=""/>
-    Create Poll
+    {% trans "Create Poll" %}
   </a>
 </div>
 
