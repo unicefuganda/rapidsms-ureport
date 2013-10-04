@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-
+{% load i18n %}
 {% block stylesheets %}
 
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/splits.css"/>
@@ -154,7 +154,7 @@
 
 {% block content %}
 
-  <div ><h3 style="font-weight: 300;font-size:22px;">{{ poll.name }}({{ poll.contacts.count }} participant{{ poll.contacts.count|pluralize }})</h3>
+  <div ><h3 style="font-weight: 300;font-size:22px;">{{ poll.name }}({{ poll.contacts.count }} {% trans "participant" %}{{ poll.contacts.count|pluralize }})</h3>
 </div>
 <div style="color:#666;font-size:16px;"">
 <span class='best_in_place' id='best_in_place_poll_question' data-url='/view_poll/{{poll.pk}}/?edit=true' data-object='poll'
@@ -167,7 +167,7 @@ font-style: italic;
 margin-right: 10px;
 margin-top: 10px;
 padding: 10px;
-color:#666;">Response:
+color:#666;">{% trans "Response" %}:
 
 
 
@@ -190,11 +190,11 @@ click on question to edit
     {%else%}
         {% if not poll.end_date %}
 <span id="state" >
-<a href="?stop=True&poll=True" data-remote=true  id="poll_action" class="btn">Close Poll</a>
+<a href="?stop=True&poll=True" data-remote=true  id="poll_action" class="btn">{% trans "Close Poll" %}</a>
  </span>
         {%else%}
 <span id="state" >
-<a href="?reopen=True&poll=True" data-remote=true id="poll_action" class="btn">Reopen Poll</a>
+<a href="?reopen=True&poll=True" data-remote=true id="poll_action" class="btn">{% trans "Reopen Poll" %}</a>
 </span>
         {%endif%}
     {%endif%}
@@ -205,15 +205,15 @@ click on question to edit
 
 {% if not poll.viewable %}
     <span id="state_h" >
-<a href="javascript:void(0)" id="poll_v" class="btn" onclick="loadViewable('?viewable=True&poll=True')">Show On Home page</a>
+<a href="javascript:void(0)" id="poll_v" class="btn" onclick="loadViewable('?viewable=True&poll=True')">{% trans "Show On Home page" %}</a>
 </span>
  {% else %}
     <span id="state_h" >
-<a href="javascript:void(0)" id="poll_v" class="btn" onclick="loadViewable('?unviewable=True&poll=True')">Don't Show on home page</a>
+<a href="javascript:void(0)" id="poll_v" class="btn" onclick="loadViewable('?unviewable=True&poll=True')">{% trans "Don't Show on home page" %}</a>
 </span>
 {% endif %}
 
-<h3>Groups</h3>
+<h3>{% trans "Groups" %}</h3>
 {% for group in groups %}
 <span style="border:1px solid #ccc;padding:3px;">{{group.name}}</span>
 
@@ -226,10 +226,10 @@ click on question to edit
 <table width="100%" class="results">
 <thead>
 <tr>
-<th class="category_name_col">Name</th>
-<th class="category_response_col">Response Message</th>
+<th class="category_name_col">{% trans "Name" %}</th>
+<th class="category_response_col">{% trans "Response Message" %}</th>
 
-<th class="category_default_col">Is Default</th>
+<th class="category_default_col">{% trans "Is Default" %}</th>
 <th class="category_options_col"></th>
 </tr>
 </thead>
@@ -252,7 +252,7 @@ click on question to edit
     <form method="post" id="category_form" action="./?category=true" data-remote=true>
     <div class="modal-header">
         <a class="close" data-dismiss="modal" onclick='$(".modal").hide()'>×</a>
-        <h3>Create A new Category</h3>
+        <h3>{% trans "Create A new Category" %}</h3>
     </div>
     <div class="modal-body" >
         <table id="cat_tb">
@@ -262,8 +262,8 @@ click on question to edit
         </table>
     </div>
     <div class="modal-footer">
-        <a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>
-        <input type="submit"  class="btn btn-primary" value="Next">
+        <a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>{% trans "Close" %}</a>
+        <input type="submit"  class="btn btn-primary" value="{% trans "Next" %}">
     </div>
     </form>
 </div>
@@ -276,7 +276,7 @@ click on question to edit
 </div>
 
 
-<a data-toggle="modal" href="#category" onclick='$("#category").show()' class="btn">Add Category</a>
+<a data-toggle="modal" href="#category" onclick='$("#category").show()' class="btn">{% trans "Add Category" %}</a>
 <br/><br/>
 
 
@@ -286,14 +286,14 @@ click on question to edit
 <div id="error"></div>
         <div style="margin:auto;width:340px;">
             <form action="" method="POST" data-remote=true>
-        <h1>Ussd Menu</h1>
+        <h1>{% trans "Ussd Menu" %}</h1>
             <TEXTAREA NAME="question" COLS=15 ROWS=2 length=150 wrap="soft" >{{xf.question}}</TEXTAREA>
 
 
             <TEXTAREA NAME="response" COLS=15 ROWS=2   length="150" wrap="soft">{{response.text}}</TEXTAREA>
 
 
-        <input value="Save Menu  Edits" class="btn" style="width:120px;" type="submit" >
+        <input value="{% trans "Save Menu  Edits" %}" class="btn" style="width:120px;" type="submit" >
         </div>
 </form>
 {%endblock%}
