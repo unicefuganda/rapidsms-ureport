@@ -27,6 +27,7 @@ from uganda_common.utils import ExcelResponse
 from ureport.models import MessageAttribute, MessageDetail
 from django.utils.safestring import mark_safe
 from uganda_common.models import Access
+from django.utils.translation import ugettext as _
 import tasks
 
 
@@ -384,7 +385,7 @@ class NewPollForm(forms.Form): # pragma: no cover
     type = forms.ChoiceField(
         required=True,
         choices=(
-            (TYPE_YES_NO, 'Yes/No Question'),
+            (TYPE_YES_NO, _('Yes/No Question')),
         ))
     response_type = forms.ChoiceField(choices=Poll.RESPONSE_TYPE_CHOICES, widget=RadioSelect,
                                       initial=Poll.RESPONSE_TYPE_ALL)
