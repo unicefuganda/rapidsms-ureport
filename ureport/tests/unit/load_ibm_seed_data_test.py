@@ -79,6 +79,11 @@ class LoadIbmSeedDataTest(TestCase):
         self.assertEquals(num_categories_before, 0)
         self.assertEquals(num_categories_after, 12)
 
+    def test_should_only_load_categories_once(self):
+        self.load_ibm_seed_data.load_categories()
+        self.load_ibm_seed_data.load_categories()
+        self.assertEquals(len(IbmCategory.objects.all()), 12)
+
     def test_should_insert_a_classifier_message_for_each_category(self):
         categories = self.create_dummy_categories()
 
