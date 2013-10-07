@@ -27,7 +27,7 @@ from django.db import transaction
 from django.contrib.auth.models import Group, User, Message
 from ureport.models import UPoll, ExportedPoll
 import logging, datetime
-# from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext
 
 
