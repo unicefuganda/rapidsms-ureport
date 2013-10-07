@@ -28,7 +28,8 @@ class Command(BaseCommand):
         return connection
 
     def create_message(self, connection, text, direction, status):
-        return Message.objects.get_or_create(connection=connection, text=text, direction=direction, status=status)
+        message, created = Message.objects.get_or_create(connection=connection, text=text, direction=direction, status=status)
+        return message
 
     def load_categories(self):
         arguments = ["manage.py", "loaddata", "initial_categories"]
