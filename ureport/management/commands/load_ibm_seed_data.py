@@ -1,5 +1,6 @@
 from django.contrib.auth.models import Group
 from django.core.management import BaseCommand, execute_from_command_line
+from django.core.exceptions import MultipleObjectsReturned
 from rapidsms.models import Backend, Connection
 from rapidsms_httprouter.models import Message
 from message_classifier.models import IbmMsgCategory, IbmCategory
@@ -27,7 +28,7 @@ class Command(BaseCommand):
         return connection
 
     def create_message(self, connection, text, direction, status):
-        return Message.objects.create(connection=connection, text=text, direction=direction, status=status)
+        return Message.objects.get_or_create(connection=connection, text=text, direction=direction, status=status)
 
     def load_categories(self):
         arguments = ["manage.py", "loaddata", "initial_categories"]
@@ -46,5 +47,9 @@ class Command(BaseCommand):
         connection = self.create_connection(backend, "0772123456")
 
         for category in categories:
-            message = self.create_message(connection, IBM_CLASSIFICATION_DUMMY, "I", "H")
-            self.create_ibm_message_category(message, category, 0)
+            try:
+                message = self.create_message(connection, IBM_CLASSIFICATION_DUMMY, "I", "H")
+                self.create_ibm_message_category(message, category, 0)
+            except MultipleObjectsReturned:
+                pass # No problem if there are already messages.
+
