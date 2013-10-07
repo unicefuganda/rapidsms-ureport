@@ -23,6 +23,9 @@ class PollFlowTest(PollBase):
             fill_form_and_submit(cls.browser, {"action": "delete_selected"}, "index", True, True)
             cls.browser.find_by_value("Yes, I'm sure").first.click()
 
+    def tearDown(self):
+        self.cleanup("/admin/poll/response/")
+
     @classmethod
     def tearDownClass(cls):
         cls.cleanup("/admin/poll/poll/")
