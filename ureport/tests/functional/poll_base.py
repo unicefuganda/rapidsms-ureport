@@ -16,6 +16,11 @@ class PollBase(PollAssertions, AdminBase):
         browser.find_link_by_text('Start Poll').first.click()
         time.sleep(2) #Sending questions is an asynchronous process
 
+    @classmethod
+    def reopen_poll(cls,browser, poll_id):
+        SplinterWrapper.open(browser,"/view_poll/%s " % poll_id)
+        browser.find_link_by_text('Reopen Poll').first.click()
+
     def close_poll(self, poll_id):
         SplinterWrapper.open(self.browser,"/view_poll/%s" % poll_id)
 
