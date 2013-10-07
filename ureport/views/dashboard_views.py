@@ -168,6 +168,7 @@ def mp_dashboard(request):
 
 
 @login_required
+@never_cache
 def alerts(request, pk):
     access = get_access(request)
     poll_form = NewPollForm()

@@ -14,7 +14,7 @@
 
         {%endfor%}
     </td>
-    <td>{{ msg.connection_id }}</td>
+    <td><a href="{% url profile msg.connection_id %}">{{ msg.connection_id }}</a></td>
     <td>{{ msg.text }}</td>
     <td>{{ msg.date|date:"m/d/Y H:i:s" }}</td>
     <td>{{ msg.connection.contact.reporting_location }}</td>
