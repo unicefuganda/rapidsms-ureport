@@ -27,7 +27,9 @@ from django.db import transaction
 from django.contrib.auth.models import Group, User, Message
 from ureport.models import UPoll, ExportedPoll
 import logging, datetime
-from django.utils.translation import ugettext as _
+# from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext
+
 
 log = logging.getLogger(__name__)
 
@@ -83,9 +85,11 @@ def view_poll(request, pk):
                 start_poll_single_tx(poll)
 
             if getattr(settings, "FEATURE_PREPARE_SEND_POLL", False):
-                res = """ <a href="?send=True&poll=True" data-remote=true  id="poll_action" class="btn">Send Poll</a> """
+                res = """ <a href="?send=True&poll=True" data-remote=true  id="poll_action" class="btn">%s</a> """ \
+                      % ugettext("Send Poll")
             else:
-                res = """ <a href="?stop=True&poll=True" data-remote=true  id="poll_action" class="btn">Close Poll</a> """
+                res = """ <a href="?stop=True&poll=True" data-remote=true  id="poll_action" class="btn">%s</a> """ \
+                      % ugettext("Close Poll")
 
             return HttpResponse(res)
 
@@ -93,20 +97,23 @@ def view_poll(request, pk):
             log.info("[send-poll] queuing...")
             poll.queue_message_batches_to_send()
             log.info("[send-poll] done.")
-            res = """ <a href="?stop=True&poll=True" data-remote=true  id="poll_action" class="btn">Close Poll</a> """
+            res = """ <a href="?stop=True&poll=True" data-remote=true  id="poll_action" class="btn">%s</a> """ \
+                  % ugettext("Close Poll")
             return HttpResponse(res)
 
         if request.GET.get('stop'):
             poll.end()
             res = HttpResponse(
-                """ <a href="?reopen=True&poll=True" data-remote=true id="poll_action" class="btn">Reopen Poll</a> """)
+                """ <a href="?reopen=True&poll=True" data-remote=true id="poll_action" class="btn">%s</a> """
+                % ugettext("Reopen Poll"))
             res['Cache-Control'] = 'no-store'
             return res
         if request.GET.get("reopen"):
             poll.end_date = None
             poll.save()
             res = HttpResponse(
-                """<a href="?stop=True&poll=True" data-remote=true  id="poll_action" class="btn">Close Poll</a>  """)
+                """<a href="?stop=True&poll=True" data-remote=true  id="poll_action" class="btn">%s</a>  """
+                % ugettext("Close Poll"))
             res['Cache-Control'] = 'no-store'
             return res
         if request.GET.get('viewable'):
@@ -114,7 +121,8 @@ def view_poll(request, pk):
             poll.save()
             res = HttpResponse(
                 '<a href="javascript:void(0)" id="poll_v" class="btn" onclick="loadViewable'
-                '(\'?unviewable=True&poll=True\')">Don\'t Show On Home page</a>')
+                '(\'?unviewable=True&poll=True\')">%s</a>'
+                % ugettext("Don\'t Show On Home page"))
             res['Cache-Control'] = 'no-store'
             return res
         if request.GET.get('unviewable'):
@@ -122,7 +130,7 @@ def view_poll(request, pk):
             poll.save()
             res = HttpResponse(
                 '<a href="javascript:void(0)" id="poll_v" class="btn" onclick="loadViewable'
-                '(\'?viewable=True&poll=True\')">Show On Home page</a>')
+                '(\'?viewable=True&poll=True\')">%s</a>' % ugettext("Show On Home page"))
             res['Cache-Control'] = 'no-store'
             return res
     x = XForm.objects.get(name='poll')

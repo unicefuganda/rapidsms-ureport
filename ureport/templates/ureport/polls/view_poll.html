@@ -179,9 +179,9 @@ color:#666;">{% trans "Response" %}:
 </div>
 {%if not  poll.start_date%}
 <span id="state" >
-<a href="?start=True?&poll=True" data-remote=true  id="poll_action" class="btn">{% if FEATURE_PREPARE_SEND_POLL %}Prepare Poll{%else%}Start Poll{%endif%}</a>
+<a href="?start=True?&poll=True" data-remote=true  id="poll_action" class="btn">{% if FEATURE_PREPARE_SEND_POLL %}{% trans "Prepare Poll" %}{%else%}{% trans "Start Poll" %}{%endif%}</a>
 </span>
-click on question to edit
+{% trans "click on question to edit" %}
 {%else%}
     {%if FEATURE_PREPARE_SEND_POLL and poll.is_ready_to_send %}
 <span id="state" >
