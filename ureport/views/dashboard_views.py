@@ -192,11 +192,11 @@ def alerts(request, pk):
     template = 'ureport/polls/alerts.html'
     if request.session.get('districts'):
         message_list = \
-            Message.objects.filter(details__attribute__name='alert'
+            Message.objects.filter(details__attribute__name='alert', direction='I',
 
             ).filter(connection__contact__reporting_location__in=request.session.get('districts'))
     else:
-        message_list = Message.objects.filter(details__attribute__name='alert')
+        message_list = Message.objects.filter(details__attribute__name='alert', direction='I')
 
     if request.session.get('groups', None):
         message_list = message_list.filter(connection__contact__groups__in=request.session.get('groups'
@@ -272,6 +272,11 @@ def alerts(request, pk):
             reply = 'Stop Capture'
         return HttpResponse(reply)
     if request.GET.get('ajax', None):
+        if request.GET.get('ajax') == 'get_replied':
+            date = datetime.datetime.now() - datetime.timedelta(seconds=60 * 30)
+            msgs = Message.objects.filter(detail__attribute__name='alerts', direction='I', date__gte=date).values_list(
+                'pk', flat=True)
+            return HttpResponse(simplejson.dumps(msgs), content_type="application/json")
         date = datetime.datetime.now() - datetime.timedelta(seconds=30)
         prev = request.session.get('prev', [])
         msgs = Message.objects.filter(details__attribute__name='alert',

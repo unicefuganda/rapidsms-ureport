@@ -1,309 +1,309 @@
 {% extends "layout.html" %}
 {% block stylesheets %}
-<link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/ureport_extras.css"/>
-<link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/ureport.min.css"/>
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/modal.css"/>
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/js_ui/jquery-ui.css"/>
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/ureport_extras.css"/>
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/ureport.min.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/modal.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/js_ui/jquery-ui.css"/>
 
-<style>
-    .star-rating {
-        list-style: none;
-        margin: 0px;
-        padding: 0px;
-        width: 100px;
-        height: 20px;
-        position: relative;
-        background: url({{ MEDIA_URL }}ureport/images/star_rating2.gif ) top left repeat-x;
-    }
+    <style>
+        .star-rating {
+            list-style: none;
+            margin: 0px;
+            padding: 0px;
+            width: 100px;
+            height: 20px;
+            position: relative;
+            background: url({{ MEDIA_URL }}ureport/images/star_rating2.gif ) top left repeat-x;
+        }
 
-    .star-rating li {
-        padding: 0px;
-        margin: 0px;
-        /*\*/
-        float: left;
-        /* */
-    }
+        .star-rating li {
+            padding: 0px;
+            margin: 0px;
+            /*\*/
+            float: left;
+            /* */
+        }
 
-    .star-rating li a {
-        display: block;
-        width: 20px;
-        height: 20px;
-        text-decoration: none;
-        text-indent: -9000px;
-        z-index: 20;
-        position: absolute;
-        padding: 0px;
-    }
+        .star-rating li a {
+            display: block;
+            width: 20px;
+            height: 20px;
+            text-decoration: none;
+            text-indent: -9000px;
+            z-index: 20;
+            position: absolute;
+            padding: 0px;
+        }
 
-    .star-rating li a:hover {
-        background: url({{ MEDIA_URL }}ureport/images/star_rating2.gif ) left bottom;
-        z-index: 1;
-        left: 0px;
-        border: none;
-    }
+        .star-rating li a:hover {
+            background: url({{ MEDIA_URL }}ureport/images/star_rating2.gif ) left bottom;
+            z-index: 1;
+            left: 0px;
+            border: none;
+        }
 
-    .star-rating a.one-star {
-        left: 0px;
-    }
+        .star-rating a.one-star {
+            left: 0px;
+        }
 
-    .star-rating a.one-star:hover {
-        width: 20px;
-    }
+        .star-rating a.one-star:hover {
+            width: 20px;
+        }
 
-    .star-rating a.two-stars {
-        left: 20px;
-    }
+        .star-rating a.two-stars {
+            left: 20px;
+        }
 
-    .star-rating a.two-stars:hover {
-        width: 40px;
-    }
+        .star-rating a.two-stars:hover {
+            width: 40px;
+        }
 
-    .star-rating a.three-stars:hover {
-        width: 60px;
-    }
+        .star-rating a.three-stars:hover {
+            width: 60px;
+        }
 
-    .star-rating a.three-stars {
-        left: 40px;
-    }
+        .star-rating a.three-stars {
+            left: 40px;
+        }
 
-    .star-rating a.four-stars {
-        left: 60px;
-    }
+        .star-rating a.four-stars {
+            left: 60px;
+        }
 
-    .star-rating a.four-stars:hover {
-        width: 80px;
-    }
+        .star-rating a.four-stars:hover {
+            width: 80px;
+        }
 
-    .star-rating a.five-stars {
-        left: 80px;
-    }
+        .star-rating a.five-stars {
+            left: 80px;
+        }
 
-    .star-rating a.five-stars:hover {
-        width: 100px;
-    }
+        .star-rating a.five-stars:hover {
+            width: 100px;
+        }
 
-    .star-rating a.rate5 {
-        background: url({{ MEDIA_URL }}ureport/images/star_rating2.gif ) left bottom;
-        z-index: 1;
-        left: 0px;
-        border: none;
-        width: 100px;
-    }
+        .star-rating a.rate5 {
+            background: url({{ MEDIA_URL }}ureport/images/star_rating2.gif ) left bottom;
+            z-index: 1;
+            left: 0px;
+            border: none;
+            width: 100px;
+        }
 
-    .star-rating a.rate4 {
-        background: url({{ MEDIA_URL }}ureport/images/star_rating2.gif ) left bottom;
-        z-index: 1;
-        left: 0px;
-        border: none;
-        width: 80px;
-    }
+        .star-rating a.rate4 {
+            background: url({{ MEDIA_URL }}ureport/images/star_rating2.gif ) left bottom;
+            z-index: 1;
+            left: 0px;
+            border: none;
+            width: 80px;
+        }
 
-    .star-rating a.rate3 {
-        background: url({{ MEDIA_URL }}ureport/images/star_rating2.gif ) left bottom;
-        z-index: 1;
-        left: 0px;
-        border: none;
-        width: 60px;
-    }
+        .star-rating a.rate3 {
+            background: url({{ MEDIA_URL }}ureport/images/star_rating2.gif ) left bottom;
+            z-index: 1;
+            left: 0px;
+            border: none;
+            width: 60px;
+        }
 
-    .star-rating a.rate2 {
-        background: url({{ MEDIA_URL }}ureport/images/star_rating2.gif ) left bottom;
-        z-index: 1;
-        left: 0px;
-        border: none;
-        width: 40px;
-    }
-    .current a{
-        background-color: #ccc;
-    }
+        .star-rating a.rate2 {
+            background: url({{ MEDIA_URL }}ureport/images/star_rating2.gif ) left bottom;
+            z-index: 1;
+            left: 0px;
+            border: none;
+            width: 40px;
+        }
+        .current a{
+            background-color: #ccc;
+        }
 
-    .star-rating a.rate1 {
-        background: url({{ MEDIA_URL }}ureport/images/star_rating2.gif ) left bottom;
-        z-index: 1;
-        left: 0px;
-        border: none;
-        width: 20px;
-    }
+        .star-rating a.rate1 {
+            background: url({{ MEDIA_URL }}ureport/images/star_rating2.gif ) left bottom;
+            z-index: 1;
+            left: 0px;
+            border: none;
+            width: 20px;
+        }
 
-</style>
+    </style>
 {% endblock %}
 {% block extra_js %}
 
 
 
-        {%endblock%}
+{%endblock%}
 
-        {%block top_js%}
-        <script src="{{MEDIA_URL}}ureport/javascripts/mp_dashboard.js" type="text/javascript"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/dropdown.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/jquery-ui.js"></script>
-<script type="text/javascript">
-
-
-    $(function () {
-        $.PeriodicalUpdater({
-                    url:"./?ajax=true&time="
-                },
-                function (data) {
-                    if (data == "success") {
-
-                    }
-                    else {
-                        d = eval(data);
-                        $.each(d, function (k, v) {
-
-                                    $("#mp_bd").prepend(v.row);
-                                         $('#'+v.pk).effect('highlight', {}, 3000);
+{%block top_js%}
+    <script src="{{MEDIA_URL}}ureport/javascripts/mp_dashboard.js" type="text/javascript"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/dropdown.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/jquery-ui.js"></script>
+    <script type="text/javascript">
 
 
+        $(function () {
+            $.PeriodicalUpdater({
+                        url:"./?ajax=true&time="
+                    },
+                    function (data) {
+                        if (data == "success") {
+
+                        }
+                        else {
+                            d = eval(data);
+                            $.each(d, function (k, v) {
+
+                                        $("#mp_bd").prepend(v.row);
+                                        $('#'+v.pk).effect('highlight', {}, 3000);
 
 
-                                }
 
-                        );
-                    }
 
-                });
+                                    }
 
-        $('.msg_rep').each(function (index, elem) {
+                            );
+                        }
 
-            $(elem)
-                    .bind('ajax:before', function (exhr, status, error) {
+                    });
 
-                        ajax_loading(elem);
-                    })
-                    .bind('ajax:success', function (evt, data, status, xhr) {
+            $('.msg_rep').each(function (index, elem) {
+
+                $(elem)
+                        .bind('ajax:before', function (exhr, status, error) {
+
+                            ajax_loading(elem);
+                        })
+                        .bind('ajax:success', function (evt, data, status, xhr) {
+
+                            // Insert response partial into page below the form.
+                            $('#message').html(xhr.responseText);
+                            $('#message').effect("highlight", {}, 3000);
+                            $('#message').show();
+                            $('.ajax_loading').remove();
+                        })
+                        .bind('ajax:failure', function (xhr, status, error) {
+                            alert("something went wrong!");
+                        });
+            });
+
+            $("#id_startdate").datepicker({ dateFormat: 'dd/mm/yy' ,changeYear: true ,changeMonth: true,minDate: new Date(2009, 1 - 1, 1) });
+            $("#id_enddate").datepicker({ dateFormat: 'dd/mm/yy' ,changeYear: true ,changeMonth: true,minDate: new Date(2009, 1 - 1, 1) });
+
+
+            $('#status').bind('ajax:before',function (exhr, status, error) {
+                ajax_loading('#status');
+
+            }).bind('ajax:success', function (evt, data, status, xhr) {
+
+                        $('#capty').html(xhr.responseText);
+                        $('.ajax_loading').remove();
+                    });
+
+            $('#remove_form').bind('ajax:before',function (exhr, status, error) {
+                ajax_loading('#remove');
+
+            }).bind('ajax:success', function (evt, data, status, xhr) {
+
+
+                        $('.ajax_loading').remove();
+                        var $form = $(this);
+
+                        // Reset fields and any validation errors, so form can be used again, but leave hidden_field values intact.
+                        $form.find('textarea,input[type="text"],input[type="file"]').val("");
+                        $('#mesg_title').html("Success:)");
+                        $('#mesg_body').html("Messages successfully removed from alerts .Please Refresh page. ");
+                        $('#mesg_st').show();
+
+                    });
+
+            $('#message_reply').bind('ajax:success', function (evt, data, status, xhr) {
+
+                $('#mesg_title').html("info");
+                $('#mesg_body').html("Message Successfully sent");
+                $('#mesg_st').show();
+                $('#mesg_st').effect("highlight", {}, 3000);
+            });
+
+            $('#message_forward').bind('ajax:success', function (evt, data, status, xhr) {
+                $('#mesg_title').html("info");
+                $('#mesg_body').html("Message Successfully forwarded");
+                $('#mesg_st').show();
+                $('#mesg_st').effect("highlight", {}, 3000);
+            });
+
+
+            $('.msg_send').each(function (index, elem) {
+
+                $(elem).bind('ajax:before',function (exhr, status, error) {
+                    ajax_loading(elem);
+
+                }).bind('ajax:success', function (evt, data, status, xhr) {
+
+                            $('#message').html(xhr.responseText);
+                            $('#message').show();
+                            $('#message').effect("highlight", {}, 3000);
+                            $('.ajax_loading').remove();
+
+                        })
+                        .bind('ajax:failure', function (xhr, status, error) {
+                            alert("something went wrong!");
+                        });
+            });
+
+
+        });
+
+
+        function bind_ajax(elem, cont) {
+
+            form=$(elem);
+            $.ureport.handleRemote( form );
+            $(elem).bind('ajax:before',function (exhr, status, error) {
+                ajax_loading(elem);
+            }).
+                    bind('ajax:success', function (evt, data, status, xhr) {
 
                         // Insert response partial into page below the form.
-                        $('#message').html(xhr.responseText);
-                        $('#message').effect("highlight", {}, 3000);
-                        $('#message').show();
+
+                        $('#' + cont).html(xhr.responseText);
+                        $('#'+cont).effect("highlight", {}, 3000);
                         $('.ajax_loading').remove();
+
+
                     })
                     .bind('ajax:failure', function (xhr, status, error) {
                         alert("something went wrong!");
                     });
-        });
+        }
 
-        $("#id_startdate").datepicker({ dateFormat: 'dd/mm/yy' ,changeYear: true ,changeMonth: true,minDate: new Date(2009, 1 - 1, 1) });
-        $("#id_enddate").datepicker({ dateFormat: 'dd/mm/yy' ,changeYear: true ,changeMonth: true,minDate: new Date(2009, 1 - 1, 1) });
-
-
-        $('#status').bind('ajax:before',function (exhr, status, error) {
-            ajax_loading('#status');
-
-        }).bind('ajax:success', function (evt, data, status, xhr) {
-
-            $('#capty').html(xhr.responseText);
-                    $('.ajax_loading').remove();
-        });
-
-        $('#remove_form').bind('ajax:before',function (exhr, status, error) {
-            ajax_loading('#remove');
-
-        }).bind('ajax:success', function (evt, data, status, xhr) {
-
-
-                    $('.ajax_loading').remove();
-                    var $form = $(this);
-
-                    // Reset fields and any validation errors, so form can be used again, but leave hidden_field values intact.
-                    $form.find('textarea,input[type="text"],input[type="file"]').val("");
-                    $('#mesg_title').html("Success:)");
-                    $('#mesg_body').html("Messages successfully removed from alerts .Please Refresh page. ");
-                    $('#mesg_st').show();
-
-                });
-
-        $('#message_reply').bind('ajax:success', function (evt, data, status, xhr) {
+        function message_info()
+        {
 
             $('#mesg_title').html("info");
             $('#mesg_body').html("Message Successfully sent");
             $('#mesg_st').show();
             $('#mesg_st').effect("highlight", {}, 3000);
-        });
+        }
 
-        $('#message_forward').bind('ajax:success', function (evt, data, status, xhr) {
-            $('#mesg_title').html("info");
-            $('#mesg_body').html("Message Successfully forwarded");
-            $('#mesg_st').show();
-            $('#mesg_st').effect("highlight", {}, 3000);
-        });
+        function bind_form(){
 
 
-        $('.msg_send').each(function (index, elem) {
+            form=$($(this).parents.find("form")[0]);
+            $.ureport.handleRemote( form );
+            form.bind('ajax:before',function (exhr, status, error) {
+                ajax_loading('#cat_tb');
 
-            $(elem).bind('ajax:before',function (exhr, status, error) {
-                ajax_loading(elem);
-
-            }).bind('ajax:success', function (evt, data, status, xhr) {
-
-                        $('#message').html(xhr.responseText);
-                        $('#message').show();
-                        $('#message').effect("highlight", {}, 3000);
-                        $('.ajax_loading').remove();
+            })
+                    .bind('ajax:success', function(evt, data, status, xhr) {
+                        $('#mesg_title').html("info");
+                        $('#mesg_body').html("Message Successfully sent");
+                        $('#mesg_st').show();
+                        $('#mesg_st').effect("highlight", {}, 3000);
 
                     })
-                    .bind('ajax:failure', function (xhr, status, error) {
+                    .bind('ajax:failure', function(evt, data, status, xhr) {
                         alert("something went wrong!");
                     });
-        });
-
-
-    });
-
-
-    function bind_ajax(elem, cont) {
-
-        form=$(elem);
-        $.ureport.handleRemote( form );
-        $(elem).bind('ajax:before',function (exhr, status, error) {
-            ajax_loading(elem);
-        }).
-                bind('ajax:success', function (evt, data, status, xhr) {
-
-                    // Insert response partial into page below the form.
-
-                    $('#' + cont).html(xhr.responseText);
-                    $('#'+cont).effect("highlight", {}, 3000);
-                    $('.ajax_loading').remove();
-
-
-                })
-                .bind('ajax:failure', function (xhr, status, error) {
-                    alert("something went wrong!");
-                });
-    }
-
-    function message_info()
-    {
-
-        $('#mesg_title').html("info");
-        $('#mesg_body').html("Message Successfully sent");
-        $('#mesg_st').show();
-        $('#mesg_st').effect("highlight", {}, 3000);
-    }
-
-    function bind_form(){
-
-
-        form=$($(this).parents.find("form")[0]);
-        $.ureport.handleRemote( form );
-        form.bind('ajax:before',function (exhr, status, error) {
-            ajax_loading('#cat_tb');
-
-        })
-                .bind('ajax:success', function(evt, data, status, xhr) {
-                    $('#mesg_title').html("info");
-                    $('#mesg_body').html("Message Successfully sent");
-                    $('#mesg_st').show();
-                    $('#mesg_st').effect("highlight", {}, 3000);
-
-                })
-                .bind('ajax:failure', function(evt, data, status, xhr) {
-                    alert("something went wrong!");
-                });
-    }
+        }
 
 
 
@@ -311,75 +311,75 @@
 
 
 
-</script>
+    </script>
 
 {% endblock %}
 
 {% block content %}
-<div>
+    <div>
 
     <div class="Module">
-        <h2>
-            Messages
-        </h2>
-        <a href="./?capture=toggle" onclick="c=$(this).attr('href')+'&time='+new Date().getTime();$(this).attr('href',c);" id="status" class="btn" data-remote=true>
+    <h2>
+        Messages
+    </h2>
+    <a href="./?capture=toggle" onclick="c=$(this).attr('href')+'&time='+new Date().getTime();$(this).attr('href',c);" id="status" class="btn" data-remote=true>
     <span id="capty">
         {%if capture_status.value == 'true'%}
-        Stop Capture
+            Stop Capture
         {%else%}
-        Start Capture
+            Start Capture
         {%endif%}
         </span>
 
 
-        </a>
-        {%if  perms.ureport.can_export %}
+    </a>
+    {%if  perms.ureport.can_export %}
 
 
 
 
-<span> <a  onclick="$('#district_filter').toggle();" href="javascript:void(0);" >Filter Districts >>|</a></span>
+        <span> <a  onclick="$('#district_filter').toggle();" href="javascript:void(0);" >Filter Districts >>|</a></span>
 
         <span><a  onclick="$('#download').toggle();" href="javascript:void(0);" >Download >></a>
         </span>
-         <span><a  onclick="$('#groups_filter').toggle();" href="javascript:void(0);" >Filter Groups >></a>
+        <span><a  onclick="$('#groups_filter').toggle();" href="javascript:void(0);" >Filter Groups >></a>
         </span>
 
 
-        {%endif%}
+    {%endif%}
 
-        <div id="download" style="display:none;">
-            <form  method="POST"  action="?download=true">
-                <table>
-                    {{range_form.as_table}}
-                    <tr><td><input type="submit" value="Download" class="btn" ></td></tr>
-                </table>
-            </form>
-        </div>
+    <div id="download" style="display:none;">
+        <form  method="POST"  action="?download=true">
+            <table>
+                {{range_form.as_table}}
+                <tr><td><input type="submit" value="Download" class="btn" ></td></tr>
+            </table>
+        </form>
+    </div>
 
-        <div id="district_filter" style="display:none;">
-           <form action="" method="POST" data-remote=true>
-               <table>
-            <tr><td>{{district_form.as_table}}</td> <td><input type="submit" name="Filter By District(s)" value="Filter By District(s)" data-disable-with="Filtering......"></td>
+    <div id="district_filter" style="display:none;">
+        <form action="" method="POST" data-remote=true>
+            <table>
+                <tr><td>{{district_form.as_table}}</td> <td><input type="submit" name="Filter By District(s)" value="Filter By District(s)" data-disable-with="Filtering......"></td>
 
-            <td><a class="btn" href="?reset_districts=true" data-remote=true>Reset Filter</a></td>
-            </tr>
-                </table>
+                    <td><a class="btn" href="?reset_districts=true" data-remote=true>Reset Filter</a></td>
+                </tr>
+            </table>
 
-           </form>
-        </div>
+        </form>
+    </div>
 
-        <div id="groups_filter" style="display:none;">
-            <form action="" method="post" data-remote=true>
-                Filter Group
-                {{ groupform.groups }}
+    <div id="groups_filter" style="display:none;">
+        <form action="" method="post" data-remote=true>
+            Filter Group
+            {{ groupform.groups }}
 
-                <input type="submit" value="filter group" data-disable-with="Filtering......" >
-            </form>
+            <input type="submit" value="filter group" data-disable-with="Filtering......" >
+        </form>
 
-        </div>
+    </div>
 
-        <div>
+    <div>
             <span> <form method="get">
                 <table>
                     <tr>
@@ -388,42 +388,42 @@
 
                 </table>
             </form>  </span>
-        </div>
+    </div>
 
-        <table class="zebra-striped bordered fc" width="100%">
-            <thead>
-            <tr>
-                <th>Actioned</th>
-                <th>Identifier</th>
-                <th>Text</th>
-                <th>Date</th>
-                <th>District</th>
-                <th>Action</th>
-                <th>Rating</th>
-            </tr>
-            </thead>
-            <tbody id="mp_bd">
-            {% load ureport %}
-            {% for msg in messages.object_list %}
+    <table class="zebra-striped bordered fc" width="100%">
+        <thead>
+        <tr>
+            <th>Actioned</th>
+            <th>Identifier</th>
+            <th>Text</th>
+            <th>Date</th>
+            <th>District</th>
+            <th>Action</th>
+            <th>Rating</th>
+        </tr>
+        </thead>
+        <tbody id="mp_bd">
+        {% load ureport %}
+        {% for msg in messages.object_list %}
             {% set alert = False %}
             <tr>
-                <td>
+                <td id="replied_{{ msg.pk }}">
                     {%for  m  in msg.details.all%}
 
-                    {%if m.attribute.name == "replied"%}
+                        {%if m.attribute.name == "replied"%}
 
-                    {{m.attribute.name}}
-                    {%endif%}
-                    {%if m.attribute.name == "forwarded"%}
+                            {{m.attribute.name}}
+                        {%endif%}
+                        {%if m.attribute.name == "forwarded"%}
 
-                    {{m.attribute.name}}
-                    {%endif%}
+                            {{m.attribute.name}}
+                        {%endif%}
 
                     {%endfor%}
                 </td>
                 <td>
                     <a href="/messagehistory/{{msg.connection_id}}/">
-                   {{ msg.connection_id }}
+                        {{ msg.connection_id }}
                     </a>
                 </td>
                 <td>{{ msg.text }}</td>
@@ -433,8 +433,8 @@
 
                     <a id="msg_rep_link" href="/sendmessage/?forward=true&msg={{msg.pk}}" class="btn msg_rep"
                        data-remote=true>Foward</a><a style="margin-top:3px; "
-                                                      href="/sendmessage/?reply=true&msg={{msg.pk}}"
-                                                      class="btn msg_send" id="msg_send_link" data-remote=true>Reply</a>
+                                                     href="/sendmessage/?reply=true&msg={{msg.pk}}"
+                                                     class="btn msg_send" id="msg_send_link" data-remote=true>Reply</a>
                 </td>
                 <td>
 
@@ -442,32 +442,32 @@
                     <ul class='star-rating' id="rate{{msg.pk}}">
 
                         {%for d in  msg.details.all%}
-                        {% if d.attribute.name == "rating" %}
+                            {% if d.attribute.name == "rating" %}
 
 
-                        <li><a href='javascript:void(0)' class="rate{{d.value}}"
+                                <li><a href='javascript:void(0)' class="rate{{d.value}}"
 
-                               title="{{d.description}}">{{d.value}} </a></li>
-                        {% set alert = True %}
-{%endif%}
+                                       title="{{d.description}}">{{d.value}} </a></li>
+                                {% set alert = True %}
+                            {%endif%}
                         {%endfor%}
 
                         {%if not alert%}
 
-                        <li><a href='./?rating=1&msg={{msg.pk}}'  onclick="bind_ajax(this,'rate{{msg.pk}}');"
-                               data-remote=true title='Requires Attention' class='one-star star'>1</a></li>
-                        <li><a href='./?rating=2&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
-                               data-remote=true title='Moderate' class='two-stars star'>2</a></li>
-                        <li><a href='./?rating=3&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
-                               data-remote=true title='Important' class='three-stars star'>3</a></li>
-                        <li><a href='./?rating=4&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
-                               data-remote=true title='Urgent' class='four-stars star star'>4</a></li>
-                        <li><a href='./?rating=5&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
-                               data-remote=true title='Very Urgent' class='five-stars star '>5</a></li>
+                            <li><a href='./?rating=1&msg={{msg.pk}}'  onclick="bind_ajax(this,'rate{{msg.pk}}');"
+                                   data-remote=true title='Requires Attention' class='one-star star'>1</a></li>
+                            <li><a href='./?rating=2&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
+                                   data-remote=true title='Moderate' class='two-stars star'>2</a></li>
+                            <li><a href='./?rating=3&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
+                                   data-remote=true title='Important' class='three-stars star'>3</a></li>
+                            <li><a href='./?rating=4&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
+                                   data-remote=true title='Urgent' class='four-stars star star'>4</a></li>
+                            <li><a href='./?rating=5&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
+                                   data-remote=true title='Very Urgent' class='five-stars star '>5</a></li>
                         {%endif%}
 
                     </ul>
-<a href="/uncapture/{{msg.pk}}/" onclick="$('#uncapt').remove();" id="uncapt"data-remote=True class="btn">Delete</a>
+                    <a href="/uncapture/{{msg.pk}}/" onclick="$('#uncapt').remove();" id="uncapt"data-remote=True class="btn">Delete</a>
 
 
                     <ul style="list-style: none;">
@@ -479,8 +479,8 @@
                             </a>
                             <ul class="dropdown-menu">
                                 {% for poll in assign_polls %}
-                                <li><a onclick="$('#asspan{{msg.pk}}').text('Assined to {{poll.name}}');" href="/assign/{{msg.pk}}/{{poll.pk}}/" data-remote=True >{{ poll.name }}</a>
-                                </li>
+                                    <li><a onclick="$('#asspan{{msg.pk}}').text('Assined to {{poll.name}}');" href="/assign/{{msg.pk}}/{{poll.pk}}/" data-remote=True >{{ poll.name }}</a>
+                                    </li>
                                 {% endfor %}
                             </ul>
                         </li>
@@ -491,78 +491,89 @@
 
             </tr>
 
-            {% endfor %}
-            </tbody>
-        </table>
-        <div class="modal hide" id="message">
-            <form method="post" id="message_form" action="?category=true" data-remote=true>
-                <div class="modal-header">
-                    <a class="close" data-dismiss="modal" onclick='$(".modal").hide()'>×</a>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="modal hide" id="message">
+        <form method="post" id="message_form" action="?category=true" data-remote=true>
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal" onclick='$(".modal").hide()'>×</a>
 
 
-                    <h3>{{title}}</h3>
+                <h3>{{title}}</h3>
 
 
-                </div>
-                <div class="modal-body">
-                    <table>
+            </div>
+            <div class="modal-body">
+                <table>
 
-                        {{send_message_form.as_table}}
-                        <tr>
-                            <td></td>
-                        </tr>
+                    {{send_message_form.as_table}}
+                    <tr>
+                        <td></td>
+                    </tr>
 
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>
-                    <input type="submit" class="btn btn-primary" value="Send Message">
-                </div>
-            </form>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>
+                <input type="submit" class="btn btn-primary" value="Send Message">
+            </div>
+        </form>
 
-        </div>
+    </div>
 
-        <div class="modal hide" id="mesg_st">
+    <div class="modal hide" id="mesg_st">
 
-                <div class="modal-header">
-                    <a class="close" data-dismiss="modal" onclick='$(".modal").hide()'>×</a>
-
-
-                    <h3 id="mesg_title"></h3>
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal" onclick='$(".modal").hide()'>×</a>
 
 
-                </div>
-                <div class="modal-body" id="mesg_body">
-
-                </div>
-                <div class="modal-footer">
-                    <a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>
-
-                </div>
+            <h3 id="mesg_title"></h3>
 
 
         </div>
+        <div class="modal-body" id="mesg_body">
 
-
-
-        <div class="pagination">
-
-{% load ureport %}
-
-            {% for num in messages.page_range %}
-            {% if not num %} <a>...</a>  {# literally dots #}
-            {% else %}
-            <span {% if num == messages.number%}class="current"{%endif%}>
-
-            <a href=" {% add_get_parameter page=num %} " >{{num}}</a></span>
-
-            {% endif %}
-            {% endfor %}
+        </div>
+        <div class="modal-footer">
+            <a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>
 
         </div>
 
 
     </div>
 
-</div>
+
+
+    <div class="pagination">
+
+        {% load ureport %}
+
+        {% for num in messages.page_range %}
+            {% if not num %} <a>...</a>  {# literally dots #}
+            {% else %}
+                <span {% if num == messages.number%}class="current"{%endif%}>
+
+            <a href=" {% add_get_parameter page=num %} " >{{num}}</a></span>
+
+            {% endif %}
+        {% endfor %}
+
+    </div>
+
+
+    </div>
+
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            setInterval(function() {
+                $.post("/alerts/?ajax=get_replied", function (result) {
+                    $.each(result, function(index, value){
+                        $('#replied_'+value).html('replied');
+                    });
+                });
+            }, 5000);
+        });
+    </script>
 {% endblock %}

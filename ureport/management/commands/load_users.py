@@ -12,14 +12,14 @@ from rapidsms.contrib.locations.models import Location
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option("-f", "--file", dest="path"),
+        make_option("-g", "--group", dest="group"),
     )
 
     def handle(self, **options):
         path = options["path"]
+        group = options['group']
+        group = Group.objects.get(name=group)
         csv_rows = csv.reader(open(path, 'rU'), delimiter=",")
-        a = open('/home/kenneth/phones-notexist.csv', 'wb')
-        spam = csv.writer(a, delimiter=",", quotechar="'", quoting=csv.QUOTE_MINIMAL)
-        spam.writerow(['identity', 'Phone', 'District'])
         n = 0
         for row in csv_rows:
             n += 1
@@ -30,16 +30,12 @@ class Command(BaseCommand):
                 continue
             except Connection.DoesNotExist:
                 print row[0], "Does not exist", n
-                spam.writerow([row[0], "", ""])
                 continue
             else:
                 print "passed", n
                 if con.contact is not None:
-                    x = unicode(con.contact.reporting_location)
-                else:
-                    x = ""
-                # spam.writerow([con.pk, con.identity, x])
-        a.close()
+                    con.contact.groups.add(group)
+                    print "Added", con, "to", group, n
 
 
     def clean_number(self, num):
