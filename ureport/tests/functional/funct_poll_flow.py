@@ -35,7 +35,6 @@ class PollFlowTest(PollBase):
         cls.cleanup("/admin/rapidsms/contact/")
         cls.cleanup("/admin/auth/group/")
         SplinterWrapper.open(cls.browser, '/account/logout')
-        cls.browser.quit()
 
     def test_that_poll_status_changes_when_started(self):
         SplinterWrapper.open(self.browser,"/poll_status/%s" % self.poll_id)

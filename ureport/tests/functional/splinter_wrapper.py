@@ -7,9 +7,19 @@ from splinter import Browser
 class SplinterWrapper(TestCase):
 
     __browser = None
+
+    @classmethod
+    def setUpClass(cls):
+        cls.__browser = Browser()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.__browser.quit()
+        cls.__browser = None
+
     @classmethod
     def getBrowser(cls):
-        return Browser()
+        return Browser() if cls.__browser is None else cls.__browser
 
     def __init__(self, methodName='runTest'):
         super(SplinterWrapper, self).__init__(methodName)

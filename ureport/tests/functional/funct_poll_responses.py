@@ -7,7 +7,7 @@ import time
 
 
 class PollResponsesTest(PollBase):
-    browser = Browser()
+    browser = SplinterWrapper.getBrowser()
 
     def tearDown(self):
         self.cleanup("/admin/poll/response/")
@@ -35,7 +35,6 @@ class PollResponsesTest(PollBase):
         cls.cleanup("/admin/rapidsms/backend/")
         cls.cleanup("/admin/rapidsms/contact/")
         cls.cleanup("/admin/auth/group/")
-        cls.browser.quit()
 
     def test_that_poll_responses_are_shown_up_at_report_page(self):
         PollBase.reopen_poll(self.browser,self.poll_id)
