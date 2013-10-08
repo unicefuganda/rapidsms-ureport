@@ -384,7 +384,7 @@ class NewPollForm(forms.Form): # pragma: no cover
 
     TYPE_YES_NO = 'yn'
 
-    type = forms.ChoiceField(required=True, label=_("Type"), choices=((TYPE_YES_NO, 'Yes/No Question'),))
+    type = forms.ChoiceField(required=True, label=_("Type"), choices=((TYPE_YES_NO, _('Yes/No Question')),))
     response_type = forms.ChoiceField(choices=Poll.RESPONSE_TYPE_CHOICES, widget=RadioSelect,
                                       initial=Poll.RESPONSE_TYPE_ALL, label=_("Response type"))
 
