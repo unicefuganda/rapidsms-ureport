@@ -312,13 +312,13 @@ class SignupForm(forms.Form):
 
 
 class ReplyTextForm(ActionForm):
-    text = forms.CharField(required=True, widget=SMSInput())
-    action_label = 'Reply to selected'
+    text = forms.CharField(required=True, widget=SMSInput(), label=_("Text"))
+    action_label = _('Reply to selected')
 
     def perform(self, request, results):
         if results is None or len(results) == 0:
-            return ('A message must have one or more recipients!',
-                    'error')
+            return (_('A message must have one or more recipients!'),
+                    _('error'))
 
         if request.user and request.user.has_perm('contact.can_message'
         ):
@@ -494,7 +494,7 @@ class AssignResponseGroupForm(ActionForm):
 
 class BlacklistForm2(ActionForm):
     """ abstract class for all the filter forms"""
-    action_label = 'Blacklist/Opt-out Users'
+    action_label = _('Blacklist/Opt-out Users')
 
     def perform(self, request, results):
         if request.user and request.user.has_perm('unregister.add_blacklist'):

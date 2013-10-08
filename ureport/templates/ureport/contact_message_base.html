@@ -1,4 +1,5 @@
 {% extends "generic/base.html" %}
+{% load i18n %}
 {% block title %}
     Messages - {{ block.super }}
 {% endblock %}
@@ -17,20 +18,20 @@
 {% block filters %}
 
             <div style="height:130px;" class="module">
-                <h2>Filters</h2>
+                <h2>{% trans "Filters" %}</h2>
 
             <table class="fc">
 
-                <tr>  <td>Search Messages :</td> <td>{{ filter_forms.0.search }}</td>  <td>Filter By District :</td> <td>{{ filter_forms.1.district }}</td>        </tr>
+                <tr>  <td>{% trans "Search Messages" %} :</td> <td>{{ filter_forms.0.search }}</td>  <td>{% trans "Filter By District" %} :</td> <td>{{ filter_forms.1.district }}</td>        </tr>
 
                 <tr>
                     <td> 
-                    <a href="javascript:void(0)" onclick="filter(this)" class="btn-primary btn btn-large">Update</a>
+                    <a href="javascript:void(0)" onclick="filter(this)" class="btn-primary btn btn-large">{% trans "Update" %}</a>
 
                    </td>
                     <td>
 
-                    <a href="./" class="btn-primary btn btn-large">Clear</a>
+                    <a href="./" class="btn-primary btn btn-large">{% trans "Clear" %}</a>
 
                     </td>
                 </tr>
