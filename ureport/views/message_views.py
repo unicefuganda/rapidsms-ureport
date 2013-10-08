@@ -30,6 +30,7 @@ from ureport.forms import BlacklistForm2, ReplyTextForm
 from ureport.views.utils.paginator import ureport_paginate
 from django.db import transaction
 from uganda_common.utils import assign_backend
+from django.utils.translation import ugettext as _
 
 
 @login_required
@@ -40,11 +41,11 @@ def messages(request):
     partial_row = 'ureport/partials/messages/message_row.html'
     base_template = 'ureport/contact_message_base.html'
     paginator_template = 'ureport/partials/new_pagination.html'
-    columns = [('Text', True, 'text', SimpleSorter()),
-               ('Identifier', True, 'connection__pk', SimpleSorter()),
-               ('Date', True, 'date',
-                SimpleSorter()), ('Type', True, 'application',
-                                  SimpleSorter()), ('Response', False, 'response', None)]
+    columns = [(_('Text'), True, 'text', SimpleSorter()),
+               (_('Identifier'), True, 'connection__pk', SimpleSorter()),
+               (_('Date'), True, 'date',
+                SimpleSorter()), (_('Type'), True, 'application',
+                                  SimpleSorter()), (_('Response'), False, 'response', None)]
 
     queryset = get_messages(request=request)
     if access:
@@ -56,7 +57,7 @@ def messages(request):
         filter_forms=filter_forms,
         action_forms=action_forms,
         objects_per_page=25,
-        results_title="Message Log",
+        results_title=_("Message Log"),
         partial_row=partial_row,
         base_template=base_template,
         paginator_template=paginator_template,
