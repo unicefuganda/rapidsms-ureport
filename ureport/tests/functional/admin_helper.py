@@ -1,4 +1,3 @@
-from splinter import Browser
 import time
 
 def fill_form(browser, field_values, by_name=False, select_by_value=False):

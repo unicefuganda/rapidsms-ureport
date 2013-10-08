@@ -1,22 +1,22 @@
 from datetime import datetime
-
 from django.conf import settings
-from splinter_wrapper import SplinterWrapper
 from ureport.tests.functional.admin_helper import fill_form_and_submit, fill_form
-
+from ureport.tests.functional.splinter_wrapper import SplinterWrapper
 
 REPORTING_LOCATION_ID_KAMAIBA = "Kamaiba"
 REPORTING_LOCATION_KAMAIBA_DISTRICT = "Kasese"
 
-class AdminBase (SplinterWrapper):
+class AdminBase():
+    browser = SplinterWrapper.getBrowser()
+
     @classmethod
     def create_backend(cls, browser, name):
-        SplinterWrapper.open(browser,"/admin/rapidsms/backend/add/")
+        SplinterWrapper.open("/admin/rapidsms/backend/add/")
         fill_form_and_submit(browser, {"id_name": name}, "_save")
 
     @classmethod
     def create_contact(cls, browser, name, gender, backend_name, identity, group):
-        SplinterWrapper.open(browser,"/admin/rapidsms/contact/add/")
+        SplinterWrapper.open("/admin/rapidsms/contact/add/")
         form_data = {
             "id_name": name,
             "id_gender": gender,
@@ -31,25 +31,26 @@ class AdminBase (SplinterWrapper):
 
     @classmethod
     def create_group(cls, browser, name):
-        SplinterWrapper.open(browser,"/admin/auth/group/add/")
+        SplinterWrapper.open("/admin/auth/group/add/")
         fill_form_and_submit(browser, {"id_name": name}, "_save")
 
     def create_user(self, name, group):
-        self.open("/admin/auth/user/add/")
+        SplinterWrapper.open("/admin/auth/user/add/")
         fill_form_and_submit(self.browser, {"id_username": name, "id_password1": name, "id_password2": name}, "_save")
         fill_form_and_submit(self.browser, {"id_groups": group}, "_save")
 
-    def change_users_group(self, group_name):
-        SplinterWrapper.open(self.browser,"/admin/auth/user")
-        self.browser.click_link_by_text("ureport")
-        fill_form_and_submit(self.browser, {"id_groups": group_name}, "_save")
+    @classmethod
+    def change_users_group(cls, group_name):
+        SplinterWrapper.open("/admin/auth/user")
+        cls.browser.click_link_by_text("ureport")
+        fill_form_and_submit(cls.browser, {"id_groups": group_name}, "_save")
 
     @classmethod
-    def log_in_as_ureport(cls,browser):
-        SplinterWrapper.open(browser,'/accounts/login')
-        browser.fill("username", "ureport")
-        browser.fill("password", "ureport")
-        browser.find_by_css("input[type=submit]").first.click()
+    def log_in_as_ureport(cls):
+        SplinterWrapper.open('/accounts/login')
+        cls.browser.fill("username", "ureport")
+        cls.browser.fill("password", "ureport")
+        cls.browser.find_by_css("input[type=submit]").first.click()
 
     def log_as_admin_and_visit(self, url):
         self.create_and_sign_in_admin("ureport", "ureport", url)

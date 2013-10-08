@@ -1,13 +1,14 @@
-from splinter_wrapper import SplinterWrapper
-from ureport.tests.functional.admin_base import AdminBase
+import unittest
+from ureport.tests.functional.poll_assertions import PollAssertions
 from ureport.tests.functional.admin_helper import fill_form_and_submit, fill_form, rows_of_table_by_class
+from ureport.tests.functional.splinter_wrapper import SplinterWrapper
+from ureport.tests.functional.admin_base import AdminBase
 from ureport.tests.functional.poll_base import PollBase
 
 
-class PollFlowTest(PollBase):
-
+class PollFlowTest(unittest.TestCase,PollBase,PollAssertions):
     browser = SplinterWrapper.getBrowser()
-    AdminBase.log_in_as_ureport(browser)
+    AdminBase.log_in_as_ureport()
     poll_id, question = PollBase.setup_poll(browser)
 
     @classmethod
@@ -16,7 +17,7 @@ class PollFlowTest(PollBase):
 
     @classmethod
     def cleanup(cls, url):
-        SplinterWrapper.open(cls.browser,url)
+        SplinterWrapper.open(url)
 
         if cls.browser.is_element_present_by_id("action-toggle"):
             fill_form(cls.browser, {"action-toggle": True})
@@ -34,10 +35,10 @@ class PollFlowTest(PollBase):
         cls.cleanup("/admin/rapidsms/backend/")
         cls.cleanup("/admin/rapidsms/contact/")
         cls.cleanup("/admin/auth/group/")
-        SplinterWrapper.open(cls.browser, '/account/logout')
+        SplinterWrapper.open('/account/logout')
 
     def test_that_poll_status_changes_when_started(self):
-        SplinterWrapper.open(self.browser,"/poll_status/%s" % self.poll_id)
+        SplinterWrapper.open("/poll_status/%s" % self.poll_id)
         self.assert_that_poll_start_date_is_not_none(self.poll_id)
 
 
@@ -45,24 +46,24 @@ class PollFlowTest(PollBase):
          self.assert_that_poll_question_are_sent_out_to_contacts(1, 'What is your name')
 
     def test_that_polls_can_be_responded(self):
-        SplinterWrapper.open(self.browser,'/router/console/')
+        SplinterWrapper.open('/router/console/')
         number_of_responses = len(rows_of_table_by_class(self.browser, "messages module"))
         self.respond_to_the_started_poll("0794339344", "yes")
         self.assert_that_number_of_responses_increase_by(number_of_responses, 1)
 
     def test_that_polls_can_be_reopen(self):
-        SplinterWrapper.open(self.browser,"/view_poll/%s" % self.poll_id)
-        self.close_poll(self.poll_id)
+        SplinterWrapper.open("/view_poll/%s" % self.poll_id)
+        PollBase.close_poll(self.poll_id)
         self.browser.find_link_by_text('Reopen Poll').first.click()
 
         self.assert_that_poll_end_date_is_none(self.poll_id)
 
     def test_that_admin_is_able_to_add_new_poll(self):
-        SplinterWrapper.open(self.browser,'/mypolls/%s' % self.poll_id)
+        SplinterWrapper.open('/mypolls/%s' % self.poll_id)
         self.assert_that_page_has_add_poll_button()
 
     def test_should_show_the_status_page(self):
-        SplinterWrapper.open(self.browser,"/poll_status/%s" % self.poll_id)
+        SplinterWrapper.open("/poll_status/%s" % self.poll_id)
 
         self.assertEqual(self.browser.is_element_present_by_id('poll-details'), True)
         self.assertTrue(self.poll_id in self.browser.find_by_id("poll-details").first.text)
@@ -76,8 +77,8 @@ class PollFlowTest(PollBase):
         poll_id, question = PollBase.setup_poll(self.browser,question="Will this test pass?",number_prefix=number_prefix)
         PollBase.start_poll(self.browser,poll_id)
         self.respond_to_the_started_poll("%s4" % number_prefix , "yes")
-        self.change_users_group(group_name)
-        SplinterWrapper.open(self.browser, '/reporter/')
+        AdminBase.change_users_group(group_name)
+        SplinterWrapper.open( '/reporter/')
         self.search_by_ureporter_group("%s" % group_name)
         self.assertEquals(True, self.browser.is_text_present("777774"))
 
