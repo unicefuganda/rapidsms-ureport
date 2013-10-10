@@ -9,8 +9,6 @@ from ureport.tests.functional.admin_base import AdminBase
 
 class PollResponsesTest(unittest.TestCase, PollAssertions):
     browser = SplinterWrapper.getBrowser()
-    AdminBase.log_in_as_ureport(browser)
-    poll_id, question = PollBase.setup_poll(browser,question="This is a new poll.")
 
     def tearDown(self):
         self.cleanup("/admin/poll/response/")
@@ -18,7 +16,8 @@ class PollResponsesTest(unittest.TestCase, PollAssertions):
 
     @classmethod
     def setUpClass(cls):
-        PollBase.start_poll(cls.browser,cls.poll_id)
+        AdminBase.log_in_as_ureport()
+        cls.poll_id, cls.question = PollBase.setup_poll(browser,question="This is a new poll.")
         AdminBase.change_users_group("groupFT")
 
     @classmethod
@@ -50,7 +49,6 @@ class PollResponsesTest(unittest.TestCase, PollAssertions):
         self.assert_that_number_of_responses_is(1)
 
     def test_that_a_poll_response_can_be_reassigned_to_another_poll(self):
-        PollBase.close_poll(self.poll_id)
         second_poll_id = PollBase.create_poll(self.browser,name='Second Poll',type="Yes/No Question",question="Is the first poll working?",group="groupFT")
         PollBase.start_poll(self.browser,second_poll_id)
 

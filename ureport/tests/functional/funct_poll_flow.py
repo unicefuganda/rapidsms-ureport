@@ -8,7 +8,7 @@ from ureport.tests.functional.poll_base import PollBase
 
 class PollFlowTest(unittest.TestCase,PollBase,PollAssertions):
     browser = SplinterWrapper.getBrowser()
-    AdminBase.log_in_as_ureport(browser)
+    AdminBase.log_in_as_ureport()
     poll_id, question = PollBase.setup_poll(browser)
 
     @classmethod
@@ -18,7 +18,6 @@ class PollFlowTest(unittest.TestCase,PollBase,PollAssertions):
     @classmethod
     def cleanup(cls, url):
         SplinterWrapper.open(url)
-
         if cls.browser.is_element_present_by_id("action-toggle"):
             fill_form(cls.browser, {"action-toggle": True})
             fill_form_and_submit(cls.browser, {"action": "delete_selected"}, "index", True, True)

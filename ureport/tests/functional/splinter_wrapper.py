@@ -43,7 +43,7 @@ class SplinterWrapper():
 
     @classmethod
     def open(cls,url):
-            cls._browser.visit("%s%s" % (settings.TEST_SERVER_URL, url))
+        cls._browser.visit("%s%s" % (settings.TEST_SERVER_URL, url))
 
     # def wait_for_seconds(self, time_out_in_seconds):
     #     current_time = datetime.datetime.now()
