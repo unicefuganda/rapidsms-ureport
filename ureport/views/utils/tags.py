@@ -140,7 +140,7 @@ def get_category_tags(district=None, category=None, date_range=None):
                 messages = IbmMsgCategory.objects.filter(msg__date__range=date_range, msg__direction='I',
                                                          score__gte=0.5,
                                                          msg__connection__contact__reporting_location=district).order_by(
-                    'msg__date').exclude(category_name__in=['family & relationships', "energy", "u-report", "social policy", "employment"])
+                    'msg__date').exclude(category__name__in=['family & relationships', "energy", "u-report", "social policy", "employment"])
         else:
             if category:
                 messages = IbmMsgCategory.objects.filter(msg__direction='I', category=category,
@@ -151,7 +151,7 @@ def get_category_tags(district=None, category=None, date_range=None):
                 messages = IbmMsgCategory.objects.filter(msg__direction='I',
                                                          score__gte=0.5,
                                                          msg__connection__contact__reporting_location=district).order_by(
-                    'msg__date').exclude(category_name__in=['family & relationships', "energy", "u-report", "social policy", "employment"])
+                    'msg__date').exclude(category__name__in=['family & relationships', "energy", "u-report", "social policy", "employment"])
     if category and not district:
         if date_range:
             messages = IbmMsgCategory.objects.filter(msg__date__range=date_range, msg__direction='I', score__gte=0.5,
