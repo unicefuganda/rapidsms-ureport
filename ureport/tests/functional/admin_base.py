@@ -43,6 +43,7 @@ class AdminBase():
     def change_users_group(cls, group_name):
         SplinterWrapper.open("/admin/auth/user")
         cls.browser.click_link_by_text("ureport")
+
         fill_form_and_submit(cls.browser, {"id_groups": group_name}, "_save")
 
     @classmethod

@@ -14,18 +14,22 @@ class PollBase(PollAssertions):
     @classmethod
     def start_poll(cls,browser, poll_id):
         SplinterWrapper.open("/view_poll/%s " % poll_id)
-
-        browser.find_link_by_text('Start Poll').first.click()
-        time.sleep(2) #Sending questions is an asynchronous process
+        if len(browser.find_link_by_text('Start Poll')) > 0:
+            browser.find_link_by_text('Start Poll').first.click()
+            time.sleep(2) #Sending questions is an asynchronous process
+        elif len(browser.find_link_by_text('Reopen Poll')) > 0:
+            PollBase.reopen_poll(browser,poll_id)
 
     @classmethod
     def reopen_poll(cls,browser, poll_id):
         SplinterWrapper.open("/view_poll/%s " % poll_id)
         browser.find_link_by_text('Reopen Poll').first.click()
+
     @classmethod
     def close_poll(cls, poll_id):
         SplinterWrapper.open("/view_poll/%s" % poll_id)
-        cls.browser.find_link_by_text('Close Poll').first.click()
+        if len(cls.browser.find_link_by_text('Close Poll')) > 0:
+            cls.browser.find_link_by_text('Close Poll').first.click()
 
 
     def get_poll(self, poll_id):

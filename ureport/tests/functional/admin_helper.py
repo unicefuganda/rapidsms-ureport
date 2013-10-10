@@ -34,5 +34,4 @@ def fill_form_and_submit(browser, form_data, submit_button_name, by_name=False, 
 
 
 def rows_of_table_by_class(browser, container_class):
-    time.sleep(5)
     return browser.find_by_xpath('//*[@class="%s"]/table/tbody/tr' % container_class)
