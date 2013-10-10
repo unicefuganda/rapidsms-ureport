@@ -8,7 +8,7 @@ from ureport.tests.functional.poll_base import PollBase
 
 class PollFlowTest(unittest.TestCase,PollBase,PollAssertions):
     browser = SplinterWrapper.getBrowser()
-    AdminBase.log_in_as_ureport()
+    AdminBase.log_in_as_ureport(browser)
     poll_id, question = PollBase.setup_poll(browser)
 
     @classmethod
