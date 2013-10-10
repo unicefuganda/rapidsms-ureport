@@ -9,7 +9,8 @@ from ureport.tests.functional.admin_base import AdminBase
 
 class PollResponsesTest(unittest.TestCase, PollAssertions):
     browser = SplinterWrapper.getBrowser()
-
+    AdminBase.log_in_as_ureport()
+    poll_id, question = PollBase.setup_poll(browser,question="This is a new poll.")
 
     def tearDown(self):
         self.cleanup("/admin/poll/response/")
@@ -17,15 +18,12 @@ class PollResponsesTest(unittest.TestCase, PollAssertions):
 
     @classmethod
     def setUpClass(cls):
-        AdminBase.log_in_as_ureport()
-        cls.poll_id, cls.question = PollBase.setup_poll(cls.browser,question="This is a new poll.")
         PollBase.start_poll(cls.browser,cls.poll_id)
         AdminBase.change_users_group("groupFT")
 
     @classmethod
     def cleanup(cls, url):
         SplinterWrapper.open(url)
-
         if cls.browser.is_element_present_by_id("action-toggle"):
             fill_form(cls.browser, {"action-toggle": True})
             fill_form_and_submit(cls.browser, {"action": "delete_selected"}, "index", True, True)
