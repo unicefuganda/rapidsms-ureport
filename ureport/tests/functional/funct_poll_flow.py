@@ -71,19 +71,19 @@ class PollFlowTest(unittest.TestCase,PollBase,PollAssertions):
         self.assertEqual(self.browser.find_by_id('category-count').text, "3")
         self.assertEqual(self.browser.find_by_id('is-yesno').text, "yes")
 
-    def test_admin_can_search_for_ureporter(self):
-        group_name = "groupFT"
-        number_prefix="77777"
-        poll_id, question = PollBase.setup_poll(self.browser,question="Will this test pass?",number_prefix=number_prefix)
-        PollBase.start_poll(self.browser,poll_id)
-        self.respond_to_the_started_poll("%s4" % number_prefix , "yes")
-        AdminBase.change_users_group(group_name)
-        SplinterWrapper.open( '/reporter/')
-        self.search_by_ureporter_group("%s" % group_name)
-        self.assertEquals(True, self.browser.is_text_present("777774"))
-
-    def search_by_ureporter_group(self, group_name):
-        element_list_macthing_option = self.browser.find_option_by_text(group_name)
-        self.browser.select("groups", element_list_macthing_option.first.value)
-        self.browser.click_link_by_partial_text("Update")
-        return self
+    # def test_admin_can_search_for_ureporter(self):
+    #     group_name = "groupFT"
+    #     number_prefix="77777"
+    #     poll_id, question = PollBase.setup_poll(self.browser,question="Will this test pass?",number_prefix=number_prefix)
+    #     PollBase.start_poll(self.browser,poll_id)
+    #     self.respond_to_the_started_poll("%s4" % number_prefix , "yes")
+    #     AdminBase.change_users_group(group_name)
+    #     SplinterWrapper.open( '/reporter/')
+    #     self.search_by_ureporter_group("%s" % group_name)
+    #     self.assertEquals(True, self.browser.is_text_present("777774"))
+    #
+    # def search_by_ureporter_group(self, group_name):
+    #     element_list_macthing_option = self.browser.find_option_by_text(group_name)
+    #     self.browser.select("groups", element_list_macthing_option.first.value)
+    #     self.browser.click_link_by_partial_text("Update")
+    #     return self
