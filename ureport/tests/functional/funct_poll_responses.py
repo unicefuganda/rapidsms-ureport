@@ -41,7 +41,8 @@ class PollResponsesTest(unittest.TestCase, PollAssertions):
 
         PollBase.respond_to_the_started_poll("0794339344", "yes")
         SplinterWrapper.open('/polls/%s/report/' % self.poll_id)
-
+        
+        time.sleep(2)
         self.assert_that_question_is(self.question)
         self.assert_the_number_of_participants_of_the_poll_is(1)
 
