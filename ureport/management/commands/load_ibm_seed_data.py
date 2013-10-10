@@ -28,7 +28,7 @@ class Command(BaseCommand):
         return connection
 
     def create_message(self, connection, text, direction, status):
-        return Message.objects.create(connection=connection, text=text, direction=direction, status=status)
+        return Message.objects.get_or_create(connection=connection, text=text, direction=direction, status=status)
 
     def load_categories(self):
         arguments = ["manage.py", "loaddata", "initial_categories"]
@@ -48,8 +48,9 @@ class Command(BaseCommand):
 
         for category in categories:
             try:
-                message = self.create_message(connection, IBM_CLASSIFICATION_DUMMY, "I", "H")
-                self.create_ibm_message_category(message, category, 0)
+                message, created = self.create_message(connection, IBM_CLASSIFICATION_DUMMY, "I", "H")
+                if created:
+                    self.create_ibm_message_category(message, category, 0)
             except MultipleObjectsReturned:
                 pass # No problem if there are already messages.
 

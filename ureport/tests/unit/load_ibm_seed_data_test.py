@@ -15,6 +15,7 @@ class LoadIbmSeedDataTest(TestCase):
     categories_with_messages_inserted = []
 
     def setUp(self):
+        print "setting up"
         self.load_ibm_seed_data = Command()
 
     def tearDown(self):
@@ -50,7 +51,7 @@ class LoadIbmSeedDataTest(TestCase):
 
     def test_should_insert_ibm_message_category(self):
         connection = self.create_connection()
-        message = self.create_message(connection)
+        message, created = self.create_message(connection)
 
         self.load_ibm_seed_data.load_categories()
         category = IbmCategory.objects.all()[0]
@@ -79,6 +80,11 @@ class LoadIbmSeedDataTest(TestCase):
         self.assertEquals(num_categories_before, 0)
         self.assertEquals(num_categories_after, 12)
 
+    def test_should_only_load_categories_once(self):
+        self.load_ibm_seed_data.load_categories()
+        self.load_ibm_seed_data.load_categories()
+        self.assertEquals(len(IbmCategory.objects.all()), 12)
+
     def test_should_insert_a_classifier_message_for_each_category(self):
         categories = self.create_dummy_categories()
 
@@ -86,8 +92,8 @@ class LoadIbmSeedDataTest(TestCase):
         self.load_ibm_seed_data.create_backend = lambda name: Backend(name=name)
         self.load_ibm_seed_data.create_connection = lambda backend, identity: Connection(backend=backend,
                                                                                          identity=identity)
-        self.load_ibm_seed_data.create_message = lambda connection, text, direction, status: Message(
-            connection=connection, text=text, direction=direction, status=status)
+        self.load_ibm_seed_data.create_message = lambda connection, text, direction, status: (Message(
+            connection=connection, text=text, direction=direction, status=status), True)
 
         self.load_ibm_seed_data.create_seed_data(categories)
 
