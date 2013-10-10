@@ -9,7 +9,7 @@ from ureport.tests.functional.admin_base import AdminBase
 
 class PollResponsesTest(unittest.TestCase, PollAssertions):
     browser = SplinterWrapper.getBrowser()
-    AdminBase.log_in_as_ureport()
+    AdminBase.log_in_as_ureport(browser)
     poll_id, question = PollBase.setup_poll(browser,question="This is a new poll.")
 
     def tearDown(self):

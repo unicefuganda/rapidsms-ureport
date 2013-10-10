@@ -47,11 +47,11 @@ class AdminBase():
         fill_form_and_submit(cls.browser, {"id_groups": group_name}, "_save")
 
     @classmethod
-    def log_in_as_ureport(cls):
+    def log_in_as_ureport(cls,browser):
         SplinterWrapper.open('/accounts/login')
-        cls.browser.fill("username", "ureport")
-        cls.browser.fill("password", "ureport")
-        cls.browser.find_by_css("input[type=submit]").first.click()
+        browser.fill("username", "ureport")
+        browser.fill("password", "ureport")
+        browser.find_by_css("input[type=submit]").first.click()
 
     def log_as_admin_and_visit(self, url):
         self.create_and_sign_in_admin("ureport", "ureport", url)
