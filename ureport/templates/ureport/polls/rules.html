@@ -1,23 +1,23 @@
-
+{% load i18n %}
 
 <form method="post" id="rule_form" action="{% url ureport.views.poll_views.create_rule category.pk %}" data-remote=true>
     <div class="modal-header">
         <a class="close" data-dismiss="modal" onclick='$(".modal").hide()'>×</a>
         {%if rules%}
-        <h3>Rules for  {{category.name}}</h3>
+        <h3>{% trans "Rules for" %}  {{category.name}}</h3>
         <table class="zebra-striped bordered fc">
-            <thead><tr><td>Rule</td><td>Words</td> <td>Action</td></td></tr></thead>
+            <thead><tr><td>{% trans "Rule" %}</td><td>{% trans "Words" %}</td> <td>{% trans "Action" %}</td></td></tr></thead>
             <tbody>
             {% for rule in rules %}
             <tr> <td>
                 {% if rule.rule_string == 1 %}
-                     Contains all of
+                     {% trans "Contains all of" %}
             {%else%}
-             Contains one of
+                {% trans "Contains one of" %}
                 {%endif%}
             </td><td>{{rule.rule_string}}</td>
 
-            <td> <a  onclick="$(this).parent().parent().remove();" href="/rule/{{rule.pk}}/delete/" data-remote=true> Delete</a></td>
+            <td> <a  onclick="$(this).parent().parent().remove();" href="/rule/{{rule.pk}}/delete/" data-remote=true> {% trans "Delete" %}</a></td>
             </tr>
             {%endfor%}
 
@@ -29,30 +29,30 @@
         {%else%}
         <table>
             <table class="zebra-striped bordered fc">
-                <thead><tr><td>Rule</td><td>Words</td></tr></thead>
+                <thead><tr><td>{% trans "Rule" %}</td><td>{% trans "Words" %}</td></tr></thead>
                 <tbody>
             <tr id="rule_result"><td ></td><td></td></tr>
                 </tbody>
         </table>
-<h4>No rules for {{category.name}} yet</h4>
+        <h4>{% blocktrans with category.name as category_name %}No rules for {{category_name}} yet{% endblocktrans %}</h4>
 
         {%endif%}
-        <h3>Add  a rule</h3>
+        <h3>{% trans "Add  a rule" %}</h3>
     </div>
 
     <div class="modal-body"  id="rule_cont">
 
         <table>
-            <tr><td>Type : </td><td>{{rule_form.rule}}</td></tr>
-             <tr><td colspan="2">enter list of comma separated words</td></tr>
-            <tr><td>Words :</td><td>{{rule_form.rule_string}}</td></tr>
+            <tr><td>{% trans "Type" %} : </td><td>{{rule_form.rule}}</td></tr>
+             <tr><td colspan="2">{% trans "enter list of comma separated words" %}</td></tr>
+            <tr><td>{% trans "Words" %} :</td><td>{{rule_form.rule_string}}</td></tr>
 
 
         </table>
 
     </div>
     <div class="modal-footer">
-        {%if edit%}<a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>{%else%}<input type="submit"  style="width:120px;" class="btn btn-primary" value="Save and close" onclick="bind_ruleform();"> {%endif%}
-        <input type="submit" onclick="bind_ruleform();" class="btn btn-primary" style="width:120px" {% if edit%}value="save edits"{%else%} value="Save and add another"{%endif%}>
+        {%if edit%}<a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>{% trans "Close" %}</a>{%else%}<input type="submit"  style="width:120px;" class="btn btn-primary" value="{% trans "Save and close" %}" onclick="bind_ruleform();"> {%endif%}
+        <input type="submit" onclick="bind_ruleform();" class="btn btn-primary" style="width:120px" {% if edit%}value="{% trans "save edits" %}"{%else%} value="{% trans "Save and add another" %}"{%endif%}>
     </div>
 </form>

@@ -1,11 +1,13 @@
+{% load i18n %}
+
 <form method="post" id="category_form" action="./?category=true&cat_pk={{category.pk}}" data-remote=true>
     <div class="modal-header">
         <a class="close" data-dismiss="modal" onclick='$(".modal").hide()'>×</a>
         {% if title %}
 
-        <h3>Editing {{category.name}}</h3>
+        <h3>{% trans "Editing" %} {{category.name}}</h3>
         {%else%}
-        <h3>Create A new Category</h3>
+        <h3>{% trans "Create A new Category" %}</h3>
         {%endif%}
     </div>
     <div class="modal-body" >
@@ -16,11 +18,11 @@
         </table>
     </div>
     <div class="modal-footer">
-        <a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>
+        <a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>{% trans "Close" %}</a>
         {% if not edit%}
-        <input type="submit"  onclick="bind_form();" class="btn btn-primary" value="Next">
+        <input type="submit"  onclick="bind_form();" class="btn btn-primary" value="{% trans "Next" %}">
         {%else%}
-        <input type="submit"  onclick="bind_form();" class="btn btn-primary" value="Save">
+        <input type="submit"  onclick="bind_form();" class="btn btn-primary" value="{% trans "Save" %}">
         {% endif %}
     </div>
 </form>
