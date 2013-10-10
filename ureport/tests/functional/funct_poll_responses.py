@@ -17,7 +17,7 @@ class PollResponsesTest(unittest.TestCase, PollAssertions):
     @classmethod
     def setUpClass(cls):
         AdminBase.log_in_as_ureport()
-        cls.poll_id, cls.question = PollBase.setup_poll(browser,question="This is a new poll.")
+        cls.poll_id, cls.question = PollBase.setup_poll(cls.browser,question="This is a new poll.")
         AdminBase.change_users_group("groupFT")
 
     @classmethod
