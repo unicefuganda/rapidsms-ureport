@@ -25,6 +25,7 @@ class PollAssertions():
         assert elements.first.value == 'Responses (%i)' % poll.responses.count()
 
     def assert_that_question_is(self, question):
+        time.sleep(WAIT_TIME_IN_SECONDS)
         elements = self.browser.find_by_xpath('//*[@class="question"]')
         assert elements.first.value == question
 
