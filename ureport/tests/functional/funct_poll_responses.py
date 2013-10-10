@@ -19,8 +19,8 @@ class PollResponsesTest(unittest.TestCase, PollAssertions):
     def setUpClass(cls):
         AdminBase.log_in_as_ureport()
         cls.poll_id, cls.question = PollBase.setup_poll(cls.browser,question="This is a new poll.")
-        PollBase.start_poll(cls.browser,cls.poll_id)
-        AdminBase.change_users_group("groupFT")
+        # PollBase.start_poll(cls.browser,cls.poll_id)
+        # AdminBase.change_users_group("groupFT")
 
     @classmethod
     def cleanup(cls, url):
