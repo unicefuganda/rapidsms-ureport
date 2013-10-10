@@ -1,6 +1,7 @@
 import time
 
 def fill_form(browser, field_values, by_name=False, select_by_value=False):
+    time.sleep(5)
     for id, value in field_values.items():
         if by_name:
             elements = browser.find_by_name(id)
