@@ -128,22 +128,36 @@ def _get_responses(poll):
 
 def get_category_tags(district=None, category=None, date_range=None):
     word_count = {}
-    #Todo Make this logic sensible, These if statements just don't make sense.
-    messages = IbmMsgCategory.objects.filter(category=category, msg__date__gt=datetime.now() - timedelta(days=7),
-                                             msg__direction='I', score__gte=0.5).order_by('msg__date')
-    if date_range and district is not None:
-        messages = IbmMsgCategory.objects.filter(category=category, msg__date__range=date_range, msg__direction='I',
-                                      score__gte=0.5).order_by(
-            'msg__date')
     if district:
         if date_range:
-            messages = IbmMsgCategory.objects.filter(msg__date__range=date_range, msg__direction='I',
-                                          score__gte=0.5, msg__connection__contact__reporting_location=district).order_by(
-            'msg__date')
+            if category:
+                messages = IbmMsgCategory.objects.filter(msg__date__range=date_range, msg__direction='I',
+                                                         category=category,
+                                                         score__gte=0.5,
+                                                         msg__connection__contact__reporting_location=district).order_by(
+                    'msg__date')
+            else:
+                messages = IbmMsgCategory.objects.filter(msg__date__range=date_range, msg__direction='I',
+                                                         score__gte=0.5,
+                                                         msg__connection__contact__reporting_location=district).order_by(
+                    'msg__date').exclude(category_name__in=['family & relationships', "energy", "u-report", "social policy", "employment"])
         else:
-            messages = IbmMsgCategory.objects.filter(msg__direction='I',
-                                          score__gte=0.5, msg__connection__contact__reporting_location=district).order_by(
-            'msg__date')
+            if category:
+                messages = IbmMsgCategory.objects.filter(msg__direction='I', category=category,
+                                                         score__gte=0.5,
+                                                         msg__connection__contact__reporting_location=district).order_by(
+                    'msg__date')
+            else:
+                messages = IbmMsgCategory.objects.filter(msg__direction='I',
+                                                         score__gte=0.5,
+                                                         msg__connection__contact__reporting_location=district).order_by(
+                    'msg__date').exclude(category_name__in=['family & relationships', "energy", "u-report", "social policy", "employment"])
+    if category and not district:
+        if date_range:
+            messages = IbmMsgCategory.objects.filter(msg__date__range=date_range, msg__direction='I', score__gte=0.5,
+                                                     category=category)
+        else:
+            messages = IbmMsgCategory.objects.filter(msg__direction='I', score__gte=0.5, category=category)
     if not messages.exists():
         return word_count
     print messages.count()

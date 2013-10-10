@@ -7,19 +7,18 @@
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/dc.css"/>
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/modal.css"/>
     <style>
-        .control {
-            position: fixed;
-            float: none;
-            right: 10px;
-        }
-        .donut {
-            right: -20px;
-        }
+        {#        .control {#}
+        {#            position: fixed;#}
+        {#            float: none;#}
+        {#            right: 10px;#}
+        {#        }#}
+        {#        .donut {#}
+        {#            right: -20px;#}
+        {#        }#}
         #risks-pie-chart {
             top: 200px;
         }
         .legend {
-            width: 4em;
             list-style-type: none;
             float: left;
             padding: 0px;
@@ -27,122 +26,23 @@
         .legend > li {
             color: #CCC;
             text-align: center;
+            font-weight: bolder;
         }
-        #facebookG{
-            width:128px}
-
-        .facebook_blockG{
-            background-color:#FFFFFF;
-            border:3px solid #000000;
-            float:left;
-            height:91px;
-            margin-left:7px;
-            width:24px;
-            opacity:0.1;
-            -moz-animation-name:bounceG;
-            -moz-animation-duration:1.3s;
-            -moz-animation-iteration-count:infinite;
-            -moz-animation-direction:linear;
-            -moz-transform:scale(0.7);
-            -webkit-animation-name:bounceG;
-            -webkit-animation-duration:1.3s;
-            -webkit-animation-iteration-count:infinite;
-            -webkit-animation-direction:linear;
-            -webkit-transform:scale(0.7);
-            -ms-animation-name:bounceG;
-            -ms-animation-duration:1.3s;
-            -ms-animation-iteration-count:infinite;
-            -ms-animation-direction:linear;
-            -ms-transform:scale(0.7);
-            -o-animation-name:bounceG;
-            -o-animation-duration:1.3s;
-            -o-animation-iteration-count:infinite;
-            -o-animation-direction:linear;
-            -o-transform:scale(0.7);
-            animation-name:bounceG;
-            animation-duration:1.3s;
-            animation-iteration-count:infinite;
-            animation-direction:linear;
-            transform:scale(0.7);
+        #nav {
+            width: 100%;
+            float: left;
+            margin: 0 0 3em 0;
+            padding: 0;
+            list-style: none; }
+        #nav li {
+            float: left;
+            margin-left: 10px;
         }
-
-        #blockG_1{
-            -moz-animation-delay:0.39s;
-            -webkit-animation-delay:0.39s;
-            -ms-animation-delay:0.39s;
-            -o-animation-delay:0.39s;
-            animation-delay:0.39s;
-        }
-
-        #blockG_2{
-            -moz-animation-delay:0.52s;
-            -webkit-animation-delay:0.52s;
-            -ms-animation-delay:0.52s;
-            -o-animation-delay:0.52s;
-            animation-delay:0.52s;
-        }
-
-        #blockG_3{
-            -moz-animation-delay:0.65s;
-            -webkit-animation-delay:0.65s;
-            -ms-animation-delay:0.65s;
-            -o-animation-delay:0.65s;
-            animation-delay:0.65s;
-        }
-
-        @-moz-keyframes bounceG{
-            0%{
-                -moz-transform:scale(1.2);
-                opacity:1}
-
-            100%{
-                -moz-transform:scale(0.7);
-                opacity:0.1}
-
-        }
-
-        @-webkit-keyframes bounceG{
-            0%{
-                -webkit-transform:scale(1.2);
-                opacity:1}
-
-            100%{
-                -webkit-transform:scale(0.7);
-                opacity:0.1}
-
-        }
-
-        @-ms-keyframes bounceG{
-            0%{
-                -ms-transform:scale(1.2);
-                opacity:1}
-
-            100%{
-                -ms-transform:scale(0.7);
-                opacity:0.1}
-
-        }
-
-        @-o-keyframes bounceG{
-            0%{
-                -o-transform:scale(1.2);
-                opacity:1}
-
-            100%{
-                -o-transform:scale(0.7);
-                opacity:0.1}
-
-        }
-
-        @keyframes bounceG{
-            0%{
-                transform:scale(1.2);
-                opacity:1}
-
-            100%{
-                transform:scale(0.7);
-                opacity:0.1}
-
+        #nav li a {
+            display: block;
+            text-decoration: none;
+            border: #800080 1px solid;
+            padding: 5px;
         }
     </style>
 {% endblock %}
@@ -159,16 +59,9 @@
 {% endblock %}
 
 {% block content %}
-    <div id="loading" style="position: fixed; top: 0; right: 45%; display: none">
-        <div id="facebookG">
-            <div id="blockG_1" class="facebook_blockG"></div>
-            <div id="blockG_2" class="facebook_blockG"></div>
-            <div id="blockG_3" class="facebook_blockG"></div>
-        </div>
-    </div>
     <div class="container">
         <div>
-            <ul>
+            <ul id="nav">
                 <li><a href="{% url pulse 'day' %}">Today's Pulse</a></li>
                 <li><a href="{% url pulse 'month' %}"> Month's Pulse</a></li>
                 <li><a href="{% url pulse 'year' %}"> Year's Pulse</a></li>
@@ -183,11 +76,6 @@
             <span class="reset" style="display: none;"> | {% trans "Click on on current filter(" %} <a href="javascript:load_cloud_word(this)" class="filter" id="district_filter"></a>{% trans ") to see word cloud" %}</span>
 
             <div class="clearfix"></div>
-        </div>
-
-        <div id="national-pie-chart" class="donut control">
-            <a class="reset" href="javascript:nationalPieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-            <span class="reset" style="display: none;"> | {% trans "Click on on current filter(" %} <a href="javascript:load_cloud_word(this)" class="filter" id="district_filter"></a>{% trans ") to see word cloud" %}</span>
         </div>
 
     </div>
@@ -207,6 +95,15 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+
+{% endblock %}
+{% block sidecontent %}
+    <div id="national-pie-chart" class="donut control">
+        <a class="reset" href="javascript:nationalPieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+        <span class="reset" style="display: none;"> | {% trans "Filter word cloud with" %} <a href="javascript:load_cloud_with_category()" class="filter" id="category_filter"></a></span>
+    </div>
+{% endblock %}
+{% block javascripts %}
     <script type="text/javascript">
     function load_cloud_word(element){
         var district = $('#district_filter').text();
@@ -214,8 +111,22 @@
         $('.modal-title').text(district + " {{ period|cut:'/' }}'s Word Cloud");
         $('#cloud').html("<p>Word Cloud Loading Please Wait...</p>");
         $('#cloud_modal').modal();
-        $('#cloud').load('/map-cloud/'+ district+'/{{ period|cut:"/" }}');
+        $('#cloud').load('/map-cloud/?district='+district + "&period={{ period|cut:'/'|default:'' }}");
 
+    }
+    function load_cloud_with_category(){
+        var district = $('#district_filter').text();
+        var category = $('#category_filter').text();
+        $('.modal-title').text(district + " {{ period|cut:'/' }}'s Word Cloud filtered with "+ category);
+        $('#cloud').html("<p>Word Cloud Loading Please Wait...</p>");
+        $('#cloud_modal').modal();
+        if(district){
+            console.log('District: '+ district + " found");
+        $('#cloud').load('/map-cloud/?district='+district + "&period={{ period|cut:'/'|default:'' }}&category="+category);
+        }else{
+            console.log('District not found');
+        $('#cloud').load('/map-cloud/?category='+category + "&period={{ period|cut:'/'|default:'' }}");
+        }
     }
     var numberFormat = d3.format(".2f");
 

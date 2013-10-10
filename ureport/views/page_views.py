@@ -76,12 +76,16 @@ def pulse(request, period=None):
 
 
 @never_cache
-def map_cloud(request, district, period=None):
+def map_cloud(request):
+    period = request.GET.get('period', None)
+    district = request.GET.get('district', None)
+    category = request.GET.get('category', None)
     date_range = None
-    try:
-        district = Location.objects.get(name=district, type__name='district')
-    except Location.DoesNotExist:
-        return HttpResponse("Error District with name %s does not exist" % district)
+    if district:
+        try:
+            district = Location.objects.get(name=district, type__name='district')
+        except Location.DoesNotExist:
+            return HttpResponse("Error District with name %s does not exist" % district)
     if period:
         if period == 'month':
             date_range = [datetime.datetime.now() - datetime.timedelta(days=30), datetime.datetime.now()]
@@ -89,7 +93,13 @@ def map_cloud(request, district, period=None):
             date_range = [datetime.datetime.now() - datetime.timedelta(days=1), datetime.datetime.now()]
         elif period == 'year':
             date_range = [datetime.datetime.now() - datetime.timedelta(days=366), datetime.datetime.now()]
-    tags = get_category_tags(district=district, date_range=date_range)
+    if category:
+        category = category.replace("_", " ")
+        try:
+            category = IbmCategory.objects.get(name__iexact=category)
+        except IbmCategory.DoesNotExist:
+            return HttpResponse("Error Category with name %s does not exist" % category)
+    tags = get_category_tags(district=district, date_range=date_range, category=category)
     return render_to_response("/ureport/partials/tag_cloud/tag_cloud.html", locals(),
                               context_instance=RequestContext(request))
 
