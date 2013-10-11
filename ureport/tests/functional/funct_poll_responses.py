@@ -5,6 +5,7 @@ from ureport.tests.functional.splinter_wrapper import SplinterWrapper
 from ureport.tests.functional.poll_base import PollBase
 from ureport.tests.functional.admin_helper import fill_form_and_submit, fill_form
 from ureport.tests.functional.admin_base import AdminBase
+from ureport.tests.functional.test_data import WAIT_TIME_IN_SECONDS
 
 
 class PollResponsesTest(unittest.TestCase, PollAssertions):
@@ -40,9 +41,8 @@ class PollResponsesTest(unittest.TestCase, PollAssertions):
         PollBase.start_poll(self.browser,self.poll_id)
 
         PollBase.respond_to_the_started_poll("0794339344", "yes")
+        time.sleep(WAIT_TIME_IN_SECONDS)
         SplinterWrapper.open('/polls/%s/report/' % self.poll_id)
-        
-        time.sleep(2)
         self.assert_that_question_is(self.question)
         self.assert_the_number_of_participants_of_the_poll_is(1)
 
