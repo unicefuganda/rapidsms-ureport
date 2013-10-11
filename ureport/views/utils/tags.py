@@ -158,26 +158,47 @@ def get_category_tags(district=None, category=None, date_range=None):
                                                      category=category)
         else:
             messages = IbmMsgCategory.objects.filter(msg__direction='I', score__gte=0.5, category=category)
-    if not messages.exists():
+    try:
+        if not messages.exists():
+            return word_count
+    except:
         return word_count
     print messages.count()
     message_pks = messages.values_list('pk', flat=True)[:500]
-    sql = """  SELECT
-           (regexp_matches(lower(word),E'[a-zA-Z]+'))[1] as wo,
-           count(*) as c
-        FROM
-           (SELECT
-              regexp_split_to_table("rapidsms_httprouter_message"."text",
-              E'\\\\s+') as word
-           from
-              "rapidsms_httprouter_message"
-            where
-              "id" in %s)t
-        GROUP BY
-           wo
-        order by
-           c DESC limit 500;
-               """ % str(tuple([str(pk) for pk in message_pks]))
+    if len(message_pks) > 1:
+        sql = """  SELECT
+               (regexp_matches(lower(word),E'[a-zA-Z]+'))[1] as wo,
+               count(*) as c
+            FROM
+               (SELECT
+                  regexp_split_to_table("rapidsms_httprouter_message"."text",
+                  E'\\\\s+') as word
+               from
+                  "rapidsms_httprouter_message"
+                where
+                  "id" in %s)t
+            GROUP BY
+               wo
+            order by
+               c DESC limit 500;
+                   """ % str(tuple([str(pk) for pk in message_pks]))
+    else:
+        sql = """  SELECT
+               (regexp_matches(lower(word),E'[a-zA-Z]+'))[1] as wo,
+               count(*) as c
+            FROM
+               (SELECT
+                  regexp_split_to_table("rapidsms_httprouter_message"."text",
+                  E'\\\\s+') as word
+               from
+                  "rapidsms_httprouter_message"
+                where
+                  "id" = %s)t
+            GROUP BY
+               wo
+            order by
+               c DESC limit 500;
+                   """ % str(message_pks[0])
     cursor = connection.cursor()
     cursor.execute(sql)
     rows = cursor.fetchall()

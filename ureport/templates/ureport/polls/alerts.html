@@ -568,7 +568,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
             setInterval(function() {
-                $.post("/alerts/?ajax=get_replied", function (result) {
+                $.post("/alerts/1/?ajax=get_replied", function (result) {
                     $.each(result, function(index, value){
                         $('#replied_'+value).html('replied');
                     });

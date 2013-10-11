@@ -117,15 +117,18 @@
     function load_cloud_with_category(){
         var district = $('#district_filter').text();
         var category = $('#category_filter').text();
+        var cat = category.replace(" ", "_");
+        cat = cat.replace(" ", "_");
+        console.log("Category:" + cat);
         $('.modal-title').text(district + " {{ period|cut:'/' }}'s Word Cloud filtered with "+ category);
         $('#cloud').html("<p>Word Cloud Loading Please Wait...</p>");
         $('#cloud_modal').modal();
         if(district){
             console.log('District: '+ district + " found");
-        $('#cloud').load('/map-cloud/?district='+district + "&period={{ period|cut:'/'|default:'' }}&category="+category);
+        $('#cloud').load('/map-cloud/?district='+district + "&period={{ period|cut:'/'|default:'' }}&category="+cat);
         }else{
             console.log('District not found');
-        $('#cloud').load('/map-cloud/?category='+category + "&period={{ period|cut:'/'|default:'' }}");
+        $('#cloud').load('/map-cloud/?category='+cat + "&period={{ period|cut:'/'|default:'' }}");
         }
     }
     var numberFormat = d3.format(".2f");
