@@ -1,4 +1,6 @@
 {% extends "layout.html" %}
+{% load i18n %}
+
 {% block title %}
 {{ block.super }}
 {% endblock %}
@@ -64,7 +66,7 @@
     {% if action_forms|length > 0 %}
     <input type="hidden" id="input_action" name="action" value=""/>
     <div class="module" id="actions">
-        <h2>Actions</h2>
+        <h2>{% trans "Actions" %}</h2>
         {% block action_forms %}
         {% for cname, form in action_forms %}
         <div class="actionform" id="div_action_{{ forloop.counter0 }}">

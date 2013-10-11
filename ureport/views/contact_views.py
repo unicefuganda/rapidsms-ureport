@@ -35,6 +35,8 @@ from ureport.models import Ureporter, UreportContact
 from ureport.views.utils.paginator import ureport_paginate
 from ureport.forms import UreporterSearchForm, AgeFilterForm
 
+from django.utils.translation import ugettext as _
+
 
 @login_required
 def ureporter_profile(request, connection_pk):
@@ -356,18 +358,18 @@ def ureporters(request):
             return HttpResponse("Some thing went wrong")
 
     columns = [
-        ('Identifier', True, 'connection_pk', SimpleSorter()),
-        ('Age', True, 'age', SimpleSorter(),),
-        ('Gender', True, 'gender', SimpleSorter(),),
-        ('Language', True, 'language', SimpleSorter(),),
-        ('District', True, 'district', SimpleSorter(),),
-        ('Group(s)', True, 'group', SimpleSorter(),),
-        ('Questions ', True, 'questions', SimpleSorter(),),
-        ('Responses ', True, 'responses', SimpleSorter(),),
-        ('Messages Sent', True, 'incoming', SimpleSorter(),),
-        ('caregiver', True, 'is_caregiver', SimpleSorter(),),
-        ('join date', True, 'autoreg_join_date', SimpleSorter(),),
-        ('quit date', True, 'quit_date', SimpleSorter(),),
+        (_('Identifier'), True, 'connection_pk', SimpleSorter()),
+        (_('Age'), True, 'age', SimpleSorter(),),
+        (_('Gender'), True, 'gender', SimpleSorter(),),
+        (_('Language'), True, 'language', SimpleSorter(),),
+        (_('District'), True, 'district', SimpleSorter(),),
+        (_('Group(s)'), True, 'group', SimpleSorter(),),
+        (_('Questions '), True, 'questions', SimpleSorter(),),
+        (_('Responses '), True, 'responses', SimpleSorter(),),
+        (_('Messages Sent'), True, 'incoming', SimpleSorter(),),
+        (_('caregiver'), True, 'is_caregiver', SimpleSorter(),),
+        (_('join date'), True, 'autoreg_join_date', SimpleSorter(),),
+        (_('quit date'), True, 'quit_date', SimpleSorter(),),
     ]
 
     if request.user.is_staff:

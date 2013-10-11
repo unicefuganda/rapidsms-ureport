@@ -233,15 +233,15 @@ class AssignToNewPollForm(ActionForm):
     """ assigns contacts to poll"""
 
     action_label = 'Assign to New poll'
-    poll_name = forms.CharField(label='Poll Name', max_length='100')
-    POLL_TYPES = [('yn', 'Yes/No Question')] + [(c['type'], c['label'])
+    poll_name = forms.CharField(label=_('Poll Name'), max_length='100')
+    POLL_TYPES = [('yn', _('Yes/No Question'))] + [(c['type'], c['label'])
                                                 for c in Poll.TYPE_CHOICES.values()]
     response_type = \
         forms.ChoiceField(choices=Poll.RESPONSE_TYPE_CHOICES,
-                          widget=RadioSelect)
-    poll_type = forms.ChoiceField(choices=POLL_TYPES)
-    question = forms.CharField(max_length=160, required=True, widget=SMSInput())
-    default_response = forms.CharField(max_length=160, required=False, widget=SMSInput())
+                          widget=RadioSelect, label=_("Response type"))
+    poll_type = forms.ChoiceField(choices=POLL_TYPES, label=_("Poll type"))
+    question = forms.CharField(max_length=160, required=True, widget=SMSInput(), label=_("Question"))
+    default_response = forms.CharField(max_length=160, required=False, widget=SMSInput(), label=_("Default response"))
 
 
     def perform(self, request, results):
@@ -342,8 +342,8 @@ class ReplyTextForm(ActionForm):
 
 
 class MassTextForm(ActionForm):
-    text = forms.CharField(max_length=160, required=True, widget=SMSInput())
-    text_luo = forms.CharField(max_length=160, required=False, widget=SMSInput())
+    text = forms.CharField(max_length=160, required=True, widget=SMSInput(), label=_("text"))
+    text_luo = forms.CharField(max_length=160, required=False, widget=SMSInput(), label=_("text luo"))
 
     action_label = 'Send Message'
 
@@ -560,13 +560,13 @@ class GroupRules(forms.ModelForm):
 
 
 class DownloadForm(forms.Form):
-    startdate = forms.DateField(('%d/%m/%Y',), label='Start Date', required=False,
+    startdate = forms.DateField(('%d/%m/%Y',), label=_('Start Date'), required=False,
                                 widget=forms.DateTimeInput(format='%d/%m/%Y', attrs={
                                     'class': 'input',
                                     'readonly': 'readonly',
                                     'size': '15'
                                 }))
-    enddate = forms.DateField(('%d/%m/%Y',), label='End Date', required=False,
+    enddate = forms.DateField(('%d/%m/%Y',), label=_('End Date'), required=False,
                               widget=forms.DateTimeInput(format='%d/%m/%Y', attrs={
                                   'class': 'input',
                                   'readonly': 'readonly',
@@ -608,8 +608,8 @@ class UreporterSearchForm(FilterForm):
 
 class AgeFilterForm(FilterForm):
     """ filter contacts by their age """
-    flag = forms.ChoiceField(label='', choices=(('', '-----'), ('==', 'Equal to'), ('>', 'Greater than'), ('<', \
-                                                                                                           'Less than'),
+    flag = forms.ChoiceField(label='', choices=(('', '-----'), ('==', _('Equal to')), ('>', _('Greater than')),
+                                                ('<', _('Less than')),
                                                 ('None', 'N/A')), required=False)
     age = forms.CharField(max_length=20, label="Age", widget=forms.TextInput(attrs={'size': '20'}), required=False)
 
@@ -671,10 +671,10 @@ def get_summary(pk, poll_data):
 
 
 class TemplateMessage(ActionForm):
-    template = forms.CharField(max_length=160, required=True, widget=SMSInput(),
-                               help_text="message shd be of form Dear Hon. [insert name]. [insert results ] of people from [insert district] say that lorem ipsum")
+    template = forms.CharField(max_length=160, required=True, widget=SMSInput(), label=_("Template"),
+                               help_text=_("message shd be of form Dear Hon. [insert name]. [insert results ] of people from [insert district] say that lorem ipsum"))
     poll = forms.ModelChoiceField(
-        queryset=Poll.objects.exclude(start_date=None).exclude(categories=None).order_by('-pk'))
+        queryset=Poll.objects.exclude(start_date=None).exclude(categories=None).order_by('-pk'), label=_("Poll"))
 
     label = "Send Message"
 

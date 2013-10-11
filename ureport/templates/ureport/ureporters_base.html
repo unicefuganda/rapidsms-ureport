@@ -1,4 +1,6 @@
 {% extends "ureport/base.html" %}
+{% load i18n %}
+
 {% block title %}
     uReporters - {{ block.super }}
 {% endblock %}
@@ -29,22 +31,22 @@ $("#id_enddate").datepicker({ dateFormat: 'dd/mm/yy' ,changeYear: true ,changeMo
 {% block filters %}
 
             <div style="height:540px;" class="module">
-                <h2>Filters</h2>
+                <h2>{% trans "Filters" %}</h2>
 
             <table class="fc">
 
-                <tr>  <td>Search Ureporters :</td> <td>{{ filter_forms.0.searchx }}</td>  <td>Filter By Group :</td> <td>{{ filter_forms.4.visible_fields.0 }}</td>        </tr>
-                <tr>  <td>Filter By Gender :</td> <td>{{ filter_forms.1.gender }}</td> <td>Filter By District :</td> <td>{{ filter_forms.3.visible_fields.0}}</td>         </tr>
-                <tr>  <td>Filter By Age :</td> <td>{{ filter_forms.2.flag }}</td> <td>{{ filter_forms.2.age }}</td>          </tr>
+                <tr>  <td>{% trans "Search Ureporters" %} :</td> <td>{{ filter_forms.0.searchx }}</td>  <td>{% trans "Filter By Group" %} :</td> <td>{{ filter_forms.4.visible_fields.0 }}</td>        </tr>
+                <tr>  <td>{% trans "Filter By Gender" %} :</td> <td>{{ filter_forms.1.gender }}</td> <td>{% trans "Filter By District" %} :</td> <td>{{ filter_forms.3.visible_fields.0}}</td>         </tr>
+                <tr>  <td>{% trans "Filter By Age" %} :</td> <td>{{ filter_forms.2.flag }}</td> <td>{{ filter_forms.2.age }}</td>          </tr>
       
                 <tr><td></td><td></td>
                     <td>
-                    <a href="javascript:void(0)" onclick="filter(this)" class="btn-primary btn btn-large">Update</a>
+                    <a href="javascript:void(0)" onclick="filter(this)" class="btn-primary btn btn-large">{% trans "Update" %}</a>
                 
                    </td>
                     <td>
 
-                    <a href="./" class="btn-primary btn btn-large">Clear</a>
+                    <a href="./" class="btn-primary btn btn-large">{% trans "Clear" %}</a>
             
                     </td>
                 </tr>
@@ -61,13 +63,13 @@ $("#id_enddate").datepicker({ dateFormat: 'dd/mm/yy' ,changeYear: true ,changeMo
  {% block action_forms %}
 <div style="margin-top:10px;">
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#send_sms" data-toggle="tab">Send SMS </a></li>
-        <li><a href="#assign_groups" data-toggle="tab">Assign Group</a></li>
-        <li><a href="#remove_group" data-toggle="tab">Remove Group</a></li>
-        <li><a href="#blacklist" data-toggle="tab">Blacklist</a></li>
-        <li><a href="#send_poll" data-toggle="tab">Send Poll</a></li>
-        <li><a href="#exports" data-toggle="tab">Export to excel</a></li>
-        <li><a href="#send_custom" data-toggle="tab">Send Custom SMS</a></li>
+        <li class="active"><a href="#send_sms" data-toggle="tab">{% trans "Send SMS" %} </a></li>
+        <li><a href="#assign_groups" data-toggle="tab">{% trans "Assign Group" %}</a></li>
+        <li><a href="#remove_group" data-toggle="tab">{% trans "Remove Group" %}</a></li>
+        <li><a href="#blacklist" data-toggle="tab">{% trans "Blacklist" %}</a></li>
+        <li><a href="#send_poll" data-toggle="tab">{% trans "Send Poll" %}</a></li>
+        <li><a href="#exports" data-toggle="tab">{% trans "Export to excel" %}</a></li>
+        <li><a href="#send_custom" data-toggle="tab">{% trans "Send Custom SMS" %}</a></li>
 
     </ul>
 </div>
@@ -76,54 +78,54 @@ $("#id_enddate").datepicker({ dateFormat: 'dd/mm/yy' ,changeYear: true ,changeMo
         <table>
      {{action_forms.0.1.as_table}}
 
-      <tr><td><a id ="send_btn" class="{{ action_forms.0.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#send_btn', '{{ action_forms.0.0 }}',{{ page }});">Send Message </a></td></tr>
+      <tr><td><a id ="send_btn" class="{{ action_forms.0.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#send_btn', '{{ action_forms.0.0 }}',{{ page }});">{% trans "Send Message" %} </a></td></tr>
         </table>
 
         </div>
     <div class="tab-pane " id="assign_groups">
         <table>
             {{action_forms.1.1.as_table}}
-            <tr><td><a id="groups_btn" class="{{ action_forms.1.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#groups_btn', '{{ action_forms.1.0 }}',{{ page }});">Assign Group </a></td></tr>
+            <tr><td><a id="groups_btn" class="{{ action_forms.1.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#groups_btn', '{{ action_forms.1.0 }}',{{ page }});">{% trans "Assign Group" %} </a></td></tr>
         </table>
         </div>
 
     <div class="tab-pane " id="remove_group">
         <table>
             {{action_forms.1.1.as_table}}
-            <tr><td><a id="group_rm_btn" class="{{ action_forms.4.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#group_rm_btn', '{{ action_forms.4.0 }}',{{ page }});">Remove Group(s) </a></td></tr>
+            <tr><td><a id="group_rm_btn" class="{{ action_forms.4.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#group_rm_btn', '{{ action_forms.4.0 }}',{{ page }});">{% trans "Remove Group(s)" %} </a></td></tr>
         </table>
     </div>
     <div class="tab-pane " id="blacklist">
         <table>
             {{action_forms.2.1.as_table}}
-            <tr><td><a id="blacklist_btn" class="{{ action_forms.2.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#blacklist_btn', '{{ action_forms.2.0 }}',{{ page }});">Blacklist Selected </a></td></tr>
+            <tr><td><a id="blacklist_btn" class="{{ action_forms.2.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#blacklist_btn', '{{ action_forms.2.0 }}',{{ page }});">{% trans "Blacklist Selected" %} </a></td></tr>
         </table>
     </div>
     <div class="tab-pane " id="send_poll">
         <table>
 
             {{action_forms.3.1.as_table}}
-            <tr><td><a id="msg_btn" class="{{ action_forms.3.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#msg_btn', '{{ action_forms.3.0 }}',{{ page }});">Send Message </a></td></tr>
+            <tr><td><a id="msg_btn" class="{{ action_forms.3.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#msg_btn', '{{ action_forms.3.0 }}',{{ page }});">{% trans "Send Message" %} </a></td></tr>
         </table>
     </div>
     <div class="tab-pane " id="exports">
         <table>
 
             {{export_form.as_table}}
-            <tr><td colspan="2">Select Join Date range and download</td></tr>
+            <tr><td colspan="2">{% trans "Select Join Date range and download" %}</td></tr>
 
             </tr>
 
             {{download_form.as_table}}
-            <tr><td><input  type="submit" value="Download"></td></tr>
+            <tr><td><input  type="submit" value="{% trans "Download" %}"></td></tr>
 
-            <tr><td>  <tr><td><a class="export_link" href="{{ MEDIA_URL }}ureport/spreadsheets/ureporters.xlsx">Export All To Excel</a></td></td></tr>
+            <tr><td>  <tr><td><a class="export_link" href="{{ MEDIA_URL }}ureport/spreadsheets/ureporters.xlsx">{% trans "Export All To Excel" %}</a></td></td></tr>
         </table>
     </div>
     <div class="tab-pane " id="send_custom">
         <table>
             {{action_forms.5.1.as_table}}
-            <tr><td><a id="send_msg_btn" class="{{ action_forms.5.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#send_msg_btn', '{{ action_forms.5.0 }}',{{ page }});">Send Message </a></td></tr>
+            <tr><td><a id="send_msg_btn" class="{{ action_forms.5.1.action_class }} btn-primary btn btn-large" href="javascript:void(0)" onClick="actionx('#send_msg_btn', '{{ action_forms.5.0 }}',{{ page }});">{% trans "Send Message" %} </a></td></tr>
         </table>
     </div>
 
