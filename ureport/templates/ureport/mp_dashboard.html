@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% load i18n %}
 
 {% block extra_js %}
 
@@ -42,7 +43,7 @@
 {% block content %}
 
     <div class="module">
-        <h2>Filter Poll Contacts</h2>
+        <h2>{% trans "Filter Poll Contacts" %}</h2>
         
             <form action="/mp_dashboard/?filtered=true" method="post" class="form-inline">
                 {% for form in filter_forms %}
@@ -74,13 +75,13 @@
             <table class="inline">
                 <tr>
                     
-                    <td><a  class="btn-primary btn btn-large" href="javascript:void(0)" onclick="filter(this,'./?filter=true')"> Update</a></td>
+                    <td><a  class="btn-primary btn btn-large" href="javascript:void(0)" onclick="filter(this,'./?filter=true')"> {% trans "Update" %}</a></td>
                 </tr>
             </table>
             </form>
 
 <div class="results" style="margin-top:210px;margin-left:100px;padding: 7px 15px;color: #333333;background-color: #f7f7f7;border:1px solid #ccc;">
-   No Contacts Selected
+   {% trans "No Contacts Selected" %}
 
 </div>
 
@@ -88,16 +89,16 @@
 
 </br>
     <div class="module" style="margin-top:40px;">
-        <h2>Poll</h2>
+        <h2>{% trans "Poll" %}</h2>
         <form action="./?poll=true" method="post" >
         <table border="0" class="form">
 
                 <tr><td>{{ poll_form.errors }}</td></tr>
 
-                <tr><td>Name:</td><td>{{ poll_form.name}}</td><td>Question:</td><td>{{ poll_form.question_en}}</td> <td><input type="submit" class="btn-primary btn btn-large" value="Send Poll"></td></tr>
-                <tr><td>Type:</td><td>{{ poll_form.type}}</td><td>Luo Question:</td><td>{{ poll_form.question_luo}}</td><td></td></tr>
-                <tr><td>Response Type:</td><td>{{ poll_form.response_type}}</td><td>Auto Response:</td><td>{{ poll_form.default_response_en}}</td><td></td></tr>
-                <tr><td></td><td></td><td>Auto Response Luo:</td><td>{{ poll_form.default_response_luo}}</td><td></td></tr>
+                <tr><td>{% trans "Name" %}:</td><td>{{ poll_form.name}}</td><td>{% trans "Question" %}:</td><td>{{ poll_form.question_en}}</td> <td><input type="submit" class="btn-primary btn btn-large" value="{% trans "Send Poll" %}"></td></tr>
+                <tr><td>{% trans "Type" %}:</td><td>{{ poll_form.type}}</td><td>{% trans "Luo Question" %}:</td><td>{{ poll_form.question_luo}}</td><td></td></tr>
+                <tr><td>{% trans "Response Type" %}:</td><td>{{ poll_form.response_type}}</td><td>{% trans "Auto Response" %}:</td><td>{{ poll_form.default_response_en}}</td><td></td></tr>
+                <tr><td></td><td></td><td>{% trans "Auto Response Luo" %}:</td><td>{{ poll_form.default_response_luo}}</td><td></td></tr>
 
 
 
@@ -110,17 +111,17 @@
 
     <div class="module">
         <h2>
-            Messages
+            {% trans "Messages" %}
         </h2>
         <table class="zebra-striped bordered fc" width="100%" id="mps">
             <thead>
             <tr>
-                <th>Identifier</th>
-                <td>Name</td>
-                <th>Text</th>
-                <th>Date</th>
-                <th>District</th>
-                <th>Group(s)</th>
+                <th>{% trans "Identifier" %}</th>
+                <td>{% trans "Name" %}</td>
+                <th>{% trans "Text" %}</th>
+                <th>{% trans "Date" %}</th>
+                <th>{% trans "District" %}</th>
+                <th>{% trans "Group(s)" %}</th>
             </tr>
             </thead>
             <tbody id="mp_bd">
@@ -147,11 +148,11 @@
         <div class="pagination">
             <span class="step-links">
                 {% if messages.has_previous %}
-                    <a href="?page={{ messages.previous_page_number }}">previous</a>
+                    <a href="?page={{ messages.previous_page_number }}">{% trans "previous" %}</a>
                 {% endif %}
 
                 <span class="current">
-            Page {{ messages.number }} of {{ messages.paginator.num_pages }}.
+            {% blocktrans with messages_number=messages.number messages_paginator_num_pages=messages.paginator.num_pages %}Page {{ messages_number }}of {{ messages_paginator_num_pages }}. {% endblocktrans %}
         </span>
 
                 {% if messages.has_next %}

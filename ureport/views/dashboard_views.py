@@ -10,6 +10,7 @@ from django.template.loader import render_to_string
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.http import HttpResponse
+from django.utils.translation import ugettext as _
 from django.views.decorators.cache import cache_page, never_cache
 from django.views.decorators.vary import vary_on_cookie
 from uganda_common.utils import ExcelResponse
@@ -86,7 +87,7 @@ def mp_dashboard(request):
             if form_instance.is_valid():
                 contacts = form_instance.filter(request, contacts)
         if old_contacts.count() == contacts.count():
-            return HttpResponse('No Contacts Selected')
+            return HttpResponse(_('No Contacts Selected'))
         else:
             request.session['filtered'] = contacts
             return HttpResponse(str(contacts.count()))
