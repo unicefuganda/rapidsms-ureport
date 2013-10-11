@@ -1,4 +1,6 @@
 {% extends "generic/base.html" %}
+{% load i18n %}
+
 {% block title %}
     Flagged Messages - Ureport
 {% endblock %}
@@ -17,14 +19,14 @@
 {% endblock %}
 {% block content %}
     <div class="module" style="padding-bottom: 12px;">
-    <h2>All Flags</h2>
+    <h2>{% trans "All Flags" %}</h2>
     <table width="100%" class="results">
-    <thead><tr><td>name</td> <td>messages</td> <td></td></tr></thead>
+    <thead><tr><td>{% trans "name" %}</td> <td>{% trans "messages" %}</td> <td></td></tr></thead>
     {% for flag in all_flags %}
 {% load ureport %}
 <tr><td>{{flag.name}}</td>  <td><a href={% if go_to_dashboards %}{% url aids-dashboard flag.name|cap_slugify %}{% else %}"/flags/{{ flag.pk }}/messages/"{% endif %}>messages</a></td>
-    <td><a href="/flags/{{ flag.pk }}/edit/">edit</a> </td>
-    <td><a href="/flags/{{ flag.pk }}/delete/">delete</a> </td>
+    <td><a href="/flags/{{ flag.pk }}/edit/">{% trans "edit" %}</a> </td>
+    <td><a href="/flags/{{ flag.pk }}/delete/">{% trans "delete" %}</a> </td>
 
 
 </tr>
@@ -32,9 +34,9 @@
     </table>
     <div class="buttons">
     <a href="{% url ureport.views.create_flags %}" style="float:left">
-      <img border="0" src="/static/rapidsms/icons/silk/add.png" alt=""/>Add New Flag
+      <img border="0" src="/static/rapidsms/icons/silk/add.png" alt=""/>{% trans "Add New Flag" %}
     </a>
-    <a style="float:right;" href="?export=true">Export To Excel</a>
+    <a style="float:right;" href="?export=true">{% trans "Export To Excel" %}</a>
     </div>
     </div>
 {{ block.super }}

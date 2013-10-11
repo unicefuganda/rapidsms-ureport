@@ -388,7 +388,7 @@ def ureporters(request):
                    model=UreportContact,
                    queryset=queryset,
                    download_form=download_form,
-                   results_title='uReporters',
+                   results_title= _('uReporters'),
                    filter_forms=[UreporterSearchForm, GenderFilterForm, AgeFilterForm, MultipleDistictFilterForm,
                                  FilterGroupsForm],
                    action_forms=[MassTextForm, AssignGroupForm, BlacklistForm, AssignToNewPollForm, RemoveGroupForm,
