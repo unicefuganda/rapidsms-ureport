@@ -571,6 +571,7 @@
                 $.post("/alerts/1/?ajax=get_replied", function (result) {
                     $.each(result, function(index, value){
                         $('#replied_'+value).html('replied');
+                        console.log('Updated some div')
                     });
                 });
             }, 5000);

@@ -273,10 +273,10 @@ def alerts(request, pk):
         return HttpResponse(reply)
     if request.GET.get('ajax', None):
         if request.GET.get('ajax') == 'get_replied':
-            date = datetime.datetime.now() - datetime.timedelta(seconds=60 * 30)
-            msgs = Message.objects.filter(detail__attribute__name='alerts', direction='I', date__gte=date).values_list(
-                'pk', flat=True)
-            return HttpResponse(simplejson.dumps(msgs), content_type="application/json")
+            date = datetime.datetime.now() - datetime.timedelta(seconds=4 * 60 * 60 * 30)
+            msgs = Message.objects.filter(details__attribute__name='replied', direction='I', date__gte=date).values(
+                'pk')
+            return HttpResponse(simplejson.dumps(list(msgs)), content_type="application/json")
         date = datetime.datetime.now() - datetime.timedelta(seconds=30)
         prev = request.session.get('prev', [])
         msgs = Message.objects.filter(details__attribute__name='alert',

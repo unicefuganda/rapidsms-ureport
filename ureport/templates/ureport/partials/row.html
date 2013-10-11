@@ -1,6 +1,6 @@
 {% load ureport %}
 <tr id="{{msg.pk}}">
-    <td>
+    <td id="replied_{{ msg.pk }}">
         {%for  m  in msg.details.all%}
 
         {%if m.attribute.name == "replied"%}
