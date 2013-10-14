@@ -76,11 +76,11 @@ def autoreg_messages(request):
     partial_row = 'ureport/partials/messages/message_row.html'
     base_template = 'ureport/contact_message_base.html'
     paginator_template = 'ureport/partials/new_pagination.html'
-    columns = [('Text', True, 'text', SimpleSorter()),
-               ('Identifier', True, 'connection__pk', SimpleSorter()),
-               ('Date', True, 'date',
-                SimpleSorter()), ('Type', True, 'application',
-                                  SimpleSorter()), ('Response', False, 'response', None)]
+    columns = [(_('Text'), True, 'text', SimpleSorter()),
+               (_('Identifier'), True, 'connection__pk', SimpleSorter()),
+               (_('Date'), True, 'date',
+                SimpleSorter()), (_('Type'), True, 'application',
+                                  SimpleSorter()), (_('Response'), False, 'response', None)]
 
     queryset = get_autoreg_messages(request=request)
     if access:
@@ -93,7 +93,7 @@ def autoreg_messages(request):
         action_forms=action_forms,
         objects_per_page=25,
         partial_row=partial_row,
-        results_title="Autoreg Messages",
+        results_title=_("Autoreg Messages"),
         base_template=base_template,
         paginator_template=paginator_template,
         paginator_func=ureport_paginate,
@@ -111,11 +111,11 @@ def unsolicitized_messages(request):
     partial_row = 'ureport/partials/messages/message_row.html'
     base_template = 'ureport/contact_message_base.html'
     paginator_template = 'ureport/partials/new_pagination.html'
-    columns = [('Text', True, 'text', SimpleSorter()),
-               ('Identifier', True, 'connection__pk', SimpleSorter()),
-               ('Date', True, 'date',
-                SimpleSorter()), ('Type', True, 'application',
-                                  SimpleSorter()), ('Response', False, 'response', None)]
+    columns = [(_('Text'), True, 'text', SimpleSorter()),
+               (_('Identifier'), True, 'connection__pk', SimpleSorter()),
+               (_('Date'), True, 'date',
+                SimpleSorter()), (_('Type'), True, 'application',
+                                  SimpleSorter()), (_('Response'), False, 'response', None)]
 
     queryset = get_unsolicitized_messages(request=request)
     if access:
@@ -129,7 +129,7 @@ def unsolicitized_messages(request):
         objects_per_page=25,
         partial_row=partial_row,
         base_template=base_template,
-        results_title="Unsolicitized Messages",
+        results_title=_("Unsolicitized Messages"),
         paginator_template=paginator_template,
         paginator_func=ureport_paginate,
         columns=columns,
@@ -146,11 +146,11 @@ def poll_messages(request):
     partial_row = 'ureport/partials/messages/message_row.html'
     base_template = 'ureport/contact_message_base.html'
     paginator_template = 'ureport/partials/new_pagination.html'
-    columns = [('Text', True, 'text', SimpleSorter()),
-               ('Identifier', True, 'connection__pk', SimpleSorter()),
-               ('Date', True, 'date',
-                SimpleSorter()), ('Type', True, 'application',
-                                  SimpleSorter()), ('Response', False, 'response', None)]
+    columns = [(_('Text'), True, 'text', SimpleSorter()),
+               (_('Identifier'), True, 'connection__pk', SimpleSorter()),
+               (_('Date'), True, 'date',
+                SimpleSorter()), (_('Type'), True, 'application',
+                                  SimpleSorter()), (_('Response'), False, 'response', None)]
 
     queryset = get_poll_messages(request=request)
     if access:
@@ -164,7 +164,7 @@ def poll_messages(request):
         objects_per_page=25,
         partial_row=partial_row,
         base_template=base_template,
-        results_title="Poll Messages",
+        results_title=_("Poll Messages"),
         paginator_template=paginator_template,
         paginator_func=ureport_paginate,
         columns=columns,
@@ -181,11 +181,11 @@ def quit_messages(request):
     partial_row = 'ureport/partials/messages/message_row.html'
     base_template = 'ureport/contact_message_base.html'
     paginator_template = 'ureport/partials/new_pagination.html'
-    columns = [('Text', True, 'text', SimpleSorter()),
-               ('Identifier', True, 'connection__pk', SimpleSorter()),
-               ('Date', True, 'date',
-                SimpleSorter()), ('Type', True, 'application',
-                                  SimpleSorter()), ('Response', False, 'response', None)]
+    columns = [(_('Text'), True, 'text', SimpleSorter()),
+               (_('Identifier'), True, 'connection__pk', SimpleSorter()),
+               (_('Date'), True, 'date',
+                SimpleSorter()), (_('Type'), True, 'application',
+                                  SimpleSorter()), (_('Response'), False, 'response', None)]
 
     queryset = get_quit_messages(request=request)
     if access:
@@ -199,7 +199,7 @@ def quit_messages(request):
         objects_per_page=25,
         partial_row=partial_row,
         base_template=base_template,
-        results_title="Quit Messages",
+        results_title=_("Quit Messages"),
         paginator_template=paginator_template,
         paginator_func=ureport_paginate,
         columns=columns,
@@ -211,10 +211,10 @@ def quit_messages(request):
 @login_required
 def mass_messages(request):
     access = get_access(request)
-    columns = [('Message', True, 'text', TupleSorter(0)),
-               ('Time', True, 'date', TupleSorter(1)), ('User', True, 'user', TupleSorter(2)),
-               ('Recipients', True, 'response', TupleSorter(3)),
-               ('Type', True, 'type', TupleSorter(4))]
+    columns = [(_('Message'), True, 'text', TupleSorter(0)),
+               (_('Time'), True, 'date', TupleSorter(1)), (_('User'), True, 'user', TupleSorter(2)),
+               (_('Recipients'), True, 'response', TupleSorter(3)),
+               (_('Type'), True, 'type', TupleSorter(4))]
 
     queryset = get_mass_messages(request=request)
     if access:
@@ -229,7 +229,7 @@ def mass_messages(request):
         paginator_func=ureport_paginate,
         base_template='ureport/contacts_base.html',
         sort_column='date',
-        results_title="Mass Messages",
+        results_title=_("Mass Messages"),
         sort_ascending=False,
         selectable=False,
         columns=columns
