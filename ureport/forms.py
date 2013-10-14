@@ -750,7 +750,7 @@ class GroupsFilter(forms.Form):
 
 
 class PushToMtracForm(ActionForm):
-    action_label = "Push Selected Messages to Mtrac"
+    action_label = _("Push Selected Messages to Mtrac")
 
     def perform(self, request, results):
         results = set([r.pk for r in results])
