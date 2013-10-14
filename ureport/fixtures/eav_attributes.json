@@ -1,0 +1,50 @@
+[
+    {
+        "pk": 3,
+        "model": "eav.attribute",
+        "fields": {
+            "description": "A response value for a Poll with expected location-based responses",
+            "created": "2013-10-11 14:16:37",
+            "datatype": "object",
+            "enum_group": null,
+            "required": false,
+            "site": 1,
+            "modified": "2013-10-11 14:16:37",
+            "type": null,
+            "slug": "poll_location_value",
+            "name": "Location"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "eav.attribute",
+        "fields": {
+            "description": "A response value for a Poll with expected numeric responses",
+            "created": "2013-10-11 14:16:37",
+            "datatype": "float",
+            "enum_group": null,
+            "required": false,
+            "site": 1,
+            "modified": "2013-10-11 14:16:37",
+            "type": null,
+            "slug": "poll_number_value",
+            "name": "Number"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "eav.attribute",
+        "fields": {
+            "description": "A response value for a Poll with expected text responses",
+            "created": "2013-10-11 14:16:37",
+            "datatype": "text",
+            "enum_group": null,
+            "required": false,
+            "site": 1,
+            "modified": "2013-10-11 14:16:37",
+            "type": null,
+            "slug": "poll_text_value",
+            "name": "Text"
+        }
+    }
+]
