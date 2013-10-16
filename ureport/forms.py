@@ -539,13 +539,13 @@ class ForwardMessageForm(forms.Form):
 
 
 class rangeForm(forms.Form):
-    startdate = forms.DateField(('%d/%m/%Y',), label='Start Date', required=False,
+    startdate = forms.DateField(('%d/%m/%Y',), label=_('Start Date'), required=False,
                                 widget=forms.DateTimeInput(format='%d/%m/%Y', attrs={
                                     'class': 'input',
                                     'readonly': 'readonly',
                                     'size': '15'
                                 }))
-    enddate = forms.DateField(('%d/%m/%Y',), label='End Date', required=False,
+    enddate = forms.DateField(('%d/%m/%Y',), label=_('End Date'), required=False,
                               widget=forms.DateTimeInput(format='%d/%m/%Y', attrs={
                                   'class': 'input',
                                   'readonly': 'readonly',
@@ -636,7 +636,7 @@ class AgeFilterForm(FilterForm):
 
 class DistrictForm(forms.Form):
     districts = forms.ModelMultipleChoiceField(queryset=Location.objects.filter(type__slug='district').order_by('name'),
-                                               required=True)
+                                               required=True, label=_("Districts"))
 
 
 def get_poll_data(poll):

@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% load i18n %}
 {% block stylesheets %}
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/ureport_extras.css"/>
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/ureport.min.css"/>
@@ -320,14 +321,14 @@
 
     <div class="Module">
     <h2>
-        Messages
+        {% trans "Messages" %}
     </h2>
     <a href="./?capture=toggle" onclick="c=$(this).attr('href')+'&time='+new Date().getTime();$(this).attr('href',c);" id="status" class="btn" data-remote=true>
     <span id="capty">
         {%if capture_status.value == 'true'%}
-            Stop Capture
+            {% trans "Stop Capture" %}
         {%else%}
-            Start Capture
+            {% trans "Start Capture" %}
         {%endif%}
         </span>
 
@@ -338,11 +339,11 @@
 
 
 
-        <span> <a  onclick="$('#district_filter').toggle();" href="javascript:void(0);" >Filter Districts >>|</a></span>
+        <span> <a  onclick="$('#district_filter').toggle();" href="javascript:void(0);" >{% trans "Filter Districts" %} >>|</a></span>
 
-        <span><a  onclick="$('#download').toggle();" href="javascript:void(0);" >Download >></a>
+        <span><a  onclick="$('#download').toggle();" href="javascript:void(0);" >{% trans "Download" %} >></a>
         </span>
-        <span><a  onclick="$('#groups_filter').toggle();" href="javascript:void(0);" >Filter Groups >></a>
+        <span><a  onclick="$('#groups_filter').toggle();" href="javascript:void(0);" >{% trans "Filter Groups" %} >></a>
         </span>
 
 
@@ -352,7 +353,7 @@
         <form  method="POST"  action="?download=true">
             <table>
                 {{range_form.as_table}}
-                <tr><td><input type="submit" value="Download" class="btn" ></td></tr>
+                <tr><td><input type="submit" value="{% trans "Download" %}" class="btn" ></td></tr>
             </table>
         </form>
     </div>
@@ -360,9 +361,9 @@
     <div id="district_filter" style="display:none;">
         <form action="" method="POST" data-remote=true>
             <table>
-                <tr><td>{{district_form.as_table}}</td> <td><input type="submit" name="Filter By District(s)" value="Filter By District(s)" data-disable-with="Filtering......"></td>
+                <tr><td>{{district_form.as_table}}</td> <td><input type="submit" name="Filter By District(s)" value="{% trans "Filter By District(s)" %}" data-disable-with="{% trans "Filtering" %}......"></td>
 
-                    <td><a class="btn" href="?reset_districts=true" data-remote=true>Reset Filter</a></td>
+                    <td><a class="btn" href="?reset_districts=true" data-remote=true>{% trans "Reset Filter" %}</a></td>
                 </tr>
             </table>
 
@@ -371,10 +372,10 @@
 
     <div id="groups_filter" style="display:none;">
         <form action="" method="post" data-remote=true>
-            Filter Group
+            {% trans "Filter Group" %}
             {{ groupform.groups }}
 
-            <input type="submit" value="filter group" data-disable-with="Filtering......" >
+            <input type="submit" value="{% trans "filter group" %}" data-disable-with="{% trans "Filtering" %}......" >
         </form>
 
     </div>
@@ -384,7 +385,7 @@
                 <table>
                     <tr>
                         <td><input type="text" name="search"></td>
-                        <td><input type="submit" value="Search"></td>
+                        <td><input type="submit" value="{% trans "Search" %}"></td>
 
                 </table>
             </form>  </span>
@@ -393,13 +394,13 @@
     <table class="zebra-striped bordered fc" width="100%">
         <thead>
         <tr>
-            <th>Actioned</th>
-            <th>Identifier</th>
-            <th>Text</th>
-            <th>Date</th>
-            <th>District</th>
-            <th>Action</th>
-            <th>Rating</th>
+            <th>{% trans "Actioned" %}</th>
+            <th>{% trans "Identifier" %}</th>
+            <th>{% trans "Text" %}</th>
+            <th>{% trans "Date" %}</th>
+            <th>{% trans "District" %}</th>
+            <th>{% trans "Action" %}</th>
+            <th>{% trans "Rating" %}</th>
         </tr>
         </thead>
         <tbody id="mp_bd">
@@ -432,9 +433,9 @@
                 <td>
 
                     <a id="msg_rep_link" href="/sendmessage/?forward=true&msg={{msg.pk}}" class="btn msg_rep"
-                       data-remote=true>Foward</a><a style="margin-top:3px; "
+                       data-remote=true>{% trans "Foward" %}</a><a style="margin-top:3px; "
                                                      href="/sendmessage/?reply=true&msg={{msg.pk}}"
-                                                     class="btn msg_send" id="msg_send_link" data-remote=true>Reply</a>
+                                                     class="btn msg_send" id="msg_send_link" data-remote=true>{% trans "Reply" %}</a>
                 </td>
                 <td>
 
@@ -474,7 +475,7 @@
 
                         <li class="dropdown" id="menu2">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
-                                <span id='asspan{{msg.pk}}'>Assign</span>
+                                <span id='asspan{{msg.pk}}'>{% trans "Assign" %}</span>
                                 <b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
@@ -515,7 +516,7 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>
+                <a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>{% trans "Close" %}</a>
                 <input type="submit" class="btn btn-primary" value="Send Message">
             </div>
         </form>
@@ -536,7 +537,7 @@
 
         </div>
         <div class="modal-footer">
-            <a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>Close</a>
+            <a href="#" data-dismiss="modal" class="btn" onclick='$(".modal").hide()'>{% trans "Close" %}</a>
 
         </div>
 
