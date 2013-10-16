@@ -37,16 +37,16 @@ class PollResponsesTest(unittest.TestCase, PollAssertions):
         cls.cleanup("/admin/rapidsms/contact/")
         cls.cleanup("/admin/auth/group/")
 
-    # def test_that_poll_responses_are_shown_up_at_report_page(self):
-    #     PollBase.start_poll(self.browser,self.poll_id)
-    #
-    #     PollBase.respond_to_the_started_poll("0794339344", "yes")
-    #     SplinterWrapper.open('/polls/%s/report/' % self.poll_id)
-    #     self.assert_that_question_is(self.question)
-    #     self.assert_the_number_of_participants_of_the_poll_is(1)
-    #
-    #     self.assert_that_response_location_is("Kasese")
-    #     self.assert_that_number_of_responses_is(1)
+    def test_that_poll_responses_are_shown_up_at_report_page(self):
+        PollBase.start_poll(self.browser,self.poll_id)
+
+        PollBase.respond_to_the_started_poll("0794339344", "yes")
+        SplinterWrapper.open('/polls/%s/report/' % self.poll_id)
+        self.assert_that_question_is(self.question)
+        self.assert_the_number_of_participants_of_the_poll_is(1)
+
+        self.assert_that_response_location_is("Kasese")
+        self.assert_that_number_of_responses_is(1)
 
     # def test_that_a_poll_response_can_be_reassigned_to_another_poll(self):
     #     second_poll_id = PollBase.create_poll(self.browser,name='Second Poll',type="Yes/No Question",question="Is the first poll working?",group="groupFT")
