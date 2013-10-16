@@ -349,9 +349,9 @@ def view_responses(req, poll_id):
     #     typedef['report_columns']:
     #     columns.append((column, sortable, db_field, sorter))
     columns = (
-        ('Date', True, 'date', SimpleSorter()),
-        ('Text', True, 'poll__question', SimpleSorter()),
-        ('Category', True, 'categories__category', SimpleSorter())
+        (_('Date'), True, 'date', SimpleSorter()),
+        (_('Text'), True, 'poll__question', SimpleSorter()),
+        (_('Category'), True, 'categories__category', SimpleSorter())
     )
 
     return generic(

@@ -12,10 +12,10 @@
     <div class="buttons">
         {% if object.responses__count %}
             <a href="{% url poll-report object.pk %}">
-                <img src="{{ MEDIA_URL }}poll/icons/silk/zoom.png" alt=""/> Report
+                <img src="{{ MEDIA_URL }}poll/icons/silk/zoom.png" alt=""/> {% trans "Report" %}
             </a>
             <a href="{% url ureport.views.view_responses object.pk %}">
-                <img src="{{ MEDIA_URL }}poll/icons/silk/database_table.png" alt=""/> Responses ({{ object.responses__count }})
+                <img src="{{ MEDIA_URL }}poll/icons/silk/database_table.png" alt=""/> {% trans "Responses" %} ({{ object.responses__count }})
             </a>
         {% endif %}
         <a href="{% url ureport.views.view_poll object.pk %}">

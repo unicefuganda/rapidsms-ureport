@@ -196,8 +196,8 @@ class AssignToPollForm(ActionForm):
 
     poll = \
         forms.ModelChoiceField(queryset=Poll.objects.all().order_by('-pk'
-        ))
-    action_label = 'Assign selected to poll'
+        ),label=_('Poll'))
+    action_label = _('Assign selected to poll')
 
     def perform(self, request, results):
         poll = self.cleaned_data['poll']
@@ -212,13 +212,13 @@ class AssignToPollForm(ActionForm):
 class DeleteSelectedForm(ActionForm):
     """ Deletes selected stuff  """
 
-    action_label = 'Delete Selected '
+    action_label = _('Delete Selected')
     action_class = 'delete'
 
     def perform(self, request, results):
         count = len(results)
         if not count:
-            return ('No contacts selected', 'error')
+            return _('No contacts selected', 'error')
 
         if isinstance(results[0], QuerySet):
             results.delete()
@@ -232,7 +232,7 @@ class DeleteSelectedForm(ActionForm):
 class AssignToNewPollForm(ActionForm):
     """ assigns contacts to poll"""
 
-    action_label = 'Assign to New poll'
+    action_label = _('Assign to New poll')
     poll_name = forms.CharField(label=_('Poll Name'), max_length='100')
     POLL_TYPES = [('yn', _('Yes/No Question'))] + [(c['type'], c['label'])
                                                 for c in Poll.TYPE_CHOICES.values()]
@@ -475,7 +475,7 @@ class AssignResponseGroupForm(ActionForm):
             if self.request.user.is_authenticated():
                 self.fields['groups'] = forms.ModelMultipleChoiceField(
                     queryset=Group.objects.filter(pk__in=self.request.user.groups.values_list('pk', flat=True)),
-                    required=False)
+                    required=False,label=_('Groups'))
             else:
                 self.fields['groups'] = forms.ModelMultipleChoiceField(queryset=Group.objects.all(), required=False)
             if self.access:

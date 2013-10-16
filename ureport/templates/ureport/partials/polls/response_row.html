@@ -1,4 +1,5 @@
 {% extends row_base %}
+        {% load i18n %}
 {% block message_information %}
 
     <td class="response_sender_col">
@@ -17,8 +18,8 @@
               <img style="vertical-alignment:bottom;padding-top:7px" src="{{ MEDIA_URL }}rapidsms/icons/silk/delete.png" alt=""/>
           </a>
           <a  onclick="editResponse(this, '{% url poll.views.edit_response response.pk %}');" href="javascript:void(0);">
-              <img src="{{ MEDIA_URL }}poll/icons/silk/pencil.png" alt=""/> 
-              Edit
+              <img src="{{ MEDIA_URL }}poll/icons/silk/pencil.png" alt=""/>
+              {% trans "Edit" %}
           </a>
 
 

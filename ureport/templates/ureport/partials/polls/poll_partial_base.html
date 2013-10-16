@@ -1,8 +1,9 @@
 {% extends "generic/partials/partial_base.html" %}
+        {% load i18n %}
 {% block list_wrapper %}
     <script type="text/javascript">
         function deleteResponse(link, url) {
-            if (confirm("Are you sure you want to remove this response from the poll?")) {
+            if (confirm("{% trans "Are you sure you want to remove this response from the poll?" %}")) {
                 $.post(url, function(data) {
                     $(link).parents("tr").remove();
                 }); 
@@ -41,28 +42,28 @@
 {% endblock %}
 {% block partial_base_content %}
 <a onclick="$(this).next('.responses_meta').slideToggle(500);$('#collapse_img').toggle();$('#expand_img').toggle();" href="javascript:void(0)">
- Response rates
+    {% trans "Response rates" %}
      <img id="collapse_img" style="float:left" src="{{ MEDIA_URL }}rapidsms/icons/silk/section_expanded--bright.png" />
      <img id="expand_img" style="float:left;display:none" src="{{ MEDIA_URL }}rapidsms/icons/silk/section_collapsed--bright.png" />
     </a>
 
     <div class="responses_meta " style="display:none;">
 
-    <h2 class="collapsed">Responses</h2>
+    <h2 class="collapsed">{% trans "Responses" %}</h2>
     <h4>{{ object_list.0.poll.question }}</h4>
     {% for rate,value in response_rates.items %}
-        <p>{{ rate }} : {{ value.0}} Participants, total responses {{ value.1 }} ({{ value.2|floatformat }}%)</p>
+        <p>{{ rate }} : {{ value.0}} {% trans "Participants, total responses" %} {{ value.1 }} ({{ value.2|floatformat }}%)</p>
     {% endfor %}
     </div>
     {% block export %}
     <div class="buttons">
             <a href="javascript:void(0)" onclick="function start_poll_export() {
                 $.get('{% url start_poll_export poll_id %}', function(data){
-                alert('You will receive an email as soon as the export is done');
+                alert('{% trans 'You will receive an email as soon as the export is done' %}');
                 });
             }
             start_poll_export()">
-            <img src="{{ MEDIA_URL }}poll/icons/silk/table_save.png" alt=""/> Export
+            <img src="{{ MEDIA_URL }}poll/icons/silk/table_save.png" alt=""/> {% trans "Export" %}
         </a>
     </div>
         {% endblock %}
