@@ -1,8 +1,6 @@
-from django.core.paginator import Paginator, QuerySetPaginator, Page, InvalidPage
+from django.core.paginator import Paginator, Page, InvalidPage
 import math
-from django.db import connection
 from django.db.utils import DatabaseError
-from ureport.models import UreportContact
 
 
 class UreportPaginator(Paginator):

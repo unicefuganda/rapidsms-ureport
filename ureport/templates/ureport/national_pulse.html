@@ -210,9 +210,13 @@
         categoriesGroup = categories.group().reduceSum(function(d){return d.total});
         categoryColor = d3.scale.ordinal()
                 .domain(caseTypes)
-                .range(["#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"]);
+                .range(["#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080", "#006400"]);
 
-        var dominant_mapper = {"no messages":0, "water":1, "violence against children":2, "ovc":6, "health & nutrition":3, "emergency":5, "education":4};
+        pieColor = d3.scale.ordinal()
+                .domain(caseTypes)
+                .range(["#000000", "#006400", "#800080", "#0000FF", "#FFA500", "#FF0000", "#808080"]);
+
+        var dominant_mapper = {"no messages":0, "water":1, "violence against children":2, "ovc":6, "health & nutrition":3, "emergency":5, "education":4, "social policy":7};
         function category_of(value){
             var n;
             var x;
@@ -346,12 +350,12 @@
         });
 
         nationalPieChart
-                .width(300)
-                .height(200)
-                .transitionDuration(500)
-                .colors(categoryColor)
-                .colorAccessor(function(d, i){return _.indexOf(caseTypes, d.data.key); })
-                .radius(90)
+                .width(400)
+                .height(350)
+                .transitionDuration(1000)
+                .colors(pieColor)
+                .colorAccessor(function(d, i){console.log(d.data.value+" "+ d.data.key+ " "+ i);return i; })
+                .radius(130)
                 .innerRadius(40)
                 .dimension(categories)
                 .group(categoriesGroup)
@@ -361,11 +365,11 @@
         dc.renderAll();
 
         mapLegendColors = d3.scale.linear()
-                .domain(d3.range(0,7))
-                .range(["#BEBEBE", "#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"]);
+                .domain(d3.range(0,8))
+                .range(["#BEBEBE", "#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080", "#006400"]);
 
         var legend = d3.select('.legend')
-                .attr("style", function (d) { return "margin-top: " + (height / 4) + "px;"; });
+                .attr("style", function (d) { return "margin-top: " + (height / 2.4) + "px;"; });
 
         var legendItems = legend.selectAll('.legend-item')
                 .data(_.zip(mapLegendColors.domain(), mapLegendColors.range()));
