@@ -205,8 +205,7 @@ class AssignToPollForm(ActionForm):
             c.categories.all().delete()
             c.poll = poll
             c.save()
-        return ('%d responses assigned to  %s poll' % (len(results),
-                                                       poll.name), 'success')
+        return (_('%(length)d responses assigned to  %(poll)s poll') % {"length":len(results),"poll":poll.name}, 'success')
 
 
 class DeleteSelectedForm(ActionForm):
