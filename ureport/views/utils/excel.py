@@ -153,8 +153,10 @@ def handle_excel_file(file, group, fields):
             connections =\
             Connection.bulk.bulk_insert_commit(send_post_save=False,
                 autoclobber=True)
-            contact_pks = connections.values_list('contact__pk',
-                flat=True)
+
+            #Important to update UreportContact
+            for connection in connections:
+                connection.contact.save()
 
             if len(contacts) > 0:
                 info = 'Contacts with numbers... '\

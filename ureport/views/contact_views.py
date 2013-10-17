@@ -221,8 +221,8 @@ def signup(request):
                             if group:
                                 connection.contact.groups.add(group)
                                 break
-            contact.save()
             connection.save()
+            contact.save()
             status_message = 'You have successfully signed up :)'
             if conn_created:
                 Message.objects.create(connection=connection, direction='O'
