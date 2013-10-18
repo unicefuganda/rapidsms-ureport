@@ -274,8 +274,7 @@ class AssignToNewPollForm(ActionForm):
         if settings.SITE_ID:
             poll.sites.add(Site.objects.get_current())
 
-        return ('%d participants added to  %s poll' % (len(results),
-                                                       poll.name), 'success')
+        return (_('%(results)d participants added to  %(poll)s poll' % {"results":len(results),"poll":poll.name}), 'success')
 
 
 DISTRICT_CHOICES = tuple([(int(d.pk), d.name) for d in
@@ -348,7 +347,7 @@ class MassTextForm(ActionForm):
 
     def perform(self, request, results):
         if results is None or len(results) == 0:
-            return ('A message must have one or more recipients!', 'error')
+            return (_('A message must have one or more recipients!'), 'error')
 
         if request.user and request.user.has_perm('contact.can_message'):
             blacklists = Blacklist.objects.values_list('connection')
@@ -374,9 +373,9 @@ class MassTextForm(ActionForm):
             masstexts = MassText.bulk.bulk_insert_commit(send_post_save=False, autoclobber=True)
             masstext = masstexts[0]
 
-            return ('Message successfully sent to %d numbers' % len(connections), 'success',)
+            return ( _('Message successfully sent to %(connections)d numbers')% {"connections":len(connections)}, 'success',)
         else:
-            return ("You don't have permission to send messages!", 'error',)
+            return (_("You don't have permission to send messages!"), 'error',)
 
 
 class NewPollForm(forms.Form): # pragma: no cover

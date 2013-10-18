@@ -469,7 +469,7 @@ function deselect_all() {
 
 function select_everything(count) {
     $('#input_select_everything').val('true');
-    $('#span_select_everything').html('All ' + count + ' items are selected. <a href="javascript:void(0)" onclick="deselect_everything(' + count + ')">Clear selection</a>');
+    $('#span_select_everything').html(gettext('All ') + count + gettext(' items are selected.')+' <a href="javascript:void(0)" onclick="deselect_everything(' + count + ')">'+gettext('Clear selection')+'</a>');
 }
 
 function deselect_everything(count) {
