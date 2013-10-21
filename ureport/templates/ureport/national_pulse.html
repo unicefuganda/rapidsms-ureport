@@ -62,9 +62,9 @@
     <div class="container">
         <div>
             <ul id="nav">
-                <li><a href="{% url pulse 'day' %}">Today's Pulse</a></li>
-                <li><a href="{% url pulse 'month' %}"> Month's Pulse</a></li>
-                <li><a href="{% url pulse 'year' %}"> Year's Pulse</a></li>
+                <li><a href="{% url pulse 'day' %}">{% trans "Today's Pulse" %}</a></li>
+                <li><a href="{% url pulse 'month' %}"> {% trans "Month's Pulse" %}</a></li>
+                <li><a href="{% url pulse 'year' %}"> {% trans "Year's Pulse" %}</a></li>
             </ul></div>
         <div>
             <a href="javascript:dc.filterAll(); dc.renderAll();">{% trans "Reset All" %}</a>

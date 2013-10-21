@@ -26,7 +26,7 @@ function filter(elem,url) {
     form_data = form.serializeArray();
     $('#div_results_loading').show();
     $('.results').load(url, form_data, function() {
-        $('.results').append('  contacts selected');
+        $('.results').append(gettext('  contacts selected'));
        $('.ajax_loading').remove();
     });
 }

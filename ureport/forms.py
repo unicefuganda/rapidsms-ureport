@@ -435,7 +435,7 @@ class NewPollForm(forms.Form): # pragma: no cover
             cleaned_data['default_response_en'] = cleaned_data['default_response_en'].replace('%', u'\u0025')
 
         if not groups:
-            raise forms.ValidationError("You must provide a set of recipients (a group or groups)")
+            raise forms.ValidationError(_("You must provide a set of recipients (a group or groups)"))
 
         return cleaned_data
 
