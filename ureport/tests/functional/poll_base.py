@@ -36,6 +36,11 @@ class PollBase(PollAssertions):
         return Poll.objects.get(id=poll_id)
 
     @classmethod
+    def get_poll_responses_ids(cls, browser, poll_id):
+        SplinterWrapper.open("/%s/responses/" % poll_id)
+        return browser.find_by_xpath('//input[@type="checkbox" and @name="results"]')
+
+    @classmethod
     def respond_to_the_started_poll(cls, sender, message):
         SplinterWrapper.open('/router/console/')
         rows_responses = rows_of_table_by_class(cls.browser, "messages module")

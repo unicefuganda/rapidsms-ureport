@@ -5,14 +5,17 @@ from ureport.tests.functional.splinter_wrapper import SplinterWrapper
 from ureport.tests.functional.poll_base import PollBase
 from ureport.tests.functional.admin_helper import fill_form_and_submit, fill_form
 from ureport.tests.functional.admin_base import AdminBase
-from ureport.tests.functional.test_data import WAIT_TIME_IN_SECONDS
+from ureport.tests.functional.clean_helper import login_as_admin, build_url, post
 
 
 class PollResponsesTest(unittest.TestCase, PollAssertions):
     browser = SplinterWrapper.getBrowser()
 
     def tearDown(self):
-        self.cleanup("/admin/poll/response/")
+        responses = PollBase.get_poll_responses_ids(self.browser, self.poll_id)
+        for response in responses:
+            delete_responses_url = build_url('/polls/responses/%s/delete/' % response.value)
+            post(self.opener, delete_responses_url)
         PollBase.close_poll(self.poll_id)
 
     @classmethod
@@ -20,6 +23,7 @@ class PollResponsesTest(unittest.TestCase, PollAssertions):
         AdminBase.log_in_as_ureport()
         cls.poll_id, cls.question = PollBase.setup_poll(cls.browser,question="This is a new poll.")
         AdminBase.change_users_group("groupFT")
+        cls.opener = login_as_admin('ureport','ureport')
 
     @classmethod
     def cleanup(cls, url):
@@ -30,8 +34,13 @@ class PollResponsesTest(unittest.TestCase, PollAssertions):
             cls.browser.find_by_value("Yes, I'm sure").first.click()
 
     @classmethod
+    def delete_poll(cls):
+        delete_url = build_url('/polls/%s/delete/' % cls.poll_id)
+        post(cls.opener, delete_url)
+
+    @classmethod
     def tearDownClass(cls):
-        cls.cleanup("/admin/poll/poll/")
+        cls.delete_poll()
         cls.cleanup("/admin/rapidsms/connection/")
         cls.cleanup("/admin/rapidsms/backend/")
         cls.cleanup("/admin/rapidsms/contact/")
