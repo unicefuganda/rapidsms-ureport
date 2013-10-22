@@ -40,6 +40,7 @@ class UreportMessagesTestCase(TestCase):
         return ss
 
     def fakeIncoming(self, message, connection):
+        self.router = get_router()
         self.router.handle_incoming(connection.backend.name, connection.identity, message)
 
     def spoof_incoming_obj(self, message, connection=None):

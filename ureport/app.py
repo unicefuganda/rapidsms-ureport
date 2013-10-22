@@ -27,10 +27,14 @@ class App(AppBase):
         OPT_IN_WORDS_LUO = getattr(settings, 'OPT_IN_WORDS_LUO', None)
         OPT_IN_WORDS_EN = getattr(settings, 'OPT_IN_WORDS', None)
         OPT_IN_WORDS_KDJ = getattr(settings, 'OPT_IN_WORDS_KDJ', None)
+
+
         if OPT_IN_WORDS_LUO:
             opt_reg_luo = re.compile(r"|".join(OPT_IN_WORDS_LUO), re.IGNORECASE)
         if OPT_IN_WORDS_KDJ:
             opt_reg_kdj = re.compile(r"|".join(OPT_IN_WORDS_KDJ), re.IGNORECASE)
+        if OPT_IN_WORDS_EN:
+            opt_reg_en = re.compile(r"|".join(OPT_IN_WORDS_EN), re.IGNORECASE)
 
         #dump new connections in Autoreg
         if not message.connection.contact and not \
@@ -41,6 +45,7 @@ class App(AppBase):
             log.debug("[ureport-app] [%s] No contact found, adding to registration" % message.connection.identity)
             luo_match = opt_reg_luo.search(message.text.lower())
             kdj_match = opt_reg_kdj.search(message.text.lower())
+            en_match = opt_reg_en.search(message.text.lower())
 
             if luo_match:
                 prog = ScriptProgress.objects.create(script=Script.objects.get(pk="ureport_autoreg_luo2"), \
@@ -52,7 +57,7 @@ class App(AppBase):
                                                      connection=message.connection)
                 prog.language = "kdj"
                 prog.save()
-            else:
+            elif en_match:
                 prog = ScriptProgress.objects.create(script=Script.objects.get(pk="ureport_autoreg2"), \
                                                      connection=message.connection)
                 prog.language = "en"
