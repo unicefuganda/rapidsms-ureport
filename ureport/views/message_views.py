@@ -1,5 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import re
+from django.core.mail import send_mail
 
 from django.shortcuts import render_to_response, render
 from django.shortcuts import get_object_or_404
@@ -276,16 +278,16 @@ def send_message(request, template='ureport/partials/forward.html'):
                 ], attribute=st, value=send_message_form.cleaned_data.get('text'
                 ), description='replied')
             for r in recs:
+                email_check = re.compile(r"[^@]+@[^@]+\.[^@]+")
+                if email_check.match(r):
+                    send_mail('Forwarded From Ureport', send_message_form.cleaned_data.get('text'),
+                              "Ureport Alerts<alerts@ureport.ug>", [r], fail_silently=True)
+                    continue
                 try:
                     connection = Connection.objects.get(identity=r)
                 except Connection.DoesNotExist:
                     number, backend = assign_backend(r)
                     connection = Connection.objects.create(identity=r, backend=backend)
-
-
-                #                rate,_=MessageAttribute.objects.get_or_create(name="forwarded")
-                #                det,_=MessageDetail.objects.get_or_create(message=message,attribute=rate,value="1",description="forwarded")
-
                 message = Message.objects.create(direction='O',
                                                  text=send_message_form.cleaned_data.get('text'
                                                  ), status='Q', connection=connection)

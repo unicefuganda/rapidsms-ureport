@@ -1,3 +1,5 @@
+from django.contrib.auth.models import Group
+from django.core.mail import send_mail
 from rapidsms.apps.base import AppBase
 from contact.models import Flag, MessageFlag
 from script.models import Script, ScriptProgress
@@ -72,7 +74,15 @@ class App(AppBase):
 
             if message.connection.contact:
                 alert_setting, _ = Settings.objects.get_or_create(attribute="alerts")
-
+                try:
+                    mp = Group.objects.get(name='MP')
+                    if mp in message.connection.contact.groups.all():
+                        log.info('MP with ID %d just sent in a message %s, emailing it to Erik' % (
+                            message.connection_id, message.text))
+                        send_mail('MP Sent Message to Ureport', message.text, "Ureport Alerts<alerts@ureport.ug>",
+                                  ['Erikfrisk01@gmail.com'], fail_silently=True)
+                except:
+                    pass
                 if alert_setting.value == "true":
                     log.debug(
                         "[ureport-app] [%s] because 'alerts' is true and this is Not a registration or a poll message, creating MessageDetail alert..." % message.connection.identity)

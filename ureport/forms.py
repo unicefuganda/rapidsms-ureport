@@ -532,7 +532,7 @@ class SendMessageForm(forms.Form):
 
 
 class ForwardMessageForm(forms.Form):
-    recipients = forms.CharField(label="recepient(s)", required=True, help_text="enter numbers commas separated")
+    recipients = forms.CharField(label="recepient(s)", required=True, help_text="enter commas separated numbers or emails")
     text = forms.CharField(required=True, widget=SMSInput())
 
 
