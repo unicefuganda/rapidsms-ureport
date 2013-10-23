@@ -48,3 +48,4 @@ This will do some basic configuration to get your install up-and-running.  It ma
 
 After you've completed this configuration, you should be able to point your browser to http://localhost:8000/ and see your Ureport install up and running!  To start uploading users, click on the "ureporters" tab to upload a spreadsheet.
 
+#Commnent to test writability of repository
