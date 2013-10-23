@@ -41,9 +41,9 @@ def autoreg(**kwargs):
 
         gresps = session.responses.filter(response__poll=genderpoll, response__has_errors=False).order_by(
             '-response__date')
-        if gresps.count():
+        if gresps.exists():
             gender = gresps[0].response
-            if gender.categories.filter(category__name='male').count():
+            if gender.categories.filter(category__name='male').exists():
                 contact.gender = 'M'
             elif gender.categories.filter(category__name='female').exists():
                 contact.gender = 'F'
