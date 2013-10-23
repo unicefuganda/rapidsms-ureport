@@ -14,7 +14,7 @@ class Command(BaseCommand):
         one_template = r"(.*\b(%s)\b.*)"
         flags = Flag.objects.exclude(rule=None).exclude(rule_regex=None)
         pattern_list = [[re.compile(flag.rule_regex, re.IGNORECASE), flag] for flag in flags if flag.rule]
-        for message in Message.objects.order_by('-pk'):
+        for message in Message.objects.filter(direction='I').order_by('-pk')[9000:]:
             for reg in pattern_list:
                 match = reg[0].search(message.text)
                 if match:
