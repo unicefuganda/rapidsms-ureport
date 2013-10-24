@@ -45,7 +45,7 @@ class App(AppBase):
             log.debug("[ureport-app] [%s] No contact found, adding to registration" % message.connection.identity)
             luo_match = opt_reg_luo.search(message.text.lower())
             kdj_match = opt_reg_kdj.search(message.text.lower())
-            en_match = opt_reg_en.search(message.text.lower())
+            en_match = opt_reg_en.search(message.text.encode('utf-8'))
 
             if luo_match:
                 prog = ScriptProgress.objects.create(script=Script.objects.get(pk="ureport_autoreg_luo2"), \
@@ -65,7 +65,7 @@ class App(AppBase):
 
             return True
             #ignore subsequent join messages
-        elif message.text.lower().strip() in OPT_IN_WORDS_LUO + OPT_IN_WORDS_EN:
+        elif message.text.encode('utf-8').lower().strip() in OPT_IN_WORDS_LUO + OPT_IN_WORDS_EN:
             if message.connection is not None:
                 log.debug(
                     "[ureport-app] [%s] Contact has already registered, ignoring message" % message.connection.identity)
