@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.http import HttpResponse
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, gettext
 from django.views.decorators.cache import cache_page, never_cache
 from django.views.decorators.vary import vary_on_cookie
 from uganda_common.utils import ExcelResponse
@@ -266,11 +266,11 @@ def alerts(request, pk):
         if s.value == 'true':
             s.value = 'false'
             s.save()
-            reply = 'Start Capture'
+            reply = gettext('Start Capture')
         else:
             s.value = 'true'
             s.save()
-            reply = 'Stop Capture'
+            reply = gettext('Stop Capture')
         return HttpResponse(reply)
     if request.GET.get('ajax', None):
         if request.GET.get('ajax') == 'get_replied':
@@ -429,11 +429,11 @@ def a_dashboard(request, name):
         if s.value == 'true':
             s.value = 'false'
             s.save()
-            reply = 'Start Capture'
+            reply = gettext('Start Capture')
         else:
             s.value = 'true'
             s.save()
-            reply = 'Stop Capture'
+            reply = gettext('Stop Capture')
         return HttpResponse(reply)
     if request.GET.get('ajax', None):
         date = datetime.datetime.now() - datetime.timedelta(seconds=30)
