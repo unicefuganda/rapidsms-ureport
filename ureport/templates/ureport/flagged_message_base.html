@@ -24,7 +24,7 @@
     <thead><tr><td>{% trans "name" %}</td> <td>{% trans "messages" %}</td> <td></td></tr></thead>
     {% for flag in all_flags %}
 {% load ureport %}
-<tr><td>{{flag.name}}</td>  <td><a href={% if go_to_dashboards %}{% url aids-dashboard flag.name|cap_slugify %}{% else %}"/flags/{{ flag.pk }}/messages/"{% endif %}>messages</a></td>
+<tr><td>{{flag.name}}</td>  <td><a href={% if go_to_dashboards %}{% url aids-dashboard flag.name|cap_slugify %}{% else %}"/flags/{{ flag.pk }}/messages/"{% endif %}>{% trans "messages" %}</a></td>
     <td><a href="/flags/{{ flag.pk }}/edit/">{% trans "edit" %}</a> </td>
     <td><a href="/flags/{{ flag.pk }}/delete/">{% trans "delete" %}</a> </td>
 
