@@ -245,7 +245,7 @@ class AssignToNewPollForm(ActionForm):
 
     def perform(self, request, results):
         if not len(results):
-            return ('No contacts selected', 'error')
+            return (_('No contacts selected'), 'error')
         name = self.cleaned_data['poll_name']
         poll_type = self.cleaned_data['poll_type']
         poll_type = self.cleaned_data['poll_type']
