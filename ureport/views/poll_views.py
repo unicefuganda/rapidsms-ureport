@@ -426,14 +426,14 @@ def create_rule(request, pk):
         rule.save()
         tasks.reprocess_responses.delay(category.poll)
         if rule.rule == 1:
-            r = "Contains all of"
+            r = _("Contains all of")
         else:
-            r = "Contains one of"
-        res = """<td>%s</td><td>%s</td><td> <a  onclick="$(this).parent().parent().remove();" href="/rule/%d/delete/" data-remote=true> Delete</a></td>""" % (
-            r, rule.rule_string, rule.pk)
+            r = _("Contains one of")
+        res = """<td>%s</td><td>%s</td><td> <a  onclick="$(this).parent().parent().remove();" href="/rule/%d/delete/" data-remote=true> %s</a></td>""" % (
+            r, rule.rule_string, rule.pk, _("Delete"))
 
         return HttpResponse(res)
-    return HttpResponse("<td colspan='2'>Please enter all the fields</td>")
+    return HttpResponse("<td colspan='2'>%s</td>" % _("Please enter all the fields"))
 
 
 @login_required
