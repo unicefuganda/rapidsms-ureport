@@ -753,7 +753,7 @@ class PushToMtracForm(ActionForm):
     def perform(self, request, results):
         results = set([r.pk for r in results])
         tasks.push_to_mtrac.delay(results)
-        return "%d Messages were pushed to mtrac" % len(results), "success"
+        return _("%(count)d Messages were pushed to mtrac") % { 'count': len(results) }, "success"
 
 
 class UploadContactsForm(forms.ModelForm):
