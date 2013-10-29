@@ -45,6 +45,11 @@
             padding: 5px;
         }
     </style>
+    <script>
+        $( document ).ajaxSend(function() {
+            $( ".loading" ).show();
+        });
+    </script>
 {% endblock %}
 
 {% block top_js %}
@@ -95,6 +100,7 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+    <div class="loading" style="position: absolute; top: 0; left: 42%; z-index: 56; background: #ffff00; display: none">Loading National Pulse... Please wait, This may take a while.</div>
 
 {% endblock %}
 {% block sidecontent %}
@@ -125,10 +131,10 @@
         $('#cloud_modal').modal();
         if(district){
             console.log('District: '+ district + " found");
-        $('#cloud').load('/map-cloud/?district='+district + "&period={{ period|cut:'/'|default:'' }}&category="+cat);
+            $('#cloud').load('/map-cloud/?district='+district + "&period={{ period|cut:'/'|default:'' }}&category="+cat);
         }else{
             console.log('District not found');
-        $('#cloud').load('/map-cloud/?category='+cat + "&period={{ period|cut:'/'|default:'' }}");
+            $('#cloud').load('/map-cloud/?category='+cat + "&period={{ period|cut:'/'|default:'' }}");
         }
     }
     var numberFormat = d3.format(".2f");
