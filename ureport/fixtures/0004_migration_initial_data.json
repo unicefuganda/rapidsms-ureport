@@ -377,9 +377,9 @@
         "pk": 130,
         "model": "poll.rule",
         "fields": {
-            "regex": "^\\\\s*(m|mal|male|ma|ekile)(\\\\s|[^a-zA-Z]|$)",
+            "regex": "^\\s*(m|mal|male|ma|ekile)(\\s|[^a-zA-Z]|$)",
             "category": 178,
-            "rule_string": "^\\\\s*(m|mal|male|ma|ekile)(\\\\s|[^a-zA-Z]|$)",
+            "rule_string": "^\\s*(m|mal|male|ma|ekile)(\\s|[^a-zA-Z]|$)",
             "rule_type": "r"
         }
     },
@@ -387,9 +387,9 @@
         "pk": 174,
         "model": "poll.rule",
         "fields": {
-            "regex": "^\\\\s*(l|laco|lacoo|lac)(\\\\s|[^a-zA-Z]|$)",
+            "regex": "^\\s*(l|laco|lacoo|lac)(\\s|[^a-zA-Z]|$)",
             "category": 178,
-            "rule_string": "^\\\\s*(l|laco|lacoo|lac)(\\\\s|[^a-zA-Z]|$)",
+            "rule_string": "^\\s*(l|laco|lacoo|lac)(\\s|[^a-zA-Z]|$)",
             "rule_type": "r"
         }
     },
@@ -398,9 +398,9 @@
         "pk": 131,
         "model": "poll.rule",
         "fields": {
-            "regex": "^\\\\s*(f|fem|female|fe|aberu)(\\\\s|[^a-zA-Z]|$)",
+            "regex": "^\\s*(f|fem|female|fe|aberu)(\\s|[^a-zA-Z]|$)",
             "category": 179,
-            "rule_string": "^\\\\s*(f|fem|female|fe|aberu)(\\\\s|[^a-zA-Z]|$)",
+            "rule_string": "^\\s*(f|fem|female|fe|aberu)(\\s|[^a-zA-Z]|$)",
             "rule_type": "r"
         }
     },
@@ -408,9 +408,9 @@
         "pk": 175,
         "model": "poll.rule",
         "fields": {
-            "regex": "^\\\\s*(d|dak|dakoo|dako)(\\\\s|[^a-zA-Z]|$)",
+            "regex": "^\\s*(d|dak|dakoo|dako)(\\s|[^a-zA-Z]|$)",
             "category": 179,
-            "rule_string": "^\\\\s*(d|dak|dakoo|dako)(\\\\s|[^a-zA-Z]|$)",
+            "rule_string": "^\\s*(d|dak|dakoo|dako)(\\s|[^a-zA-Z]|$)",
             "rule_type": "r"
         }
     },
