@@ -49,11 +49,11 @@ def parse_name(row, worksheet, cols):
 
 
 def parse_district(row, worksheet, cols):
-    return str(worksheet.cell(row, cols['district']).value)
+    return unicode(worksheet.cell(row, cols['district']).value)
 
 
 def parse_village(row, worksheet, cols):
-    return str(worksheet.cell(row, cols['village']).value)
+    return unicode(worksheet.cell(row, cols['village']).value)
 
 
 def parse_birthdate(row, worksheet, cols):
