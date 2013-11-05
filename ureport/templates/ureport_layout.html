@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 {% load i18n %}
+{% load captureas %}
 <html lang="en">
 <head>
     <title>Ureport - {% block page_title %}{% trans "Voice Matters" %}{% endblock %}</title>
@@ -63,7 +64,8 @@
 
             <div class="intro">
                 <p>
-		    {% blocktrans %}Ureport is a free SMS-based system that allows young Ugandans to speak out on what's happening in communities across the country, and work together with other community leaders for positive change.{% endblocktrans %}
+                {% captureas citizens_trans %}{% trans "Ugandans" %}{% endcaptureas %}
+		    {% blocktrans %}Ureport is a free SMS-based system that allows young {{ citizens_trans }} to speak out on what's happening in communities across the country, and work together with other community leaders for positive change.{% endblocktrans %}
                 </p>
             </div>
             <div class="join">
