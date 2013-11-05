@@ -43,6 +43,10 @@
             text-decoration: none;
             border: #800080 1px solid;
             padding: 5px;
+            background: #f5f5f5;
+        }
+        #nav li a.active {
+            background: burlywood;
         }
     </style>
     <script>
@@ -67,9 +71,10 @@
     <div class="container">
         <div>
             <ul id="nav">
-                <li><a href="{% url pulse 'day' %}">{% trans "Today's Pulse" %}</a></li>
-                <li><a href="{% url pulse 'month' %}"> {% trans "Month's Pulse" %}</a></li>
-                <li><a href="{% url pulse 'year' %}"> {% trans "Year's Pulse" %}</a></li>
+                <li><a {% if period|cut:"/" != 'day' %}href="{% url pulse 'day' %}" {% endif %}{% if period|cut:"/" == 'day' %}class="active" {% endif %}>{% trans "Today's Pulse" %}</a></li>
+                <li><a {% if period|cut:"/" != 'week' %}href="{% url pulse 'week' %}" {% endif %} {% if period|cut:"/" == 'week' %}class="active" {% endif %}>{% trans "Week's Pulse" %}</a></li>
+                <li><a {% if period|cut:"/" != 'month' %}href="{% url pulse 'month' %}" {% endif %} {% if period|cut:"/" == 'month' %}class="active" {% endif %}> {% trans "Month's Pulse" %}</a></li>
+                <li><a {% if period|cut:"/" != 'year' %}href="{% url pulse 'year' %}" {% endif %} {% if period|cut:"/" == 'year' %}class="active" {% endif %}> {% trans "Year's Pulse" %}</a></li>
             </ul></div>
         <div>
             <a href="javascript:dc.filterAll(); dc.renderAll();">{% trans "Reset All" %}</a>
@@ -100,7 +105,10 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-    <div id="loading" style="position: absolute; top: 0; left: 42%; z-index: 56; background: #ffff00;">Loading National Pulse... Please wait, This may take a while.</div>
+    <div id="loading" style="position: absolute; top: 0; left: 42%; z-index: 56; background: #ffff00;">
+        Loading National Pulse... Please wait, This may take a while.<br/>
+        <img src="{{ MEDIA_URL }}ureport/images/ajax-loader.gif" style="padding-left: 40%">
+    </div>
 
 {% endblock %}
 {% block sidecontent %}

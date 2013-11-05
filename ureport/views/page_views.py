@@ -51,7 +51,7 @@ def kannel_status(request):
 
 
 def pulse(request, period=None):
-    period_map = {'day': 1, 'month': 30, 'year': 365}
+    period_map = {'day': 1, 'week': 7, 'month': 30, 'year': 365}
     l = [l.pk for l in Location.objects.filter(type='district').distinct()]
 
     if period:
