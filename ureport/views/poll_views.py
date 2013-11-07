@@ -3,10 +3,11 @@
 from django.core.mail import send_mail
 from django.shortcuts import render_to_response, get_object_or_404, redirect, render
 from django.template import RequestContext
+from django.views.decorators.vary import vary_on_cookie
 from script.models import ScriptStep
 from django.contrib.auth.decorators import login_required
 from generic.views import generic
-from django.views.decorators.cache import cache_control, never_cache, cache_page
+from django.views.decorators.cache import cache_control, never_cache
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from rapidsms_xforms.models import XFormField, XForm
@@ -15,16 +16,16 @@ from ussd.models import StubScreen
 from poll.models import Poll, Category, Rule, Translation, Response
 from poll.forms import CategoryForm, RuleForm2
 from rapidsms.models import Contact
-from ureport.forms import NewPollForm, GroupsFilter
+from ureport.forms import NewPollForm, GroupsFilter, SearchPollsForm
 from django.conf import settings
 from ureport.forms import AssignToPollForm, SearchResponsesForm, AssignResponseGroupForm, ReplyTextForm, DeleteSelectedForm
-from django.contrib.sites.models import Site, get_current_site
+from django.contrib.sites.models import Site
 from ureport import tasks
 from ureport.utils import get_polls, get_script_polls, get_access
 from generic.sorters import SimpleSorter
 from ureport.views.utils.paginator import ureport_paginate
 from django.db import transaction
-from django.contrib.auth.models import Group, User, Message
+from django.contrib.auth.models import Group
 from ureport.models import UPoll, ExportedPoll
 import logging, datetime
 from django.utils.translation import ugettext as _
@@ -455,12 +456,13 @@ def poll_dashboard(request):
                    paginator_template='ureport/partials/new_pagination.html',
                    paginator_func=ureport_paginate,
                    selectable=False,
-                   sort_column='start_date'
+                   sort_column='start_date',
+                   columns=columns
     )
 
 
 @login_required
-@cache_page(30 * 60, cache='default', key_prefix="ureport")
+@vary_on_cookie
 def ureport_polls(request, pk):
     access = get_access(request)
     columns = [(_('Name'), True, 'name', SimpleSorter()),
@@ -483,6 +485,7 @@ def ureport_polls(request, pk):
                    paginator_func=ureport_paginate,
                    sort_column='start_date',
                    sort_ascending=False,
+                   filter_forms=[SearchPollsForm],
                    columns=columns
     )
 

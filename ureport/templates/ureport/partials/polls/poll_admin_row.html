@@ -8,7 +8,7 @@
 <td>{% if object.start_date %}{{ object.start_date|date:"d/m/Y" }}{% endif %}</td>
 <td>{% if object.end_date %}{{ object.end_date|date:"d/m/Y" }}{% else %}{% trans "Open" %}{% endif %}</td>
 <td style="white-space:nowrap;width:25em">
-    <a style="float:right;padding-top:7px;" href="javascript:void(0);" onclick="deletePoll(this, '{% url poll.views.delete_poll object.pk %}','{{object.question|addslashes}}');"><img border="0" src="{{ MEDIA_URL }}rapidsms/icons/silk/delete.png"/></a>
+    <a style="float:right;padding-top:7px;" href="javascript:void(0);" onclick="deletePoll(this, '{% url poll.views.delete_poll object.pk %}','{{object.name|addslashes}}');"><img border="0" src="{{ MEDIA_URL }}rapidsms/icons/silk/delete.png"/></a>
     <div class="buttons">
         {% if object.responses__count %}
             <a href="{% url poll-report object.pk %}">

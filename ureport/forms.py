@@ -196,7 +196,7 @@ class AssignToPollForm(ActionForm):
 
     poll = \
         forms.ModelChoiceField(queryset=Poll.objects.all().order_by('-pk'
-        ),label=_('Poll'))
+        ), label=_('Poll'))
     action_label = _('Assign selected to poll')
 
     def perform(self, request, results):
@@ -205,7 +205,8 @@ class AssignToPollForm(ActionForm):
             c.categories.all().delete()
             c.poll = poll
             c.save()
-        return (_('%(length)d responses assigned to  %(poll)s poll') % {"length":len(results),"poll":poll.name}, 'success')
+        return (
+            _('%(length)d responses assigned to  %(poll)s poll') % {"length": len(results), "poll": poll.name}, 'success')
 
 
 class DeleteSelectedForm(ActionForm):
@@ -234,7 +235,7 @@ class AssignToNewPollForm(ActionForm):
     action_label = _('Assign to New poll')
     poll_name = forms.CharField(label=_('Poll Name'), max_length='100')
     POLL_TYPES = [('yn', _('Yes/No Question'))] + [(c['type'], c['label'])
-                                                for c in Poll.TYPE_CHOICES.values()]
+                                                   for c in Poll.TYPE_CHOICES.values()]
     response_type = \
         forms.ChoiceField(choices=Poll.RESPONSE_TYPE_CHOICES,
                           widget=RadioSelect, label=_("Response type"))
@@ -274,7 +275,8 @@ class AssignToNewPollForm(ActionForm):
         if settings.SITE_ID:
             poll.sites.add(Site.objects.get_current())
 
-        return (_('%(results)d participants added to  %(poll)s poll' % {"results":len(results),"poll":poll.name}), 'success')
+        return (
+            _('%(results)d participants added to  %(poll)s poll' % {"results": len(results), "poll": poll.name}), 'success')
 
 
 DISTRICT_CHOICES = tuple([(int(d.pk), d.name) for d in
@@ -373,7 +375,8 @@ class MassTextForm(ActionForm):
             masstexts = MassText.bulk.bulk_insert_commit(send_post_save=False, autoclobber=True)
             masstext = masstexts[0]
 
-            return ( _('Message successfully sent to %(connections)d numbers')% {"connections":len(connections)}, 'success',)
+            return (
+                _('Message successfully sent to %(connections)d numbers') % {"connections": len(connections)}, 'success',)
         else:
             return (_("You don't have permission to send messages!"), 'error',)
 
@@ -473,7 +476,7 @@ class AssignResponseGroupForm(ActionForm):
             if self.request.user.is_authenticated():
                 self.fields['groups'] = forms.ModelMultipleChoiceField(
                     queryset=Group.objects.filter(pk__in=self.request.user.groups.values_list('pk', flat=True)),
-                    required=False,label=_('Groups'))
+                    required=False, label=_('Groups'))
             else:
                 self.fields['groups'] = forms.ModelMultipleChoiceField(queryset=Group.objects.all(), required=False)
             if self.access:
@@ -532,7 +535,8 @@ class SendMessageForm(forms.Form):
 
 
 class ForwardMessageForm(forms.Form):
-    recipients = forms.CharField(label="recepient(s)", required=True, help_text="enter commas separated numbers or emails")
+    recipients = forms.CharField(label="recepient(s)", required=True,
+                                 help_text="enter commas separated numbers or emails")
     text = forms.CharField(required=True, widget=SMSInput())
 
 
@@ -670,7 +674,8 @@ def get_summary(pk, poll_data):
 
 class TemplateMessage(ActionForm):
     template = forms.CharField(max_length=160, required=True, widget=SMSInput(), label=_("Template"),
-                               help_text=_("message shd be of form Dear Hon. [insert name]. [insert results ] of people from [insert district] say that lorem ipsum"))
+                               help_text=_(
+                                   "message shd be of form Dear Hon. [insert name]. [insert results ] of people from [insert district] say that lorem ipsum"))
     poll = forms.ModelChoiceField(
         queryset=Poll.objects.exclude(start_date=None).exclude(categories=None).order_by('-pk'), label=_("Poll"))
 
@@ -753,7 +758,7 @@ class PushToMtracForm(ActionForm):
     def perform(self, request, results):
         results = set([r.pk for r in results])
         tasks.push_to_mtrac.delay(results)
-        return _("%(count)d Messages were pushed to mtrac") % { 'count': len(results) }, "success"
+        return _("%(count)d Messages were pushed to mtrac") % {'count': len(results)}, "success"
 
 
 class UploadContactsForm(forms.ModelForm):
@@ -772,6 +777,7 @@ class AssignGroupForm(forms.Form):
 
     def handle_upload(self, upload):
         from datetime import datetime
+
         path = '/tmp/' + str(datetime.now()).replace(" ", "_").replace("-", "_").replace(":", "_")
         with open(path, 'wb+') as excel_file:
             for chunk in upload.chunks():
@@ -781,3 +787,11 @@ class AssignGroupForm(forms.Form):
 
     def process(self, upload, username):
         tasks.process_assign_group.delay(upload, self.cleaned_data['group'], username)
+
+
+class SearchPollsForm(FilterForm):
+    search_term = forms.CharField()
+
+    def filter(self, request, queryset):
+        return queryset.filter(Q(name__icontains=self.cleaned_data['search_term']) | Q(
+            question__icontains=self.cleaned_data['search_term']))
