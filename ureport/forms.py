@@ -43,7 +43,7 @@ class EditReporterForm(forms.ModelForm):
 
     class Meta:
         model = Contact
-        fields = ('name', 'reporting_location', 'groups')
+        fields = ['gender', 'birthdate', 'reporting_location', 'village_name', 'groups', 'language']
 
 
 class PollModuleForm(ModuleForm):
