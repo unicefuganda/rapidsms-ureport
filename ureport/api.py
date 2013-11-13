@@ -1,11 +1,13 @@
-from tastypie.resources import ModelResource
 from poll.models import Poll
 from poll.models import ResponseCategory, Response
 from rapidsms_httprouter.models import Message
+from rapidsms.models import Contact
+from tastypie.resources import ModelResource
 from tastypie.authentication import ApiKeyAuthentication
-from rapidsms.models import Connection,Contact
 from tastypie import fields
-from tastypie.constants import ALL, ALL_WITH_RELATIONS
+from tastypie.constants import ALL_WITH_RELATIONS
+from django.db.models import Count
+
 
 class MessageResource(ModelResource):
     class Meta:
@@ -13,6 +15,7 @@ class MessageResource(ModelResource):
         resource_name = 'messages'
         allowed_methods = ['get']
         #authentication = ApiKeyAuthentication()
+
 
 class ResponseResource(ModelResource):
     #poll = fields.ForeignKey(PollResource, 'polls')
@@ -30,12 +33,18 @@ class ResponseResource(ModelResource):
 
 
 class PollResource(ModelResource):
+
+    response_count = fields.IntegerField(readonly=True)
+
     def dehydrate(self, bundle):
-        bundle.data['responses_uri'] ="/api/v1/responses/?poll="+bundle.data['id']
-        bundle.data['categories']=Poll.objects.get(pk=bundle.data['id']).categories.values_list('name',flat=True)
+        bundle.data['responses_uri'] = "/api/v1/responses/?poll=" + bundle.data['id']
+        bundle.data['categories'] = Poll.objects.get(pk=bundle.data['id']).categories.values_list('name', flat=True)
+        bundle.data['response_count'] = bundle.obj.response_count
+        bundle.data['response_percent'] = (bundle.obj.response_count / float(bundle.obj.contacts.count())) * 100
         return bundle.data
+
     class Meta:
-        queryset = Poll.objects.exclude(start_date=None)
+        queryset = Poll.objects.exclude(start_date=None).annotate(response_count=Count('responses'))
         excludes = ['response_type', 'type', 'default_response']
         resource_name = 'polls'
         allowed_methods = ['get']
@@ -45,13 +54,13 @@ class PollResource(ModelResource):
         authentication = ApiKeyAuthentication()
 
 
-
 class PollResponseResource(ModelResource):
     class Meta:
         queryset = Response.objects.all()
         resource_name = 'responsecategories'
         allowed_methods = ['get']
         authentication = ApiKeyAuthentication()
+
 
 class PollResponseCategoryResource(ModelResource):
     class Meta:
@@ -60,15 +69,10 @@ class PollResponseCategoryResource(ModelResource):
         allowed_methods = ['get']
         authentication = ApiKeyAuthentication()
 
+
 class ContactResource(ModelResource):
     class Meta:
         queryset = Contact.objects.all()
         resource_name = 'contacts'
         allowed_methods = ['get']
         authentication = ApiKeyAuthentication()
-
-
-
-
-
-
