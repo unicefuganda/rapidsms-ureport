@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 
 import re
 import urllib
@@ -8,13 +9,16 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.db.models import Q
+from django.utils.datastructures import SortedDict
 from openpyxl import reader
 from rapidsms_httprouter.models import Message
+from uganda_common.utils import ExcelResponse
 from ureport.models import SentToMtrac, AutoregGroupRules, MessageDetail, MessageAttribute, Settings, ExportedPoll, UPoll
 from script.models import Script
 
 import logging
 from rapidsms.models import Connection, Contact
+from ureport.settings import UREPORT_ROOT
 import utils
 
 log = logging.getLogger(__name__)
@@ -164,3 +168,39 @@ def export_poll(poll_id, host, username=None):
                   "\nPlease find it here %s\nThank You" % (
                       user.username, poll.name, poll.get_export_path(host))
             send_mail('Contacts Added to Group', msg, "", [user.email], fail_silently=False)
+
+
+@task
+def extract_gen_reports(name, queryset, **kwargs):
+    excel_file_path = \
+        os.path.join(os.path.join(os.path.join(UREPORT_ROOT,
+                                               'static'), 'spreadsheets'),
+                     'general_report_for_%s.xlsx' % name.replace(" ", "_"))
+    link = "/static/ureport/spreadsheets/%s_queued.xlsx" % name.replace(" ", "_")
+    message_list = []
+    for message in queryset:
+        message_list_dict = SortedDict()
+        message_list_dict['ID'] = message.connection_id
+        message_list_dict['text'] = message.text
+        message_list_dict['sent on'] = message.date
+        if not message.poll_responses.exists():
+            message_list_dict['poll'] = 'Unsolicited'
+        else:
+            message_list_dict['poll'] = message.poll_responses.get().poll.question
+        message_list_dict['birth date'] = 'N/A'
+        message_list_dict['district'] = 'N/A'
+        if message.connection.contact:
+            if message.connection.contact.age:
+                message_list_dict['birth date'] = message.connection.contact.birthdate
+            else:
+                message_list_dict['age'] = 'N/A'
+            if message.connection.contact.reporting_location:
+                message_list_dict['district'] = message.connection.contact.reporting_location
+        message_list.append(message_list_dict)
+    ExcelResponse(message_list, output_name=excel_file_path, write_to_file=True)
+    user = User.objects.get(username=kwargs.get('username'))
+    host = kwargs.get('host')
+    if user.email:
+        msg = "Hi %s,\nThe excel report that you requested to download is now ready for download. Please visit %s%s" \
+              " and download it.\n\nThank You\nUreport Team" % (user.username, host, link)
+        send_mail('General Ureport Report', msg, "", [user.email], fail_silently=False)

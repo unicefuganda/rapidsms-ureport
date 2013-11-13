@@ -1,11 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from datetime import date, timedelta
 
 import re
 
 from django import forms
 from django.forms.util import ErrorList
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.forms.widgets import RadioSelect
@@ -31,6 +32,7 @@ from uganda_common.utils import ExcelResponse
 from ureport.models import MessageAttribute, MessageDetail
 from uganda_common.models import Access
 import tasks
+from ureport.utils import get_access
 
 
 class EditReporterForm(forms.ModelForm):
@@ -206,7 +208,8 @@ class AssignToPollForm(ActionForm):
             c.poll = poll
             c.save()
         return (
-            _('%(length)d responses assigned to  %(poll)s poll') % {"length": len(results), "poll": poll.name}, 'success')
+            _('%(length)d responses assigned to  %(poll)s poll') % {"length": len(results), "poll": poll.name},
+            'success')
 
 
 class DeleteSelectedForm(ActionForm):
@@ -276,7 +279,8 @@ class AssignToNewPollForm(ActionForm):
             poll.sites.add(Site.objects.get_current())
 
         return (
-            _('%(results)d participants added to  %(poll)s poll' % {"results": len(results), "poll": poll.name}), 'success')
+            _('%(results)d participants added to  %(poll)s poll' % {"results": len(results), "poll": poll.name}),
+            'success')
 
 
 DISTRICT_CHOICES = tuple([(int(d.pk), d.name) for d in
@@ -376,7 +380,8 @@ class MassTextForm(ActionForm):
             masstext = masstexts[0]
 
             return (
-                _('Message successfully sent to %(connections)d numbers') % {"connections": len(connections)}, 'success',)
+                _('Message successfully sent to %(connections)d numbers') % {"connections": len(connections)},
+                'success',)
         else:
             return (_("You don't have permission to send messages!"), 'error',)
 
@@ -795,3 +800,53 @@ class SearchPollsForm(FilterForm):
     def filter(self, request, queryset):
         return queryset.filter(Q(name__icontains=self.cleaned_data['search_term']) | Q(
             question__icontains=self.cleaned_data['search_term']))
+
+
+class ExReportForm(forms.Form):
+    ALL = 'A'
+    UNSOLICITED = 'U'
+    POLLED = 'P'
+
+    FILTER_CHOICES = ((ALL, 'All'), (UNSOLICITED, 'Unsolicited'), (POLLED, 'Polled'))
+
+    districts = forms.ModelMultipleChoiceField(queryset=Location.objects.filter(type='district'))
+    groups = forms.ModelMultipleChoiceField(queryset=Group.objects.all())
+    age_from = forms.IntegerField()
+    age_to = forms.IntegerField()
+    date_from = forms.DateField()
+    date_to = forms.DateField()
+    partner = forms.ModelChoiceField(queryset=User.objects.all())
+    filter = forms.ChoiceField(choices=FILTER_CHOICES)
+
+    def extract(self, request):
+        messages_for_user = self._get_messages_for_user(self._get_messages(), request)
+        tasks.extract_gen_reports.delay(self.cleaned_data['partner'].username, messages_for_user,
+                                        username=request.user.username, host=request.get_host())
+
+    def _get_messages(self):
+        districts = self.cleaned_data['districts']
+        age_rage = [date.today() - timedelta(days=356 * self.cleaned_data['age_from']),
+                    date.today() - timedelta(days=356 * self.cleaned_data['age_to'])]
+        date_rage = [self.cleaned_data['date_from'], self.cleaned_data['date_to']]
+        partner = self.cleaned_data['partner']
+        f = self.cleaned_data['filter']
+        messages = Message.objects.filter(connection__contact__reporting_location__in=districts,
+                                          connection__contact__birthdate=age_rage, date__rage=date_rage,
+                                          connection__contact__groups__in=self.cleaned_data['groups'])
+        if f == ExReportForm.UNSOLICITED:
+            messages = messages.filter(poll_responses=None)
+        elif f == ExReportForm.POLLED:
+            messages = messages.exclude(poll_responses=None)
+        try:
+            access = Access.objects.get(user=partner)
+            messages = messages.filter(connection__contact__groups__in=access.groups)
+        except:
+            pass
+        return messages
+
+    @staticmethod
+    def _get_messages_for_user(messages, request):
+        access = get_access(request)
+        if access:
+            return messages.filter(connection__contact__groups__in=access.groups)
+        return messages

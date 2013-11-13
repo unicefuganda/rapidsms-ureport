@@ -28,7 +28,7 @@ from django.conf import settings
 from rapidsms.contrib.locations.models import Location
 from django.contrib.auth.models import Group
 from ureport.views.utils.excel import handle_excel_file
-from ureport.utils import get_contacts, get_contacts2, get_access
+from ureport.utils import get_contacts2, get_access
 from contact.forms import MultipleDistictFilterForm, GenderFilterForm, FilterGroupsForm, AssignGroupForm, RemoveGroupForm
 from unregister.forms import BlacklistForm
 from ureport.models import Ureporter, UreportContact
