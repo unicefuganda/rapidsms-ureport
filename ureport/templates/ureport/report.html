@@ -1,0 +1,68 @@
+{% extends "ureport_layout.html" %}
+{% block top_js %}
+    <style>
+        input, textarea {
+            padding: 9px;
+            border: solid 1px #E5E5E5;
+            outline: 0;
+            font: normal 13px/100% Verdana, Tahoma, sans-serif;
+            width: 200px;
+            background: #FFFFFF;
+        }
+
+        textarea {
+            width: 400px;
+            max-width: 400px;
+            height: 150px;
+            line-height: 150%;
+        }
+
+        input:hover, textarea:hover,
+        input:focus, textarea:focus {
+            border-color: #C9C9C9;
+        }
+
+        .form label {
+            margin-left: 10px;
+            color: #999999;
+        }
+
+        button {
+            width: auto;
+            padding: 9px 15px;
+            background: #617798;
+            border: 0;
+            font-size: 14px;
+            color: #FFFFFF;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+
+
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/jquery-ui.css"/>
+
+    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/jquery-ui.js"></script>
+
+    <script type="text/javascript">
+        $(function() {
+            $("#id_date_to").datepicker({ dateFormat: 'yy-mm-dd' ,changeYear: true ,changeMonth: true,maxDate: Date.now() });
+            $("#id_date_from").datepicker({ dateFormat: 'yy-mm-dd' ,changeYear: true ,changeMonth: true,maxDate: Date.now() });
+        });
+    </script>
+{% endblock %}
+{% block content %}
+    <div id="signup">
+        <h3>Customise Report to Generate</h3>
+        <table>
+
+            <form action="" method="POST">{% csrf_token %}
+                {{ form.as_table }}<br/>
+                <tr><td> <button type="submit" class="btn btn-primary">Extract Report</button></td></tr>
+            </form>
+
+        </table>
+    </div>
+
+{%endblock%}
