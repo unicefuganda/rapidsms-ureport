@@ -807,41 +807,57 @@ class ExReportForm(forms.Form):
     UNSOLICITED = 'U'
     POLLED = 'P'
 
-    FILTER_CHOICES = ((ALL, 'All'), (UNSOLICITED, 'Unsolicited'), (POLLED, 'Polled'))
+    MALE = 'M'
+    FEMALE = 'F'
 
-    districts = forms.ModelMultipleChoiceField(queryset=Location.objects.filter(type='district'))
-    groups = forms.ModelMultipleChoiceField(queryset=Group.objects.all())
-    age_from = forms.IntegerField()
-    age_to = forms.IntegerField()
+    required_css_class = 'required'
+
+    GENDER_CHOICES = ((ALL, 'All'), (MALE, 'Male'), (FEMALE, 'Female'))
+
+    FILTER_CHOICES = ((ALL, 'All'), (UNSOLICITED, 'Unsolicited Messages'), (POLLED, 'Polled Messages'))
+
+    districts = forms.ModelMultipleChoiceField(queryset=Location.objects.filter(type='district'), required=False)
+    groups = forms.ModelMultipleChoiceField(queryset=Group.objects.all(), required=False)
+    age_from = forms.IntegerField(max_value=90, min_value=10,
+                                  error_messages={'invalid': "Age must be a number between 10 and 90"}, required=True,
+                                  widget=forms.TextInput(attrs={"style": "width: 24px"}))
+    age_to = forms.IntegerField(max_value=90, min_value=10,
+                                error_messages={'invalid': "Age must be a number between 10 and 90"}, required=True,
+                                widget=forms.TextInput(attrs={"style": "width: 24px"}))
     date_from = forms.DateField()
     date_to = forms.DateField()
-    partner = forms.ModelChoiceField(queryset=User.objects.all())
+    gender = forms.ChoiceField(choices=GENDER_CHOICES, required=False)
+    partner = forms.ModelChoiceField(queryset=User.objects.all(), required=False)
     filter = forms.ChoiceField(choices=FILTER_CHOICES)
 
     def extract(self, request):
         messages_for_user = self._get_messages_for_user(self._get_messages(), request)
-        tasks.extract_gen_reports.delay(self.cleaned_data['partner'].username, messages_for_user,
-                                        username=request.user.username, host=request.get_host())
+        tasks.extract_gen_reports.delay(messages_for_user, username=request.user.username, host=request.get_host())
 
     def _get_messages(self):
         districts = self.cleaned_data['districts']
-        age_rage = [date.today() - timedelta(days=356 * self.cleaned_data['age_from']),
+        age_range = [date.today() - timedelta(days=356 * self.cleaned_data['age_from']),
                     date.today() - timedelta(days=356 * self.cleaned_data['age_to'])]
-        date_rage = [self.cleaned_data['date_from'], self.cleaned_data['date_to']]
+        date_range = [self.cleaned_data['date_from'], self.cleaned_data['date_to']]
         partner = self.cleaned_data['partner']
         f = self.cleaned_data['filter']
+        gender = self.cleaned_data['gender']
+        print type(gender)
         messages = Message.objects.filter(connection__contact__reporting_location__in=districts,
-                                          connection__contact__birthdate=age_rage, date__rage=date_rage,
-                                          connection__contact__groups__in=self.cleaned_data['groups'])
-        if f == ExReportForm.UNSOLICITED:
+                                          connection__contact__birthdate__range=age_range, date__range=date_range,
+                                          connection__contact__groups__in=self.cleaned_data['groups'],
+                                          direction='I')
+        if f == self.UNSOLICITED:
             messages = messages.filter(poll_responses=None)
-        elif f == ExReportForm.POLLED:
+        elif f == self.POLLED:
             messages = messages.exclude(poll_responses=None)
         try:
             access = Access.objects.get(user=partner)
             messages = messages.filter(connection__contact__groups__in=access.groups)
         except:
             pass
+        if gender != self.ALL:
+            messages = messages.filter(connection__contact__gender__iexact=gender)
         return messages
 
     @staticmethod

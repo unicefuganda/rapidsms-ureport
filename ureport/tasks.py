@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 import os
 
 import re
@@ -171,12 +172,13 @@ def export_poll(poll_id, host, username=None):
 
 
 @task
-def extract_gen_reports(name, queryset, **kwargs):
+def extract_gen_reports(queryset, **kwargs):
+    time_now = str(datetime.now()).replace(" ", "").replace("-", "").replace(":", "").replace(".", "")
     excel_file_path = \
         os.path.join(os.path.join(os.path.join(UREPORT_ROOT,
                                                'static'), 'spreadsheets'),
-                     'general_report_for_%s.xlsx' % name.replace(" ", "_"))
-    link = "/static/ureport/spreadsheets/%s_queued.xlsx" % name.replace(" ", "_")
+                     'ureport_general_report_at_%s.xlsx' % time_now)
+    link = "/static/ureport/spreadsheets/ureport_general_report_at_%s.xlsx" % time_now
     message_list = []
     for message in queryset:
         message_list_dict = SortedDict()

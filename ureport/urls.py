@@ -8,7 +8,7 @@ from ureport.views import poll_dashboard, ureporters, editReporter, deleteReport
     new_poll, mp_dashboard, ussd_manager, blacklist, delete, view_poll, poll_status, edit_category, delete_category, \
     delete_rule, view_rules, create_rule, alerts, remove_captured, send_message, view_autoreg_rules, set_autoreg_rules, \
     user_registration_status, kannel_status, a_dashboard, flag_categories, remove_captured_ind, assign_poll,\
-    comfirm_message_sending, comfirmmessages, pulse, start_poll_export, cloud_dashboard, access_dashboards, map_cloud
+    comfirm_message_sending, comfirmmessages, pulse, start_poll_export, cloud_dashboard, access_dashboards, map_cloud, extract_report
 from django.contrib.auth.decorators import login_required
 from generic.views import generic_row, generic
 from contact.forms import FreeSearchForm, MultipleDistictFilterForm, GenderFilterForm, FilterGroupsForm, \
@@ -122,6 +122,7 @@ urlpatterns = patterns('',
                        #    }),
 
                        url(r'^signup/$', signup, name="signup"),
+                       url(r'^extract-report/$', extract_report, name="extract_report"),
                        url(r'^messagehistory/(?P<connection_pk>\d+)/$', ureporter_profile, name="profile"),
                        url(r'^createpoll/$', new_poll, name="new_poll"),
                        url(r'^mp_dashboard/$', mp_dashboard, name="mp_dashboard"),

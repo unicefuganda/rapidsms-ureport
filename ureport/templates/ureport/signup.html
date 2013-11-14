@@ -1,35 +1,35 @@
 {% extends "ureport_layout.html" %}
 
 {% block extra_js %}
-    
-  
-     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/jquery-ui.css"/>
- <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/jquery-ui.js"></script>
 
-<script type="text/javascript">
-    $(function() {
-               $("#id_birthdate").datepicker({ dateFormat: 'dd/mm/yy' ,changeYear: true ,changeMonth: true,maxDate: new Date(1999, 1 - 1, 1) });
-            });
+
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ureport/stylesheets/jquery-ui.css"/>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/jquery-ui.js"></script>
+
+    <script type="text/javascript">
+        $(function() {
+            $("#id_birthdate").datepicker({ dateFormat: 'dd/mm/yy' ,changeYear: true ,changeMonth: true,maxDate: new Date(1999, 1 - 1, 1) });
+        });
     </script>
 {% endblock %}
 {% block content %}
-<div id="signup">
-<h3>Signup for Ureport</h3>
-    <table>
-        {% if status_message %}
-            <tr><td> <div id="span_status_message" class="status_{{ status_message_type }}">
-        {{ status_message }}
-    <a href="javascript:void(0)" onclick="$('#span_status_message').hide();">Dismiss</a>
-    </div></td></tr>
+    <div id="signup">
+        <h3>Signup for Ureport</h3>
+        <table>
+            {% if status_message %}
+                <tr><td> <div id="span_status_message" class="status_{{ status_message_type }}">
+                    {{ status_message }}
+                    <a href="javascript:void(0)" onclick="$('#span_status_message').hide();">Dismiss</a>
+                </div></td></tr>
 
 
-{% endif %}
-<form action="{% url signup %}" method="POST">
-    {{ signup_form.as_table }}
-   <tr><td> <input type="submit" value="Signup"></td></tr>
-</form>
+            {% endif %}
+            <form action="{% url signup %}" method="POST">
+                {{ signup_form.as_table }}
+                <tr><td> <input type="submit" value="Signup"></td></tr>
+            </form>
 
-       </table>
-</div>
+        </table>
+    </div>
 
 {%endblock%}

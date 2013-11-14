@@ -3,6 +3,7 @@
 import json
 import datetime
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.urlresolvers import reverse
 from django.db.models import Count
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -10,12 +11,12 @@ from django.views.decorators.cache import never_cache
 
 import httplib2
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from generic.views import generic_dashboard
 from generic.forms import StaticModuleForm
 from generic.models import Dashboard
-from ureport.forms import PollModuleForm
+from ureport.forms import PollModuleForm, ExReportForm
 from message_classifier.models import IbmCategory, IbmMsgCategory
 from rapidsms.contrib.locations.models import Location
 from ureport.views import get_category_tags
@@ -105,5 +106,14 @@ def map_cloud(request):
 
 
 def national_pulse(request, period=None):
-    print period
     return render_to_response('ureport/national_pulse.html', locals(), context_instance=RequestContext(request))
+
+@never_cache
+def extract_report(request):
+    form = ExReportForm()
+    if request.method == 'POST':
+        form = ExReportForm(request.POST)
+        if form.is_valid():
+            form.extract(request)
+            return HttpResponseRedirect(reverse('extract_report'))
+    return render_to_response('ureport/report.html', {'form': form}, context_instance=RequestContext(request))
