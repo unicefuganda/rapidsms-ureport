@@ -55,6 +55,9 @@
 {% block content %}
     <div id="signup">
         <h3>Customise Report to Generate</h3>
+        {% if ex %}
+            <h4 style="color: red">Report is being generated, You will receive an email with the link to the report.</h4>
+        {% endif %}
         <table>
 
             <form action="" method="POST">{% csrf_token %}

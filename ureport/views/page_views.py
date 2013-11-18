@@ -109,11 +109,13 @@ def national_pulse(request, period=None):
     return render_to_response('ureport/national_pulse.html', locals(), context_instance=RequestContext(request))
 
 @never_cache
+@login_required
 def extract_report(request):
+    ex = request.GET.get('extracted', None)
     form = ExReportForm()
     if request.method == 'POST':
         form = ExReportForm(request.POST)
         if form.is_valid():
             form.extract(request)
-            return HttpResponseRedirect(reverse('extract_report'))
-    return render_to_response('ureport/report.html', {'form': form}, context_instance=RequestContext(request))
+            return HttpResponseRedirect(reverse('extract_report')+"?extracted=T")
+    return render_to_response('ureport/report.html', {'form': form, 'ex': ex}, context_instance=RequestContext(request))

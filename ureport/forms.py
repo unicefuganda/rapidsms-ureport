@@ -835,14 +835,22 @@ class ExReportForm(forms.Form):
         tasks.extract_gen_reports.delay(messages_for_user, username=request.user.username, host=request.get_host())
 
     def _get_messages(self):
+        if self.cleaned_data['age_from'] > self.cleaned_data['age_to']:
+            age1 = self.cleaned_data['age_from']
+            age2 = self.cleaned_data['age_to']
+        else:
+            age1 = self.cleaned_data['age_to']
+            age2 = self.cleaned_data['age_from']
+        print age1, age2
         districts = self.cleaned_data['districts']
-        age_range = [date.today() - timedelta(days=356 * self.cleaned_data['age_from']),
-                    date.today() - timedelta(days=356 * self.cleaned_data['age_to'])]
-        date_range = [self.cleaned_data['date_from'], self.cleaned_data['date_to']]
+        age_range = [date.today() - timedelta(days=356 * age1), date.today() - timedelta(days=356 * age2)]
+        if self.cleaned_data['date_from'] < self.cleaned_data['date_to']:
+            date_range = [self.cleaned_data['date_from'], self.cleaned_data['date_to']]
+        else:
+            date_range = [self.cleaned_data['date_to'], self.cleaned_data['date_from']]
         partner = self.cleaned_data['partner']
         f = self.cleaned_data['filter']
         gender = self.cleaned_data['gender']
-        print type(gender)
         messages = Message.objects.filter(connection__contact__reporting_location__in=districts,
                                           connection__contact__birthdate__range=age_range, date__range=date_range,
                                           connection__contact__groups__in=self.cleaned_data['groups'],
@@ -858,7 +866,7 @@ class ExReportForm(forms.Form):
             pass
         if gender != self.ALL:
             messages = messages.filter(connection__contact__gender__iexact=gender)
-        return messages
+        return messages.distinct()
 
     @staticmethod
     def _get_messages_for_user(messages, request):
