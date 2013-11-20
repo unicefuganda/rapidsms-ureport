@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
+from datetime import datetime, date, timedelta
 import os
 
 import re
@@ -13,6 +13,7 @@ from django.db.models import Q
 from django.utils.datastructures import SortedDict
 from openpyxl import reader
 from rapidsms_httprouter.models import Message
+from uganda_common.models import Access
 from uganda_common.utils import ExcelResponse
 from ureport.models import SentToMtrac, AutoregGroupRules, MessageDetail, MessageAttribute, Settings, ExportedPoll, UPoll
 from script.models import Script
@@ -172,7 +173,8 @@ def export_poll(poll_id, host, username=None):
 
 
 @task
-def extract_gen_reports(queryset, **kwargs):
+def extract_gen_reports(form_data, **kwargs):
+    user = User.objects.get(username=kwargs.get('username'))
     time_now = str(datetime.now()).replace(" ", "").replace("-", "").replace(":", "").replace(".", "")
     excel_file_path = \
         os.path.join(os.path.join(os.path.join(UREPORT_ROOT,
@@ -180,6 +182,50 @@ def extract_gen_reports(queryset, **kwargs):
                      'ureport_general_report_at_%s.xlsx' % time_now)
     link = "/static/ureport/spreadsheets/ureport_general_report_at_%s.xlsx" % time_now
     message_list = []
+
+    def _get_messages(cleaned_data):
+        if cleaned_data['age_from'] > cleaned_data['age_to']:
+            age1 = cleaned_data['age_from']
+            age2 = cleaned_data['age_to']
+        else:
+            age1 = cleaned_data['age_to']
+            age2 = cleaned_data['age_from']
+        districts = cleaned_data['districts']
+        age_range = [date.today() - timedelta(days=356 * age1), date.today() - timedelta(days=356 * age2)]
+        if cleaned_data['date_from'] < cleaned_data['date_to']:
+            date_range = [cleaned_data['date_from'], cleaned_data['date_to']]
+        else:
+            date_range = [cleaned_data['date_to'], cleaned_data['date_from']]
+        partner = cleaned_data['partner']
+        f = cleaned_data['filter']
+        gender = cleaned_data['gender']
+        messages = Message.objects.filter(connection__contact__reporting_location__in=districts,
+                                          connection__contact__birthdate__range=age_range, date__range=date_range,
+                                          connection__contact__groups__in=cleaned_data['groups'],
+                                          direction='I')
+        if f == 'U':
+            messages = messages.filter(poll_responses=None)
+        elif f == 'P':
+            messages = messages.exclude(poll_responses=None)
+        try:
+            access = Access.objects.get(user=partner)
+            messages = messages.filter(connection__contact__groups__in=access.groups)
+        except:
+            pass
+        if gender != 'A':
+            messages = messages.filter(connection__contact__gender__iexact=gender)
+        return messages.distinct()
+
+    def _get_messages_for_user(messages):
+       try:
+            access = Access.objects.get(user = user)
+            return messages.filter(connection__contact__groups__in=access.groups)
+       except Access.DoesNotExist:
+            return messages
+
+    queryset = _get_messages(form_data)
+    queryset = _get_messages_for_user(queryset)
+
     for message in queryset:
         message_list_dict = SortedDict()
         message_list_dict['ID'] = message.connection_id
@@ -200,7 +246,7 @@ def extract_gen_reports(queryset, **kwargs):
                 message_list_dict['district'] = message.connection.contact.reporting_location
         message_list.append(message_list_dict)
     ExcelResponse(message_list, output_name=excel_file_path, write_to_file=True)
-    user = User.objects.get(username=kwargs.get('username'))
+
     host = kwargs.get('host')
     if user.email:
         msg = "Hi %s,\nThe excel report that you requested to download is now ready for download. Please visit %s%s" \
