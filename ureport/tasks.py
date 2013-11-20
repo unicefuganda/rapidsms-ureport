@@ -238,10 +238,10 @@ def extract_gen_reports(form_data, **kwargs):
         message_list_dict['birth date'] = 'N/A'
         message_list_dict['district'] = 'N/A'
         if message.connection.contact:
-            if message.connection.contact.age:
+            if message.connection.contact.birthdate:
                 message_list_dict['birth date'] = message.connection.contact.birthdate
             else:
-                message_list_dict['age'] = 'N/A'
+                message_list_dict['birth date'] = 'N/A'
             if message.connection.contact.reporting_location:
                 message_list_dict['district'] = message.connection.contact.reporting_location
         message_list.append(message_list_dict)
