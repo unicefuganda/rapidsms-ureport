@@ -1,0 +1,145 @@
+#ug-chart.dc-chart {
+    float: left;
+}
+
+.dc-chart .pie-slice {
+    fill: #fff;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.dc-chart .pie-slice :hover{
+    fill-opacity: .8;
+}
+
+.dc-chart .selected path{
+    stroke-width: 3;
+    stroke: #fff;
+    fill-opacity: 1;
+}
+
+.dc-chart .deselected path{
+    strok: none;
+    fill-opacity: .5;
+    fill: #fff;
+}
+
+.dc-chart path.line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+
+.dc-chart g.dc-tooltip path{
+    fill: none;
+    stroke: grey;
+    stroke-opacity: .8;
+}
+
+.dc-chart path.area {
+    fill: steelblue;
+    fill-opacity: .3;
+    stroke: none;
+}
+
+.dc-chart .node {
+    font-size: 0.7em;
+    cursor: pointer;
+}
+
+.dc-chart .node :hover{
+    fill-opacity: .8;
+}
+
+.dc-chart g.district {
+    cursor: pointer;
+}
+
+.dc-chart g.district :hover{
+    fill-opacity: .8;
+}
+
+.dc-chart g.district path {
+    stroke: #fff;
+}
+
+.dc-chart g.selected path {
+}
+
+.dc-chart g.deselected path {
+    fill: #eee;
+}
+
+.dc-chart g.selected text {
+}
+
+.dc-chart g.deselected text {
+    display: none;
+}
+
+.dc-chart g.county path {
+    stroke: white;
+    fill: none;
+}
+
+.dc-chart g.debug rect{
+    fill: blue;
+    fill-opacity: .2;
+}
+
+.control {
+  float: right;
+  right: 10px;
+}
+
+.reset {
+  position: absolute;
+  top: 150px;
+}
+
+.filter {
+  color: #F00;
+  font-weight:bold;
+}
+
+.hidden {
+  display: none;
+}
+
+.lighter {
+  opacity: 0.1;
+}
+
+#national-pie-chart {
+  padding-top: 3em;
+  float: left;
+}
+
+#ug-chart {
+  margin: 10px 0px 10px 0px;
+}
+
+.legend {
+  float:left;
+  width: 200px;
+  background: #FFFFFF;
+  list-style-type: none;
+  margin: 36px 0px 36px 0px;
+  padding: 0px;
+  line-height: 1.4em;
+}
+
+.legend > li {
+  color: #000;
+  text-align: center;
+  font-size: .9em;
+  letter-spacing: .125em;
+  text-transform: uppercase;
+  padding: .125em;
+  font-weight: bold;
+}
+
+text.pie-slice {
+  font-weight: bold;
+  text-shadow: 1.5px .5px 1.5px rgba(5, 5, 5, 0.9);
+}

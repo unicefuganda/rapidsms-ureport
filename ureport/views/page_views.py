@@ -71,9 +71,14 @@ def pulse(request, period=None):
                                                   'ibmmsgcategory__msg__connection__contact__reporting_location__name'). \
             exclude(name__in=['family & relationships', "energy", "u-report", "employment"])
     data = json.dumps(list(s), cls=DjangoJSONEncoder)
-    return HttpResponse(data.replace('"ibmmsgcategory__msg__connection__contact__reporting_location__name"',
+    response = HttpResponse(data.replace('"ibmmsgcategory__msg__connection__contact__reporting_location__name"',
                                      "\"district\"").replace("\"name\"", "\"category\""),
                         content_type='application/json')
+    response["Access-Control-Allow-Origin"] = "*"
+    response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+    response["Access-Control-Max-Age"] = "1000"
+    response["Access-Control-Allow-Headers"] = "*"
+    return response
 
 
 @never_cache

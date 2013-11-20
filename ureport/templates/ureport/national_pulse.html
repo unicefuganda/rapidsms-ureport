@@ -6,54 +6,8 @@
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/dc.css"/>
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/modal.css"/>
-    <style>
-        {#        .control {#}
-        {#            position: fixed;#}
-        {#            float: none;#}
-        {#            right: 10px;#}
-        {#        }#}
-        {#        .donut {#}
-        {#            right: -20px;#}
-        {#        }#}
-        #risks-pie-chart {
-            top: 200px;
-        }
-        .legend {
-            list-style-type: none;
-            float: left;
-            padding: 0px;
-        }
-        .legend > li {
-            color: #CCC;
-            text-align: center;
-            font-weight: bolder;
-        }
-        #nav {
-            width: 100%;
-            float: left;
-            margin: 0 0 3em 0;
-            padding: 0;
-            list-style: none; }
-        #nav li {
-            float: left;
-            margin-left: 10px;
-        }
-        #nav li a {
-            display: block;
-            text-decoration: none;
-            border: #800080 1px solid;
-            padding: 5px;
-            background: #f5f5f5;
-        }
-        #nav li a.active {
-            background: burlywood;
-        }
-    </style>
-    <script>
-        $( document ).ajaxSend(function() {
-            $( ".loading" ).show();
-        });
-    </script>
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/pulse.css">
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}ureport/stylesheets/buttons.css">
 {% endblock %}
 
 {% block top_js %}
@@ -65,28 +19,28 @@
     <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/underscore-min.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/d3.geo.projection.v0.min.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/bootstrap-modal.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}ureport/javascripts/national-pulse.js"></script>
 {% endblock %}
 
 {% block content %}
     <div class="container">
-        <div>
-            <ul id="nav">
-                <li><a {% if period|cut:"/" != 'day' %}href="{% url pulse 'day' %}" {% endif %}{% if period|cut:"/" == 'day' %}class="active" {% endif %}>{% trans "Today's Pulse" %}</a></li>
-                <li><a {% if period|cut:"/" != 'week' %}href="{% url pulse 'week' %}" {% endif %} {% if period|cut:"/" == 'week' %}class="active" {% endif %}>{% trans "Week's Pulse" %}</a></li>
-                <li><a {% if period|cut:"/" != 'month' %}href="{% url pulse 'month' %}" {% endif %} {% if period|cut:"/" == 'month' %}class="active" {% endif %}> {% trans "Month's Pulse" %}</a></li>
-                <li><a {% if period|cut:"/" != 'year' %}href="{% url pulse 'year' %}" {% endif %} {% if period|cut:"/" == 'year' %}class="active" {% endif %}> {% trans "Year's Pulse" %}</a></li>
-            </ul></div>
-        <div>
-            <a href="javascript:dc.filterAll(); dc.renderAll();">{% trans "Reset All" %}</a>
+        <div id="controls">
+            <h3> {% blocktrans %}Welcome to National Pulse{% endblocktrans %}<br/> {% blocktrans %}This is What is trending in the Ureport Community{% endblocktrans %}</h3>
+
+            <a {% if period|cut:"/" != 'day' %}href="{% url pulse 'day' %}" {% endif %}class="btn btn-primary btn-mini {% if period|cut:"/" == 'day' %}active {% endif %}">{% trans "Today's Pulse" %}</a>
+            <a {% if period|cut:"/" != 'week' %}href="{% url pulse 'week' %}" {% endif %} class="btn btn-primary btn-mini {% if period|cut:"/" == 'week' %}active {% endif %}">{% trans "Week's Pulse" %}</a>
+            <a {% if period|cut:"/" != 'month' %}href="{% url pulse 'month' %}" {% endif %} class="btn btn-primary btn-mini {% if period|cut:"/" == 'month' %}active {% endif %}"> {% trans "Month's Pulse" %}</a>
+            <a {% if period|cut:"/" != 'year' %}href="{% url pulse 'year' %}" {% endif %} class="btn btn-primary btn-mini {% if period|cut:"/" == 'year' %}active {% endif %}"> {% trans "Year's Pulse" %}</a>
         </div>
-        <ol class="legend"></ol>
+
         <div id="ug-chart">
-            <h3> {% blocktrans %}Welcome to National Pulse where you can see what is trending within the U-report community.{% endblocktrans %}<br/> {% blocktrans %}Click on your district to see what the young people are talking about where you live.{% endblocktrans %}</h3>
-            <a class="reset" href="javascript:ugChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-            <span class="reset" style="display: none;"> | {% trans "Click on on current filter(" %} <a href="javascript:load_cloud_word(this)" class="filter" id="district_filter"></a>{% trans ") to see word cloud" %}</span>
+
+            <!--<a class="reset" href="javascript:ugChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>-->
+{#            <span class="reset" style="display: none;"> | {% trans "Click on on current filter(" %} <a href="javascript:load_cloud_word(this)" class="filter" id="district_filter"></a>{% trans ") to see word cloud" %}</span>#}
 
             <div class="clearfix"></div>
         </div>
+        <ol class="legend"></ol>
 
     </div>
     <div class="modal fade" id="cloud_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -113,291 +67,64 @@
 {% endblock %}
 {% block sidecontent %}
     <div id="national-pie-chart" class="donut control">
-        <a class="reset" href="javascript:nationalPieChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-        <span class="reset" style="display: none;"> | {% trans "Filter word cloud with" %} <a href="javascript:load_cloud_with_category()" class="filter" id="category_filter"></a></span>
+{#        <span class="reset" style="display: none;"> | {% trans "Filter word cloud with" %} <a href="javascript:load_cloud_with_category()" class="filter" id="category_filter"></a></span>#}
     </div>
 {% endblock %}
 {% block javascripts %}
-    <script type="text/javascript">
-    function load_cloud_word(element){
-        var district = $('#district_filter').text();
-        console.log("Clicked on: " +district);
-        $('.modal-title').text(district + " {{ period|cut:'/' }}'s Word Cloud");
-        $('#cloud').html("<p>Word Cloud Loading Please Wait...</p>");
-        $('#cloud_modal').modal();
-        $('#cloud').load('/map-cloud/?district='+district + "&period={{ period|cut:'/'|default:'' }}");
-
-    }
-    function load_cloud_with_category(){
-        var district = $('#district_filter').text();
-        var category = $('#category_filter').text();
-        var cat = category.replace(" ", "_");
-        cat = cat.replace(" ", "_");
-        console.log("Category:" + cat);
-        $('.modal-title').text(district + " {{ period|cut:'/' }}'s Word Cloud filtered with "+ category);
-        $('#cloud').html("<p>Word Cloud Loading Please Wait...</p>");
-        $('#cloud_modal').modal();
-        if(district){
-            console.log('District: '+ district + " found");
-            $('#cloud').load('/map-cloud/?district='+district + "&period={{ period|cut:'/'|default:'' }}&category="+cat);
-        }else{
-            console.log('District not found');
-            $('#cloud').load('/map-cloud/?category='+cat + "&period={{ period|cut:'/'|default:'' }}");
-        }
-    }
-    var numberFormat = d3.format(".2f");
-
-    var ugChart = dc.geoChoroplethChart("#ug-chart");
-    var totalsChart = dc.bubbleChart("#totals-chart");
-    var nationalPieChart = dc.pieChart("#national-pie-chart")
-
-    var width = 700,
-            height = 960;
-
-    var raw_map_args = '{{ map_args }}';
-    var cleaned_map_args = raw_map_args.replace(/&#39;/g, "\"");
-    var map_args = JSON.parse(cleaned_map_args);
-
-    var projection = d3.geo.mercator()
-            .center([map_args.center.longitude, map_args.center.latitude])
-            .scale(map_args.scale)
-            .translate([width / 2, height / 2]);
-
-    // declare some vars here so they are available
-    // in the browser console for debugging
-    var data;
-    var districts;
-    var shapes;
-    var data1;
-    var categories;
-    var debug = true;
-    var total;
-    var caseTypes;
-    var categoriesGroup;
-
-    function max_of(obj){
-        var n = 0;
-        var x;
-        var key;
-        for (x in obj){
-            if (obj[x] > n){
-                n = obj[x];
-                key = x;
+    <script>
+        function load_cloud_word(element){
+            var district = $('#district_filter').text();
+            if (debug) {
+                console.log("Clicked on: " + district);
             }
+            $('.modal-title').text(district + " {{ period|cut:'/' }}'s Word Cloud");
+            $('#cloud').html("<p>Word Cloud Loading Please Wait...</p>");
+            $('#cloud_modal').modal();
+            $('#cloud').load('/map-cloud/?district='+district + "&period={{ period|cut:'/'|default:'' }}");
         }
-        return key;
-    }
 
-    queue()
-            .defer(d3.json, "{{ MEDIA_URL }}ureport/data/districts.json")
-            {% if period %}
-                .defer(d3.json, "{% url pulse_json period|cut:'/' %}")
-            {% else %}
-                .defer(d3.json, "{% url pulse_json %}")
-            {% endif %}
-            .await(ready);
-
-    function ready(error, ug, category) {
-        var loading = document.getElementById("loading");
-        if (loading){
-            loading.style.display = "none";
-        }
-    // TODO handle error!
-    // TODO maybe rework so that fgmPoll.tsv is organized like this?
-    // District Answer Number
-    // District1 yes 22
-    // District1 no 11
-    // i *think* that this sort of structure
-    // would make it simpler to group by answer, so you could
-    // easily toggle between mapping percentYes to percentNo, etc
-    //
-    // add poll name to each result record
-    // TODO toggle between results from more than one poll
-    //data = crossfilter(_.map(poll, function(p) {return _.defaults(p, {'poll': 'fgm'});}));
-    shapes = ug;
-
-    data = crossfilter(_.map(category, function(p){return _.defaults(p, {'category': 'irrelevant'})}))
-    categories = data.dimension(function(d){
-        return d['category']
-    });
-    districts = data.dimension(function (d) {
-        return d["district"];
-    });
-    caseDistricts = _.unique(_.pluck(districts, 'district'));
-    caseTypes = _.unique(_.pluck(categories.top(1000), 'category'));
-    categoriesGroup = categories.group().reduceSum(function(d){return d.total});
-    categoryColor = d3.scale.ordinal()
-            .domain(caseTypes)
-            .range(["#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080", "#006400"]);
-
-    pieColor = d3.scale.ordinal()
-            .domain(caseTypes)
-            .range(["#000000", "#006400", "#800080", "#0000FF", "#FFA500", "#FF0000", "#808080"]);
-
-    var dominant_mapper = {"no messages":0, "water":1, "violence against children":2, "ovc":6, "health & nutrition":3, "emergency":5, "education":4, "social policy":7};
-    function category_of(value){
-        var n;
-        var x;
-        for (x in dominant_mapper){
-            if (value == dominant_mapper[x]){
-                n = x;
+        function load_cloud_with_category(){
+            var district = $('#district_filter').text();
+            var category = $('#category_filter').text();
+            var cat = category.replace(" ", "_");
+            cat = cat.replace(" ", "_");
+            if (debug) {
+                console.log("Category:" + cat);
             }
-        }
-        return n;
-    }
-
-    // crossfilter dimension for districts
-
-
-    // crossfilter group (map-reduce) for poll result counts and stats by district
-    // see https://github.com/square/crossfilter/wiki/API-Reference#wiki-group_reduce
-    var totalAnswersByDistrict = districts.group().reduce(
-            function(p, v) {
-                // add function
-                // reduce by sum
-                p.total += +v.total;
-                p.totals[v.category] = v.total;
-                if (v.total !== 0){
-                    p.categories.push(v.category);
-                }
-                p.dominant_name = max_of(p.totals);
-                p.dominant = dominant_mapper[p.dominant_name];
-                p.countList = _.sortBy(_.pairs(p.totals), function(d){return d[1];});
-                total = p;
-                return p;
-            },
-            function(p, v) {
-                // add function
-                // reduce by sum
-                p.total -= +v.total;
-                p.totals[v.category] = v.total;
-                if (v.total !== 0){
-                    p.categories.push(v.category);
-                }
-                p.dominant_name = max_of(p.totals);
-                p.dominant = dominant_mapper[p.dominant_name];
-                p.countList = _.sortBy(_.pairs(p.totals), function(d){return d[1];});
-                total = p;
-                return p;
-            },
-            function() {
-                return {total: 0, counts: {}, countList: [], categories: [], totals: {}, dominant_name:"", dominant:0};
-            }
-    );
-
-    maxCategories = _.max(totalAnswersByDistrict.top(1000), function(p) {return p.value.total;}).value.total;
-
-    function enumerateCountsForDatumTitle(d) {
-        var countsText = _.map(d.value.countList, function(x) {return x[0] + ":\t " + x[1] + "\n";}).join('');
-        return d.key + ":" + d.value.total
-                + "\nCategories"
-                + "\n"
-                + countsText;
-    }
-
-    ugChart.width(width)
-            .height(height)
-            .dimension(districts)
-            .projection(projection)
-            .group(totalAnswersByDistrict)
-            .valueAccessor(function (p) {
-                return p.value.dominant;
-            })
-        // TODO look into patching dc.js so we can
-        // use topojson instead of geojson (topojson files are much smaller)
-            .overlayGeoJson(ug.features, "district", function (d) {
-                if (_.find(caseDistricts, function(x){ return x == d.properties.name; })){
-                    // if district name from map is the same
-                    // as district name in cases, use it
-                    return d.properties.name;
-                }
-                // print debug info if district cannont be reconciled with map
+            $('.modal-title').text(district + " {{ period|cut:'/' }}'s Word Cloud filtered with "+ category);
+            $('#cloud').html("<p>Word Cloud Loading Please Wait...</p>");
+            $('#cloud_modal').modal();
+            if(district){
                 if (debug) {
-                    console.log('no district named ', d.properties.name);
+                    console.log('District: '+ district + " found");
                 }
-                return d.properties.name;
-            })
-        // color across yellow-green-blue range
-        // with a domain of 0% yes to 100% yes
-            .colors(["#E8FAF9", "#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080"])
-            .colorAccessor(function(d, i){return d})
-            .title(function (d) {
-                return "District: " + d.key + "\n " + category_of((d.value ? d.value : 0));
-            });
+                $('#cloud').load('/map-cloud/?district='+district + "&period={{ period|cut:'/'|default:'' }}&category="+cat);
+            } else {
+                if (debug) {
+                    console.log('District not found');
+                }
+                $('#cloud').load('/map-cloud/?category='+cat + "&period={{ period|cut:'/'|default:'' }}");
+            }
+        }
+        // bind map and pie chart to DOM
+        var map = dc.geoChoroplethChart("#ug-chart");
+        var categoryChart = dc.pieChart("#national-pie-chart")
 
+        // configure map for Uganda
+        configure('UG');
 
-
-    totalsChart.width((width))
-            .height(height/1.5)
-            .margins({top: 10, right: 50, bottom: 30, left: 60})
-            .dimension(districts)
-        // FIXME colors shown on chart don't make sense. WTF
-            .colors(colorbrewer.YlGnBu[9])
-            .colorDomain([0, 100])
-            .group(totalAnswersByDistrict)
-            .keyAccessor(function (p) {
-                return p.value.total;
-            })
-            .valueAccessor(function (p) {
-                return _.unique(p.value.categories).length;
-            })
-            .radiusValueAccessor(function (p) {
-                return p.value.total;
-            })
-        // TODO calculate these domains
-            .x(d3.scale.linear().domain([0, (2 + maxCategories)]))
-            .r(d3.scale.linear().domain([0, maxCategories]))
-            .minRadiusWithLabel(11)
-            .elasticY(true)
-            .yAxisPadding(5)
-            .elasticX(true)
-            .xAxisPadding(200)
-            .maxBubbleRelativeSize(0.07)
-            .renderHorizontalGridLines(false)
-            .renderVerticalGridLines(true)
-            .renderLabel(true)
-            .renderTitle(true)
-            .title(function (p) {
-                return enumerateCountsForDatumTitle(p);
-            });
-    totalsChart.yAxis().tickFormat(function (s) {
-        return s ;
-    });
-    totalsChart.xAxis().tickFormat(function (s) {
-        return s;
-    });
-
-    nationalPieChart
-            .width(400)
-            .height(350)
-            .transitionDuration(1000)
-            .colors(pieColor)
-            .colorAccessor(function(d, i){console.log(d.data.value+" "+ d.data.key+ " "+ i);return i; })
-            .radius(130)
-            .innerRadius(40)
-            .dimension(categories)
-            .group(categoriesGroup)
-            .renderLabel(true)
-            .renderTitle(true);
-
-    dc.renderAll();
-
-    mapLegendColors = d3.scale.linear()
-            .domain(d3.range(0,8))
-            .range(["#BEBEBE", "#0000FF", "#000000", "#800080", "#FFA500", "#FF0000", "#808080", "#006400"]);
-
-    var legend = d3.select('.legend')
-            .attr("style", function (d) { return "margin-top: " + (height / 2.4) + "px;"; });
-
-    var legendItems = legend.selectAll('.legend-item')
-            .data(_.zip(mapLegendColors.domain(), mapLegendColors.range()));
-
-    legendItems.enter().append('li')
-            .attr("style", function (d) { return "background-color: " + mapLegendColors(d[0]) + "; width: 90px; border-style: double"; })
-            .html(function(d) {
-                return " " + category_of(d[0]);
-            });
-    }
+        // load data assets
+        queue()
+                .defer(d3.json, "{{ MEDIA_URL }}ureport/data/districts.json")
+                {% if period %}
+                    .defer(d3.json, "{% url pulse_json period|cut:'/' %}")
+                {% else %}
+                    .defer(d3.json, "{% url pulse_json %}")
+                {% endif %}
+                .await(ready);
     </script>
+    <script type="text/javascript">var addthis_config = {"data_track_addressbar":false};</script>
+    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js"></script>
+
 {% endblock %}
 
