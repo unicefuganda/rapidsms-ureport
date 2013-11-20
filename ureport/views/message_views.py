@@ -131,7 +131,7 @@ def unsolicitized_messages(request):
         objects_per_page=25,
         partial_row=partial_row,
         base_template=base_template,
-        results_title=_("Unsolicitized Messages"),
+        results_title=_("Unsolicited Messages"),
         paginator_template=paginator_template,
         paginator_func=ureport_paginate,
         columns=columns,
