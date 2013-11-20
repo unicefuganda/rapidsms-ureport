@@ -841,7 +841,6 @@ class ExReportForm(forms.Form):
         else:
             age1 = self.cleaned_data['age_to']
             age2 = self.cleaned_data['age_from']
-        print age1, age2
         districts = self.cleaned_data['districts']
         age_range = [date.today() - timedelta(days=356 * age1), date.today() - timedelta(days=356 * age2)]
         if self.cleaned_data['date_from'] < self.cleaned_data['date_to']:
