@@ -50,7 +50,8 @@ class PollResource(ModelResource):
         resource_name = 'polls'
         allowed_methods = ['get']
         filtering = {
-            'poll': ALL_WITH_RELATIONS
+            'poll': ALL_WITH_RELATIONS,
+            'start_date': ['range', 'exact', 'lte', 'gte', 'lt', 'gt']
         }
         authentication = ApiKeyAuthentication()
 
