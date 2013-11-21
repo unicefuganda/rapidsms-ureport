@@ -14,7 +14,7 @@ from django.forms import ValidationError
 from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, ugettext
 
 from rapidsms.models import Contact
 from poll.models import Poll, Response
@@ -725,9 +725,10 @@ class TemplateMessage(ActionForm):
                                                          connection=contact.default_connection, text=message)
                         msg_a = MessageDetail.objects.create(message=message, attribute=temp_msg, value='comfirm')
 
-                return (mark_safe(
-                    'Message is going to be sent to   %d contacts .<a href="/comfirmmessages/%s/">Comfirm Sending </a>' % (
-                        len(results), key)), 'success',)
+                message_final = ugettext("Message is going to be sent to %(contacts)d contacts.") % { 'contacts':len(results)}
+                alert_message = ugettext("Confirm Sending")
+                return mark_safe('%s<a href="/comfirmmessages/%s/">%s </a>' % (message_final, key, alert_message)), 'success'
+                
             else:
                 return ("some thing went wrong", 'error',)
 
