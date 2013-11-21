@@ -279,7 +279,7 @@ class AssignToNewPollForm(ActionForm):
             poll.sites.add(Site.objects.get_current())
 
         return (
-            _('%(results)d participants added to  %(poll)s poll' % {"results": len(results), "poll": poll.name}),
+            _('%(results)d participants added to  %(poll)s poll') % {"results": len(results), "poll": poll.name},
             'success')
 
 

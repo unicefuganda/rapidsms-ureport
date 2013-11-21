@@ -112,6 +112,7 @@
 	                   <li><a href="{% url flaggedmessages %}">{% trans "FLAGGED MESSAGES" %}</a></li>
                         <li><a href="{% url classifier %}">{% trans "A-CLASS" %}</a></li>
                     <li><a href="{% url alerts user.pk%}">{% trans "REAL TIME" %}</a></li>
+                    <li><a href="/accounts/logout">{% trans "LOGOUT" %}</a></li>
 	                {% else %}
 	                   <li><a href="/accounts/login">{% trans "LOGIN" %}</a></li>
 	                {% endif %}

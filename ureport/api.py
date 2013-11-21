@@ -34,23 +34,24 @@ class ResponseResource(ModelResource):
 
 class PollResource(ModelResource):
 
-    responses_count = fields.IntegerField(readonly=True)
+    response_count = fields.IntegerField(readonly=True)
 
     def dehydrate(self, bundle):
         bundle.data['responses_uri'] = "/api/v1/responses/?poll=" + bundle.data['id']
         bundle.data['categories'] = Poll.objects.get(pk=bundle.data['id']).categories.values_list('name', flat=True)
-        bundle.data['responses_count'] = bundle.obj.response_count
+        bundle.data['response_count'] = bundle.obj.response_count
         bundle.data['response_rate'] = (bundle.obj.response_count / float(bundle.obj.contacts.count())) * 100
         bundle.data['contacts_count'] = bundle.obj.contacts.count()
         return bundle.data
 
     class Meta:
-        queryset = Poll.objects.exclude(start_date=None).annotate(responses_count=Count('responses'))
+        queryset = Poll.objects.exclude(start_date=None).annotate(response_count=Count('responses'))
         excludes = ['response_type', 'type', 'default_response']
         resource_name = 'polls'
         allowed_methods = ['get']
         filtering = {
-            'poll': ALL_WITH_RELATIONS
+            'poll': ALL_WITH_RELATIONS,
+            'start_date': ['range', 'exact', 'lte', 'gte', 'lt', 'gt']
         }
         authentication = ApiKeyAuthentication()
 
