@@ -234,7 +234,7 @@ def extract_gen_reports(form_data, **kwargs):
         if not message.poll_responses.exists():
             message_list_dict['poll'] = 'Unsolicited'
         else:
-            message_list_dict['poll'] = message.poll_responses.get().poll.question
+            message_list_dict['poll'] = message.poll_responses.all()[0].poll.question
         message_list_dict['birth date'] = 'N/A'
         message_list_dict['district'] = 'N/A'
         if message.connection.contact:
