@@ -1,4 +1,5 @@
 {% extends "generic/base.html" %}
+{% load i18n %}
 {% block title %}
     Ureport Poll Dashboard - {{ block.super }}
 {% endblock %}
@@ -35,7 +36,7 @@
 {{ block.super }}
 <a id="show_results_list" href="javascript:void(0)" onclick="expand()" style="display:none">Show Polls</a>
 <div class="module">
-    <h2>Report</h2>
+    <h2>{% trans "Report" %}</h2>
     <div style="width:100%;">
         <div id="visual">
             <div id="map" class="init" style="display:none;" >

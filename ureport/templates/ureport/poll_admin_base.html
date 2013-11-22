@@ -35,8 +35,8 @@
       <img border="0" src="/static/rapidsms/icons/silk/add.png" alt=""/> {%  trans "Add New Poll" %}
     </a>
     {% if results_title == 'Polls' %}
-<a href="{% url script-polls %}" style="float:right" class="">View AutoReg Polls</a>
-    <a href="{% url view_group_rules %}"  style="float:right" class="">View Autoreg Group Rules</a>
+<a href="{% url script-polls %}" style="float:right" class="">{% trans "View AutoReg Polls" %}</a>
+    <a href="{% url view_group_rules %}"  style="float:right" class="">{% trans "View Autoreg Group Rules" %}</a>
 {% endif %}
 </div>
 {% endblock %}
