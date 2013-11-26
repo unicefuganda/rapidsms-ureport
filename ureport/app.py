@@ -43,26 +43,27 @@ class App(AppBase):
                     connection=message.connection).exists():
 
             log.debug("[ureport-app] [%s] No contact found, adding to registration" % message.connection.identity)
-            luo_match = opt_reg_luo.search(message.text.lower())
-            kdj_match = opt_reg_kdj.search(message.text.lower())
-            en_match = opt_reg_en.search(message.text.encode('utf-8'))
-
-            if luo_match:
-                prog = ScriptProgress.objects.create(script=Script.objects.get(pk="ureport_autoreg_luo2"), \
+            prog = ScriptProgress.objects.create(script=Script.objects.get(pk="ureport_autoreg_luo2"), \
                                                      connection=message.connection)
-                prog.language = "ach"
-                prog.save()
-            elif kdj_match:
-                prog = ScriptProgress.objects.create(script=Script.objects.get(pk="ureport_autoreg_kdj"), \
-                                                     connection=message.connection)
-                prog.language = "kdj"
-                prog.save()
-            elif en_match:
-                prog = ScriptProgress.objects.create(script=Script.objects.get(pk="ureport_autoreg2"), \
-                                                     connection=message.connection)
-                prog.language = "en"
-                prog.save()
-
+            try:
+                luo_match = opt_reg_luo.search(message.text.lower())
+                if luo_match:
+                    prog.language = "ach"
+            except UnboundLocalError:
+                pass
+            try:
+                kdj_match = opt_reg_kdj.search(message.text.lower())
+                if kdj_match:
+                    prog.language = "kdj"
+            except UnboundLocalError:
+                pass
+            try:
+                en_match = opt_reg_en.search(message.text.encode('utf-8'))
+                if en_match:
+                    prog.language = "en"
+            except UnboundLocalError:
+                pass
+            prog.save()
             return True
             #ignore subsequent join messages
         elif message.text.encode('utf-8').lower().strip() in OPT_IN_WORDS_LUO + OPT_IN_WORDS_EN:
