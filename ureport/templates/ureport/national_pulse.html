@@ -110,8 +110,17 @@
         var map = dc.geoChoroplethChart("#ug-chart");
         var categoryChart = dc.pieChart("#national-pie-chart")
 
-        // configure map for Uganda
-        configure('UG');
+        map_config = {
+          'center': {
+            'longitude': {{map_args.center.longitude}},
+            'latitude': {{map_args.center.latitude}}
+          },
+          'width': 500,
+          'height': 420,
+          'scale': {{map_args.scale}}
+        }
+
+        configure(map_config);
 
         // load data assets
         queue()

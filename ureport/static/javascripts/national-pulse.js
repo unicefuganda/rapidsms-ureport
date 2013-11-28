@@ -20,27 +20,14 @@ var width;
 var height;
 var projection;
 
-var map_configs = {
-  'UG': {
-    'center': {
-        'longitude': 32.27,
-        'latitude': 0.95 
-    },
-    'width': 500,
-    'height': 420,
-    'scale': 23000
-  }
-};
+function configure(config) {
+  width = config.width;
+  height = config.height;
 
-function configure(country) {
-  country_config = map_configs[country];
-
-	width = country_config.width;
-	height = country_config.height;
-
-  projection = d3.geo.mercator()
-	  .center([country_config.center.longitude, country_config.center.latitude])
-	  .scale(country_config.scale)
+  projection = d3.geo
+          .mercator()
+	  .center([config.center.longitude, config.center.latitude])
+	  .scale(config.scale)
 	  .translate([width/2, height/2]);
 }
 
