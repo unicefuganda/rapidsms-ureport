@@ -23,14 +23,12 @@ var projection;
 var map_configs = {
   'UG': {
     'center': {
-        'longitude': .8,
-        'latitude': 35.95
+        'longitude': 0.95,
+        'latitude': 32.27
     },
     'width': 500,
     'height': 420,
-    'rotate': [-1, 11.5, -16.4],
-    'parallels': [25, 35],
-    'scale': 4500
+    'scale': 23000
   }
 };
 
@@ -40,11 +38,10 @@ function configure(country) {
 	width = country_config.width;
 	height = country_config.height;
 
-  projection = d3.geo.albers()
+  projection = d3.geo.mercator()
 	  .center([country_config.center.latitude, country_config.center.longitude])
-	  .rotate(country_config.rotate)
-	  .parallels(country_config.parallels)
-	  .scale(country_config.scale);
+	  .scale(country_config.scale)
+	  .translate([width/2, height/2]);
 }
 
 function ready(error, district_shapes, district_records) {
