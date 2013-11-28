@@ -23,8 +23,8 @@ var projection;
 var map_configs = {
   'UG': {
     'center': {
-        'longitude': 0.95,
-        'latitude': 32.27
+        'longitude': 32.27,
+        'latitude': 0.95 
     },
     'width': 500,
     'height': 420,
@@ -39,7 +39,7 @@ function configure(country) {
 	height = country_config.height;
 
   projection = d3.geo.mercator()
-	  .center([country_config.center.latitude, country_config.center.longitude])
+	  .center([country_config.center.longitude, country_config.center.latitude])
 	  .scale(country_config.scale)
 	  .translate([width/2, height/2]);
 }
