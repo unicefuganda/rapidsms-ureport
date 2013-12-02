@@ -23,6 +23,7 @@ from generic.sorters import SimpleSorter
 from ureport.forms import AssignToNewPollForm
 from ureport.models import Ureporter
 from ureport.utils import get_contacts
+from rapidsms.backends.vumi.views import VumiBackendView
 
 message_resource = MessageResource()
 
@@ -189,5 +190,6 @@ urlpatterns = patterns('',
                        url(r"^upload-contacts", upload_users, name='upload_users'),
                        url(r"^access/dashboards/$", access_dashboards, name='access_dashboards'),
                        url(r"^assign-group", assign_group, name="assign_group"),
-                       url(r'^start_poll_export/(\d+)/$', start_poll_export, name="start_poll_export")
+                       url(r'^start_poll_export/(\d+)/$', start_poll_export, name="start_poll_export"),
+                       url(r"^backend/vumi-fake-smsc/$", VumiBackendView.as_view(backend_name="vumi-fake-smsc")),
 )
