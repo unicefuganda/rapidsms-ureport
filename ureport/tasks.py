@@ -12,6 +12,7 @@ from django.core.mail import send_mail
 from django.db.models import Q
 from django.utils.datastructures import SortedDict
 from openpyxl import reader
+from poll.models import Response
 from rapidsms_httprouter.models import Message
 from uganda_common.models import Access
 from uganda_common.utils import ExcelResponse
@@ -217,10 +218,10 @@ def extract_gen_reports(form_data, **kwargs):
         return messages.distinct()
 
     def _get_messages_for_user(messages):
-       try:
-            access = Access.objects.get(user = user)
+        try:
+            access = Access.objects.get(user=user)
             return messages.filter(connection__contact__groups__in=access.groups)
-       except Access.DoesNotExist:
+        except Access.DoesNotExist:
             return messages
 
     queryset = _get_messages(form_data)
@@ -252,3 +253,15 @@ def extract_gen_reports(form_data, **kwargs):
         msg = "Hi %s,\nThe excel report that you requested to download is now ready for download. Please visit %s%s" \
               " and download it.\n\nThank You\nUreport Team" % (user.username, host, link)
         send_mail('General Ureport Report', msg, "", [user.email], fail_silently=False)
+
+
+@task
+def group_up_category(group, category, user, poll):
+    for response in Response.objects.filter(categories__category=category):
+        contact = response.contact
+        contact.groups.add(group)
+        contact.save()
+    if user.email:
+        msg = "The responses for poll(%s) and category(%s) have been grouped up to the group(%s)" % (
+            poll.question, category.name, group.name)
+        send_mail('Category Grouped Up', msg, "", [user.email], fail_silently=False)

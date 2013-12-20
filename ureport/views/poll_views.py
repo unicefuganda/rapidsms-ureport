@@ -143,6 +143,11 @@ def view_poll(request, pk):
     category_form = CategoryForm()
     rule_form = RuleForm2()
     if request.method == "POST":
+        if 'g_name' in request.POST:
+            group, __ = Group.objects.get_or_create(name=request.POST.get('g_name')[0])
+            cat = Category.objects.get(pk=request.POST.get('category')[0])
+            tasks.group_up_category(group, cat, request.user, Poll.objects.get(pk=pk))
+            return HttpResponse("success")
         if request.GET.get('edit'):
             if request.POST.get('poll[default_response]'):
                 poll.default_response = request.POST['poll[default_response]']

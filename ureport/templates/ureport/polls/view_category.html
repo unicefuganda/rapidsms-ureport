@@ -7,18 +7,21 @@
 </td>
 <td class="category_default_col">
     {% if category.default %}
-    <img style="vertical-alignment:bottom;padding-top:7px" src="{{ MEDIA_URL }}rapidsms/icons/silk/accept.png" alt="This category is default"/>
+        <img style="vertical-alignment:bottom;padding-top:7px" src="{{ MEDIA_URL }}rapidsms/icons/silk/accept.png" alt="This category is default"/>
     {% else %}
-    &nbsp;
+        &nbsp;
     {% endif %}
 </td>
-        <td>
-            <a href="javascript:void(0)" onclick="ajax_loading(this);$('#view_rules').load('/category/{{category.pk}}/rules/view/',function() { $('.ajax_loading').remove();$('#view_rules').show();$('#view_rules').effect('highlight', {}, 3000);});" class="btn">{% trans "View Rules" %}</a>
-        </td>
-        <td>
-            <a href="javascript:void(0)" onclick="ajax_loading(this);$('#edit_category').load('/category/{{category.pk}}/edit/',function() { $('.ajax_loading').remove();$('#edit_category').show();$('#edit_category').effect('highlight', {}, 3000);});" class="btn">{% trans "Edit" %}</a>
-        </td>
-        <td>
-            <a  href="/category/{{category.pk}}/delete/" onclick="$(this).parent().parent().hide()" data-remote=true>{% trans "Delete" %}</a>
-        </td>
+<td>
+    <a href="javascript:void(0)" onclick="ajax_loading(this);$('#view_rules').load('/category/{{category.pk}}/rules/view/',function() { $('.ajax_loading').remove();$('#view_rules').show();$('#view_rules').effect('highlight', {}, 3000);});" class="btn">{% trans "View Rules" %}</a>
+</td>
+<td>
+    <a href="javascript:void(0)" onclick="ajax_loading(this);$('#edit_category').load('/category/{{category.pk}}/edit/',function() { $('.ajax_loading').remove();$('#edit_category').show();$('#edit_category').effect('highlight', {}, 3000);});" class="btn">{% trans "Edit" %}</a>
+</td>
+<td>
+    <a  href="/category/{{category.pk}}/delete/" onclick="$(this).parent().parent().hide()" data-remote=true>{% trans "Delete" %}</a>
+</td>
+<td>
+    <a  data-toggle="modal" href="#give_group" onclick="load_give_group_form('{{ category.pk }}')">{% trans "Give Group" %}</a>
+</td>
 
