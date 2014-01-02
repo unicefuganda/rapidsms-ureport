@@ -44,9 +44,16 @@ class App(AppBase):
 
             log.debug("[ureport-app] [%s] No contact found, adding to registration" % message.connection.identity)
 
-            luo_match = opt_reg_luo.search(message.text.lower())
-            kdj_match = opt_reg_kdj.search(message.text.lower())
-            en_match = opt_reg_en.search(message.text.encode('utf-8'))
+            luo_match = None
+            kdj_match = None
+            en_match = None
+
+            if OPT_IN_WORDS_LUO:
+                luo_match = opt_reg_luo.search(message.text.lower())
+            if OPT_IN_WORDS_KDJ:
+                kdj_match = opt_reg_kdj.search(message.text.lower())
+            if OPT_IN_WORDS_EN:
+                en_match = opt_reg_en.search(message.text.encode('utf-8'))
 
             if luo_match:
                 prog = ScriptProgress.objects.create(script=Script.objects.get(pk="ureport_autoreg_luo2"), \
@@ -83,6 +90,7 @@ class App(AppBase):
                 try:
                     mp = Group.objects.get(name='MP')
                     if mp in message.connection.contact.groups.all():
+                        # TODO make recipient email configurable
                         log.info('MP with ID %d just sent in a message %s, emailing it to Erik' % (
                             message.connection_id, message.text))
                         send_mail('MP Sent Message to Ureport', message.text, "Ureport Alerts<alerts@ureport.ug>",
