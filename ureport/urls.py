@@ -15,6 +15,7 @@ from contact.forms import FreeSearchForm, MultipleDistictFilterForm, GenderFilte
     AssignGroupForm, AgeFilterForm, MassTextForm
 from tastypie.api import Api
 from .api import PollResponseResource, PollResource, MessageResource, ContactResource, ResponseResource
+from ureport.views.api.ViewUreporter import ViewUreporter
 from ureport.views.excel_reports_views import generate_poll_dump_report, generate_per_district_report, upload_users, \
     assign_group
 from rapidsms.models import Contact
@@ -38,6 +39,7 @@ urlpatterns = patterns('',
                        url(r'^jsi18n/(?P<packages>\S+?)/$', 'django.views.i18n.javascript_catalog'),
                        # dashboard view for viewing all poll reports in one place
                        url(r'^dashboard/$', poll_dashboard, name="poll_dashboard"),
+                       url(r'^profiler/', include('profiler.urls')),
 
                        # ureporters (contact management views)
                        url(r'^reporter/$', ureporters, name="ureport-contact"),
@@ -192,4 +194,6 @@ urlpatterns = patterns('',
                        url(r"^assign-group", assign_group, name="assign_group"),
                        url(r'^start_poll_export/(\d+)/$', start_poll_export, name="start_poll_export"),
                        url(r"^backend/vumi/$", VumiBackendView.as_view(backend_name="vumi")),
+                       url(r"^ureporters/(?P<backend>\w+)/(?P<user_address>\w+)$", ViewUreporter.as_view()),
+
 )
