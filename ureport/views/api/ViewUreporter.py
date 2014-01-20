@@ -12,19 +12,25 @@ class ViewUreporter(View):
     def get(self, request, *args, **kwargs):
         self.parse_url_parameters(kwargs)
         contact = self.get_contact()
-        response_data = {u"success": True, "user": contact}
-        return HttpResponse(json.dumps(response_data), content_type="application/json")
+        status_code = 200
+        response_data = {"success": True}
+        if not contact["registered"]:
+            response_data["success"] = False
+            response_data["reason"] = "Ureporter not found"
+            status_code = 404
+        else:
+            response_data["user"] = contact
+        return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
 
     def post(self, request, *args, **kwargs):
         raise Http404()
 
     def get_contact(self):
-        contact_data = {"id": "", "language": "", "registered": False}
+        contact_data = {"language": "", "registered": False}
         backend, backend_created = Backend.objects.get_or_create(name=self.backend_name)
         try:
             connection = Connection.objects.get(identity=self.user_address, backend=backend)
             if (connection.contact):
-                contact_data["id"] = connection.contact.id
                 contact_data["registered"] = True
                 contact_data["language"] = connection.contact.language
         except Connection.DoesNotExist:

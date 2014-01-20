@@ -16,7 +16,6 @@ class ViewUreporterTest(TestCase):
         connection.contact = contact
         connection.save()
         data = view.get_contact()
-        self.assertEqual(contact.id, data['id'])
         self.assertEqual(True, data['registered'])
         self.assertEqual(contact.language, data['language'])
 
@@ -28,8 +27,6 @@ class ViewUreporterTest(TestCase):
         view.user_address = user_address
         backend,backend_created = Backend.objects.get_or_create(name=backend_name)
         connection,connection_created= Connection.objects.get_or_create(identity=user_address,backend=backend)
-
         data = view.get_contact()
-        self.assertEqual("", data['id'])
         self.assertEqual(False, data['registered'])
         self.assertEqual("", data['language'])

@@ -21,13 +21,6 @@ class ViewUreporterTest(unittest.TestCase):
         self.assertEqual("console", view.backend_name)
         self.assertEqual("999", view.user_address)
 
-    def test_if_the_request_is_valid(self):
-        view = ViewUreporter()
-        kwargs = {"backend": "console", "user_address": "999"}
-        http_response = self.get_http_response_from_view(kwargs, view)
-        json_string = http_response.content
-        data = json.loads(json_string)
-        self.assertEqual(True, data['success'])
 
     def test_that_in_case_of_post_it_raise_404(self):
         view = ViewUreporter()
@@ -43,7 +36,7 @@ class ViewUreporterTest(unittest.TestCase):
         http_response = self.get_http_response_from_view(kwargs, view)
         json_string = http_response.content
         data = json.loads(json_string)
-        self.assertEqual(False, data['user']['registered'])
+        self.assertDictEqual({"success":False,"reason":"Ureporter not found"}, data)
 
     def test_that_return_registered_true_if_contact_exists(self):
         view = ViewUreporter()
@@ -54,6 +47,6 @@ class ViewUreporterTest(unittest.TestCase):
         http_response = self.get_http_response_from_view(kwargs, view)
         json_string = http_response.content
         data = json.loads(json_string)
+        self.assertEqual(True, data['success'])
         self.assertEqual(True, data['user']['registered'])
-        self.assertEqual(12, data['user']['id'])
         self.assertEqual('en', data['user']['language'])
