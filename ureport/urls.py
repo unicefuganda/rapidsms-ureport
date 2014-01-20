@@ -39,7 +39,6 @@ urlpatterns = patterns('',
                        url(r'^jsi18n/(?P<packages>\S+?)/$', 'django.views.i18n.javascript_catalog'),
                        # dashboard view for viewing all poll reports in one place
                        url(r'^dashboard/$', poll_dashboard, name="poll_dashboard"),
-                       url(r'^profiler/', include('profiler.urls')),
 
                        # ureporters (contact management views)
                        url(r'^reporter/$', ureporters, name="ureport-contact"),
