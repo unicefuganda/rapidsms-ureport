@@ -7,6 +7,7 @@ class AuthenticationTest(unittest.TestCase):
     browser = SplinterWrapper.getBrowser()
 
     def test_login_redirects_to_admin_dashboard_on_success(self):
+        SplinterWrapper.open("/accounts/logout")
         SplinterWrapper.open("/accounts/login")
         fill_form(self.browser, {"username": "ureport", "password":"ureport"}, True, True)
         self.browser.find_by_value("login").first.click()
