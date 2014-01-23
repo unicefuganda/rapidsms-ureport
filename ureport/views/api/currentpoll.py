@@ -2,6 +2,8 @@ from poll.models import Poll
 from script.models import ScriptProgress, Script
 from ureport.views.api.base import UReporterApiView
 
+DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
+
 
 class ViewCurrentPoll(UReporterApiView):
     def get(self, request, *args, **kwargs):
@@ -14,20 +16,31 @@ class ViewCurrentPoll(UReporterApiView):
         else:
             data['success'] = True
             self.script_progress = self.get_script_progress(connection)
-
-            #if not registered
-        #   is there a script progress object ?
-        #   if there is ? is the current step a message , question or email
-        #   if there is no ? create the script progress and send out the first step
-        #DONE
+            step = self.get_current_step(self.script_progress)
+            if step and step.poll:
+                data['poll'] = self.get_data_from_poll(step.poll, True)
+            elif step and step.message:
+                data['poll'] = self.get_data_from_message(step.message)
+                self.script_progress.moveon()
         return self.create_json_response(data)
+
+    def format_date(self, start_date):
+        return start_date.strftime(DATE_FORMAT) if start_date else None
+
+    def get_data_from_poll(self, poll, is_registration=False):
+        return {"name": poll.name, "question": poll.question, "id": str(poll.id), "language": None,
+                "start_date": self.format_date(poll.start_date), "end_date": self.format_date(poll.end_date),
+                "type": poll.type,
+                "question_voice": None, "is_registration": is_registration,
+                "response_type": "allow_all" if poll.response_type == "a" else "allow_one",
+                "default_response": poll.default_response, "default_response_voice": None}
 
     def get_current_poll_for(self, contact):
         try:
             poll = contact.polls.filter(start_date__isnull=False, end_date__isnull=True).latest("start_date")
         except Poll.DoesNotExist:
             return None
-        return {"name": poll.name, "question": poll.question}
+        return self.get_data_from_poll(poll)
 
     def get_script_progress(self, connection):
         script_progress_querylist = ScriptProgress.objects.filter(connection=connection,
@@ -37,7 +50,11 @@ class ViewCurrentPoll(UReporterApiView):
         else:
             script = Script.objects.get(slug="ureport_autoreg2")
             script_progress = ScriptProgress.objects.create(connection=connection, script=script)
+            script_progress.start()
         return script_progress
 
-    def get_next_step(self, script_progress):
-        return script_progress.get_next_step()
+    def get_current_step(self, script_progress):
+        return script_progress.step
+
+    def get_data_from_message(self, message):
+        return {"name": "Message", "question": message, "type": "none"}

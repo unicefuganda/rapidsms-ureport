@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from poll.models import Poll
 from rapidsms.models import Contact, Backend, Connection
-from script.models import ScriptProgress, Script, ScriptStep
+from script.models import ScriptProgress, Script, ScriptStep, ScriptSession
 from ureport.views.api.currentpoll import ViewCurrentPoll
 
 
@@ -17,7 +17,9 @@ class CurrentPollTest(TestCase):
                                                         start_date=an_hour_ago)
         poll.contacts = [contact]
         poll.save()
-        self.assertDictEqual({"name": "Test Poll", "question": "Is working?"}, view.get_current_poll_for(contact))
+        current_poll = view.get_current_poll_for(contact)
+        self.assertEqual("Test Poll", current_poll["name"])
+        self.assertEqual("Is working?", current_poll["question"])
 
     def test_that_it_retrieves_data_from_active_poll(self):
         view = ViewCurrentPoll()
@@ -40,7 +42,9 @@ class CurrentPollTest(TestCase):
 
         third_poll.contacts = [contact]
         third_poll.save()
-        self.assertDictEqual({"name": "Test Poll", "question": "Is working?"}, view.get_current_poll_for(contact))
+        current_poll = view.get_current_poll_for(contact)
+        self.assertEqual("Test Poll", current_poll["name"])
+        self.assertEqual("Is working?", current_poll["question"])
 
     def test_that_retrieves_none_when_contact_do_not_have_a_poll(self):
         view = ViewCurrentPoll()
@@ -59,14 +63,18 @@ class CurrentPollTest(TestCase):
         self.assertEqual(first_script_progress, view.get_script_progress(connection))
 
     def test_that_returns_new_script_progress_if_connection_is_not_associated_to_script_progress(self):
-        script2, created = Script.objects.get_or_create(slug="ureport_autoreg2")
+        script_autoreg2, created = Script.objects.get_or_create(slug="ureport_autoreg2")
         view = ViewCurrentPoll()
         backend = Backend.objects.create(name="test_backend")
         connection = Connection.objects.create(identity="7777", backend=backend)
         second_connection = Connection.objects.create(identity="7777", backend=backend)
         script, created = Script.objects.get_or_create(slug="other_script")
-        script_progress = ScriptProgress.objects.create(connection=second_connection, script=script)
+        first_step = ScriptStep.objects.create(script=script_autoreg2, order=1)
+        second_step = ScriptStep.objects.create(script=script_autoreg2, order=2)
+        script_progress = ScriptProgress.objects.create(connection=connection, script=script)
         self.assertEqual("ureport_autoreg2", view.get_script_progress(connection).script.slug)
+        script_session_list = ScriptSession.objects.filter(script=script_autoreg2, connection=connection)
+        self.assertEqual(1,len(script_session_list))
 
     def test_that_raise_exception_if_script_ureport_autoreg2_does_not_exist(self):
         view = ViewCurrentPoll()
@@ -76,18 +84,7 @@ class CurrentPollTest(TestCase):
         with self.assertRaises(Script.DoesNotExist):
             view.get_script_progress(connection)
 
-    def test_that_retrieves_first_step_for_script_progress_that_does_not_started(self):
-        view = ViewCurrentPoll()
-        backend = Backend.objects.create(name="test_backend")
-        connection = Connection.objects.create(identity="7777", backend=backend)
-        script, created = Script.objects.get_or_create(slug="ureport_autoreg2")
-        first_step = ScriptStep.objects.create(script=script, order=1)
-        second_step = ScriptStep.objects.create(script=script, order=2)
-        script_progress = ScriptProgress.objects.create(connection=connection, script=script)
-
-        self.assertEqual(first_step, view.get_next_step(script_progress))
-
-    def test_that_retrieves_next_step_for_script_progress_that_is_in_progress(self):
+    def test_that_retrieves_same_step_for_script_progress_that_is_in_progress(self):
         view = ViewCurrentPoll()
         backend = Backend.objects.create(name="test_backend")
         connection = Connection.objects.create(identity="7777", backend=backend)
@@ -95,11 +92,11 @@ class CurrentPollTest(TestCase):
         first_step = ScriptStep.objects.create(script=script, order=1)
         second_step = ScriptStep.objects.create(script=script, order=2)
         third_step = ScriptStep.objects.create(script=script, order=3)
-        script_progress = ScriptProgress.objects.create(connection=connection, script=script, step= second_step)
+        script_progress = ScriptProgress.objects.create(connection=connection, script=script, step=second_step)
 
-        self.assertEqual(third_step, view.get_next_step(script_progress))
+        self.assertEqual(second_step, view.get_current_step(script_progress))
 
-    def test_that_for_script_progress_that_is_in_last_step(self):
+    def test_that_retrieves_last_step_for_a_script_progress_that_is_in_last_step(self):
         view = ViewCurrentPoll()
         backend = Backend.objects.create(name="test_backend")
         connection = Connection.objects.create(identity="7777", backend=backend)
@@ -107,6 +104,6 @@ class CurrentPollTest(TestCase):
         first_step = ScriptStep.objects.create(script=script, order=1)
         second_step = ScriptStep.objects.create(script=script, order=2)
         third_step = ScriptStep.objects.create(script=script, order=3)
-        script_progress = ScriptProgress.objects.create(connection=connection, script=script, step= third_step)
+        script_progress = ScriptProgress.objects.create(connection=connection, script=script, step=third_step)
 
-        self.assertEqual(None, view.get_next_step(script_progress))
+        self.assertEqual(third_step, view.get_current_step(script_progress))
