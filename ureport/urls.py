@@ -15,6 +15,7 @@ from contact.forms import FreeSearchForm, MultipleDistictFilterForm, GenderFilte
     AssignGroupForm, AgeFilterForm, MassTextForm
 from tastypie.api import Api
 from .api import PollResponseResource, PollResource, MessageResource, ContactResource, ResponseResource
+from ureport.views.api.ViewUreporter import ViewUreporter
 from ureport.views.excel_reports_views import generate_poll_dump_report, generate_per_district_report, upload_users, \
     assign_group
 from rapidsms.models import Contact
@@ -47,6 +48,7 @@ urlpatterns = patterns('',
                            {'model': Contact, 'partial_row': 'ureport/partials/contacts/generic_contact_row.html'},
                            name="reporter-profile"),
                        # poll management views using generic (rather than built-in poll views
+                       url(r'^mypolls/$', ureport_polls, name="ureport-polls", kwargs= {"pk": None}),
                        url(r'^mypolls/(?P<pk>\d+)/$', ureport_polls, name="ureport-polls"),
 
                        # poll management views using generic (rather than built-in poll views
@@ -192,4 +194,6 @@ urlpatterns = patterns('',
                        url(r"^assign-group", assign_group, name="assign_group"),
                        url(r'^start_poll_export/(\d+)/$', start_poll_export, name="start_poll_export"),
                        url(r"^backend/vumi/$", VumiBackendView.as_view(backend_name="vumi")),
+                       url(r"^ureporters/(?P<backend>\w+)/(?P<user_address>\w+)$", ViewUreporter.as_view()),
+
 )
