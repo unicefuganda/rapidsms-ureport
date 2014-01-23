@@ -1,10 +1,12 @@
 import unittest
+import datetime
 import django.utils.simplejson as json
 from django.test import RequestFactory
-from mock import Mock
+from mock import Mock, MagicMock
+from poll.models import Poll
 from rapidsms.models import Backend, Connection, Contact
-from script.models import Script, ScriptProgress
-from ureport.views.api.currentpoll import ViewCurrentPoll
+from script.models import Script, ScriptProgress, ScriptStep
+from ureport.views.api.currentpoll import ViewCurrentPoll, DATE_FORMAT
 
 
 class CurrentPollTest(unittest.TestCase):
@@ -52,18 +54,53 @@ class CurrentPollTest(unittest.TestCase):
         fake_connection = Mock()
         fake_connection.return_value = self.build_connection(None)
         self.view.get_connection = fake_connection
+        self.view.get_current_step = Mock(return_value=None)
         self.view.get_script_progress = Mock(return_value=ScriptProgress(script=Script(slug="ureport_autoreg2")))
         response = self.get_http_response_from_view({"backend": "my_backend", "user_address": "77777"}, self.view)
         data = json.loads(response.content)
         self.assertEqual(True, data['success'])
         self.assertEqual("ureport_autoreg2", self.view.script_progress.script.slug)
 
-    # def test_that_if_the_script_progress_has_no_step_start_it(self):
-    #     fake_connection = Mock()
-    #     fake_connection.return_value = self.build_connection(None)
-    #     self.view.get_connection = fake_connection
-    #     self.view.get_script_progress = Mock(return_value=ScriptProgress(script=Script(slug="ureport_autoreg2")))
-    #     response = self.get_http_response_from_view({"backend": "my_backend", "user_address": "77777"}, self.view)
-    #     data = json.loads(response.content)
-    #     self.assertEqual(None, self.view.get_next_step())
+    def test_that_retrieves_poll_data_from_step_of_script_progress(self):
+        fake_connection = Mock()
+        fake_connection.return_value = self.build_connection(None)
+        self.view.get_connection = fake_connection
+        self.view.get_script_progress = Mock(return_value=ScriptProgress(script=Script(slug="ureport_autoreg2")))
+        fake_get_next_step = Mock(return_value=ScriptStep(poll=Poll(name="test poll", question="Is it working?")))
+        self.view.get_current_step = fake_get_next_step
+        response = self.get_http_response_from_view({"backend": "my_backend", "user_address": "77777"}, self.view)
+        data = json.loads(response.content)
+        self.assertEqual(True, data['poll']['is_registration'])
 
+    def test_that_data_from_poll_should_have_all_the_neccessary_fields(self):
+        question = "is this really a poll ? or a pool ? or a loop?"
+        name = "this is a poll"
+        an_hour_ago = datetime.datetime.now() - datetime.timedelta(hours=1)
+        default_response = "thanks"
+        poll = Poll(name=name, question=question, id=12, type="t", start_date=an_hour_ago,
+                    default_response=default_response, response_type="a")
+        expected_poll_data = {"id": "12", "question": question, "name": name, "language": None, "question_voice": None,
+                              "start_date": an_hour_ago.strftime(DATE_FORMAT), "end_date": None,
+                              "is_registration": False, "type": "t",
+                              "default_response": default_response, "default_response_voice": None,
+                              "response_type": "allow_all"}
+        self.assertDictEqual(expected_poll_data, self.view.get_data_from_poll(poll))
+
+    def test_that_if_the_step_is_a_message_the_poll_type_is_none(self):
+        message = "hello hallo who aaa"
+        fake_get_next_step = Mock(return_value=ScriptStep(message=message))
+        self.view.get_current_step = fake_get_next_step
+        expected_data = {"name": "Message", "question": message, "type": "none"}
+        actual_data = self.view.get_data_from_message(message)
+        self.assertDictEqual(expected_data, actual_data)
+
+
+    def test_that_script_progress_moves_on_when_current_step_is_message(self):
+        self.setup_fake_connection()
+        mock_progress = MagicMock()
+        mock_progress.moveon = MagicMock()
+        self.view.get_script_progress = Mock(return_value=mock_progress)
+        self.view.contact_exists = Mock(return_value=False)
+        self.view.get_current_step = Mock(return_value=ScriptStep(message="Welcome"))
+        response = self.get_http_response_from_view({"backend": "my_backend", "user_address": "77777"}, self.view)
+        self.assertEqual(True, mock_progress.moveon.called)
