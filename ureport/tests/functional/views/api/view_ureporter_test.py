@@ -4,6 +4,7 @@ from rapidsms.models import Backend, Connection, Contact
 
 class ViewUreporterTestCase(TestCase):
     def test_view_ureporter_api_url_for_new_ureport_user(self):
+        backend, backend_created = Backend.objects.get_or_create(name="console")
         response = self.client.get("/ureporters/console/999")
         self.assertEqual(404, response.status_code)
 

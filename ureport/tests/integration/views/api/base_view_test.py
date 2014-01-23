@@ -4,11 +4,12 @@ from ureport.views.api.base import UReporterApiView
 
 
 class BaseViewTest(TestCase):
-    def test_get_connection_returns_none_if_no_connection_exists(self):
+    def test_get_connection_throws_exception_if_backend_doesnot_exist(self):
         view = UReporterApiView()
         view.backend_name = "adsas"
         view.user_address = "2222"
-        self.assertEqual(None, view.get_connection())
+        with self.assertRaises(Backend.DoesNotExist):
+            view.get_connection()
 
     def test_get_connection_returns_connection_for_user_address(self):
         view = UReporterApiView()
