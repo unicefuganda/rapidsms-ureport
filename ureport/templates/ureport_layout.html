@@ -104,7 +104,7 @@
 	                <li><a href="/#poll_results">{% trans "POLL RESULTS" %}</a></li>
 	                <li><a href="about_ureport">{% trans "ABOUT UREPORT" %}</a></li>
 	                <li><a href="/join/">{% trans "HOW TO JOIN" %}</a></li>
-                    <li><a href="{% url pulse %}">{% trans "HOW TO JOIN" %}</a> </li>
+                    <li><a href="{% url pulse %}">{% trans "NATIONAL PULSE" %}</a> </li>
 	                {% if user.is_authenticated %}
 	                   <li><a href="{% url ureport-polls user.pk %}">{% trans "POLL ADMIN" %}</a></li>
 	                   <li><a href="{% url messagelog %}">{% trans "MESSAGE LOG" %}</a></li>
