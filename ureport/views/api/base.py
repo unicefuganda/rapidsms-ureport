@@ -10,19 +10,15 @@ class UReporterApiView(View):
         self.user_address = kwargs.get("user_address")
 
     def get_connection(self):
-        try:
-            backend = Backend.objects.get(name=self.backend_name)
-            connection_list = Connection.objects.get_or_create(identity=self.user_address, backend=backend)
-            print(connection_list)
-            connection,connection_created = connection_list
-            return connection
-        except Backend.DoesNotExist:
-            return None
+        backend = Backend.objects.get(name=self.backend_name)
+        connection, connection_created = Connection.objects.get_or_create(identity=self.user_address, backend=backend)
+        return connection
+
 
     def create_json_response(self, response_data, status_code=200):
         return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
 
-    def get(self,request,*args,**kwargs):
+    def get(self, request, *args, **kwargs):
         self.parse_url_parameters(kwargs)
         return HttpResponse("")
 
