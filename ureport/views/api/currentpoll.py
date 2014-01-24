@@ -1,4 +1,4 @@
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from poll.models import Poll
 from rapidsms.models import Backend
 from script.models import ScriptProgress, Script
@@ -63,3 +63,6 @@ class ViewCurrentPoll(UReporterApiView):
 
     def get_data_from_message(self, message):
         return {"name": "Message", "question": message, "type": "none"}
+
+    def post(self, request, *args, **kwargs):
+        return HttpResponse("Method Not Allowed", status=405)

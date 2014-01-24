@@ -37,6 +37,10 @@ class CurrentPollTest(unittest.TestCase):
         with self.assertRaises(Http404):
             response = self.get_http_response_from_view({"backend": "my_backend", "user_address": "77777"}, self.view)
 
+    def test_that_in_case_of_post_it_raise_405(self):
+        http_response = self.view.post(None)
+        self.assertEqual(405, http_response.status_code)
+
     def test_that_poll_null_for_a_registered_user_with_no_poll(self):
         self.setup_fake_connection()
         self.setup_fake_poll(None)

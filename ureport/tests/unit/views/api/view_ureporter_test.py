@@ -18,7 +18,7 @@ class ViewUreporterTest(unittest.TestCase):
         with self.assertRaises(Http404):
             response = self.get_http_response_from_view({"backend": "my_backend", "user_address": "77777"}, view)
 
-    def test_that_in_case_of_post_it_raise_404(self):
+    def test_that_in_case_of_post_it_raise_405(self):
         view = ViewUReporter()
         http_response = view.post(None)
         self.assertEqual(405, http_response.status_code)
