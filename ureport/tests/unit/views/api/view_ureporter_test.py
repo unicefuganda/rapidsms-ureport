@@ -4,8 +4,7 @@ import unittest
 
 from django.test import RequestFactory
 from mock import Mock
-
-from ureport.views.api.ViewUReporter import ViewUReporter
+from ureport.views.api.ViewUreporter import ViewUReporter
 
 
 class ViewUreporterTest(unittest.TestCase):
@@ -14,6 +13,10 @@ class ViewUreporterTest(unittest.TestCase):
         fake_request = request_factory.get('/')
         return view.get(fake_request, None, **kwargs)
 
+    def test_404_is_raised_if_backend_does_not_exist(self):
+        view = ViewUReporter()
+        with self.assertRaises(Http404):
+            response = self.get_http_response_from_view({"backend": "my_backend", "user_address": "77777"}, view)
 
     def test_that_in_case_of_post_it_raise_404(self):
         view = ViewUReporter()

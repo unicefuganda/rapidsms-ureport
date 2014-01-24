@@ -1,4 +1,6 @@
+from django.http import Http404
 from poll.models import Poll
+from rapidsms.models import Backend
 from script.models import ScriptProgress, Script
 from ureport.views.api.base import UReporterApiView
 
@@ -8,7 +10,10 @@ DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 class ViewCurrentPoll(UReporterApiView):
     def get(self, request, *args, **kwargs):
         self.parse_url_parameters(kwargs)
-        connection = self.get_connection()
+        try:
+            connection = self.get_connection()
+        except Backend.DoesNotExist:
+            raise Http404
         data = {}
         if self.contact_exists(connection):
             data['success'] = True
