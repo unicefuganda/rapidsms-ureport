@@ -20,7 +20,7 @@ class CurrentPollTest(unittest.TestCase):
     def get_http_response_from_view(self, kwargs, view):
         request_factory = RequestFactory()
         fake_request = request_factory.get('/')
-        return view.get(fake_request, None, **kwargs)
+        return view.dispatch(fake_request, None, **kwargs)
 
     def setup_fake_connection(self):
         fake_connection = Mock()
@@ -44,6 +44,7 @@ class CurrentPollTest(unittest.TestCase):
     def test_that_poll_null_for_a_registered_user_with_no_poll(self):
         self.setup_fake_connection()
         self.setup_fake_poll(None)
+        self.view.get_backend = Mock(return_value=Backend(name="my_backend"))
         response = self.get_http_response_from_view({"backend": "my_backend", "user_address": "77777"}, self.view)
         data = json.loads(response.content)
         self.assertEqual(True, data['success'])
@@ -54,6 +55,7 @@ class CurrentPollTest(unittest.TestCase):
         poll_data = {"id": 1, "name": "Test Poll", "question": "Is working?"}
         fake_poll = self.setup_fake_poll(poll_data)
         self.view.get_current_poll_for = fake_poll
+        self.view.get_backend = Mock(return_value=Backend(name="my_backend"))
         response = self.get_http_response_from_view({"backend": "my_backend", "user_address": "77777"}, self.view)
         data = json.loads(response.content)
         self.assertEqual(True, data['success'])
@@ -65,6 +67,7 @@ class CurrentPollTest(unittest.TestCase):
         self.view.get_connection = fake_connection
         self.view.get_current_step = Mock(return_value=None)
         self.view.get_script_progress = Mock(return_value=ScriptProgress(script=Script(slug="ureport_autoreg2")))
+        self.view.get_backend = Mock(return_value=Backend(name="my_backend"))
         response = self.get_http_response_from_view({"backend": "my_backend", "user_address": "77777"}, self.view)
         data = json.loads(response.content)
         self.assertEqual(True, data['success'])
@@ -77,6 +80,7 @@ class CurrentPollTest(unittest.TestCase):
         self.view.get_script_progress = Mock(return_value=ScriptProgress(script=Script(slug="ureport_autoreg2")))
         fake_get_next_step = Mock(return_value=ScriptStep(poll=Poll(name="test poll", question="Is it working?")))
         self.view.get_current_step = fake_get_next_step
+        self.view.get_backend = Mock(return_value=Backend(name="my_backend"))
         response = self.get_http_response_from_view({"backend": "my_backend", "user_address": "77777"}, self.view)
         data = json.loads(response.content)
         self.assertEqual(True, data['poll']['is_registration'])
@@ -111,5 +115,6 @@ class CurrentPollTest(unittest.TestCase):
         self.view.get_script_progress = Mock(return_value=mock_progress)
         self.view.contact_exists = Mock(return_value=False)
         self.view.get_current_step = Mock(return_value=ScriptStep(message="Welcome"))
+        self.view.get_backend = Mock(return_value=Backend(name="my_backend"))
         response = self.get_http_response_from_view({"backend": "my_backend", "user_address": "77777"}, self.view)
         self.assertEqual(True, mock_progress.moveon.called)

@@ -4,6 +4,7 @@ import unittest
 
 from django.test import RequestFactory
 from mock import Mock
+from rapidsms.models import Backend, Connection
 from ureport.views.api.view_ureporter import ViewUReporter
 
 
@@ -11,7 +12,7 @@ class ViewUreporterTest(unittest.TestCase):
     def get_http_response_from_view(self, kwargs, view):
         request_factory = RequestFactory()
         fake_request = request_factory.get('/')
-        return view.get(fake_request, None, **kwargs)
+        return view.dispatch(fake_request, None, **kwargs)
 
     def test_404_is_raised_if_backend_does_not_exist(self):
         view = ViewUReporter()
@@ -29,6 +30,8 @@ class ViewUreporterTest(unittest.TestCase):
         fake_check.return_value = {"id": "", "language": "", "registered": False}
         view.get_contact = fake_check
         kwargs = {"backend": "console", "user_address": "999"}
+        view.get_backend = Mock(return_value=Backend(name="my_backend"))
+        view.get_connection = Mock(return_value=Connection(identity="999"))
         http_response = self.get_http_response_from_view(kwargs, view)
         json_string = http_response.content
         data = json.loads(json_string)
@@ -40,6 +43,8 @@ class ViewUreporterTest(unittest.TestCase):
         fake_check.return_value = {"id": 12, "language": "en", "registered": True}
         view.get_contact = fake_check
         kwargs = {"backend": "console", "user_address": "999"}
+        view.get_backend = Mock(return_value=Backend(name="my_backend"))
+        view.get_connection = Mock(return_value=Connection(identity="999"))
         http_response = self.get_http_response_from_view(kwargs, view)
         json_string = http_response.content
         data = json.loads(json_string)

@@ -1,24 +1,18 @@
-from django.http import Http404, HttpResponse
+from django.http import HttpResponse
 from poll.models import Poll
-from rapidsms.models import Backend
 from script.models import ScriptProgress, Script
 from ureport.views.api.base import UReporterApiView
 
 
 class ViewCurrentPoll(UReporterApiView):
     def get(self, request, *args, **kwargs):
-        self.parse_url_parameters(kwargs)
-        try:
-            connection = self.get_connection()
-        except Backend.DoesNotExist:
-            raise Http404
         data = {}
-        if self.contact_exists(connection):
+        if self.contact_exists(self.connection):
             data['success'] = True
-            data['poll'] = self.get_current_poll_for(connection.contact)
+            data['poll'] = self.get_current_poll_for(self.connection.contact)
         else:
             data['success'] = True
-            self.script_progress = self.get_script_progress(connection)
+            self.script_progress = self.get_script_progress(self.connection)
             step = self.get_current_step(self.script_progress)
             if step and step.poll:
                 data['poll'] = self.get_data_from_poll(step.poll, True)

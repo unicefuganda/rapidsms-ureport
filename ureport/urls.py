@@ -15,6 +15,7 @@ from contact.forms import FreeSearchForm, MultipleDistictFilterForm, GenderFilte
     AssignGroupForm, AgeFilterForm, MassTextForm
 from tastypie.api import Api
 from .api import PollResponseResource, PollResource, MessageResource, ContactResource, ResponseResource
+from ureport.views.api.poll_responses import ViewPollResponses
 from ureport.views.api.view_ureporter import ViewUReporter
 from ureport.views.api.currentpoll import ViewCurrentPoll
 from ureport.views.excel_reports_views import generate_poll_dump_report, generate_per_district_report, upload_users, \
@@ -197,5 +198,6 @@ urlpatterns = patterns('',
                        url(r"^backend/vumi/$", VumiBackendView.as_view(backend_name="vumi")),
                        url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)$", ViewUReporter.as_view()),
                        url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/polls/current$", ViewCurrentPoll.as_view()),
+                       url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/poll/(?P<poll_id>\d+)/responses$", ViewPollResponses.as_view()),
 
 )
