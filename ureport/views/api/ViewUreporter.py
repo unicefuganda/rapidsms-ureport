@@ -1,4 +1,4 @@
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from ureport.views.api.base import UReporterApiView
 
 
@@ -18,10 +18,7 @@ class ViewUReporter(UReporterApiView):
         return self.create_json_response(response_data, status_code)
 
     def post(self, request, *args, **kwargs):
-        raise Http404()
-
-
-
+        return HttpResponse("Method Not Allowed", status=405)
 
     def get_contact(self):
         contact_data = {"language": "", "registered": False}
