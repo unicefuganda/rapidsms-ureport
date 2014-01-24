@@ -19,8 +19,10 @@ class UReporterApiView(View):
         return HttpResponse(json.dumps(response_data), content_type="application/json", status=status_code)
 
     def get(self, request, *args, **kwargs):
-        self.parse_url_parameters(kwargs)
-        return HttpResponse("")
+        raise NotImplementedError("Define in subclass")
+
+    def post(self, request, *args, **kwargs):
+        raise NotImplementedError("Define in subclass")
 
     def contact_exists(self, connection):
         return connection is not None and connection.contact is not None

@@ -1,5 +1,4 @@
 from unittest import TestCase
-from django.test import RequestFactory
 from rapidsms.models import Contact, Connection
 from ureport.views.api.base import UReporterApiView
 
@@ -8,9 +7,7 @@ class BaseViewTest(TestCase):
     def test_is_called_with_backend_and_address(self):
         view = UReporterApiView()
         kwargs = {"backend": "console", "user_address": "999"}
-        request_factory = RequestFactory()
-        fake_request = request_factory.get('/')
-        view.get(fake_request, None, **kwargs)
+        view.parse_url_parameters(kwargs)
         self.assertEqual("console", view.backend_name)
         self.assertEqual("999", view.user_address)
 
