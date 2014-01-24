@@ -10,6 +10,6 @@ class AuthenticationTest(unittest.TestCase):
         SplinterWrapper.open("/accounts/logout")
         SplinterWrapper.open("/accounts/login")
         fill_form(self.browser, {"username": "ureport", "password":"ureport"}, True, True)
-        self.browser.find_by_value("login").first.click()
+        self.browser.find_by_value("Login").first.click()
 
         self.assertEqual(self.browser.is_text_present('Add New Poll'), True)
