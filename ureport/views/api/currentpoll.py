@@ -4,8 +4,6 @@ from rapidsms.models import Backend
 from script.models import ScriptProgress, Script
 from ureport.views.api.base import UReporterApiView
 
-DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
-
 
 class ViewCurrentPoll(UReporterApiView):
     def get(self, request, *args, **kwargs):
@@ -29,8 +27,9 @@ class ViewCurrentPoll(UReporterApiView):
                 self.script_progress.moveon()
         return self.create_json_response(data)
 
+
     def format_date(self, start_date):
-        return start_date.strftime(DATE_FORMAT) if start_date else None
+        return start_date.strftime(self.get_datetime_format()) if start_date else None
 
     def get_data_from_poll(self, poll, is_registration=False):
         return {"name": poll.name, "question": poll.question, "id": str(poll.id), "language": None,
