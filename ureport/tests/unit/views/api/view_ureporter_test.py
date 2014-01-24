@@ -15,11 +15,10 @@ class ViewUreporterTest(unittest.TestCase):
         return view.get(fake_request, None, **kwargs)
 
 
-
     def test_that_in_case_of_post_it_raise_404(self):
         view = ViewUReporter()
-        with self.assertRaises(Http404):
-            http_response = view.post(None)
+        http_response = view.post(None)
+        self.assertEqual(405, http_response.status_code)
 
     def test_that_return_not_registered_if_contact_does_not_exist(self):
         view = ViewUReporter()
@@ -30,7 +29,7 @@ class ViewUreporterTest(unittest.TestCase):
         http_response = self.get_http_response_from_view(kwargs, view)
         json_string = http_response.content
         data = json.loads(json_string)
-        self.assertDictEqual({"success":False,"reason":"Ureporter not found"}, data)
+        self.assertDictEqual({"success": False, "reason": "Ureporter not found"}, data)
 
     def test_that_return_registered_true_if_contact_exists(self):
         view = ViewUReporter()
