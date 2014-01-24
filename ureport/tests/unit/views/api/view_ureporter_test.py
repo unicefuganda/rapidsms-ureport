@@ -4,7 +4,7 @@ import unittest
 
 from django.test import RequestFactory
 from mock import Mock
-from ureport.views.api.ViewUreporter import ViewUReporter
+from ureport.views.api.view_ureporter import ViewUReporter
 
 
 class ViewUreporterTest(unittest.TestCase):

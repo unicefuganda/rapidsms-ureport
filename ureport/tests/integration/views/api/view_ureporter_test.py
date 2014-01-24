@@ -1,6 +1,6 @@
 from django.test import TestCase
 from rapidsms.models import Backend, Connection, Contact
-from ureport.views.api.ViewUReporter import ViewUReporter
+from ureport.views.api.view_ureporter import ViewUReporter
 
 
 class ViewUreporterTest(TestCase):
