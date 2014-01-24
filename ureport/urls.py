@@ -195,7 +195,7 @@ urlpatterns = patterns('',
                        url(r"^assign-group", assign_group, name="assign_group"),
                        url(r'^start_poll_export/(\d+)/$', start_poll_export, name="start_poll_export"),
                        url(r"^backend/vumi/$", VumiBackendView.as_view(backend_name="vumi")),
-                       url(r"^ureporters/(?P<backend>\w+)/(?P<user_address>\w+)$", ViewUReporter.as_view()),
-                       url(r"^ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/polls/current$", ViewCurrentPoll.as_view()),
+                       url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)$", ViewUReporter.as_view()),
+                       url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/polls/current$", ViewCurrentPoll.as_view()),
 
 )
