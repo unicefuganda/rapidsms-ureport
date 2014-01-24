@@ -1,7 +1,10 @@
+from django.conf import settings
 from django.http import HttpResponse
 from django.utils import simplejson as json
 from django.views.generic import View
 from rapidsms.models import Backend, Connection
+
+UREPORT_JSON_API_DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
 
 class UReporterApiView(View):
@@ -26,3 +29,6 @@ class UReporterApiView(View):
 
     def contact_exists(self, connection):
         return connection is not None and connection.contact is not None
+
+    def get_datetime_format(self):
+        return getattr(settings,"UREPORT_JSON_API_DATETIME_FORMAT", UREPORT_JSON_API_DATETIME_FORMAT)

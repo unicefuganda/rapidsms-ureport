@@ -7,7 +7,7 @@ from mock import Mock, MagicMock
 from poll.models import Poll
 from rapidsms.models import Backend, Connection, Contact
 from script.models import Script, ScriptProgress, ScriptStep
-from ureport.views.api.currentpoll import ViewCurrentPoll, DATE_FORMAT
+from ureport.views.api.currentpoll import ViewCurrentPoll
 
 
 class CurrentPollTest(unittest.TestCase):
@@ -89,7 +89,7 @@ class CurrentPollTest(unittest.TestCase):
         poll = Poll(name=name, question=question, id=12, type="t", start_date=an_hour_ago,
                     default_response=default_response, response_type="a")
         expected_poll_data = {"id": "12", "question": question, "name": name, "language": None, "question_voice": None,
-                              "start_date": an_hour_ago.strftime(DATE_FORMAT), "end_date": None,
+                              "start_date": an_hour_ago.strftime(self.view.get_datetime_format()), "end_date": None,
                               "is_registration": False, "type": "t",
                               "default_response": default_response, "default_response_voice": None,
                               "response_type": "allow_all"}
