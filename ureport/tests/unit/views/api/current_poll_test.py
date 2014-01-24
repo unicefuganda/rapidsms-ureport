@@ -1,5 +1,6 @@
 import unittest
 import datetime
+from django.http import Http404
 import django.utils.simplejson as json
 from django.test import RequestFactory
 from mock import Mock, MagicMock
@@ -31,6 +32,10 @@ class CurrentPollTest(unittest.TestCase):
         fake_poll.return_value = none
         self.view.get_current_poll_for = fake_poll
         return fake_poll
+
+    def test_404_is_raised_if_backend_does_not_exist(self):
+        with self.assertRaises(Http404):
+            response = self.get_http_response_from_view({"backend": "my_backend", "user_address": "77777"}, self.view)
 
     def test_that_poll_null_for_a_registered_user_with_no_poll(self):
         self.setup_fake_connection()
