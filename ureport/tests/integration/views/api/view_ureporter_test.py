@@ -1,11 +1,11 @@
 from django.test import TestCase
 from rapidsms.models import Backend, Connection, Contact
-from ureport.views.api.ViewUreporter import ViewUreporter
+from ureport.views.api.ViewUReporter import ViewUReporter
 
 
 class ViewUreporterTest(TestCase):
     def test_that_retrieves_contact_formation(self):
-        view = ViewUreporter()
+        view = ViewUReporter()
         backend_name = "Console"
         user_address = "9922"
         view.backend_name = backend_name
@@ -20,7 +20,7 @@ class ViewUreporterTest(TestCase):
         self.assertEqual(contact.language, data['language'])
 
     def test_that_retrieves_contact_formation(self):
-        view = ViewUreporter()
+        view = ViewUReporter()
         backend_name = "Console"
         user_address = "9922"
         view.backend_name = backend_name
