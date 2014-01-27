@@ -27,9 +27,9 @@ class CurrentPollTest(unittest.TestCase):
         fake_connection.return_value = self.build_connection()
         self.view.get_connection = fake_connection
 
-    def setup_fake_poll(self, none):
+    def setup_fake_poll(self, fake_poll_return_value):
         fake_poll = Mock()
-        fake_poll.return_value = none
+        fake_poll.return_value = fake_poll_return_value
         self.view.get_current_poll_for = fake_poll
         return fake_poll
 
