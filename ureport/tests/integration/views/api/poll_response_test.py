@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from poll.models import Poll
 from rapidsms.models import Contact, Backend, Connection
-from script.models import Script, ScriptStep, ScriptProgress
+from script.models import Script, ScriptStep, ScriptProgress, ScriptSession
 from ureport.views.api.poll_responses import SubmitPollResponses
 
 
@@ -21,6 +21,8 @@ class SubmitPollResponseTest(TestCase):
         contact, contact_created = Contact.objects.get_or_create(name='John Jonny')
         connection.contact = contact
         connection.save()
+        script = Script.objects.create(slug="who")
+        ScriptSession.objects.create(connection=connection, script=script)
         default_response = "Thanks"
         poll = self.setup_poll(default_response)
         view = SubmitPollResponses()

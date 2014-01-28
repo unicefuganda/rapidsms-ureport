@@ -2,7 +2,7 @@ from django.http import HttpResponse, Http404
 from poll.models import Poll
 from rapidsms.messages import IncomingMessage
 from rapidsms_httprouter.models import Message
-from script.models import ScriptProgress
+from script.models import ScriptProgress, ScriptSession, ScriptResponse
 from ureport.views.api.base import UReporterApiView
 from django.utils import simplejson as json
 
@@ -19,9 +19,14 @@ class SubmitPollResponses(UReporterApiView):
         incoming_response = incoming_json_data["response"]
         return incoming_response
 
-    def process_poll_response(self, incoming_response, poll):
-        incoming_message = self.create_incoming_message(incoming_response)
+    def create_script_response(self, response):
+        ss = ScriptSession.objects.get(connection=self.connection)
+        ScriptResponse.objects.create(session=ss, response=response)
+
+    def process_poll_response(self, incoming_response_text, poll):
+        incoming_message = self.create_incoming_message(incoming_response_text)
         response, outgoing_message = poll.process_response(incoming_message)
+        self.create_script_response(response)
         return (not response.has_errors), outgoing_message
 
     def post(self, request, *args, **kwargs):

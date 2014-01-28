@@ -1,7 +1,7 @@
 import unittest
 from django.http import Http404
 from django.test import RequestFactory
-from mock import Mock
+from mock import Mock, patch
 from poll.models import Poll, Response
 from ureport.views.api.poll_responses import SubmitPollResponses
 
@@ -42,6 +42,7 @@ class PollResponsesTest(unittest.TestCase):
         fake_poll = Mock()
         fake_poll.process_response = Mock(return_value=(Response(has_errors=True), ""))
         self.view.create_incoming_message = Mock(return_value=None)
+        self.view.create_script_response = Mock(return_value=None)
         accepted, message = self.view.process_poll_response("", fake_poll)
         self.assertEqual(accepted, False)
 
@@ -49,6 +50,7 @@ class PollResponsesTest(unittest.TestCase):
         fake_poll = Mock()
         fake_poll.process_response = Mock(return_value=(Response(has_errors=False), ""))
         self.view.create_incoming_message = Mock(return_value=None)
+        self.view.create_script_response = Mock(return_value=None)
         accepted, message = self.view.process_poll_response("", fake_poll)
         self.assertEqual(accepted, True)
 
