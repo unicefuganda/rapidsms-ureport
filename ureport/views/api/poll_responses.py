@@ -1,4 +1,5 @@
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseBadRequest
+from simplejson import JSONDecodeError
 from poll.models import Poll
 from rapidsms.messages import IncomingMessage
 from rapidsms_httprouter.models import Message
@@ -32,7 +33,10 @@ class SubmitPollResponses(UReporterApiView):
     def post(self, request, *args, **kwargs):
         poll_id = kwargs.get("poll_id")
         poll = self.get_poll(poll_id)
-        incoming_response = self.get_incoming_response(request)
+        try:
+            incoming_response = self.get_incoming_response(request)
+        except (JSONDecodeError, KeyError):
+            return HttpResponseBadRequest("Incoming response was in a wrong format.")
         accepted, outgoing_message = self.process_poll_response(incoming_response, poll)
         if accepted:
             self.process_registration_steps(poll)
@@ -43,21 +47,14 @@ class SubmitPollResponses(UReporterApiView):
         return HttpResponse("Method Not Allowed", status=405)
 
     def get_json_data(self, request):
-    #TODO Review for newer versions of django
-        try:
-            json_content = request.body
-        except AttributeError:
-            json_content = request.POST.items()[0][0]
-        else:
-            pass
-        return json.loads(json_content)
+        json_content = request.raw_post_data
+        data_from_json = json.loads(json_content)
+        return data_from_json
 
-    def get_poll_by_id(self, param):
-        return Poll.objects.get(pk=int(param))
 
     def get_poll(self, param):
         try:
-            poll = self.get_poll_by_id(param)
+            poll = Poll.objects.get(pk=int(param))
             return poll
         except  Poll.DoesNotExist:
             raise Http404

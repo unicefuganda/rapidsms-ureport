@@ -1,6 +1,8 @@
+import json
 import unittest
 from django.http import Http404
 from django.test import RequestFactory
+from django.test.client import FakePayload
 from mock import Mock, patch
 from poll.models import Poll, Response
 from ureport.views.api.poll_responses import SubmitPollResponses
@@ -32,11 +34,6 @@ class PollResponsesTest(unittest.TestCase):
         self.view.get_poll_by_id = fake_get_poll
         with self.assertRaises(Http404):
             self.view.get_poll("23")
-
-    def test_that_a_poll_is_returned_from_get_poll(self):
-        fake_get_poll = Mock(return_value=Poll(id=5))
-        self.view.get_poll_by_id = fake_get_poll
-        self.assertEqual(5, self.view.get_poll("5").id)
 
     def test_that_if_response_has_errors_accepted_is_false(self):
         fake_poll = Mock()
@@ -92,5 +89,20 @@ class PollResponsesTest(unittest.TestCase):
         self.view.post(self, None, **{'poll_id': "12"})
         assert not fake_process_registration.called
 
+    def test_that_it_returns_a_400_response_if_the_json_is_in_the_wrong_format(self):
+        fake_request_factory = RequestFactory()
+        fake_request = fake_request_factory.post('/', {"": ""})
+        fake_request._raw_post_data = "///sd"
+        self.view.get_poll = Mock(return_value=None)
+        response = self.view.post(fake_request)
+        self.assertEqual(400, response.status_code)
+
+    def test_that_it_returns_a_400_if_the_json_has_no_key_response(self):
+        fake_request_factory = RequestFactory()
+        fake_request = fake_request_factory.post('/', {"": ""})
+        fake_request._raw_post_data = "{}"
+        self.view.get_poll = Mock(return_value=None)
+        response = self.view.post(fake_request)
+        self.assertEqual(400, response.status_code)
 
 
