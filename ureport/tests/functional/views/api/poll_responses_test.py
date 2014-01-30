@@ -1,5 +1,6 @@
 import json
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django_liveserver.testcases import LiveServerTestCase
 import requests
 from poll.models import Poll
@@ -17,7 +18,8 @@ class PollResponsesTestCase(LiveServerTestCase):
         script = Script.objects.create(slug="who")
         ScriptSession.objects.create(connection=connection, script=script)
         Poll.objects.create(id=1, user=User.objects.create(username="theone"), question="who")
-        url = self.server_url_for_path("/api/v1/ureporters/console/999/poll/1/responses")
+        url = self.server_url_for_path(
+            reverse("submit_poll_response_api", kwargs={"poll_id": 1, "backend": "console", "user_address": 999}))
         data = {"response": True}
         response = requests.post(url, data=json.dumps(data))
         self.assertEqual(200, response.status_code)
