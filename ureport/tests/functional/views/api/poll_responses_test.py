@@ -17,9 +17,9 @@ class PollResponsesTestCase(LiveServerTestCase):
         connection = Connection.objects.create(backend=backend, identity="999")
         script = Script.objects.create(slug="who")
         ScriptSession.objects.create(connection=connection, script=script)
-        Poll.objects.create(id=1, user=User.objects.create(username="theone"), question="who")
+        Poll.objects.create(id=900, user=User.objects.create(username="theone"), question="who")
         url = self.server_url_for_path(
-            reverse("submit_poll_response_api", kwargs={"poll_id": 1, "backend": "console", "user_address": 999}))
+            reverse("submit_poll_response_api", kwargs={"poll_id": 900, "backend": "console", "user_address": 999}))
         data = {"response": True}
         response = requests.post(url, data=json.dumps(data))
         self.assertEqual(200, response.status_code)
@@ -27,6 +27,7 @@ class PollResponsesTestCase(LiveServerTestCase):
     def test_404_is_thrown_if_backend_does_not_exist(self):
         response = requests.post(self.server_url_for_path("/api/v1/ureporters/console/999/poll/1/responses"))
         self.assertEqual(404, response.status_code)
+
 
 
 
