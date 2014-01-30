@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.utils import simplejson as json
 from django.views.generic import View
 from rapidsms.models import Backend, Connection
@@ -11,10 +11,16 @@ class UReporterApiView(View):
     def parse_url_parameters(self, kwargs):
         self.backend_name = kwargs.get("backend")
         self.user_address = kwargs.get("user_address")
+        if kwargs.get("poll_id"):
+            self.poll_id = kwargs.get("poll_id")
+
+    def get_backend(self):
+        backend = Backend.objects.get(name=self.backend_name)
+        return backend
 
     def get_connection(self):
-        backend = Backend.objects.get(name=self.backend_name)
-        connection, connection_created = Connection.objects.get_or_create(identity=self.user_address, backend=backend)
+        connection, connection_created = Connection.objects.get_or_create(identity=self.user_address,
+                                                                              backend=self.backend)
         return connection
 
 
@@ -31,4 +37,14 @@ class UReporterApiView(View):
         return connection is not None and connection.contact is not None
 
     def get_datetime_format(self):
-        return getattr(settings,"UREPORT_JSON_API_DATETIME_FORMAT", UREPORT_JSON_API_DATETIME_FORMAT)
+        return getattr(settings, "UREPORT_JSON_API_DATETIME_FORMAT", UREPORT_JSON_API_DATETIME_FORMAT)
+
+    def dispatch(self, request, *args, **kwargs):
+        self.parse_url_parameters(kwargs)
+        try:
+            self.backend = self.get_backend()
+        except Backend.DoesNotExist:
+            raise Http404()
+        self.connection = self.get_connection()
+        return super(UReporterApiView, self).dispatch(request, *args, **kwargs)
+

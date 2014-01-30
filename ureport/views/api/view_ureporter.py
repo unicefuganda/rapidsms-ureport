@@ -1,17 +1,12 @@
-from django.http import Http404, HttpResponse
-from rapidsms.models import Backend
+from django.http import HttpResponse
 from ureport.views.api.base import UReporterApiView
 
 
 class ViewUReporter(UReporterApiView):
     def get(self, request, *args, **kwargs):
-        self.parse_url_parameters(kwargs)
         status_code = 200
         response_data = {"success": True}
-        try:
-            contact = self.get_contact()
-        except Backend.DoesNotExist:
-            raise Http404
+        contact = self.get_contact()
         error_message = "Ureporter not found"
         if not contact["registered"]:
             status_code = 404
@@ -26,10 +21,9 @@ class ViewUReporter(UReporterApiView):
 
     def get_contact(self):
         contact_data = {"language": "", "registered": False}
-        connection = self.get_connection()
-        if (self.contact_exists(connection)):
+        if (self.contact_exists(self.connection)):
             contact_data["registered"] = True
-            contact_data["language"] = connection.contact.language
+            contact_data["language"] = self.connection.contact.language
 
         return contact_data
 
