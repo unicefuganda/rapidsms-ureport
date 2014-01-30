@@ -4,10 +4,10 @@ from ureport.views import poll_dashboard, ureporters, editReporter, deleteReport
     messages, mass_messages, quit_messages, autoreg_messages, poll_messages, unsolicitized_messages, flagged_messages, \
     view_flagged_with, create_flags, delete_flag, view_responses, ureport_content, message_feed, poll_summary, \
     best_visualization, tag_cloud, add_drop_word, delete_drop_word, show_ignored_tags, histogram, show_timeseries, \
-    get_all_contacts, bulk_upload_contacts, download_contacts_template, clickatell_wrapper, signup, ureporter_profile,\
+    get_all_contacts, bulk_upload_contacts, download_contacts_template, clickatell_wrapper, signup, ureporter_profile, \
     new_poll, mp_dashboard, ussd_manager, blacklist, delete, view_poll, poll_status, edit_category, delete_category, \
     delete_rule, view_rules, create_rule, alerts, remove_captured, send_message, view_autoreg_rules, set_autoreg_rules, \
-    user_registration_status, kannel_status, a_dashboard, flag_categories, remove_captured_ind, assign_poll,\
+    user_registration_status, kannel_status, a_dashboard, flag_categories, remove_captured_ind, assign_poll, \
     comfirm_message_sending, comfirmmessages, pulse, start_poll_export, cloud_dashboard, access_dashboards, map_cloud, extract_report
 from django.contrib.auth.decorators import login_required
 from generic.views import generic_row, generic
@@ -16,6 +16,7 @@ from contact.forms import FreeSearchForm, MultipleDistictFilterForm, GenderFilte
 from tastypie.api import Api
 from .api import PollResponseResource, PollResource, MessageResource, ContactResource, ResponseResource
 from ureport.views.api.poll_responses import SubmitPollResponses
+from ureport.views.api.poll_topics import PollTopicsApiView
 from ureport.views.api.view_ureporter import ViewUReporter
 from ureport.views.api.currentpoll import ViewCurrentPoll
 from ureport.views.excel_reports_views import generate_poll_dump_report, generate_per_district_report, upload_users, \
@@ -50,7 +51,7 @@ urlpatterns = patterns('',
                            {'model': Contact, 'partial_row': 'ureport/partials/contacts/generic_contact_row.html'},
                            name="reporter-profile"),
                        # poll management views using generic (rather than built-in poll views
-                       url(r'^mypolls/$', ureport_polls, name="ureport-polls", kwargs= {"pk": None}),
+                       url(r'^mypolls/$', ureport_polls, name="ureport-polls", kwargs={"pk": None}),
                        url(r'^mypolls/(?P<pk>\d+)/$', ureport_polls, name="ureport-polls"),
 
                        # poll management views using generic (rather than built-in poll views
@@ -196,8 +197,14 @@ urlpatterns = patterns('',
                        url(r"^assign-group", assign_group, name="assign_group"),
                        url(r'^start_poll_export/(\d+)/$', start_poll_export, name="start_poll_export"),
                        url(r"^backend/vumi/$", VumiBackendView.as_view(backend_name="vumi")),
-                       url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)$", ViewUReporter.as_view(),name="view_ureporter_api"),
-                       url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/polls/current$", ViewCurrentPoll.as_view(),name="view_current_poll_api"),
-                       url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/poll/(?P<poll_id>\d+)/responses$", SubmitPollResponses.as_view(),name="submit_poll_response_api"),
+                       url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)$", ViewUReporter.as_view(),
+                           name="view_ureporter_api"),
+                       url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/polls/current$",
+                           ViewCurrentPoll.as_view(), name="view_current_poll_api"),
+                       url(
+                           r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/poll/(?P<poll_id>\d+)/responses$",
+                           SubmitPollResponses.as_view(), name="submit_poll_response_api"),
+                       url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/poll/topics",
+                           PollTopicsApiView.as_view(), name="poll_topics_api"),
 
 )
