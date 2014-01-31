@@ -17,6 +17,7 @@ from tastypie.api import Api
 from .api import PollResponseResource, PollResource, MessageResource, ContactResource, ResponseResource
 from ureport.views.api.poll_responses import SubmitPollResponses
 from ureport.views.api.poll_topics import PollTopicsApiView
+from ureport.views.api.submit_report import SubmitReportApiView
 from ureport.views.api.view_ureporter import ViewUReporter
 from ureport.views.api.currentpoll import ViewCurrentPoll
 from ureport.views.excel_reports_views import generate_poll_dump_report, generate_per_district_report, upload_users, \
@@ -204,7 +205,9 @@ urlpatterns = patterns('',
                        url(
                            r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/poll/(?P<poll_id>\d+)/responses$",
                            SubmitPollResponses.as_view(), name="submit_poll_response_api"),
-                       url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/poll/topics",
+                       url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/poll/topics$",
                            PollTopicsApiView.as_view(), name="poll_topics_api"),
+                       url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/reports$",
+                           SubmitReportApiView.as_view(), name="submit_report_api"),
 
 )
