@@ -1,9 +1,7 @@
-import json
 import unittest
 from django.http import Http404
 from django.test import RequestFactory
-from django.test.client import FakePayload
-from mock import Mock, patch
+from mock import Mock
 from poll.models import Poll, Response
 from ureport.views.api.poll_responses import SubmitPollResponses
 

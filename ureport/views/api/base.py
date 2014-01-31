@@ -20,7 +20,7 @@ class UReporterApiView(View):
 
     def get_connection(self):
         connection, connection_created = Connection.objects.get_or_create(identity=self.user_address,
-                                                                              backend=self.backend)
+                                                                          backend=self.backend)
         return connection
 
 
@@ -48,3 +48,12 @@ class UReporterApiView(View):
         self.connection = self.get_connection()
         return super(UReporterApiView, self).dispatch(request, *args, **kwargs)
 
+
+class UReportPostApiViewMixin(object):
+    def get_json_data(self, request):
+        json_content = request.raw_post_data
+        data_from_json = json.loads(json_content)
+        return data_from_json
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse("Method Not Allowed", status=405)

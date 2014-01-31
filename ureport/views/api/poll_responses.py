@@ -1,14 +1,13 @@
-from django.http import HttpResponse, Http404, HttpResponseBadRequest
+from django.http import Http404, HttpResponseBadRequest
 from simplejson import JSONDecodeError
 from poll.models import Poll
 from rapidsms.messages import IncomingMessage
 from rapidsms_httprouter.models import Message
 from script.models import ScriptProgress, ScriptSession, ScriptResponse
-from ureport.views.api.base import UReporterApiView
-from django.utils import simplejson as json
+from ureport.views.api.base import UReporterApiView, UReportPostApiViewMixin
 
 
-class SubmitPollResponses(UReporterApiView):
+class SubmitPollResponses(UReportPostApiViewMixin, UReporterApiView):
     def create_incoming_message(self, incoming_response):
         incoming_message = IncomingMessage(self.connection, incoming_response)
         incoming_message.db_message = Message.objects.create(direction='I', connection=self.connection,
@@ -42,14 +41,6 @@ class SubmitPollResponses(UReporterApiView):
             self.process_registration_steps(poll)
         json_response_data = {"success": True, "result": {"accepted": accepted, "response": outgoing_message}}
         return self.create_json_response(json_response_data)
-
-    def get(self, request, *args, **kwargs):
-        return HttpResponse("Method Not Allowed", status=405)
-
-    def get_json_data(self, request):
-        json_content = request.raw_post_data
-        data_from_json = json.loads(json_content)
-        return data_from_json
 
 
     def get_poll(self, param):
