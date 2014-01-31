@@ -1,3 +1,4 @@
+import base64
 from django.http import Http404
 import django.utils.simplejson as json
 import unittest
@@ -11,7 +12,8 @@ from ureport.views.api.view_ureporter import ViewUReporter
 class ViewUreporterTest(unittest.TestCase):
     def get_http_response_from_view(self, kwargs, view):
         request_factory = RequestFactory()
-        fake_request = request_factory.get('/')
+        fake_request = request_factory.get('/', **{"HTTP_AUTHORIZATION": ("Basic %s" % base64.b64encode("who:why"))})
+        view.validate_credentials = Mock(return_value=True)
         return view.dispatch(fake_request, None, **kwargs)
 
     def test_404_is_raised_if_backend_does_not_exist(self):

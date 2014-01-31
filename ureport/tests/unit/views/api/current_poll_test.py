@@ -1,3 +1,4 @@
+import base64
 import unittest
 import datetime
 from django.http import Http404
@@ -19,7 +20,9 @@ class CurrentPollTest(unittest.TestCase):
 
     def get_http_response_from_view(self, kwargs, view):
         request_factory = RequestFactory()
-        fake_request = request_factory.get('/')
+        auth_string = base64.b64encode("who:why")
+        fake_request = request_factory.get('/', **{"HTTP_AUTHORIZATION": ("Basic %s" % auth_string)})
+        self.view.validate_credentials = Mock(return_value=True)
         return view.dispatch(fake_request, None, **kwargs)
 
     def setup_fake_connection(self):

@@ -1,12 +1,14 @@
 from django.test import TestCase
 from rapidsms.models import Backend, Connection, Contact
+from ureport.tests.functional.views.api.helpers import TestBasicAuthMixin
 
 
-class ViewUreporterTestCase(TestCase):
+class ViewUreporterTestCase(TestCase, TestBasicAuthMixin):
     def test_view_ureporter_api_url_for_new_ureport_user(self):
         backend, backend_created = Backend.objects.get_or_create(name="console")
-        response = self.client.get("/api/v1/ureporters/console/999")
+        response = self.client.get("/api/v1/ureporters/console/999", **(self.get_auth_headers()))
         self.assertEqual(404, response.status_code)
+
 
     def test_view_ureporter_api_url_for_exisiting_ureport_user(self):
         backend_name = "console"
@@ -16,5 +18,5 @@ class ViewUreporterTestCase(TestCase):
         contact = Contact.objects.create(name=user_address)
         connection.contact = contact
         connection.save()
-        response = self.client.get("/api/v1/ureporters/console/999")
+        response = self.client.get("/api/v1/ureporters/console/999", **(self.get_auth_headers()))
         self.assertEqual(200, response.status_code)

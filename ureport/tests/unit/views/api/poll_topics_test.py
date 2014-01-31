@@ -1,3 +1,4 @@
+import base64
 import json
 from unittest import TestCase
 from django.http import Http404
@@ -25,7 +26,10 @@ class PollTopicsTestCase(TestCase):
     def setup_get_request(self, backend, connection):
         self.view.get_backend = Mock(return_value=backend)
         self.view.get_connection = Mock(return_value=connection)
-        fake_request = self.request_factory.get("/", **{"backend": "console", "user_address": "999"})
+        self.view.validate_credentials = Mock(return_value=True)
+        fake_request = self.request_factory.get("/", **{"backend": "console", "user_address": "999",
+                                                        "HTTP_AUTHORIZATION": (
+                                                            "Basic %s" % base64.b64encode("who:why"))})
         return fake_request
 
     def test_that_if_the_user_address_does_not_exist_you_get_a_404(self):

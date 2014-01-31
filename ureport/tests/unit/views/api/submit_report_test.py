@@ -4,10 +4,11 @@ from django.http import Http404
 from django.test import RequestFactory
 from mock import Mock
 from rapidsms.models import Backend, Connection
+from ureport.tests.functional.views.api.helpers import TestBasicAuthMixin
 from ureport.views.api.submit_report import SubmitReportApiView
 
 
-class SubmitReportTestCase(unittest.TestCase):
+class SubmitReportTestCase(unittest.TestCase, TestBasicAuthMixin):
     def setUp(self):
         self.view = SubmitReportApiView()
         self.request_factory = RequestFactory()
@@ -21,12 +22,15 @@ class SubmitReportTestCase(unittest.TestCase):
         connection = Connection(identity=999, backend=backend)
         fake_request = self.setup_post_request(backend, connection)
         with self.assertRaises(Http404):
-            self.view.dispatch(fake_request)
+            response = self.view.dispatch(fake_request)
+            print response.status_code
 
     def setup_post_request(self, backend, connection):
         self.view.get_backend = Mock(return_value=backend)
         self.view.get_connection = Mock(return_value=connection)
-        fake_request = self.request_factory.post("/", **{"backend": "console", "user_address": "999"})
+        self.view.validate_credentials = Mock(return_value=True)
+        fake_request = self.request_factory.post("/", **{"backend": "console", "user_address": "999",
+                                                         'HTTP_AUTHORIZATION': self.http_auth('test', 'nakulabye')})
         return fake_request
 
     def test_that_if_response_does_not_have_errors_accepted_is_true(self):
