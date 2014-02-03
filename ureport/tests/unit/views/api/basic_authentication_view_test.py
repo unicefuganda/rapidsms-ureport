@@ -43,11 +43,11 @@ class BasicAuthenticationViewTest(TestCase):
         self.assertEqual(200, response.status_code)
 
     def test_that_if_correct_username_and_password_are_available_in_the_api_user_setting_they_are_validated(self):
-        settings.API_USERS = {"test": "secret"}
+        settings.UREPORT_JSON_API_USERS = {"test": "secret"}
         self.assertEqual(True, self.view.validate_credentials("test", "secret"))
 
 
     def test_that_if_correct_username_and_password_are__not_available_in_the_api_user_setting_they_are_not_validated(
             self):
-        settings.API_USERS = {}
+        settings.UREPORT_JSON_API_USERS = {}
         self.assertEqual(False, self.view.validate_credentials("test2", "secret2"))

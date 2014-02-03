@@ -10,19 +10,21 @@ UREPORT_JSON_API_DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
 class BasicAuthenticationView(View):
     def validate_credentials(self, username, password):
-        api_users = getattr(settings, "API_USERS", {})
+        api_users = getattr(settings, "UREPORT_JSON_API_USERS", {})
         if username in api_users and api_users[username] == password:
             return True
         return False
 
     def dispatch(self, request, *args, **kwargs):
-        print request.META
         if 'HTTP_AUTHORIZATION' in request.META:
             auth = request.META['HTTP_AUTHORIZATION'].split()
             if len(auth) == 2:
                 if auth[0].lower() == "basic":
-                    uname, passwd = base64.b64decode(auth[1]).split(':')
-                    if not self.validate_credentials(uname, passwd):
+                    try:
+                        uname, passwd = base64.b64decode(auth[1]).split(':')
+                        if not self.validate_credentials(uname, passwd):
+                            return HttpResponse("Not Authorized", status=401)
+                    except TypeError:
                         return HttpResponse("Not Authorized", status=401)
             else:
                 return HttpResponse("Not Authorized", status=401)
