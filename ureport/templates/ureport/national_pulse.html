@@ -27,7 +27,7 @@
         <div id="controls">
             <h3> {% blocktrans %}Welcome to National Pulse{% endblocktrans %}<br/> {% blocktrans %}This is What is trending in the Ureport Community{% endblocktrans %}</h3>
 
-            <a {% if period|cut:"/" != 'day' %}href="{% url pulse 'day' %}" {% endif %}class="btn btn-primary btn-mini {% if period|cut:"/" == 'day' %}active {% endif %}">{% trans "Today's Pulse" %}</a>
+            <a {% if period|cut:"/" != 'day' %}href="{% url pulse 'day' %}?nocache=True" {% endif %}class="btn btn-primary btn-mini {% if period|cut:"/" == 'day' %}active {% endif %}">{% trans "Today's Pulse" %}</a>
             <a {% if period|cut:"/" != 'week' %}href="{% url pulse 'week' %}" {% endif %} class="btn btn-primary btn-mini {% if period|cut:"/" == 'week' %}active {% endif %}">{% trans "Week's Pulse" %}</a>
             <a {% if period|cut:"/" != 'month' %}href="{% url pulse 'month' %}" {% endif %} class="btn btn-primary btn-mini {% if period|cut:"/" == 'month' %}active {% endif %}"> {% trans "Month's Pulse" %}</a>
             <a {% if period|cut:"/" != 'year' %}href="{% url pulse 'year' %}" {% endif %} class="btn btn-primary btn-mini {% if period|cut:"/" == 'year' %}active {% endif %}"> {% trans "Year's Pulse" %}</a>
