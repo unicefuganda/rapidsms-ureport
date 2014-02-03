@@ -226,7 +226,7 @@ class AutoregGroupRules(models.Model):
 from .litseners import autoreg, check_conn, update_latest_poll, ussd_poll, add_to_poll
 
 script_progress_was_completed.connect(autoreg, weak=False)
-post_save.connect(check_conn, sender=Connection, weak=False)
+#post_save.connect(check_conn, sender=Connection, weak=False)
 post_save.connect(update_latest_poll, sender=Poll, weak=False)
 ussd_complete.connect(ussd_poll, weak=False)
 #post_save.connect(add_to_poll, sender=Blacklist, weak=False)
