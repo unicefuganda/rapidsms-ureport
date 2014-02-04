@@ -9,6 +9,7 @@ from ureport.models import MessageAttribute, MessageDetail, Settings, FlagTracke
 
 import logging
 from rapidsms_httprouter.models import Message
+from ureport.utils import alert_if_mp
 
 log = logging.getLogger(__name__)
 
@@ -21,6 +22,7 @@ class App(AppBase):
         :return:
         """
         if message.connection is not None and message.db_message is not None:
+            alert_if_mp(message)
             log.debug("[ureport-app] [{}] Handling incoming message [pk={}]...".format(message.connection.identity,
                                                                                        message.db_message.pk))
         one_template = r"(.*\b(%s)\b.*)"
