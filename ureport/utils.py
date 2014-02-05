@@ -397,6 +397,6 @@ def alert_if_mp(message):
         mp_group = Group.objects.get(name=getattr(settings, 'MP_GROUP', 'MP'))
         if mp_group in message.connection.contact.groups:
             send_mail('Mp Alerts - From ID: %d' % message.connection.pk, message.text, "",
-                      getattr(settings, 'PROJECT_MANAGERS', 'erikfrisk01@gmail.com'))
+                      getattr(settings, 'PROJECT_MANAGERS', ('erikfrisk01@gmail.com',)))
     except Exception as e:
         logger.debug("Something wrong happened while alerting on MPs:" + str(e))
