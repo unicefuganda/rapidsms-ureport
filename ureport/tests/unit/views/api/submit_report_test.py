@@ -23,7 +23,6 @@ class SubmitReportTestCase(unittest.TestCase, TestBasicAuthMixin):
         fake_request = self.setup_post_request(backend, connection)
         with self.assertRaises(Http404):
             response = self.view.dispatch(fake_request)
-            print response.status_code
 
     def setup_post_request(self, backend, connection):
         self.view.get_backend = Mock(return_value=backend)
