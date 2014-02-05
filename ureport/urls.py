@@ -16,6 +16,7 @@ from contact.forms import FreeSearchForm, MultipleDistictFilterForm, GenderFilte
 from tastypie.api import Api
 from .api import PollResponseResource, PollResource, MessageResource, ContactResource, ResponseResource
 from ureport.views.api.poll_responses import SubmitPollResponses
+from ureport.views.api.poll_summary import PollSummary
 from ureport.views.api.poll_topics import PollTopicsApiView
 from ureport.views.api.submit_report import SubmitReportApiView
 from ureport.views.api.view_ureporter import ViewUReporter
@@ -209,5 +210,6 @@ urlpatterns = patterns('',
                            PollTopicsApiView.as_view(), name="poll_topics_api"),
                        url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/reports$",
                            SubmitReportApiView.as_view(), name="submit_report_api"),
+                       url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/poll/(?P<poll_id>\d+)/summary$", PollSummary.as_view()),
 
 )

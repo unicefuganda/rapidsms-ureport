@@ -3,6 +3,7 @@ from django.conf import settings
 from django.http import HttpResponse, Http404
 from django.utils import simplejson as json
 from django.views.generic import View
+from poll.models import Poll
 from rapidsms.models import Backend, Connection
 
 UREPORT_JSON_API_DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
@@ -61,6 +62,13 @@ class UReporterApiView(BasicAuthenticationView):
 
     def contact_exists(self, connection):
         return connection is not None and connection.contact is not None
+
+    def get_poll(self, param):
+        try:
+            poll = Poll.objects.get(pk=int(param))
+            return poll
+        except  Poll.DoesNotExist:
+            raise Http404
 
     def get_datetime_format(self):
         return getattr(settings, "UREPORT_JSON_API_DATETIME_FORMAT", UREPORT_JSON_API_DATETIME_FORMAT)

@@ -1,6 +1,5 @@
-from django.http import Http404, HttpResponseBadRequest
+from django.http import HttpResponseBadRequest
 from simplejson import JSONDecodeError
-from poll.models import Poll
 from rapidsms.messages import IncomingMessage
 from rapidsms_httprouter.models import Message
 from script.models import ScriptProgress, ScriptSession, ScriptResponse
@@ -41,14 +40,6 @@ class SubmitPollResponses(UReportPostApiViewMixin, UReporterApiView):
             self.process_registration_steps(poll)
         json_response_data = {"success": True, "result": {"accepted": accepted, "response": outgoing_message}}
         return self.create_json_response(json_response_data)
-
-
-    def get_poll(self, param):
-        try:
-            poll = Poll.objects.get(pk=int(param))
-            return poll
-        except  Poll.DoesNotExist:
-            raise Http404
 
     def process_registration_steps(self, poll):
         script_progress = self.get_script_progress_for_poll(poll)
