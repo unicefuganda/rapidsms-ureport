@@ -5,6 +5,7 @@ from rapidsms.models import Contact
 from tastypie.resources import ModelResource
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie import fields
+from tastypie.cache import SimpleCache
 from tastypie.constants import ALL_WITH_RELATIONS
 from django.db.models import Count
 
@@ -54,6 +55,8 @@ class PollResource(ModelResource):
             'start_date': ['range', 'exact', 'lte', 'gte', 'lt', 'gt']
         }
         authentication = ApiKeyAuthentication()
+        cache = SimpleCache(timeout=3600)
+
 
 
 class PollResponseResource(ModelResource):
