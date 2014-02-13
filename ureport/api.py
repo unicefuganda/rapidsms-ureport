@@ -55,7 +55,7 @@ class PollResource(ModelResource):
             'start_date': ['range', 'exact', 'lte', 'gte', 'lt', 'gt']
         }
         authentication = ApiKeyAuthentication()
-        cache = SimpleCache(timeout=3600)
+        cache = SimpleCache()
 
 
 
