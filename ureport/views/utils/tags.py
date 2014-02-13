@@ -164,7 +164,6 @@ def get_category_tags(district=None, category=None, date_range=None):
             return word_count
     except:
         return word_count
-    print messages.count()
     message_pks = messages.values_list('pk', flat=True)[:500]
     if len(message_pks) > 1:
         sql = """  SELECT
