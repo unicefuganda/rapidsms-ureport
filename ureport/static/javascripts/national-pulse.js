@@ -12,7 +12,7 @@ var records;
 var recordsByDistrict;
 var shapes;
 var recordsByCategory;
-var debug = false;
+var debug = true;
 var categories;
 var totalsByCategory;
 
@@ -20,7 +20,13 @@ var width;
 var height;
 var projection;
 
+var mapFilter;
+var categoryFilter;
+
+var period;
+
 function configure(config) {
+  period = config.period;
   width = config.width;
   height = config.height;
 
@@ -140,7 +146,7 @@ function ready(error, district_shapes, district_records) {
 	      }
         // print debug info if district cannont be reconciled with map
         if (debug) {
-            console.log('no district named ', d.properties.name);
+//            console.log('no district named ', d.properties.name);
         }
 	      return d.properties.name;
       })
@@ -214,13 +220,56 @@ function ready(error, district_shapes, district_records) {
       return reset.classed("hidden", true);
     };
 
+    function reset_word_cloud(map_filter, category_filter){
+        if (category_filter != undefined) category_filter = category_filter.split(' ').join('_');
+        cloud = d3.select('.cloud');
+        cloud.html("<h3>Word Cloud Loading Please Wait...</h3>");
+        if (!map_filter && !category_filter){
+            console.log('No map or category');
+            cloud.html('<h3>Select Region or Category to view word cloud<h3>');
+        }
+        else if (category_filter == undefined){
+            console.log('No category');
+            $('.cloud').load('/map-cloud/?district='+ map_filter + '&period='+period);
+        }
+        else if (map_filter == undefined){
+            console.log('No map');
+            $('.cloud').load('/map-cloud/?period='+period + '&category='+category_filter);
+        }
+        else{
+            console.log('Yes map or category');
+            $('.cloud').load('/map-cloud/?district='+ map_filter + '&period='+period + '&category='+category_filter);
+        }
+    }
+
+    //Show or hide the word cloud
+    function update_word_cloud(){
+
+       if (categoryChart.hasFilter() || map.hasFilter()) {
+        console.log('Map Filter', mapFilter);
+        console.log('Category Filter', categoryFilter);
+        reset_word_cloud(mapFilter, categoryFilter)
+
+      } else {
+            console.log('Map Filter no', mapFilter);
+            console.log('Category Filter no', categoryFilter);
+           reset_word_cloud(mapFilter, categoryFilter)
+           }
+    };
+
     // listen for filter events
     map.on("filtered", function(chart, filter) {
+      if (filter == null) filter = '';
+      mapFilter = filter.toString();
+      update_word_cloud();
       toggleResetButton();
     });
 
     // listen for filter events
     categoryChart.on("filtered", function(chart, filter) {
+      if (filter == null) filter = '';
+      categoryFilter = filter.toString();
+      update_word_cloud();
       toggleResetButton();
 
       var legend_items = d3.selectAll('.legend-item');

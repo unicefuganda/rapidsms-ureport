@@ -106,6 +106,7 @@ def generate_tag_cloud(words, counts_dict, tag_classes):
                 #url reverse hates single quotes. turn to double quotes
                 k['tag'] = "%s" % word
                 k['class'] = klass
+                k['weight'] = int(klass.replace('tag', ''))
                 tags.append(k)
                 used_words_list.append(word)
                 if len(used_words_list) == tag_cloud_size:

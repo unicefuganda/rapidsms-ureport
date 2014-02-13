@@ -143,3 +143,8 @@ text.pie-slice {
   font-weight: bold;
   text-shadow: 1.5px .5px 1.5px rgba(5, 5, 5, 0.9);
 }
+
+.cloud {
+    float: left;
+    width: 650px;
+}

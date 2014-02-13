@@ -31,34 +31,20 @@
             <a {% if period|cut:"/" != 'week' %}href="{% url pulse 'week' %}" {% endif %} class="btn btn-primary btn-mini {% if period|cut:"/" == 'week' %}active {% endif %}">{% trans "Week's Pulse" %}</a>
             <a {% if period|cut:"/" != 'month' %}href="{% url pulse 'month' %}" {% endif %} class="btn btn-primary btn-mini {% if period|cut:"/" == 'month' %}active {% endif %}"> {% trans "Month's Pulse" %}</a>
             <a {% if period|cut:"/" != 'year' %}href="{% url pulse 'year' %}" {% endif %} class="btn btn-primary btn-mini {% if period|cut:"/" == 'year' %}active {% endif %}"> {% trans "Year's Pulse" %}</a>
+            <a href="javascript:dc.filterAll(); dc.renderAll();" class="btn btn-primary btn-mini" id="#dc-reset" style="display: none">Reset</a>
         </div>
 
         <div id="ug-chart">
 
-            <!--<a class="reset" href="javascript:ugChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>-->
-{#            <span class="reset" style="display: none;"> | {% trans "Click on on current filter(" %} <a href="javascript:load_cloud_word(this)" class="filter" id="district_filter"></a>{% trans ") to see word cloud" %}</span>#}
-
             <div class="clearfix"></div>
         </div>
         <ol class="legend"></ol>
+        <div class="cloud">
+
+        </div>
 
     </div>
-    <div class="modal fade" id="cloud_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Modal title</h4>
-                </div>
-                <div class="modal-body" id="cloud">
-                    <p>Word Cloud Loading Please Wait...</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+
     <div id="loading" style="position: absolute; top: 0; left: 42%; z-index: 56; background: #ffff00;">
         {% blocktrans %}Loading National Pulse... Please wait, This may take a while.{% endblocktrans %}<br/>
         <img src="{{ MEDIA_URL }}ureport/images/ajax-loader.gif" style="padding-left: 40%">
@@ -67,59 +53,25 @@
 {% endblock %}
 {% block sidecontent %}
     <div id="national-pie-chart" class="donut control">
-{#        <span class="reset" style="display: none;"> | {% trans "Filter word cloud with" %} <a href="javascript:load_cloud_with_category()" class="filter" id="category_filter"></a></span>#}
+
     </div>
 {% endblock %}
 {% block javascripts %}
     <script>
-        function load_cloud_word(element){
-            var district = $('#district_filter').text();
-            if (debug) {
-                console.log("Clicked on: " + district);
-            }
-            $('.modal-title').text(district + " {{ period|cut:'/' }}'s Word Cloud");
-            $('#cloud').html("<p>Word Cloud Loading Please Wait...</p>");
-            $('#cloud_modal').modal();
-            $('#cloud').load('/map-cloud/?district='+district + "&period={{ period|cut:'/'|default:'' }}");
-        }
-
-        function load_cloud_with_category(){
-            var district = $('#district_filter').text();
-            var category = $('#category_filter').text();
-            var cat = category.replace(" ", "_");
-            cat = cat.replace(" ", "_");
-            if (debug) {
-                console.log("Category:" + cat);
-            }
-            $('.modal-title').text(district + " {{ period|cut:'/' }}'s Word Cloud filtered with "+ category);
-            $('#cloud').html("<p>Word Cloud Loading Please Wait...</p>");
-            $('#cloud_modal').modal();
-            if(district){
-                if (debug) {
-                    console.log('District: '+ district + " found");
-                }
-                $('#cloud').load('/map-cloud/?district='+district + "&period={{ period|cut:'/'|default:'' }}&category="+cat);
-            } else {
-                if (debug) {
-                    console.log('District not found');
-                }
-                $('#cloud').load('/map-cloud/?category='+cat + "&period={{ period|cut:'/'|default:'' }}");
-            }
-        }
         // bind map and pie chart to DOM
         var map = dc.geoChoroplethChart("#ug-chart");
         var categoryChart = dc.pieChart("#national-pie-chart")
 
         map_config = {
-          'center': {
-            'longitude': {{map_args.center.longitude}},
-            'latitude': {{map_args.center.latitude}}
-          },
-          'width': 500,
-          'height': 420,
-          'scale': {{map_args.scale}}
-        }
-
+            'center': {
+                'longitude': {{map_args.center.longitude}},
+                'latitude': {{map_args.center.latitude}}
+            },
+            'width': 500,
+            'height': 420,
+            'scale': {{map_args.scale}},
+            'period':"{{ period|cut:'/'|default:'' }}"
+        };
         configure(map_config);
 
         // load data assets
