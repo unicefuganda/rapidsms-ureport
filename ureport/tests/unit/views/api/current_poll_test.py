@@ -106,10 +106,17 @@ class CurrentPollTest(unittest.TestCase):
         message = "hello hallo who aaa"
         fake_get_next_step = Mock(return_value=ScriptStep(message=message))
         self.view.get_current_step = fake_get_next_step
-        expected_data = {"name": "Message", "question": message, "type": "none"}
+        expected_data = {"name": "Message", "question": message, "type": "none", "id": None}
         actual_data = self.view.get_data_from_message(message)
         self.assertDictEqual(expected_data, actual_data)
 
+    def test_that_if_the_step_is_a_message_the_poll_id_is_none(self):
+        message = "hello hallo who aaa"
+        fake_get_next_step = Mock(return_value=ScriptStep(message=message))
+        self.view.get_current_step = fake_get_next_step
+        expected_data = {"name": "Message", "question": message, "type": "none", "id": None}
+        actual_data = self.view.get_data_from_message(message)
+        self.assertDictEqual(expected_data, actual_data)
 
     def test_that_script_progress_moves_on_when_current_step_is_message(self):
         self.setup_fake_connection()

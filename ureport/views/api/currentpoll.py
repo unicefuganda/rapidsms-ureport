@@ -55,7 +55,7 @@ class ViewCurrentPoll(UReporterApiView):
         return script_progress.step
 
     def get_data_from_message(self, message):
-        return {"name": "Message", "question": message, "type": "none"}
+        return {"id": None, "name": "Message", "question": message, "type": "none"}
 
     def post(self, request, *args, **kwargs):
         return HttpResponse("Method Not Allowed", status=405)
