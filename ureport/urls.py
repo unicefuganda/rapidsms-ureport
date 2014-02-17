@@ -206,7 +206,7 @@ urlpatterns = patterns('',
                        url(
                            r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/poll/(?P<poll_id>\d+)/responses$",
                            SubmitPollResponses.as_view(), name="submit_poll_response_api"),
-                       url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/poll/topics$",
+                       url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/polls/topics$",
                            PollTopicsApiView.as_view(), name="poll_topics_api"),
                        url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/reports$",
                            SubmitReportApiView.as_view(), name="submit_report_api"),
