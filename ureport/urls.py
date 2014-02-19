@@ -204,11 +204,11 @@ urlpatterns = patterns('',
                        url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/polls/current$",
                            ViewCurrentPoll.as_view(), name="view_current_poll_api"),
                        url(
-                           r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/poll/(?P<poll_id>\d+)/responses$",
+                           r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/poll/(?P<poll_id>\d+)/responses/$",
                            SubmitPollResponses.as_view(), name="submit_poll_response_api"),
                        url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/polls/topics$",
                            PollTopicsApiView.as_view(), name="poll_topics_api"),
-                       url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/reports$",
+                       url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/reports/$",
                            SubmitReportApiView.as_view(), name="submit_report_api"),
                        url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/poll/(?P<poll_id>\d+)/summary$", PollSummary.as_view()),
 
