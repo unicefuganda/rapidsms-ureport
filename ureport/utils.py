@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from logging import getLogger
+import logging
 import os
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
@@ -25,7 +25,7 @@ from uganda_common.utils import ExcelResponse
 from ureport.settings import UREPORT_ROOT
 
 module_name = __name__
-logger = getLogger(module_name)
+logger = logging.getLogger(module_name)
 
 
 def get_access(request):
@@ -394,9 +394,10 @@ def export_poll(poll):
 
 def alert_if_mp(message):
     try:
+        logger.debug("Checking if user is MP")
         mp_group = Group.objects.get(name=getattr(settings, 'MP_GROUP', 'MP'))
-        if mp_group in message.connection.contact.groups:
+        if message.connection.contact.groups.filter(pk=mp_group.pk).exists():
             send_mail('Mp Alerts - From ID: %d' % message.connection.pk, message.text, "",
-                      getattr(settings, 'PROJECT_MANAGERS', ('erikfrisk01@gmail.com',)))
+                      getattr(settings, 'PROJECT_MANAGERS', ('erikfrisk01@gmail.com', 'kbonky@gmail.com')))
     except Exception as e:
         logger.debug("Something wrong happened while alerting on MPs:" + str(e))
