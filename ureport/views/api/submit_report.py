@@ -15,7 +15,9 @@ class SubmitReportApiView(UReportPostApiViewMixin, UReporterApiView):
         except (JSONDecodeError, KeyError):
             return HttpResponseBadRequest("Incoming response was in a wrong format.")
 
-        return self.create_json_response({"success": True, "response": "Thank you for your report"})
+        return self.create_json_response(
+            {"success": True, "result": {"response": "Thank you for your report", "accepted": True}}
+        )
 
     def get_incoming_report(self, request):
         incoming_json_data = self.get_json_data(request)
