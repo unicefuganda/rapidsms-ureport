@@ -290,7 +290,7 @@ def send_message(request, template='ureport/partials/forward.html'):
                     connection = Connection.objects.create(identity=r, backend=backend)
                 message = Message.objects.create(direction='O',
                                                  text=send_message_form.cleaned_data.get('text'
-                                                 ), status='Q', connection=connection)
+                                                 ), status='Q', connection=connection, priority=8)
                 if request.GET.get('flag'):
                     tracker = FlagTracker.objects.create(
                         flag=Flag.objects.get(name__iexact=request.GET.get('flag').replace("-", " ")), reply=message,

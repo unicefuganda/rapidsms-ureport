@@ -169,6 +169,18 @@ class TestViews(TestCase):
         response = self.client.get(reverse('send_message'))
         self.assertEqual(response.status_code, 200)
 
+    def test_post_send_message(self):
+        response = self.client.post(reverse('send_message'))
+        self.assertEqual(response.status_code, 302)
+        self.client.login(username="foo", password="barbar")
+        session = self.client.session
+        session['mesg'] = self.test_msg
+        session.save()
+        response = self.client.post(reverse('send_message'), data={'text': 'messages-text', 'recipients': '751234567'})
+        self.assertEqual(response.status_code, 200)
+        msg = Message.objects.filter(text='messages-text')[0]
+        self.assertEqual(msg.priority, 8)
+
     def test_editcategory(self):
         response = self.client.get(reverse('edit_category', kwargs={'pk': self.cat1.pk}))
         self.assertEqual(response.status_code, 302)
