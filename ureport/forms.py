@@ -336,7 +336,7 @@ class ReplyTextForm(ActionForm):
 
             Message.mass_text(text,
                               Connection.objects.filter(pk__in=connections).distinct(),
-                              status='P')
+                              status='P', batch_status='Q', batch_name=None, priority=10)
 
             return ('%d messages sent successfully' % results.count(),
                     'success')
