@@ -144,8 +144,8 @@ def view_poll(request, pk):
     rule_form = RuleForm2()
     if request.method == "POST":
         if 'g_name' in request.POST:
-            group, __ = Group.objects.get_or_create(name=request.POST.get('g_name')[0])
-            cat = Category.objects.get(pk=request.POST.get('category')[0])
+            group, __ = Group.objects.get_or_create(name=request.POST.get('g_name'))
+            cat = Category.objects.get(pk=request.POST.get('category'))
             tasks.group_up_category(group, cat, request.user, Poll.objects.get(pk=pk))
             return HttpResponse("success")
         if request.GET.get('edit'):
