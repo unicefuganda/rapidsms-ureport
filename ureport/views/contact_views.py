@@ -6,6 +6,7 @@ from django.shortcuts import render_to_response
 from django.shortcuts import get_object_or_404
 from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
+from django.views.decorators.cache import never_cache
 from django.views.decorators.vary import vary_on_cookie
 from uganda_common.utils import ExcelResponse
 from rapidsms_httprouter.models import Message
@@ -21,7 +22,8 @@ import datetime
 from rapidsms.models import Connection, Contact
 from poll.models import Poll
 from generic.sorters import SimpleSorter
-from ureport.forms import ReplyTextForm, DownloadForm, EditReporterForm, SignupForm, ExcelUploadForm, MassTextForm, AssignToNewPollForm, TemplateMessage
+from ureport.forms import ReplyTextForm, DownloadForm, EditReporterForm, SignupForm, ExcelUploadForm, MassTextForm, AssignToNewPollForm, TemplateMessage, \
+    EditUreporterForm
 
 from unregister.models import Blacklist
 from django.conf import settings
@@ -39,6 +41,7 @@ from django.utils.translation import ugettext as _
 
 
 @login_required
+@never_cache
 def ureporter_profile(request, connection_pk):
     from script.models import ScriptSession, ScriptResponse
 
@@ -154,20 +157,16 @@ def editReporter(request, reporter_pk):
     reporter = get_object_or_404(Contact, pk=reporter_pk)
     reporter_form = EditReporterForm(instance=reporter)
     if request.method == 'POST':
-        reporter_form = EditReporterForm(instance=reporter,
-                                         data=request.POST)
+        reporter_form = EditUreporterForm(request.POST)
         if reporter_form.is_valid():
-            reporter_form.save()
+            reporter_form.save(reporter)
         else:
             return render_to_response('ureport/partials/contacts/edit_reporter.html'
                 , {'reporter_form': reporter_form, 'reporter'
                 : reporter},
                                       context_instance=RequestContext(request))
-        return render_to_response('/ureport/partials/contacts/contacts_row.html'
-            , {'object'
-               : Contact.objects.get(pk=reporter_pk),
-               'selectable': True},
-                                  context_instance=RequestContext(request))
+        return HttpResponse('saved')
+
     else:
         return render_to_response('ureport/partials/contacts/edit_reporter.html'
             , {'reporter_form': reporter_form,

@@ -29,7 +29,7 @@ from poll.models import Translation
 from unregister.models import Blacklist
 from .models import AutoregGroupRules, UploadContacts
 from uganda_common.utils import ExcelResponse, assign_backend
-from ureport.models import MessageAttribute, MessageDetail
+from ureport.models import MessageAttribute, MessageDetail, Ureporter
 from uganda_common.models import Access
 import tasks
 from ureport.utils import get_access
@@ -46,6 +46,28 @@ class EditReporterForm(forms.ModelForm):
     class Meta:
         model = Contact
         fields = ['gender', 'birthdate', 'reporting_location', 'village_name', 'groups', 'language']
+
+
+class EditUreporterForm(forms.Form):
+    gender = forms.CharField(required=False)
+    birthdate = forms.DateTimeField(required=False)
+    reporting_location = forms.ModelChoiceField(Location.objects.filter(type='district'))
+    village_name = forms.CharField(required=False)
+    groups = forms.ModelMultipleChoiceField(Group.objects.all(), required=False)
+    language = forms.ChoiceField(choices=(('en', 'en'), ('luo', 'luo', 'language')), required=False)
+
+    def save(self, reporter):
+        ureporter = Ureporter.objects.get(pk=reporter.pk)
+        reporter.gender  = ureporter.gender= self.cleaned_data['gender']
+        reporter.birthdate = ureporter.birhdate = self.cleaned_data['birthdate']
+        reporter.reporting_location = ureporter.reporting_location = self.cleaned_data['reporting_location']
+        reporter.village_name = ureporter.village_name = self.cleaned_data['village_name']
+        reporter.language = ureporter.language = self.cleaned_data['language']
+        reporter.save()
+        ureporter.save()
+        for group in self.cleaned_data['groups']:
+            reporter.groups.add(group)
+            ureporter.groups.add(group)
 
 
 class PollModuleForm(ModuleForm):
