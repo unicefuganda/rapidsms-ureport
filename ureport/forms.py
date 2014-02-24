@@ -28,7 +28,7 @@ from contact.models import MassText
 from poll.models import Translation
 from unregister.models import Blacklist
 from .models import AutoregGroupRules, UploadContacts
-from uganda_common.utils import ExcelResponse
+from uganda_common.utils import ExcelResponse, assign_backend
 from ureport.models import MessageAttribute, MessageDetail
 from uganda_common.models import Access
 import tasks
@@ -309,9 +309,11 @@ class SignupForm(forms.Form):
         cleaned_data['district'] = \
             Location.objects.get(pk=int(cleaned_data.get('district', '1'
             )))
-        match = re.match(phone_re, cleaned_data.get('mobile', ''))
-        if not match:
-            raise ValidationError('invalid Number')
+        try:
+            phone = cleaned_data.get('mobile')
+            p, b = assign_backend(phone)
+        except Exception as e:
+            raise ValidationError(str(e))
         return cleaned_data
 
 
