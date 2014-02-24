@@ -201,7 +201,7 @@ urlpatterns = patterns('',
                        url(r"^backend/vumi/$", VumiBackendView.as_view(backend_name="vumi")),
                        url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\+?\w+)$", ViewUReporter.as_view(),
                            name="view_ureporter_api"),
-                       url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/polls/current$",
+                       url(r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>.*)/polls/current$",
                            ViewCurrentPoll.as_view(), name="view_current_poll_api"),
                        url(
                            r"^api/v1/ureporters/(?P<backend>\w+)/(?P<user_address>\w+)/poll/(?P<poll_id>\d+)/responses/$",
