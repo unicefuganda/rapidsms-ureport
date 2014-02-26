@@ -14,6 +14,7 @@ var shapes;
 var recordsByCategory;
 var debug = true;
 var categories;
+var category_number;
 var totalsByCategory;
 
 var width;
@@ -64,6 +65,7 @@ function ready(error, district_shapes, district_records) {
 
     // find all categories
     categories = _.unique(_.pluck(recordsByCategory.top(1000), 'category'));
+    category_number = records.groupAll();
     // prepend a category for 'no data'
     categories.unshift('no data');
 
@@ -204,7 +206,7 @@ function ready(error, district_shapes, district_records) {
       .innerRadius(0)
       .dimension(recordsByCategory)
       .group(totalsByCategory)
-      .renderLabel(false)
+      .renderLabel(true)
       .renderTitle(false);
 
     dc.renderAll();
