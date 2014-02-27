@@ -18,7 +18,8 @@
                                    onclick="clear_layers();
                                            $('.poll_selectors').attr('disabled','');
                                            $(this).attr('disabled','disabled');
-                                           $('#poll_content').load('{% url ureport.views.best_visualization p.pk %}')"
+                                           $('#poll_content').load('{% url ureport.views.best_visualization p.pk %}');
+                                           $('#share_link').attr('href', '{% url polls-summary poll=p.pk %}')"
                                         >
                                 {{ p.name }}
                                 </a>
@@ -32,7 +33,8 @@
         <div class="column" id="column1">
             <div class="widget">
                 <div class="module widget-head">
-                    <h3>Results {% if not share %}<a style="float: right" href="{% url polls-summary poll=poll.pk %}">Share This Poll</a>{% endif %}</h3>
+                    <h3>Results </h3>
+                    {% if not share %}<a style="display: block; background-color: #26aaff; width: 100px; font-weight: bolder; color: #ffffff" href="{% url polls-summary poll=poll.pk %}" id="share_link">Share This Poll</a>{% endif %}
                 </div>
                 <div id="poll_content" class="widget-content">
                 </div>
