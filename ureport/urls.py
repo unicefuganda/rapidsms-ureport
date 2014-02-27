@@ -95,7 +95,8 @@ urlpatterns = patterns('',
                        url(r'^messagefeed/(?P<pks>\d+)/$', message_feed, name="message-feed"),
 
                        # polls page and best-visualization module (different viz based on poll type
-                       url(r'^pollresults/$', poll_summary, name="polls-summary"), \
+                       url(r'^pollresults/$', poll_summary, name="polls-summary"),
+                       url(r'^pollresults/(?P<poll>\d+)/$', poll_summary, name="polls-summary"),
                        url(r'^bestviz/$', best_visualization, name="best-viz"),
                        url(r'^bestviz/(?P<poll_id>\d+)/$', best_visualization, name="best-viz"),
 

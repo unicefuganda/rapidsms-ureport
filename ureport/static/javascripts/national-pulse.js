@@ -207,7 +207,7 @@ function ready(error, district_shapes, district_records) {
       .dimension(recordsByCategory)
       .group(totalsByCategory)
       .renderLabel(true)
-      .renderTitle(false);
+      .renderTitle(true);
 
     dc.renderAll();
 

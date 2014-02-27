@@ -3,6 +3,7 @@
 <div id="mod">
     <div id="columns">
         <div class="column" id="column0">
+        {% if not share %}
             <div class="widget">
                 <div class="module widget-head">
                     <h3>Polls</h3>
@@ -26,11 +27,12 @@
                     </ul>
                 </div>
             </div>
+        {% endif %}
         </div>  
         <div class="column" id="column1">
             <div class="widget">
                 <div class="module widget-head">
-                    <h3>Results</h3>
+                    <h3>Results {% if not share %}<a style="float: right" href="{% url polls-summary poll=poll.pk %}">Share This Poll</a>{% endif %}</h3>
                 </div>
                 <div id="poll_content" class="widget-content">
                 </div>
@@ -44,4 +46,7 @@ $(document).ready(function(){
 	$('#poll_content').load('{% url ureport.views.best_visualization polls.0.pk %}');
 });
 </script>
+{% if share %}
+{% include 'ureport/plugins/addthis.html' %}
+{% endif %}
 {% endblock %}

@@ -300,7 +300,8 @@ def new_poll(req):
 
 
 @cache_control(no_cache=True, max_age=0)
-def poll_summary(request):
+def poll_summary(request, poll=None):
+    share = False
     script_polls = \
         ScriptStep.objects.exclude(poll=None).values_list('poll',
                                                           flat=True)
@@ -308,12 +309,20 @@ def poll_summary(request):
     polls = \
         Poll.objects.exclude(pk__in=script_polls).exclude(pk__in=excluded_polls).exclude(start_date=None).order_by(
             '-start_date')
-    if polls.count():
-        return render_to_response('/ureport/poll_summary.html', {'polls'
-                                                                : polls, 'poll': polls[0]},
+    if not polls.exists():
+        polls = None
+    if poll:
+        poll = get_object_or_404(Poll, pk=poll)
+        polls = [poll]
+        share = True
+    else:
+        poll = polls[0]
+    if polls:
+        return render_to_response('ureport/poll_summary.html', {'polls'
+                                                                : polls, 'poll': poll, 'share': share},
                                 context_instance=RequestContext(request))
     else:
-        return render_to_response('/ureport/poll_empty.html',
+        return render_to_response('ureport/poll_empty.html',
                                   context_instance=RequestContext(request))
 
 
