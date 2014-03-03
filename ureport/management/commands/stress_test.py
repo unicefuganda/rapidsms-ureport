@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
        for i in range(0,int(options['n'])):
 
-           backend=Backend.objects.get(name="dmark")
+           backend=Backend.objects.get(name="yo")
            identity="259%s%s%s"%(str(random.randint(0000,1000)),str(random.randint(0000,1000)),str(random.randint(0000,1000)))
            g=Group.objects.get(pk=54)
            try:
