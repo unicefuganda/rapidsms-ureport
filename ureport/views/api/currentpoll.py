@@ -43,7 +43,7 @@ class ViewCurrentPoll(UReporterApiView):
     def get_script_progress(self, connection):
         script_progress_querylist = ScriptProgress.objects.filter(connection=connection,
                                                                   script__slug="ureport_autoreg2")
-        if len(script_progress_querylist) > 0:
+        if script_progress_querylist.exists():
             script_progress = script_progress_querylist[0]
         else:
             script = Script.objects.get(slug="ureport_autoreg2")

@@ -50,7 +50,7 @@ def autoreg(**kwargs):
 
         village = find_best_response(session, villagepoll)
         if village:
-            contact.village = village
+            contact.village_name = village
 
         group_to_match = find_best_response(session, youthgrouppoll)
         gr_matched = False
