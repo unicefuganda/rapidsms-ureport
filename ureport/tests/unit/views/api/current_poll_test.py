@@ -97,7 +97,7 @@ class CurrentPollTest(unittest.TestCase):
                     default_response=default_response, response_type="a")
         expected_poll_data = {"id": "12", "question": question, "name": name, "language": None, "question_voice": None,
                               "start_date": an_hour_ago.strftime(self.view.get_datetime_format()), "end_date": None,
-                              "is_registration": False, "type": "t",
+                              "is_registration": False, "type": "t", "is_registration_end": False,
                               "default_response": default_response, "default_response_voice": None,
                               "response_type": "allow_all"}
         self.assertDictEqual(expected_poll_data, self.view.get_data_from_poll(poll))
@@ -106,7 +106,8 @@ class CurrentPollTest(unittest.TestCase):
         message = "hello hallo who aaa"
         fake_get_next_step = Mock(return_value=ScriptStep(message=message))
         self.view.get_current_step = fake_get_next_step
-        expected_data = {"name": "Message", "question": message, "type": "none", "id": None}
+        expected_data = {"name": "Message", "question": message, "type": "none", "id": None,
+                         "is_registration_end": False}
         actual_data = self.view.get_data_from_message(message)
         self.assertDictEqual(expected_data, actual_data)
 
@@ -114,7 +115,8 @@ class CurrentPollTest(unittest.TestCase):
         message = "hello hallo who aaa"
         fake_get_next_step = Mock(return_value=ScriptStep(message=message))
         self.view.get_current_step = fake_get_next_step
-        expected_data = {"name": "Message", "question": message, "type": "none", "id": None}
+        expected_data = {"name": "Message", "question": message, "type": "none", "id": None,
+                         "is_registration_end": False}
         actual_data = self.view.get_data_from_message(message)
         self.assertDictEqual(expected_data, actual_data)
 
