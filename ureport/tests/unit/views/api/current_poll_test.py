@@ -8,6 +8,7 @@ from mock import Mock, MagicMock
 from poll.models import Poll
 from rapidsms.models import Backend, Connection, Contact
 from script.models import Script, ScriptProgress, ScriptStep
+from ureport.settings import UREPORT_ROOT
 from ureport.views.api.currentpoll import ViewCurrentPoll
 
 
@@ -126,7 +127,8 @@ class CurrentPollTest(unittest.TestCase):
         mock_progress.moveon = MagicMock()
         self.view.get_script_progress = Mock(return_value=mock_progress)
         self.view.contact_exists = Mock(return_value=False)
-        self.view.get_current_step = Mock(return_value=ScriptStep(message="Welcome"))
+        self.view.get_current_step = Mock(
+            return_value=ScriptStep(message="Welcome", script=Script(slug='ureport_autoreg2'), order=1))
         self.view.get_backend = Mock(return_value=Backend(name="my_backend"))
         response = self.get_http_response_from_view({"backend": "my_backend", "user_address": "77777"}, self.view)
         self.assertEqual(True, mock_progress.moveon.called)
