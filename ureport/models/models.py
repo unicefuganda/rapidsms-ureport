@@ -17,6 +17,7 @@ from ussd.models import ussd_complete
 import datetime
 import re
 from script.signals import script_progress_was_completed
+from poll.models import poll_started
 
 
 class IgnoredTags(models.Model):
@@ -223,14 +224,12 @@ class AutoregGroupRules(models.Model):
         app_label = 'ureport'
 
 
-from .litseners import autoreg, check_conn, update_latest_poll, ussd_poll, add_to_poll
+from .litseners import autoreg, update_latest_poll, ussd_poll, add_poll_to_blacklist
 
 script_progress_was_completed.connect(autoreg, weak=False)
-#post_save.connect(check_conn, sender=Connection, weak=False)
 post_save.connect(update_latest_poll, sender=Poll, weak=False)
 ussd_complete.connect(ussd_poll, weak=False)
-#post_save.connect(add_to_poll, sender=Blacklist, weak=False)
-
+poll_started.connect(add_poll_to_blacklist, weak=False)
 
 class UPoll(Poll):
     def _get_set_attr(self):

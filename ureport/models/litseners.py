@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import requests
 from rapidsms.models import Contact
 from script.models import ScriptSession
 from rapidsms_xforms.models import XFormField
@@ -14,7 +15,10 @@ from poll.models import ResponseCategory, Response, Poll
 from rapidsms_httprouter.models import Message
 from django.conf import settings
 from django.core.mail import send_mail
+import logging
 
+
+log = logging.getLogger(__name__)
 
 def autoreg(**kwargs):
     connection = kwargs['connection']
@@ -186,3 +190,18 @@ def add_to_poll(sender, **kwargs):
         poll.contacts.add(contact)
     except:
         pass
+
+
+def add_poll_to_blacklist(sender, **kwargs):
+    url = getattr(settings,"BLACKLIST_POLL_DATA_URL", None)
+    if url:
+        poll = sender
+        values = {'poll_id': str(poll.pk),
+                  'poll_text': poll.question,
+                  'poll_response': poll.default_response }
+        log.info('[add_poll_to_blacklist] Poll id=%s, question=%s, response=%s' % (values["poll_id"], values['poll_text'], values["poll_response"]))
+        try:
+            response = requests.post(url, data=values)
+            log.info('[add_poll_to_blacklist] Adding poll details to blacklist status:%s' % response.status_code)
+        except Exception, e:
+            log.error(e)

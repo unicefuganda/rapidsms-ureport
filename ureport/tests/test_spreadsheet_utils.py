@@ -1,9 +1,9 @@
 from unittest import TestCase
 from django.contrib.auth.models import User
+from mock import patch
 from poll.models import Poll, Response
 from rapidsms_httprouter.models import Message
 from rapidsms.models import Contact, Connection, Backend
-from rapidsms.contrib.locations.models import Location
 from ureport.spreadsheet_utils import get_poll_responses, get_formatted_responses_for_poll_per_district
 from rapidsms.messages.incoming import IncomingMessage
 from geoserver.models import PollData
@@ -31,7 +31,9 @@ def _get_incoming_message(connection, message):
 
 
 class TestSpreadSheetUtils(TestCase):
-    def test_excel_dump_report_for_poll(self):
+
+    @patch('poll.models.poll_started')
+    def test_excel_dump_report_for_poll(self, mock_poll_started):
         backend = Backend.objects.create(name='test_backend')
         connection = Connection.objects.create(identity='7798987102',backend=backend)
         contact = Contact.objects.create(name='test_contact')
