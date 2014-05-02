@@ -4,6 +4,7 @@ from script.models import Script
 from django.http import HttpResponse
 import settings
 from ureport.views.api.base import BasicAuthenticationView
+from poll.models import gettext_db
 
 
 class RegistrationStepsView(BasicAuthenticationView):
@@ -24,9 +25,11 @@ class RegistrationStepsView(BasicAuthenticationView):
 
     def get_step_strings(self, registration_steps):
         step_messages = set()
+        registration_script_names = self.get_registration_script_name()
         for step in registration_steps:
             if step and step.poll:
-                step_messages.add(step.poll.question)
+                language = registration_script_names[step.script.slug]
+                step_messages.add(gettext_db(step.poll.question, language))
             else:
                 step_messages.add(step.message)
         return list(step_messages)
@@ -35,10 +38,13 @@ class RegistrationStepsView(BasicAuthenticationView):
         return Script.objects.filter(self.get_registration_scripts_query())
 
     def get_registration_scripts_query(self):
-        default_scripts = ['ureport_autoreg2', 'ureport_autoreg_luo2', 'ureport_autoreg_kdj']
-        registration_scripts_name = getattr(settings, 'REGISTRATION_SCRIPTS', default_scripts)
+        registration_scripts_name = self.get_registration_script_name()
         script_iteration = iter(registration_scripts_name)
         query = Q(slug=script_iteration.next())
         for script_name in script_iteration:
             query |= Q(slug=script_name)
         return query
+
+    def get_registration_script_name(self):
+        default_scripts = {'ureport_autoreg2': 'en', 'ureport_autoreg_luo2': 'ach', 'ureport_autoreg_kdj': 'kdj'}
+        return getattr(settings, 'REGISTRATION_SCRIPTS', default_scripts)
