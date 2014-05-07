@@ -4,6 +4,7 @@ Basic tests for RapidSMS-Ureport
 """
 import datetime
 from httplib import HTTPException
+import simplejson as json
 import re
 
 from django.contrib.auth.models import User, Group
@@ -23,6 +24,7 @@ from script.models import *
 from script.utils.outgoing import check_progress
 from ureport.models import add_poll_to_blacklist
 from mock import patch, Mock
+from ureport.models.litseners import add_poll_recipients_to_blacklist
 
 
 class UreportMessagesTestCase(TestCase):
@@ -243,3 +245,39 @@ class ModelTest(UreportMessagesTestCase): #pragma: no cover
         settings.BLACKLIST_POLL_DATA_URL = "www.server.com"
         post_mock.return_value = HTTPException()
         self.assertRaises(Exception, add_poll_to_blacklist(poll))
+
+    @patch('requests.post')
+    def test_that_send_poll_contact_to_prioritizer_api_when_url_exists(self, post_mock):
+        user = User.objects.create_user('test', 'test@test.com', password='test_password')
+        backend, backend_created = Backend.objects.get_or_create(name='test_backend')
+        connection, connection_created = Connection.objects.get_or_create(identity='25612345678', backend=backend)
+        contact = Contact.objects.create(name='Test Contact')
+        connection.contact = contact
+        connection.save()
+        poll = Poll.objects.create(id=999, name='Test Poll', question='question for test poll', user=user)
+        poll.contacts.add(contact)
+        poll.save()
+
+        settings.BLACKLIST_POLL_RECIPIENTS_URL = "http://fake.com"
+        response_mock = Mock()
+        response_mock.status_code = 200
+        post_mock.return_value = response_mock
+
+        add_poll_recipients_to_blacklist(poll)
+        data = json.dumps([u'25612345678'])
+        params = {'poll_id': 999}
+        post_mock.assert_called_once_with("http://fake.com", data=data, params=params)
+
+    @patch('requests.post')
+    def test_that_send_poll_contact_to_prioritizer_api_when_url_exists(self, post_mock):
+        poll = Poll(pk=123, question="My important question", default_response="Thanks")
+        settings.BLACKLIST_POLL_DATA_URL = None
+        add_poll_recipients_to_blacklist(poll)
+        self.assertEquals(post_mock.call_count, 0)
+
+    @patch('requests.post')
+    def test_that_send_poll_contact_to_prioritizer_api_when_url_exists(self, post_mock):
+        poll = Poll(pk=123, question="My important question", default_response="Thanks")
+        settings.BLACKLIST_POLL_DATA_URL = "http://fake.com"
+        post_mock.return_value = HTTPException()
+        self.assertRaises(Exception, add_poll_recipients_to_blacklist(poll))

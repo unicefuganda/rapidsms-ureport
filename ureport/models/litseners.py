@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+import simplejson as json
 import requests
-from rapidsms.models import Contact
+from rapidsms.models import Contact, Connection
 from script.models import ScriptSession
 from rapidsms_xforms.models import XFormField
 import datetime
@@ -205,3 +206,17 @@ def add_poll_to_blacklist(sender, **kwargs):
             log.info('[add_poll_to_blacklist] Adding poll details to blacklist status:%s' % response.status_code)
         except Exception, e:
             log.error(e)
+
+def add_poll_recipients_to_blacklist(sender, **kwargs):
+    url = getattr(settings,"BLACKLIST_POLL_RECIPIENTS_URL", None)
+    if url:
+        poll = sender
+        contacts = poll.contacts.all()
+        values = Connection.objects.filter(contact__in=contacts).distinct().values_list('identity', flat=True)
+        data = json.dumps(list(values))
+        log.info('[add_poll_recipients_to_blacklist] Poll id=%s' % poll.pk)
+        try:
+            response = requests.post(url, data=data, params={"poll_id": poll.pk})
+            log.info('[add_poll_recipients_to_blacklist] Adding poll recipients to blacklist-status:%s' % response.status_code)
+        except Exception, e:
+            log.error('[add_poll_recipients_to_blacklist] Error: %s' % e)
