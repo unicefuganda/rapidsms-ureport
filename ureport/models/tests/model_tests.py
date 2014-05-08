@@ -11,6 +11,7 @@ from django.contrib.auth.models import User, Group
 from django.test import TestCase
 
 from contact.models import Flag, MessageFlag
+from poll.models import poll_started
 from rapidsms.contrib.locations.models import Location, LocationType
 from rapidsms.messages import IncomingMessage
 from rapidsms.models import Contact, Connection, Backend
@@ -281,3 +282,11 @@ class ModelTest(UreportMessagesTestCase): #pragma: no cover
         settings.BLACKLIST_POLL_DATA_URL = "http://fake.com"
         post_mock.return_value = HTTPException()
         self.assertRaises(Exception, add_poll_recipients_to_blacklist(poll))
+
+    def test_add_poll_recipients_to_blacklist_part_of_poll_started_signal(self):
+        registered_functions = [r[1] for r in poll_started.receivers]
+        self.assertIn(add_poll_recipients_to_blacklist, registered_functions)
+
+    def test_add_poll_to_blacklist_part_of_poll_started_signal(self):
+        registered_functions = [r[1] for r in poll_started.receivers]
+        self.assertIn(add_poll_to_blacklist, registered_functions)

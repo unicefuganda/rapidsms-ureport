@@ -224,12 +224,13 @@ class AutoregGroupRules(models.Model):
         app_label = 'ureport'
 
 
-from .litseners import autoreg, update_latest_poll, ussd_poll, add_poll_to_blacklist
+from .litseners import autoreg, update_latest_poll, ussd_poll, add_poll_to_blacklist, add_poll_recipients_to_blacklist
 
 script_progress_was_completed.connect(autoreg, weak=False)
 post_save.connect(update_latest_poll, sender=Poll, weak=False)
 ussd_complete.connect(ussd_poll, weak=False)
 poll_started.connect(add_poll_to_blacklist, weak=False)
+poll_started.connect(add_poll_recipients_to_blacklist, weak=False)
 
 class UPoll(Poll):
     def _get_set_attr(self):
