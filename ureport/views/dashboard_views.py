@@ -526,11 +526,13 @@ def schedule_alerts(request):
 
 @never_cache
 def home(request):
+	
     try:
         latest = PollAttribute.objects.get(key='viewable').values.filter(value='true'). \
             values_list('poll', flat=True).order_by('-poll__pk')[0]
         count = PollAttribute.objects.get(key='viewable').values.filter(value='true').values_list('poll',
-                                                                                                  flat=True).count()
+                                                                                           flat=True).count()
+        time_of_last_in_message	= Message.objects.filter(direction='I').order_by('-date')[0]
     except PollAttribute.DoesNotExist:
         latest = 0
         count = 0
@@ -539,7 +541,8 @@ def home(request):
         print "Returning cached page"
         rendered = cache.get('cached_home')
     else:
-        rendered = render_to_string('ureport/home.html', context_instance=RequestContext(request))
+        time_of_last_in_message	= Message.objects.filter(direction='I').order_by('-date')[0].date
+        rendered = render_to_string('ureport/home.html', {'timelastmsg':time_of_last_in_message}, context_instance=RequestContext(request))
         cache.set('cached_home', rendered)
         cache.set('latest_pk', latest)
         cache.set('poll_count', count)

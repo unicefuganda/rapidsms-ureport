@@ -19,7 +19,7 @@
     <div id="viz">
     </div>
     <div class="scrolltop">
-	<span>{% trans "PREVIOUS POLLS" %}</span>
+	<span>{% blocktrans %} PREVIOUS POLLS.    The last message is received at : {{timelastmsg}} {% endblocktrans %}</span>
     </div>
     <a name="poll_results"></a>
         {% block poll_list %}
