@@ -38,6 +38,7 @@ from generic.views import generic
 from generic.sorters import SimpleSorter
 from message_classifier.models import IbmCategory, IbmMsgCategory
 from ureport.views.utils.tags import get_category_tags
+import datetime
 
 
 @login_required
@@ -533,9 +534,13 @@ def home(request):
         count = PollAttribute.objects.get(key='viewable').values.filter(value='true').values_list('poll',
                                                                                            flat=True).count()
         time_of_last_in_message	= Message.objects.filter(direction='I').order_by('-date')[0]
+        
+	
+		
     except PollAttribute.DoesNotExist:
         latest = 0
         count = 0
+    
     if int(cache.get('latest_pk', 0)) == latest and cache.get('cached_home', None) is not None and int(
                     cache.get('poll_count', 0) == count):
         print "Returning cached page"

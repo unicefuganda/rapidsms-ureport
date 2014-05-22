@@ -118,7 +118,9 @@
 	                {% endif %}
                 </ul>
 	           </div>
-	           <p> {% trans "&copy; 2010 - 2012 UNICEF et al." %}</p>
+	           <p> 
+	          {% trans "&copy; 2010 -" %}  {% now "Y" %} {% trans "UNICEF et al." %}  
+	           </p>
 	        </div>
 	    </div>
     </div>
