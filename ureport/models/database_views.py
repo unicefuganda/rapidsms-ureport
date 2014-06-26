@@ -4,6 +4,7 @@ from rapidsms.contrib.locations.models import  Location
 from django.contrib.auth.models import User
 
 class UreportContact(models.Model):
+    MAX_VILLAGE_LENGTH = 100
     name = models.CharField(max_length=100)
     mobile = models.CharField(max_length=100)
     language = models.CharField(max_length=6)
@@ -13,7 +14,7 @@ class UreportContact(models.Model):
     age = models.IntegerField()
     gender = models.CharField(max_length=1)
     facility = models.CharField(max_length=50)
-    village = models.CharField(max_length=100)
+    village = models.CharField(max_length=MAX_VILLAGE_LENGTH)
     group = models.CharField(max_length=80)
     source = models.TextField()
     responses = models.IntegerField()

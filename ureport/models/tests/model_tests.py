@@ -2,7 +2,6 @@
 """
 Basic tests for RapidSMS-Ureport
 """
-import datetime
 from httplib import HTTPException
 import simplejson as json
 import re
@@ -31,18 +30,23 @@ from ureport.models.litseners import add_poll_recipients_to_blacklist
 class UreportMessagesTestCase(TestCase):
     def fake_script_dialog(self, script_prog, connection, responses, emit_signal=True):
         script = script_prog.script
-        ss = ScriptSession.objects.create(script=script, connection=connection, start_time=datetime.datetime.now())
+        ScriptSession.objects.filter(script=script, connection=connection).delete()
+        script_session = ScriptSession.objects.create(script=script, connection=connection, start_time=datetime.datetime.now())
+
         for poll_name, resp in responses:
-            print "%s ---- %s " % (poll_name, resp)
             poll = script.steps.get(poll__name=poll_name).poll
-            poll.process_response(self.spoof_incoming_obj(resp))
+            poll.process_response(self.spoof_incoming_obj(resp, connection))
             resp = poll.responses.all().order_by('-date')[0]
-            ScriptResponse.objects.create(session=ss, response=resp)
-        ss.end_time = datetime.datetime.now()
-        ss.save()
+
+            script_response = ScriptResponse.objects.create(session=script_session, response=resp)
+            script_session.responses.add(script_response)
+
+        script_session.end_time = datetime.datetime.now()
+        script_session.save()
+
         if emit_signal:
             script_progress_was_completed.send(connection=connection, sender=script_prog)
-        return ss
+        return script_session
 
     def fakeIncoming(self, message, connection):
         self.router = get_router()
@@ -52,7 +56,7 @@ class UreportMessagesTestCase(TestCase):
         if connection is None:
             connection = Connection.objects.all()[0]
         incomingmessage = IncomingMessage(connection, message)
-        incomingmessage.db_message = Message.objects.create(direction='I', connection=Connection.objects.all()[0],
+        incomingmessage.db_message = Message.objects.create(direction='I', connection=connection,
                                                             text=message)
         return incomingmessage
 
@@ -84,6 +88,8 @@ class ModelTest(UreportMessagesTestCase): #pragma: no cover
         self.connection1 = Connection.objects.create(identity='4162549', backend=self.backend)
         self.connection2 = Connection.objects.create(identity='82764125', backend=self.backend)
         self.connection3 = Connection.objects.create(identity='256777773260', backend=self.backend)
+        self.connection4 = Connection.objects.create(identity='25677771234', backend=self.backend)
+
         self.user, created = User.objects.get_or_create(username="admin")
         self.router = get_router()
         #create test contact
@@ -99,19 +105,9 @@ class ModelTest(UreportMessagesTestCase): #pragma: no cover
         self.gem_group = Group.objects.create(name="GEM")
         Location.objects.create(name="kampala", type=LocationType.objects.create(name="district", slug="district"))
 
-
-
-
     def assertInteraction(self, connection, incoming_message, expected_response):
         incoming_obj = self.router.handle_incoming(connection.backend.name, connection.identity, incoming_message)
         self.assertEquals(Message.objects.filter(in_response_to=incoming_obj, text=expected_response).count(), 1)
-
-
-
-
-
-
-
 
     def testflaggedmessage(self):
         #create flagged messages
@@ -148,12 +144,13 @@ class ModelTest(UreportMessagesTestCase): #pragma: no cover
         self.assertEquals((registration_script_progress).script.slug, 'ureport_autoreg2')
         self.assertEqual((registration_script_progress).language, "en")
 
-    def fake_incoming_message_and_check_script_progress(self, incoming_message_text):
-        self.fakeIncoming(incoming_message_text, self.connection1)
+    def fake_incoming_message_and_check_script_progress(self, incoming_message_text, connection=None):
+        connection = self.connection1 if connection is None else connection
+        self.fakeIncoming(incoming_message_text, connection)
 
         self.assertEquals(ScriptProgress.objects.count(), 1)
 
-        registration_script_progress = ScriptProgress.objects.all().order_by('pk')[0]
+        registration_script_progress = ScriptProgress.objects.all().order_by('-pk')[0]
 
         check_progress(registration_script_progress.script)
 
@@ -184,6 +181,47 @@ class ModelTest(UreportMessagesTestCase): #pragma: no cover
                                     ])
 
         self.assertEquals((Contact.objects.get(connection=(registration_script_progress).connection)).language, 'en')
+
+    def change_village_name_poll_type_to_be_text(self):
+        village_poll = Poll.objects.get(id=126)
+        village_poll.type = 't'
+        village_poll.save()
+
+    def generate_contact(self, connection, poll_responses):
+        registration_script_progress = self.fake_incoming_message_and_check_script_progress('join', connection)
+        self.fake_script_dialog(registration_script_progress, connection, poll_responses)
+
+    def test_contact_is_generated(self):
+        self.change_village_name_poll_type_to_be_text()
+        connection = self.connection4
+        village_name = 'bukoto'
+        poll_responses = [('contactdistrict', 'kampala'), ('contactage', '29'),
+                          ('contactgender', 'female'), ('contactvillage', village_name), ]
+        self.generate_contact(connection, poll_responses)
+
+        kampala = Location.objects.get(name='kampala')
+        contact_attributes = {'connection': connection, 'reporting_location': kampala,
+                              'gender': 'F', 'village_name': village_name}
+
+        contact = Contact.objects.filter(**contact_attributes)
+
+        self.assertEquals(1, contact.count())
+
+    def test_when_user_sends_a_village_with_more_than_100_characters_should_error(self):
+        self.change_village_name_poll_type_to_be_text()
+        connection = self.connection4
+        village_name_with_more_than_100_characters = 'a'*101
+        poll_responses = [('contactdistrict', 'kampala'), ('contactage', '29'),
+                          ('contactgender', 'female'), ('contactvillage', village_name_with_more_than_100_characters), ]
+        self.generate_contact(connection, poll_responses)
+
+        kampala = Location.objects.get(name='kampala')
+        contact_attributes = {'connection': connection, 'reporting_location': kampala,
+                              'gender': 'F'}
+
+        contact = Contact.objects.get(**contact_attributes)
+
+        self.assertEquals('a'*100, contact.village_name)
 
     def test_autoreg_luo(self):
         #fake luo join message

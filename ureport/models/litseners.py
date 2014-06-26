@@ -8,6 +8,7 @@ import datetime
 from script.utils.handling import find_closest_match, find_best_response
 from django.contrib.auth.models import Group
 from unregister.models import Blacklist
+from ureport.models.database_views import UreportContact
 from ussd.models import Menu, StubScreen
 import re
 from models import AutoregGroupRules, EquatelLocation
@@ -55,7 +56,7 @@ def autoreg(**kwargs):
 
         village = find_best_response(session, villagepoll)
         if village:
-            contact.village_name = village
+            contact.village_name = check_location_length(village)
 
         group_to_match = find_best_response(session, youthgrouppoll)
         gr_matched = False
@@ -123,6 +124,10 @@ def check_conn(sender, **kwargs):
         c.delete()
         return True
 
+def check_location_length(location):
+    if len(location) < UreportContact.MAX_VILLAGE_LENGTH:
+        return location
+    return location[-UreportContact.MAX_VILLAGE_LENGTH:]
 
 def update_latest_poll(sender, **kwargs):
     poll = kwargs['instance']
