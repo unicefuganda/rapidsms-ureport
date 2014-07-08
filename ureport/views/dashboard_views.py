@@ -120,7 +120,7 @@ def mp_dashboard(request):
         # create poll
 
         if request.session.get('filtered', None) \
-            and poll_form.is_valid():
+                and poll_form.is_valid():
             name = poll_form.cleaned_data['name']
             p_type = poll_form.cleaned_data['type']
             response_type = poll_form.cleaned_data['response_type']
@@ -129,7 +129,7 @@ def mp_dashboard(request):
             ]
 
             if not poll_form.cleaned_data['default_response_luo'] == '' \
-                and not poll_form.cleaned_data['default_response'] \
+                    and not poll_form.cleaned_data['default_response'] \
                             == '':
                 (translation, created) = \
                     Translation.objects.get_or_create(language='ach',
@@ -309,7 +309,7 @@ def alerts(request, pk):
                     m['name'] = 'Anonymous User'
                 m['number'] = msg.connection.identity
                 if msg.connection.contact \
-                    and msg.connection.contact.reporting_location:
+                        and msg.connection.contact.reporting_location:
                     m['district'] = \
                         msg.connection.contact.reporting_location.name
                 else:
@@ -460,7 +460,7 @@ def a_dashboard(request, name):
                     m['name'] = 'Anonymous User'
                 m['number'] = msg.connection.identity
                 if msg.connection.contact \
-                    and msg.connection.contact.reporting_location:
+                        and msg.connection.contact.reporting_location:
                     m['district'] = \
                         msg.connection.contact.reporting_location.name
                 else:
@@ -527,27 +527,27 @@ def schedule_alerts(request):
 
 @never_cache
 def home(request):
-	
     try:
         latest = PollAttribute.objects.get(key='viewable').values.filter(value='true'). \
             values_list('poll', flat=True).order_by('-poll__pk')[0]
         count = PollAttribute.objects.get(key='viewable').values.filter(value='true').values_list('poll',
-                                                                                           flat=True).count()
-        time_of_last_in_message	= Message.objects.filter(direction='I').order_by('-date')[0]
-        
-	
-		
+                                                                                                  flat=True).count()
+        time_of_last_in_message = Message.objects.filter(direction='I').order_by('-date')[0]
+
+
+
     except PollAttribute.DoesNotExist:
         latest = 0
         count = 0
-    
+
     if int(cache.get('latest_pk', 0)) == latest and cache.get('cached_home', None) is not None and int(
                     cache.get('poll_count', 0) == count):
         print "Returning cached page"
         rendered = cache.get('cached_home')
     else:
-        time_of_last_in_message	= Message.objects.filter(direction='I').order_by('-date')[0].date
-        rendered = render_to_string('ureport/home.html', {'timelastmsg':time_of_last_in_message}, context_instance=RequestContext(request))
+        time_of_last_in_message = Message.objects.filter(direction='I').order_by('-date')[0].date
+        rendered = render_to_string('ureport/home.html', {'timelastmsg': time_of_last_in_message},
+                                    context_instance=RequestContext(request))
         cache.set('cached_home', rendered)
         cache.set('latest_pk', latest)
         cache.set('poll_count', count)
@@ -560,11 +560,14 @@ def flag_categories(request, name):
     group = get_object_or_404(Group, name=name)
     if get_access(request) and request.user not in group.user_set.all():
         return render(request, '403.html', status=403)
-    flags = group.flags.all()
+    access = group.access_set.all()[0]
+    flags = access.flags.all()
     flagged_messages = MessageFlag.objects.filter(flag__in=flags)
     if request.GET.get('export', None):
-        data = flagged_messages.values_list('message__connection_id', 'message__text', 'flag__name', 'message__date',
-                                            'message__connection__contact__reporting_location__name')
+        data = flagged_messages.filter(
+            message__connection__contact__reporting_location__name__in=access.allowed_locations).values_list(
+            'message__connection_id', 'message__text', 'flag__name', 'message__date',
+            'message__connection__contact__reporting_location__name')
         headers = ['Identifier', 'Message', 'Flag', 'Date', 'District']
         return ExcelResponse(data=data, headers=headers)
     return generic(
@@ -620,7 +623,7 @@ def cloud_dashboard(request, name):
 
 @never_cache
 @login_required
-#This is very sketchy stuff that we have to get rid of very soon(May require rewriting the whole access architecture)
+# This is very sketchy stuff that we have to get rid of very soon(May require rewriting the whole access architecture)
 def access_dashboards(request):
     access = get_access(request)
     urls = []
