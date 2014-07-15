@@ -156,7 +156,7 @@ LEFT JOIN
     ON "rapidsms_contact"."reporting_location_id" = "locations_location"."id"
 LEFT JOIN
     "rapidsms_connection"
-    ON "rapidsms_contact"."id" = "rapidsms_connection"."contact_id"  LIMIT 30;
+    ON "rapidsms_contact"."id" = "rapidsms_connection"."contact_id";
          """ \
         % year_now
 
@@ -277,7 +277,7 @@ LEFT JOIN
 
                     response_export_data = SortedDict()
                     if response.contact:
-                        response_export_data['ID'] = response.contact.default_connection().pk
+                        response_export_data['ID'] = response.contact.default_connection.pk
                     else:
                         response_export_data['ID'] = ""
 
