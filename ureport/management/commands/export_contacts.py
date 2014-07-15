@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
     sql = \
         """    SELECT
-"rapidsms_contact"."id",
+"rapidsms_contact"."id" as contact_pk,
 "rapidsms_contact"."language",
 "rapidsms_contact"."created_on",
 
@@ -45,6 +45,7 @@ WHERE
 ) as quit_date,
 
 "locations_location"."name" as district,
+"rapidsms_connection"."id" as id,
 
 (
  %d-EXTRACT('year'
@@ -152,7 +153,10 @@ FROM
  "rapidsms_contact"
 LEFT JOIN
  "locations_location"
-    ON "rapidsms_contact"."reporting_location_id" = "locations_location"."id";
+    ON "rapidsms_contact"."reporting_location_id" = "locations_location"."id"
+LEFT JOIN
+    "rapidsms_connection"
+    ON "rapidsms_contact"."id" = "rapidsms_connection"."contact_id"  LIMIT 30;
          """ \
         % year_now
 
@@ -218,11 +222,12 @@ LEFT JOIN
             cursor.execute(self.sql)
             row_0 = [
                 (
-                    'Id',
+                    'Contact_pk',
                     'Language',
                     'Join Date',
                     'Quit Date',
                     'District',
+                    'Id',
                     'Age',
                     'Gender',
                     'Health Facility',
@@ -239,7 +244,7 @@ LEFT JOIN
             ]
 
             rows = row_0 + cursor.fetchall()
-            kinds = "int text date date text int text text text text text text text text text text text".split()
+            kinds = "int text date date text int int text text text text text text text text text text text".split()
             kind_to_xf_map = {
                 'date': ezxf(num_format_str='yyyy-mm-dd'),
                 'int': ezxf(num_format_str='#,##0'),
@@ -254,6 +259,7 @@ LEFT JOIN
         except Exception, exc:
 
             print traceback.format_exc(exc)
+        print "Doxing"
 
         # export the last 2 polls
 
@@ -271,9 +277,9 @@ LEFT JOIN
 
                     response_export_data = SortedDict()
                     if response.contact:
-                        response_export_data['contact_pk'] = response.contact.default_connection.pk
+                        response_export_data['ID'] = response.contact.default_connection().pk
                     else:
-                        response_export_data['contact_pk'] = ""
+                        response_export_data['ID'] = ""
 
                     response_export_data['message_pk'] = response.message.pk
 

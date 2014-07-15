@@ -300,11 +300,11 @@ def export_poll(poll):
             response_export_data = SortedDict()
             if response.contact:
                 try:
-                    response_export_data['contact_pk'] = response.contact.connection_set.all()[0].pk
+                    response_export_data['ID'] = response.contact.connection_set.all()[0].pk
                 except IndexError:
                     continue
             else:
-                response_export_data['contact_pk'] = ""
+                response_export_data['ID'] = ""
 
             response_export_data['message_pk'] = response.message.pk
 
