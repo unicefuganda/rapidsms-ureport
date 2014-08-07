@@ -562,7 +562,8 @@ def flag_categories(request, name):
         return render(request, '403.html', status=403)
     access = group.access_set.all()[0]
     flags = access.flags.all()
-    flagged_messages = MessageFlag.objects.filter(flag__in=flags)
+    flagged_messages = MessageFlag.objects.filter(flag__in=flags,
+                                                  message__connection__contact__reporting_location__name__in=access.allowed_locations)
     if request.GET.get('export', None):
         data = flagged_messages.filter(
             message__connection__contact__reporting_location__name__in=access.allowed_locations).values_list(
