@@ -1,5 +1,6 @@
 {% extends "ureport/two-column.html" %}
 {% block content %}
+{% load i18n %}
 <div id="mod">
     <div id="columns">
         <div class="column" id="column0">
@@ -34,7 +35,7 @@
             <div class="widget">
                 <div class="module widget-head">
                     <h3>Results </h3>
-                    {% if not share %}<a style="display: block; background-color: #26aaff; width: 100px; font-weight: bolder; color: #ffffff" href="{% url polls-summary poll=poll.pk %}" id="share_link">Share This Poll</a>{% endif %}
+                    {% if not share %}<a style="display: inline; padding: 4px; background-color: #26aaff; width: 100px; font-weight: bolder; color: #ffffff" href="{% url polls-summary poll=poll.pk %}" id="share_link">{% trans "Share This Poll" %}</a>{% endif %}
                 </div>
                 <div id="poll_content" class="widget-content">
                 </div>
