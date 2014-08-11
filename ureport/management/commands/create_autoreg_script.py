@@ -1,6 +1,9 @@
 from django.core.management.base import BaseCommand
 from script.models import *
 from poll.models import *
+from django.conf import settings
+from django.utils.translation import ugettext as _
+
 
 class Command(BaseCommand):
 
@@ -114,7 +117,7 @@ class Command(BaseCommand):
         ))
         script.steps.add(ScriptStep.objects.create(
             script=script,
-            message="CONGRATULATIONS!!! You are now a registered member of Ureport! With Ureport, you can make a real difference!  Speak Up and Be Heard! from UNICEF",
+            message=_(getattr(settings, 'OPT_IN_WEB_CONFIRMATION', '')),
             order=9,
             rule=ScriptStep.WAIT_MOVEON,
             start_offset=60,

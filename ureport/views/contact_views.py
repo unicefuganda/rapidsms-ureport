@@ -226,7 +226,7 @@ def signup(request):
             if conn_created:
                 Message.objects.create(connection=connection, direction='O'
                     , status='Q',
-                                       text='CONGRATULATIONS!!! You are now a registered member of Ureport! With Ureport, you can make a real difference!  Speak Up and Be Heard! from UNICEF'
+                                       text=_(getattr(settings, 'OPT_IN_WEB_CONFIRMATION', ''))
                 )
         else:
             return render_to_response('ureport/signup.html',
@@ -331,7 +331,7 @@ def blacklist(request, pk):
     if request.user and request.user.has_perm('unregister.add_blacklist'):
         Blacklist.objects.get_or_create(connection=contact.default_connection)
         Message.objects.create(status="Q", direction="O", connection=contact.default_connection,
-                               text="Your UReport opt out is confirmed.If you made a mistake,or you want your voice to be heard again,text in JOIN and send it to 8500!All SMS messages are free")
+                               text=_(getattr(settings, 'OPT_OUT_CONFIRMATION', '')))
         return HttpResponse(status=200)
 
 
