@@ -205,7 +205,11 @@ def alerts(request, pk):
         ))
 
     if access:
-        message_list = message_list.filter(connection__contact__groups__in=access.groups.all())
+        if access.assigned_messages.exists():
+            message_list = access.assigned_messages.all()
+        else:
+            message_list = message_list.filter(connection__contact__groups__in=access.groups.all())
+
     (capture_status, _) = \
         Settings.objects.get_or_create(attribute='alerts')
     (rate, _) = MessageAttribute.objects.get_or_create(name='rating')
@@ -545,7 +549,10 @@ def home(request):
         print "Returning cached page"
         rendered = cache.get('cached_home')
     else:
-        time_of_last_in_message = Message.objects.filter(direction='I').order_by('-date')[0].date
+        try:
+            time_of_last_in_message = Message.objects.filter(direction='I').latest('date')
+        except Message.DoesNotExist:
+            time_of_last_in_message = None
         rendered = render_to_string('ureport/home.html', {'timelastmsg': time_of_last_in_message},
                                     context_instance=RequestContext(request))
         cache.set('cached_home', rendered)
