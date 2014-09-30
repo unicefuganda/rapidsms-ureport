@@ -8,7 +8,8 @@ from ureport.views import poll_dashboard, ureporters, editReporter, deleteReport
     new_poll, mp_dashboard, ussd_manager, blacklist, delete, view_poll, poll_status, edit_category, delete_category, \
     delete_rule, view_rules, create_rule, alerts, remove_captured, send_message, view_autoreg_rules, set_autoreg_rules, \
     user_registration_status, kannel_status, a_dashboard, flag_categories, remove_captured_ind, assign_poll, \
-    comfirm_message_sending, comfirmmessages, pulse, start_poll_export, cloud_dashboard, access_dashboards, map_cloud, extract_report
+    comfirm_message_sending, comfirmmessages, pulse, start_poll_export, cloud_dashboard, access_dashboards, map_cloud, extract_report, \
+    assign_dashboard
 from django.contrib.auth.decorators import login_required
 from generic.views import generic_row, generic
 from contact.forms import FreeSearchForm, MultipleDistictFilterForm, GenderFilterForm, FilterGroupsForm, \
@@ -168,7 +169,8 @@ urlpatterns = patterns('',
                        url(r'^dashboard/group/(?P<name>\w+)/$', flag_categories, name="flag-categories"),
                        url(r'^dashboard/(?P<name>\w+)/$', a_dashboard, name="aids-dashboard"),
                        url(r'^uncapture/(?P<pk>\d+)/$', remove_captured_ind, name="remove-captured_ind"),
-                       url(r'^assign/(?P<pk>\d+)/(?P<poll>\d+)/$', assign_poll, name="remove-captured_ind"),
+                       url(r'^assign/(?P<pk>\d+)/(?P<poll>\d+)/$', assign_poll, name="assign-to-poll"),
+                       url(r'^assign/(?P<pk>\d+)/(?P<access>\d+)/$', assign_dashboard, name="assign-to-dashboard"),
                        url(r'^reporter2/$', login_required(generic), {
                            'model': Ureporter,
                            'queryset': get_contacts,

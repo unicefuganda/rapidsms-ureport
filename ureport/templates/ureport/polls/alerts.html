@@ -195,9 +195,9 @@
 
             }).bind('ajax:success', function (evt, data, status, xhr) {
 
-                        $('#capty').html(xhr.responseText);
-                        $('.ajax_loading').remove();
-                    });
+                $('#capty').html(xhr.responseText);
+                $('.ajax_loading').remove();
+            });
 
             $('#remove_form').bind('ajax:before',function (exhr, status, error) {
                 ajax_loading('#remove');
@@ -205,16 +205,16 @@
             }).bind('ajax:success', function (evt, data, status, xhr) {
 
 
-                        $('.ajax_loading').remove();
-                        var $form = $(this);
+                $('.ajax_loading').remove();
+                var $form = $(this);
 
-                        // Reset fields and any validation errors, so form can be used again, but leave hidden_field values intact.
-                        $form.find('textarea,input[type="text"],input[type="file"]').val("");
-                        $('#mesg_title').html("Success:)");
-                        $('#mesg_body').html("Messages successfully removed from alerts .Please Refresh page. ");
-                        $('#mesg_st').show();
+                // Reset fields and any validation errors, so form can be used again, but leave hidden_field values intact.
+                $form.find('textarea,input[type="text"],input[type="file"]').val("");
+                $('#mesg_title').html("Success:)");
+                $('#mesg_body').html("Messages successfully removed from alerts .Please Refresh page. ");
+                $('#mesg_st').show();
 
-                    });
+            });
 
             $('#message_reply').bind('ajax:success', function (evt, data, status, xhr) {
 
@@ -239,12 +239,12 @@
 
                 }).bind('ajax:success', function (evt, data, status, xhr) {
 
-                            $('#message').html(xhr.responseText);
-                            $('#message').show();
-                            $('#message').effect("highlight", {}, 3000);
-                            $('.ajax_loading').remove();
+                    $('#message').html(xhr.responseText);
+                    $('#message').show();
+                    $('#message').effect("highlight", {}, 3000);
+                    $('.ajax_loading').remove();
 
-                        })
+                })
                         .bind('ajax:failure', function (xhr, status, error) {
                             alert("something went wrong!");
                         });
@@ -434,8 +434,8 @@
 
                     <a id="msg_rep_link" href="/sendmessage/?forward=true&msg={{msg.pk}}" class="btn msg_rep"
                        data-remote=true>{% trans "Foward" %}</a><a style="margin-top:3px; "
-                                                     href="/sendmessage/?reply=true&msg={{msg.pk}}"
-                                                     class="btn msg_send" id="msg_send_link" data-remote=true>{% trans "Reply" %}</a>
+                                                                   href="/sendmessage/?reply=true&msg={{msg.pk}}"
+                                                                   class="btn msg_send" id="msg_send_link" data-remote=true>{% trans "Reply" %}</a>
                 </td>
                 <td>
 
@@ -474,16 +474,29 @@
                     <ul style="list-style: none;">
 
                         <li class="dropdown" id="menu2">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
-                                <span id='asspan{{msg.pk}}'>{% trans "Assign" %}</span>
-                                <b class="caret"></b>
-                            </a>
-                            <ul class="dropdown-menu">
-                                {% for poll in assign_polls %}
-                                    <li><a onclick="$('#asspan{{msg.pk}}').text('Assined to {{poll.name}}');" href="/assign/{{msg.pk}}/{{poll.pk}}/" data-remote=True >{{ poll.name }}</a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
+                            {% if access and access.can_assign%}
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
+                                    <span id='asspan{{msg.pk}}'>{% trans "Assign" %}</span>
+                                    <b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    {% for a in accesses %}
+                                        <li><a onclick="$('#asspan{{ msg.pk }}').text('Assined to {{a.user.username}}');" href="/assign/{{msg.pk}}/{{a.pk}}/" data-remote=True >{{ a.user.username }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% elif not access %}
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
+                                    <span id='asspan{{msg.pk}}'>{% trans "Assign" %}</span>
+                                    <b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    {% for poll in assign_polls %}
+                                        <li><a onclick="$('#asspan{{msg.pk}}').text('Assined to {{poll.name}}');" href="/assign/{{msg.pk}}/{{poll.pk}}/" data-remote=True >{{ poll.name }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
                         </li>
                     </ul>
 

@@ -13,6 +13,7 @@ from django.http import HttpResponse
 from django.utils.translation import ugettext as _, gettext
 from django.views.decorators.cache import cache_page, never_cache
 from django.views.decorators.vary import vary_on_cookie
+from uganda_common.models import Access
 from uganda_common.utils import ExcelResponse
 
 from rapidsms_httprouter.models import Message
@@ -371,6 +372,8 @@ def alerts(request, pk):
         'district_form': district_form,
         'range_form': range_form,
         'groupform': groupform,
+        'access': access,
+        'accesses': Access.objects.all(),
     }, context_instance=RequestContext(request))
 
 
@@ -384,6 +387,13 @@ def assign_poll(request, pk, poll):
     message = Message.objects.get(pk=pk)
     poll = Poll.objects.get(pk=poll)
     poll.process_response(message)
+    return HttpResponse(status=200)
+
+
+def assign_dashboard(request, pk, access):
+    message = Message.objects.get(pk=pk)
+    access = Access.objects.get(pk=access)
+    access.assigned_messages.add(message)
     return HttpResponse(status=200)
 
 
