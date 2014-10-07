@@ -419,7 +419,7 @@ def remove_captured(request):
 def push_to_mtrac(request, pk):
     message = Message.objects.get(pk=pk)
     send_to_mtrac(message)
-    return "Sent"
+    return HttpResponse("Sent")
 
 
 @login_required
