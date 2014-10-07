@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
+import urllib
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
 from django.utils.datastructures import SortedDict
 from contact.models import MessageFlag
 from rapidsms.models import Contact
 from poll.models import ResponseCategory
-from ureport.models.models import UPoll as Poll, PollAttribute
+from ureport.models.models import UPoll as Poll, PollAttribute, SentToMtrac
 from script.models import ScriptStep, Script
 from django.db.models import Count
 from .models import Ureporter, UreportContact
@@ -26,6 +27,30 @@ from ureport.settings import UREPORT_ROOT
 
 module_name = __name__
 logger = logging.getLogger(module_name)
+
+
+def send_to_mtrac(message):
+    log = logger
+    try:
+            message = message.senttomtrac
+            log.info("Already Sent message to Mtrac on %s" % message.senttomtrac.sent_on)
+            return
+    except SentToMtrac.DoesNotExist:
+        pass
+    params = urllib.urlencode({'message': message.text, 'sender': message.connection.identity,
+                               'backend': getattr(settings, 'MTRAC_PUSH_BACKEND'),
+                               'password': getattr(settings, 'MTRAC_ROUTER_PASSWORD')})
+    try:
+        #f = None
+        f = urllib.urlopen("%s?%s" % (getattr(settings, 'MTRAC_ROUTER_URL'), params))
+    except Exception, e:
+        log.error(str(e))
+        return
+    if f.getcode() != 200:
+        log.error("Status Mtrac returned (%d):" % f.getcode())
+        return
+    SentToMtrac.objects.create(message=message)
+    log.info("Pushed messages to Mtrac")
 
 
 def get_access(request):

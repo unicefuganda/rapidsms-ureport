@@ -33,7 +33,7 @@ from ureport.views.utils.paginator import UreportPaginator, ureport_paginate
 from contact.models import Flag, MessageFlag
 from django.db.models import Q
 from ureport.settings import UREPORT_ROOT
-from ureport.utils import get_access
+from ureport.utils import get_access, send_to_mtrac
 import os
 from generic.views import generic
 from generic.sorters import SimpleSorter
@@ -413,6 +413,13 @@ def remove_captured(request):
         return HttpResponse('success')
 
     return HttpResponse('Sucessfully deleted')
+
+
+@login_required
+def push_to_mtrac(request, pk):
+    message = Message.objects.get(pk=pk)
+    send_to_mtrac(message)
+    return "Sent"
 
 
 @login_required
