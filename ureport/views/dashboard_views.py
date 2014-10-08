@@ -427,6 +427,7 @@ def push_to_mtrac(request, pk):
 
 
 @login_required
+@never_cache
 def a_dashboard(request, name):
     poll_form = NewPollForm()
     range_form = rangeForm()
