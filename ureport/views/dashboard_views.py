@@ -12,6 +12,7 @@ from django.utils.safestring import mark_safe
 from django.http import HttpResponse
 from django.utils.translation import ugettext as _, gettext
 from django.views.decorators.cache import cache_page, never_cache
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.vary import vary_on_cookie
 from uganda_common.models import Access
 from uganda_common.utils import ExcelResponse
@@ -416,6 +417,7 @@ def remove_captured(request):
 
 
 @login_required
+@csrf_exempt
 def push_to_mtrac(request, pk):
     message = Message.objects.get(pk=pk)
     sent = send_to_mtrac(message)
