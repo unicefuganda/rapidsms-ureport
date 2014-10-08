@@ -41,11 +41,13 @@ def send_to_mtrac(message):
     params = {'message': message.text, 'sender': message.connection.identity,
                                'backend': getattr(settings, 'MTRAC_PUSH_BACKEND'),
                                'password': getattr(settings, 'MTRAC_ROUTER_PASSWORD')}
-    response = requests.get(getattr(settings, 'MTRAC_ROUTER_URL'), data=params)
+    response = requests.get(getattr(settings, 'MTRAC_ROUTER_URL'), params=params)
+    log.info("Request Url:" % response.url)
     if response.status_code in [200, 201]:
         SentToMtrac.objects.create(message=message)
         return True
     log.info("Message not sent returned code %d" % response.status_code)
+    log.info("Response:" % response.text)
     return False
 
 
