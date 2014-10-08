@@ -84,25 +84,9 @@ def reprocess_groups(group, ignore_result=True):
 def push_to_mtrac(messages):
     messages = list(Message.objects.filter(pk__in=messages))
     for message in messages:
-        try:
-            message = message.senttomtrac
-            log.info("Already Sent message to Mtrac on %s" % message.senttomtrac.sent_on)
-            continue
-        except SentToMtrac.DoesNotExist:
-            pass
-        params = urllib.urlencode({'message': message.text, 'sender': message.connection.identity,
-                                   'backend': getattr(settings, 'MTRAC_PUSH_BACKEND'),
-                                   'password': getattr(settings, 'MTRAC_ROUTER_PASSWORD')})
-        try:
-            #f = None
-            f = urllib.urlopen("%s?%s" % (getattr(settings, 'MTRAC_ROUTER_URL'), params))
-        except Exception, e:
-            log.error(str(e))
-            continue
-        if f.getcode() != 200:
-            log.error("Status Mtrac returned (%d):" % f.getcode())
-            continue
-        SentToMtrac.objects.create(message=message)
+        sent = utils.send_to_mtrac(message)
+        if not sent:
+            log.info("Message with pk %d not sent" % message.pk)
     log.info("Pushed messages to Mtrac")
 
 

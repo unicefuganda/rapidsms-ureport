@@ -5,6 +5,7 @@ import urllib
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
 from django.utils.datastructures import SortedDict
+import requests
 from contact.models import MessageFlag
 from rapidsms.models import Contact
 from poll.models import ResponseCategory
@@ -34,23 +35,18 @@ def send_to_mtrac(message):
     try:
             message = message.senttomtrac
             log.info("Already Sent message to Mtrac on %s" % message.senttomtrac.sent_on)
-            return
+            return True
     except SentToMtrac.DoesNotExist:
         pass
-    params = urllib.urlencode({'message': message.text, 'sender': message.connection.identity,
+    params = {'message': message.text, 'sender': message.connection.identity,
                                'backend': getattr(settings, 'MTRAC_PUSH_BACKEND'),
-                               'password': getattr(settings, 'MTRAC_ROUTER_PASSWORD')})
-    try:
-        #f = None
-        f = urllib.urlopen("%s?%s" % (getattr(settings, 'MTRAC_ROUTER_URL'), params))
-    except Exception, e:
-        log.error(str(e))
-        return
-    if f.getcode() != 200:
-        log.error("Status Mtrac returned (%d):" % f.getcode())
-        return
-    SentToMtrac.objects.create(message=message)
-    log.info("Pushed messages to Mtrac")
+                               'password': getattr(settings, 'MTRAC_ROUTER_PASSWORD')}
+    response = requests.get(getattr(settings, 'MTRAC_ROUTER_URL'), data=params)
+    if response.status_code in [200, 201]:
+        SentToMtrac.objects.create(message=message)
+        return True
+    log.info("Message not sent returned code %d" % response.status_code)
+    return False
 
 
 def get_access(request):
