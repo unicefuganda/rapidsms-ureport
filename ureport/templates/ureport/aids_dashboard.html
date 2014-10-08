@@ -326,11 +326,9 @@
                                                               href="/sendmessage/?reply=true&msg={{msg.pk}}&flag={{ name|slugify }}"
                                                               class="btn msg_send" id="msg_send_link" data-remote=true>Reply</a>
                             {% if msg.senttomtrac %}
-                                <button class="btn msg_rep" type="button" disabled="disabled"
-                                        data-remote=true>Pushed2Mtrac</button>
+                                <button class="btn" type="button" disabled="disabled" data-remote=true>Pushed2Mtrac</button>
                             {% else %}
-                                <a href="#" class="btn msg_rep" id="push2mtrac" onclick="push2mtrac('{{ msg.id }}')"
-                                   data-remote=true>Push2Mtrac</a>
+                                <button class="btn" type="button" id="push2mtrac" onclick="push2mtrac('{{ msg.id }}')" data-remote=true>Push2Mtrac</button>
                             {% endif %}
                         </td>
                         <td>
