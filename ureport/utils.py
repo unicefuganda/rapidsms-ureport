@@ -34,7 +34,7 @@ def send_to_mtrac(message):
     log = logger
     try:
             message = message.senttomtrac
-            log.info("Already Sent message to Mtrac on %s" % message.senttomtrac.sent_on)
+            log.info("Already Sent message to Mtrac on %s" % message.sent_on)
             return True
     except SentToMtrac.DoesNotExist:
         pass

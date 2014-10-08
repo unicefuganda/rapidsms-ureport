@@ -328,7 +328,7 @@
                             {% if msg.senttomtrac %}
                                 <button class="btn" type="button" disabled="disabled" data-remote=true>Pushed2Mtrac</button>
                             {% else %}
-                                <button class="btn" type="button" id="push2mtrac" onclick="push2mtrac('{{ msg.id }}')" data-remote=true>Push2Mtrac</button>
+                                <button class="btn" type="button" id="push2mtrac{{ msg.id }}" onclick="push2mtrac('{{ msg.id }}')" data-remote=true>Push2Mtrac</button>
                             {% endif %}
                         </td>
                         <td>
@@ -443,7 +443,7 @@
     <script>
         function push2mtrac(id){
             $.post('/push2mtrac/'+id+'/', function(data){
-                var p2m = $('#push2mtrac');
+                var p2m = $('#push2mtrac'+id);
                 p2m.text("Pushed2Mtrac");
                 p2m.attr('disabled', 'disabled');
                 p2m.removeAttr('onclick')
