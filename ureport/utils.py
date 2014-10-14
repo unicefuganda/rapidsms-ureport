@@ -38,7 +38,7 @@ def send_to_mtrac(message):
             return True
     except SentToMtrac.DoesNotExist:
         pass
-    params = {'message': "ALERT %s" % message.text, 'sender': message.connection.identity,
+    params = {'message': "%s %s"  % (getattr(settings, 'MTRAC_KEYWORD', 'ureport'), message.text), 'sender': message.connection.identity,
                                'backend': getattr(settings, 'MTRAC_PUSH_BACKEND'),
                                'password': getattr(settings, 'MTRAC_ROUTER_PASSWORD')}
     response = requests.get(getattr(settings, 'MTRAC_ROUTER_URL'), params=params)
