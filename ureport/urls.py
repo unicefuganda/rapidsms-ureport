@@ -171,7 +171,7 @@ urlpatterns = patterns('',
                        url(r'^uncapture/(?P<pk>\d+)/$', remove_captured_ind, name="remove-captured_ind"),
                        url(r'^push2mtrac/(?P<pk>\d+)/$', push_to_mtrac, name="push-to-mtrac"),
                        url(r'^assign/(?P<pk>\d+)/(?P<poll>\d+)/$', assign_poll, name="assign-to-poll"),
-                       url(r'^assign/(?P<pk>\d+)/(?P<access>\d+)/$', assign_dashboard, name="assign-to-dashboard"),
+                       url(r'^assignd/(?P<pk>\d+)/(?P<access>\d+)/$', assign_dashboard, name="assign-to-dashboard"),
                        url(r'^reporter2/$', login_required(generic), {
                            'model': Ureporter,
                            'queryset': get_contacts,

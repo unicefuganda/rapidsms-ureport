@@ -481,7 +481,7 @@
                                 </a>
                                 <ul class="dropdown-menu">
                                     {% for a in accesses %}
-                                        <li><a onclick="$('#asspan{{ msg.pk }}').text('Assined to {{a.user.username}}');" href="/assign/{{msg.pk}}/{{a.pk}}/" data-remote=True >{{ a.user.username }}</a>
+                                        <li><a onclick="$('#asspan{{ msg.pk }}').text('Assined to {{a.user.username}}');" href="/assignd/{{msg.pk}}/{{a.pk}}/" data-remote=True >{{ a.user.username }}</a>
                                         </li>
                                     {% endfor %}
                                 </ul>
