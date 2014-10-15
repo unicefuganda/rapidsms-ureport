@@ -395,6 +395,7 @@ def assign_dashboard(request, pk, access):
     message = Message.objects.get(pk=pk)
     access = Access.objects.get(pk=access)
     access.assigned_messages.add(message)
+    access.save()
     return HttpResponse(status=200)
 
 
