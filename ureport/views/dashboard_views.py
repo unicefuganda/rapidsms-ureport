@@ -374,7 +374,7 @@ def alerts(request, pk):
         'range_form': range_form,
         'groupform': groupform,
         'access': access,
-        'accesses': Access.objects.filter(user__name__startswith='GAPP'),
+        'accesses': Access.objects.filter(user__username__startswith='GAPP'),
     }, context_instance=RequestContext(request))
 
 
