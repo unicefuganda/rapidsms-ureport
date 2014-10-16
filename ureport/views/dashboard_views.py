@@ -224,7 +224,7 @@ def alerts(request, pk):
         range_form = rangeForm(request.POST)
         if range_form.is_valid():
             tasks.export_alerts_task(range_form, access, request.get_host(), request.user.username)
-            return HttpResponseRedirect(reverse('alerts', args=[request.use.pk]))
+            return HttpResponseRedirect(reverse('alerts', args=[request.user.pk]))
 
     if request.GET.get('search', None):
         search = request.GET.get('search')
