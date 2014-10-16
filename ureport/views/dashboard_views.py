@@ -219,7 +219,7 @@ def alerts(request, pk):
     # message_list=[Message.objects.latest('date')]
     # use more efficient count
 
-    if request.GET.get('download', None) and access is None:
+    if request.GET.get('download', None):
         range_form = rangeForm(request.POST)
         if range_form.is_valid():
             start = range_form.cleaned_data['startdate']
@@ -228,7 +228,14 @@ def alerts(request, pk):
 
             cols = ["replied", "rating", "direction", "district", "date", "message", "id",
                     "forwarded"]
-            data = AlertsExport.objects.filter(date__range=(start, end)).values_list(*cols).iterator()
+            data = AlertsExport.objects.filter(date__range=(start, end))
+            if access:
+                if access.assigned_messages.exists():
+                    numbers = access.assigned_messages.values_list('connection__identity', flat=True)
+                else:
+                    numbers = list(access.groups.values_list('contact__connection__identity', flat=True))
+                data = data.filter(mobile__in=numbers)
+            data = data.values_list(*cols).iterator()
             excel_file_path = \
                 os.path.join(os.path.join(os.path.join(UREPORT_ROOT,
                                                        'static'), 'spreadsheets'),
