@@ -353,7 +353,7 @@
         <form  method="POST"  action="?download=true">
             <table>
                 {{range_form.as_table}}
-                <tr><td><input type="submit" value="{% trans "Download" %}" class="btn" ></td></tr>
+                <tr><td><input type="submit" value="{% trans "Download" %}" class="btn" onclick="send_download_request()" ></td></tr>
             </table>
         </form>
     </div>
@@ -592,5 +592,8 @@
                 });
             }, 5000);
         });
+       function send_download_request(){
+           alert('You will receive and email with link to export, when export is done')
+       }
     </script>
 {% endblock %}

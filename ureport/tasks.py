@@ -157,6 +157,21 @@ def export_poll(poll_id, host, username=None):
 
 
 @task
+def export_alerts_task(range_form, access, host, username=None):
+    user = User.objects.get(username=username)
+    utils.export_alerts(range_form, access, user)
+    excel_file_path = \
+        os.path.join(os.path.join(os.path.join(UREPORT_ROOT,
+                                               'static'), 'spreadsheets'),
+                     'alerts_%s.xlsx' % user.pk)
+    if user.email:
+        msg = "Hi %s,\nThe Messages has been exported and are now ready for download." \
+              "\nPlease find it here %s\nThank You" % (
+                  user.username, host+excel_file_path)
+        send_mail('Contacts Added to Group', msg, "", [user.email], fail_silently=False)
+
+
+@task
 def extract_gen_reports(form_data, **kwargs):
     user = User.objects.get(username=kwargs.get('username'))
     time_now = str(datetime.now()).replace(" ", "").replace("-", "").replace(":", "").replace(".", "")

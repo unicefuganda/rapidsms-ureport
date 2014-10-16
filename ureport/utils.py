@@ -4,6 +4,7 @@ import os
 import urllib
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
+from django.http import HttpResponse
 from django.utils.datastructures import SortedDict
 import requests
 from contact.models import MessageFlag
@@ -12,7 +13,7 @@ from poll.models import ResponseCategory
 from ureport.models.models import UPoll as Poll, PollAttribute, SentToMtrac
 from script.models import ScriptStep, Script
 from django.db.models import Count
-from .models import Ureporter, UreportContact
+from .models import Ureporter, UreportContact, AlertsExport
 from unregister.models import Blacklist
 from django.conf import settings
 from rapidsms_httprouter.models import Message
@@ -413,6 +414,29 @@ def export_poll(poll):
 
             response_data_list.append(response_export_data)
         ExcelResponse(response_data_list, output_name=excel_file_path, write_to_file=True)
+
+
+def export_alerts(range_form, access, user):
+    start = range_form.cleaned_data['startdate']
+    end = range_form.cleaned_data['enddate']
+    from django.core.servers.basehttp import FileWrapper
+
+    cols = ["replied", "rating", "direction", "district", "date", "message", "id",
+            "forwarded"]
+    data = AlertsExport.objects.filter(date__range=(start, end))
+    if access:
+        if access.assigned_messages.exists():
+            numbers = access.assigned_messages.values_list('connection__identity', flat=True)
+        else:
+            numbers = list(access.groups.values_list('contact__connection__identity', flat=True))
+        data = data.filter(mobile__in=numbers)
+    data = data.values_list(*cols).iterator()
+    excel_file_path = \
+        os.path.join(os.path.join(os.path.join(UREPORT_ROOT,
+                                               'static'), 'spreadsheets'),
+                     'alerts_%s.xlsx' % user.pk)
+    ExcelResponse(data, output_name=excel_file_path,
+                  write_to_file=True, headers=cols)
 
 
 def alert_if_mp(message):

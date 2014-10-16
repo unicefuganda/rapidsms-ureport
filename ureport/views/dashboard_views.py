@@ -9,7 +9,7 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.translation import ugettext as _, gettext
 from django.views.decorators.cache import cache_page, never_cache
 from django.views.decorators.csrf import csrf_exempt
@@ -18,11 +18,12 @@ from uganda_common.models import Access
 from uganda_common.utils import ExcelResponse
 
 from rapidsms_httprouter.models import Message
+from ureport import tasks
 
 from ureport.forms import AssignResponseGroupForm, \
     NewPollForm, rangeForm, DistrictForm
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, resolve
 from rapidsms.models import Contact, Connection
 from unregister.models import Blacklist
 from poll.models import Translation, Poll
@@ -222,34 +223,8 @@ def alerts(request, pk):
     if request.GET.get('download', None):
         range_form = rangeForm(request.POST)
         if range_form.is_valid():
-            start = range_form.cleaned_data['startdate']
-            end = range_form.cleaned_data['enddate']
-            from django.core.servers.basehttp import FileWrapper
-
-            cols = ["replied", "rating", "direction", "district", "date", "message", "id",
-                    "forwarded"]
-            data = AlertsExport.objects.filter(date__range=(start, end))
-            if access:
-                if access.assigned_messages.exists():
-                    numbers = access.assigned_messages.values_list('connection__identity', flat=True)
-                else:
-                    numbers = list(access.groups.values_list('contact__connection__identity', flat=True))
-                data = data.filter(mobile__in=numbers)
-            data = data.values_list(*cols).iterator()
-            excel_file_path = \
-                os.path.join(os.path.join(os.path.join(UREPORT_ROOT,
-                                                       'static'), 'spreadsheets'),
-                             'alerts.xlsx')
-            ExcelResponse(data, output_name=excel_file_path,
-                          write_to_file=True, headers=cols)
-            response = HttpResponse(FileWrapper(open(excel_file_path)),
-                                    content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-            response['Content-Disposition'] = 'attachment; filename=alerts.xlsx'
-            from django import db
-
-            db.reset_queries()
-            response['Cache-Control'] = 'no-cache'
-            return response
+            tasks.export_alerts_task(range_form, access, request.get_host(), request.user.username)
+            return HttpResponseRedirect(reverse('alerts', args=[request.use.pk]))
 
     if request.GET.get('search', None):
         search = request.GET.get('search')
