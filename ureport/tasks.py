@@ -160,10 +160,7 @@ def export_poll(poll_id, host, username=None):
 def export_alerts_task(range_form, access, host, username=None):
     user = User.objects.get(username=username)
     utils.export_alerts(range_form, access, user)
-    excel_file_path = \
-        os.path.join(os.path.join(os.path.join(UREPORT_ROOT,
-                                               'static'), 'spreadsheets'),
-                     'alerts_%s.xlsx' % user.pk)
+    excel_file_path = '/static/ureport/spreadsheets/alerts_%s.xlsx' % user.pk
     if user.email:
         msg = "Hi %s,\nThe Messages has been exported and are now ready for download." \
               "\nPlease find it here %s\nThank You" % (
