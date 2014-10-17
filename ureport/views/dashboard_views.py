@@ -431,8 +431,8 @@ def a_dashboard(request, name):
     messages = messages | responses
 
     if request.GET.get('download', None):
-        export_data = messages.values('connection__pk', 'text', 'date',
-                                           'connection__contact__reporting_location__name')
+        export_data = messages.values_list('connection__pk', 'text', 'date',
+                                           'connection__contact__reporting_location__name').iterator()
         return ExcelResponse(data=export_data)
     if request.GET.get('capture', None):
         (s, _) = Settings.objects.get_or_create(attribute='aids')
