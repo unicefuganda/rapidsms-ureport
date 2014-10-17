@@ -3,14 +3,14 @@
     <td id="replied_{{ msg.pk }}">
         {%for  m  in msg.details.all%}
 
-        {%if m.attribute.name == "replied"%}
+            {%if m.attribute.name == "replied"%}
 
-        {{m.attribute.name}}
-        {%endif%}
-        {%if m.attribute.name == "forwarded"%}
+                {{m.attribute.name}}
+            {%endif%}
+            {%if m.attribute.name == "forwarded"%}
 
-        {{m.attribute.name}}
-        {%endif%}
+                {{m.attribute.name}}
+            {%endif%}
 
         {%endfor%}
     </td>
@@ -18,13 +18,15 @@
     <td>{{ msg.text }}</td>
     <td>{{ msg.date|date:"m/d/Y H:i:s" }}</td>
     <td>{{ msg.connection.contact.reporting_location }}</td>
-    <td>{%if perms.rapidsms.forward %}
-        <a id="msg_rep_link"   href="/sendmessage/?forward=true&msg={{msg.pk}}" class="btn msg_rep .msg_rep_link"
-           data-remote=true>Foward</a>
-        {%endif%}
-        <a style="margin-top:3px; "
-                                          href="/sendmessage/?reply=true&msg={{msg.pk}}"
-                                          class="btn msg_send .msg_rep_link"  id="msg_send_link" data-remote=true>Reply</a>
+    <td><a id="msg_rep_link" href="/sendmessage/?forward=true&msg={{msg.pk}}" class="btn msg_rep"
+           data-remote=true>Foward</a> <a style="margin-top:3px; "
+                                          href="/sendmessage/?reply=true&msg={{msg.pk}}&flag={{ name|slugify }}"
+                                          class="btn msg_send" id="msg_send_link" data-remote=true>Reply</a>
+        {% if msg.senttomtrac %}
+            <button class="btn" type="button" disabled="disabled" data-remote=true>Pushed2Mtrac</button>
+        {% else %}
+            <button class="btn" type="button" id="push2mtrac{{ msg.id }}" onclick="push2mtrac('{{ msg.id }}')" data-remote=true>Push2Mtrac</button>
+        {% endif %}
     </td>
     <td>
 
@@ -32,28 +34,28 @@
         <ul class='star-rating' id="rate{{msg.pk}}">
 
             {%for d in  msg.details.all%}
-            {% if d.attribute.name == "rating" %}
+                {% if d.attribute.name == "rating" %}
 
 
-            <li><a href='javascript:void(0)' class="rate{{d.value}}"
+                    <li><a href='javascript:void(0)' class="rate{{d.value}}"
 
-                   title="{{d.description}}">{{d.value}} </a></li>
-            {% set alert = True %}
-            {%endif%}
+                           title="{{d.description}}">{{d.value}} </a></li>
+                    {% set alert = True %}
+                {%endif%}
             {%endfor%}
 
             {%if not alert%}
 
-            <li><a href='./?rating=1&msg={{msg.pk}}'  onclick="bind_ajax(this,'rate{{msg.pk}}');"
-                   data-remote=true title='Requires Attention' class='one-star star'>1</a></li>
-            <li><a href='./?rating=2&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
-                   data-remote=true title='Moderate' class='two-stars star'>2</a></li>
-            <li><a href='./?rating=3&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
-                   data-remote=true title='Important' class='three-stars star'>3</a></li>
-            <li><a href='./?rating=4&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
-                   data-remote=true title='Urgent' class='four-stars star star'>4</a></li>
-            <li><a href='./?rating=5&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
-                   data-remote=true title='Very Urgent' class='five-stars star '>5</a></li>
+                <li><a href='./?rating=1&msg={{msg.pk}}'  onclick="bind_ajax(this,'rate{{msg.pk}}');"
+                       data-remote=true title='Requires Attention' class='one-star star'>1</a></li>
+                <li><a href='./?rating=2&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
+                       data-remote=true title='Moderate' class='two-stars star'>2</a></li>
+                <li><a href='./?rating=3&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
+                       data-remote=true title='Important' class='three-stars star'>3</a></li>
+                <li><a href='./?rating=4&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
+                       data-remote=true title='Urgent' class='four-stars star star'>4</a></li>
+                <li><a href='./?rating=5&msg={{msg.pk}}' onclick="bind_ajax(this,'rate{{msg.pk}}');"
+                       data-remote=true title='Very Urgent' class='five-stars star '>5</a></li>
             {%endif%}
 
         </ul>
@@ -69,8 +71,8 @@
                 </a>
                 <ul class="dropdown-menu">
                     {% for poll in assign_polls %}
-                    <li><a href="/assign/{{msg.pk}}/{{poll.pk}}/" data-remote=True >{{ poll.name }}</a>
-                    </li>
+                        <li><a href="/assign/{{msg.pk}}/{{poll.pk}}/" data-remote=True >{{ poll.name }}</a>
+                        </li>
                     {% endfor %}
                 </ul>
             </li>
