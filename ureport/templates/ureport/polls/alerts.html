@@ -334,7 +334,6 @@
 
 
     </a>
-    {%if  perms.ureport.can_export %}
 
 
 
@@ -346,8 +345,6 @@
         <span><a  onclick="$('#groups_filter').toggle();" href="javascript:void(0);" >{% trans "Filter Groups" %} >></a>
         </span>
 
-
-    {%endif%}
 
     <div id="download" style="display:none;">
         <form  method="POST"  action="?download=true">
