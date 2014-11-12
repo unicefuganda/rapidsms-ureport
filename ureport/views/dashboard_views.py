@@ -541,7 +541,7 @@ def home(request):
             values_list('poll', flat=True).order_by('-poll__pk')[0]
         count = PollAttribute.objects.get(key='viewable').values.filter(value='true').values_list('poll',
                                                                                                   flat=True).count()
-        time_of_last_in_message = Message.objects.filter(direction='I').order_by('-date')[0]
+        time_of_last_in_message = Message.objects.filter(direction='I').order_by('-date')[0].date
 
 
 
