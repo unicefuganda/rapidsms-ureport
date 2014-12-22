@@ -323,21 +323,6 @@
     <h2>
         {% trans "Messages" %}
     </h2>
-    <a href="./?capture=toggle" onclick="c=$(this).attr('href')+'&time='+new Date().getTime();$(this).attr('href',c);" id="status" class="btn" data-remote=true>
-    <span id="capty">
-        {%if capture_status.value == 'true'%}
-            {% trans "Stop Capture" %}
-        {%else%}
-            {% trans "Start Capture" %}
-        {%endif%}
-        </span>
-
-
-    </a>
-
-
-
-
         <span> <a  onclick="$('#district_filter').toggle();" href="javascript:void(0);" >{% trans "Filter Districts" %} >>|</a></span>
 
         <span><a  onclick="$('#download').toggle();" href="javascript:void(0);" >{% trans "Download" %} >></a>

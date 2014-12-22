@@ -555,7 +555,7 @@ def home(request):
         rendered = cache.get('cached_home')
     else:
         try:
-            time_of_last_in_message = Message.objects.filter(direction='I').latest('date')
+            time_of_last_in_message = Message.objects.filter(direction='I').latest('date').date
         except Message.DoesNotExist:
             time_of_last_in_message = None
         rendered = render_to_string('ureport/home.html', {'timelastmsg': time_of_last_in_message},
