@@ -4,15 +4,17 @@ import os
 
 import re
 import urllib
-from celery.task import Task, task
+from celery.task import Task, task, periodic_task
+from celery.schedules import crontab
 from celery.registry import tasks
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from django.core import mail
 from django.db.models import Q
 from django.utils.datastructures import SortedDict
 from openpyxl import reader
-from poll.models import Response
+from poll.models import Response, Poll
 from rapidsms_httprouter.models import Message
 from uganda_common.models import Access
 from uganda_common.utils import ExcelResponse
@@ -23,9 +25,72 @@ import logging
 from rapidsms.models import Connection, Contact
 from ureport.settings import UREPORT_ROOT
 import utils
+from uganda_common import utils as common_utils
+
+UREPORTERS_STATIC_FOLDER = 'rapidsms_ureport/ureport/static/spreadsheets/'
+UREPORT_STATIC_URL = 'static/ureport/'
 
 log = logging.getLogger(__name__)
 
+@periodic_task(run_every=crontab(minute=0, hour=6))
+def _generate_new_ureporters_spreadsheet():
+    generate_new_ureporters_spreadsheet()
+
+
+def generate_new_ureporters_spreadsheet():
+    file_name = 'new-ureporters.xlsx'
+    today = datetime.today()
+    yesterday = today - timedelta(days=1)
+    youth_group_poll = Poll.objects.get(name="youthgroup")
+    connections = Connection.objects.filter(created_on__gte=yesterday).exclude(contact=None).order_by('created_on')
+
+    export_data = _all_contacts_data(connections, youth_group_poll)
+    headers = ['Id', 'District', 'How did you hear about U-report?']
+
+    common_utils.create_workbook(export_data, UREPORTERS_STATIC_FOLDER + file_name, headers)
+    notify_admins(file_name, today, yesterday)
+
+
+def notify_admins(file_name, today, yesterday):
+    format = '%b %d, %Y at %H:%m'
+    yesterday_str = yesterday.strftime(format)
+    today_str = today.strftime(format)
+    url = getattr(settings, 'HOST', 'http://ureport.ug/') + UREPORT_STATIC_URL + 'spreadsheets/'+file_name
+    message = """
+    Hello,
+
+    Please find the list of new U-reporters who joined since yesterday %s to today %s here:
+
+    %s
+
+    Have a nice day,
+    U-report team
+
+    """
+    message = message % (yesterday_str, today_str, url)
+    subject = 'Daily Ureporters Joining Details'
+    mail.send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
+                                  settings.PROJECT_MANAGERS, fail_silently=True)
+
+
+
+
+def _all_contacts_data(connections, youth_group_poll):
+    result = []
+    for connection in connections:
+        youth_group = connection.messages.filter(poll_responses__poll=youth_group_poll)
+        contact_data = _contact_data(connection, youth_group)
+        result.append(contact_data)
+    return result
+
+
+def _contact_data(connection, youth_group):
+    result = [connection.id, '', '']
+    if connection.contact.reporting_location:
+        result[1] = connection.contact.reporting_location.name or ''
+    if youth_group.exists():
+        result[2] = youth_group[0].text or ''
+    return result
 
 @task
 def ping(ignore_result=True):
