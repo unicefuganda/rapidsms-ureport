@@ -342,12 +342,7 @@ def view_responses(req, poll_id):
         responses = poll.responses.order_by('-date')
         log.info("[reponses] 1 - %s " % responses)
     else:
-        if hasattr(Contact, 'groups'):
-            responses = \
-                poll.responses.filter(contact__groups__in=req.user.groups.all()).distinct()
-            log.info("[reponses] 2- %s " % responses)
-        else:
-            responses = poll.responses.all()
+        responses = poll.responses.all()
         responses = responses.order_by('-date')
         log.info("[reponses] 3 - %s " % responses)
         for group in req.user.groups.all():
