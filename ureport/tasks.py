@@ -42,19 +42,19 @@ def generate_new_ureporters_spreadsheet():
     today = datetime.today()
     yesterday = today - timedelta(days=1)
     youth_group_poll = Poll.objects.get(name="youthgroup")
-    connections = Connection.objects.filter(created_on__gte=yesterday).exclude(contact=None).order_by('created_on')
+    connections = Connection.objects.filter(created_on__gte=yesterday).exclude(contact=None).order_by('contact__created_on')
 
     export_data = _all_contacts_data(connections, youth_group_poll)
-    headers = ['Id', 'District', 'How did you hear about U-report?']
+    headers = ['date', 'Id', 'District', 'How did you hear about U-report?']
 
     common_utils.create_workbook(export_data, UREPORTERS_STATIC_FOLDER + file_name, headers)
     notify_admins(file_name, today, yesterday)
 
 
 def notify_admins(file_name, today, yesterday):
-    format = '%b %d, %Y at %H:%m'
-    yesterday_str = yesterday.strftime(format)
-    today_str = today.strftime(format)
+    date_format = '%b %d, %Y at %H:%m'
+    yesterday_str = yesterday.strftime(date_format)
+    today_str = today.strftime(date_format)
     url = getattr(settings, 'HOST', 'http://ureport.ug/') + UREPORT_STATIC_URL + 'spreadsheets/'+file_name
     message = """
     Hello,
@@ -69,10 +69,7 @@ def notify_admins(file_name, today, yesterday):
     """
     message = message % (yesterday_str, today_str, url)
     subject = 'Daily Ureporters Joining Details'
-    mail.send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
-                                  settings.PROJECT_MANAGERS, fail_silently=True)
-
-
+    mail.send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, settings.PROJECT_MANAGERS, fail_silently=True)
 
 
 def _all_contacts_data(connections, youth_group_poll):
@@ -85,11 +82,12 @@ def _all_contacts_data(connections, youth_group_poll):
 
 
 def _contact_data(connection, youth_group):
-    result = [connection.id, '', '']
-    if connection.contact.reporting_location:
-        result[1] = connection.contact.reporting_location.name or ''
+    contact = connection.contact
+    result = [str(contact.created_on.date()), connection.id, '', '']
+    if contact.reporting_location:
+        result[2] = contact.reporting_location.name or ''
     if youth_group.exists():
-        result[2] = youth_group[0].text or ''
+        result[3] = youth_group[0].text or ''
     return result
 
 @task

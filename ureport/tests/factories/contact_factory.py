@@ -10,4 +10,3 @@ class ContactFactory(factory.DjangoModelFactory):
         model = Contact
 
     reporting_location = factory.SubFactory(LocationFactory)
-    created_on = datetime.datetime.now()
