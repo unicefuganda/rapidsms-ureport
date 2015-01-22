@@ -408,6 +408,33 @@ def push_to_mtrac(request, pk):
     return HttpResponse("Sent")
 
 
+def append_message_ratings(export_data):
+    rate_attribute = None
+    if MessageAttribute.objects.filter(name='rating').exists():
+        rate_attribute = MessageAttribute.objects.get(name='rating')
+    if rate_attribute:
+        for index, message_tuple in enumerate(export_data):
+            message = Message.objects.get(id=message_tuple[0])
+            message_ratings = MessageDetail.objects.filter(message=message, attribute=rate_attribute).order_by('-value')
+            if message_ratings.exists():
+                export_data[index] = message_tuple + (message_ratings[0].value, )
+            else:
+                export_data[index] = message_tuple + ("", )
+
+
+def append_message_attributes(export_data, attribute_name):
+    attribute = None
+    if MessageAttribute.objects.filter(name=attribute_name).exists():
+        attribute = MessageAttribute.objects.get(name=attribute_name)
+    if attribute:
+        for index, message_tuple in enumerate(export_data):
+            message = Message.objects.get(id=message_tuple[0])
+            if MessageDetail.objects.filter(message=message, attribute=attribute).exists():
+                export_data[index] = message_tuple + ("Yes", )
+            else:
+                export_data[index] = message_tuple + ("No", )
+
+
 @login_required
 @never_cache
 def a_dashboard(request, name):
@@ -432,18 +459,11 @@ def a_dashboard(request, name):
     if request.GET.get('download', None):
         export_data = list(messages.values_list('id', 'connection__pk', 'text', 'date',
                                                 'connection__contact__reporting_location__name'))
-        rate_attribute = None
-        if len(MessageAttribute.objects.filter(name='rating')):
-            rate_attribute = MessageAttribute.objects.get(name='rating')
+        append_message_ratings(export_data)
+        append_message_attributes(export_data, 'replied')
+        append_message_attributes(export_data, 'forwarded')
 
-        if rate_attribute:
-            for index, message_tuple in enumerate(export_data):
-                message = Message.objects.get(id=message_tuple[0])
-                message_ratings = MessageDetail.objects.filter(message=message, attribute=rate_attribute).order_by('-value')
-                if len(message_ratings):
-                    export_data[index] = message_tuple + (message_ratings[0].value, )
-
-        headers = ['message_id', 'Connection ID', 'Message', 'Date', 'District', 'Rating']
+        headers = ['message_id', 'Connection ID', 'Message', 'Date', 'District', 'Rating', 'Replied', "Forwarded"]
         return ExcelResponse(data=export_data, headers=headers)
 
     if request.GET.get('capture', None):
