@@ -324,9 +324,8 @@ def alerts(request, pk):
             '5': 'Very Urgent',
         }
         msg = Message.objects.get(pk=int(request.GET.get('msg')))
-        (rate, _) = MessageAttribute.objects.get_or_create(name='rating'
-        )
-        det = MessageDetail.objects.create(message=msg, attribute=rate,
+        (rate, _) = MessageAttribute.objects.get_or_create(name='rating')
+        MessageDetail.objects.create(message=msg, attribute=rate,
                                            value=rating, description=descs.get(rating, ''))
         response = \
             """<li><a href='javascript:void(0)'  class="rate%s"
@@ -431,9 +430,22 @@ def a_dashboard(request, name):
     messages = messages | responses
 
     if request.GET.get('download', None):
-        export_data = messages.values_list('connection__pk', 'text', 'date',
-                                           'connection__contact__reporting_location__name').iterator()
-        return ExcelResponse(data=export_data)
+        export_data = list(messages.values_list('id', 'connection__pk', 'text', 'date',
+                                                'connection__contact__reporting_location__name'))
+        rate_attribute = None
+        if len(MessageAttribute.objects.filter(name='rating')):
+            rate_attribute = MessageAttribute.objects.get(name='rating')
+
+        if rate_attribute:
+            for index, message_tuple in enumerate(export_data):
+                message = Message.objects.get(id=message_tuple[0])
+                message_ratings = MessageDetail.objects.filter(message=message, attribute=rate_attribute).order_by('-value')
+                if len(message_ratings):
+                    export_data[index] = message_tuple + (message_ratings[0].value, )
+
+        headers = ['message_id', 'Connection ID', 'Message', 'Date', 'District', 'Rating']
+        return ExcelResponse(data=export_data, headers=headers)
+
     if request.GET.get('capture', None):
         (s, _) = Settings.objects.get_or_create(attribute='aids')
         if s.value == 'true':
