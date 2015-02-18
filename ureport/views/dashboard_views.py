@@ -408,28 +408,15 @@ def push_to_mtrac(request, pk):
     return HttpResponse("Sent")
 
 
-def append_message_ratings(export_data):
-    rate_attribute = None
-    if MessageAttribute.objects.filter(name='rating').exists():
-        rate_attribute = MessageAttribute.objects.get(name='rating')
-    if rate_attribute:
-        for index, message_tuple in enumerate(export_data):
-            message = Message.objects.get(id=message_tuple[0])
-            message_ratings = MessageDetail.objects.filter(message=message, attribute=rate_attribute).order_by('-value')
-            if message_ratings.exists():
-                export_data[index] = message_tuple + (message_ratings[0].value, )
-            else:
-                export_data[index] = message_tuple + ("", )
-
-
 def append_message_attributes(export_data, attribute_names):
     for index, message_tuple in enumerate(export_data):
         message_detail_objects = MessageDetail.objects.filter(
             message__id=message_tuple[0],
             attribute__name__in=attribute_names
         )
-        detail_values = reduce(detail_reducer, message_detail_objects, {'forwarded': "No", 'replied': "No"})
-        export_data[index] = message_tuple + (detail_values['replied'], detail_values['forwarded'])
+        default_values = {'forwarded': "No", 'replied': "No", 'rating': ''}
+        values = reduce(detail_reducer, message_detail_objects, default_values)
+        export_data[index] = message_tuple + (values['rating'], values['replied'], values['forwarded'])
 
 
 def detail_reducer(detail_values, message_detail_object):
@@ -437,8 +424,8 @@ def detail_reducer(detail_values, message_detail_object):
         detail_values['forwarded'] = 'Yes'
     elif message_detail_object.attribute.name == 'replied':
         detail_values['replied'] = 'Yes'
-    # elif message_detail_object.attribute.name == 'rating':
-    #     detail_values['rating'] = message_detail_object.attribute.value
+    elif message_detail_object.attribute.name == 'rating':
+        detail_values['rating'] = message_detail_object.value
     return detail_values
 
 
@@ -467,8 +454,7 @@ def a_dashboard(name):
     # if request.GET.get('download', None):
     export_data = list(messages.values_list('id', 'connection__pk', 'text', 'date',
                                             'connection__contact__reporting_location__name'))
-    append_message_ratings(export_data)
-    append_message_attributes(export_data, ['replied', 'forwarded'])
+    append_message_attributes(export_data, ['rating', 'replied', 'forwarded'])
 
     headers = ['message_id', 'Connection ID', 'Message', 'Date', 'District', 'Rating', 'Replied', "Forwarded"]
     return ExcelResponse(data=export_data, headers=headers)
