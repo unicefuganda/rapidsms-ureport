@@ -470,10 +470,9 @@ def _build_report(message_details):
     return export_data, messages_with_details
 
 
-# @login_required
-# @never_cache
-# def a_dashboard(request, name):
-def a_dashboard(name):
+@login_required
+@never_cache
+def a_dashboard(request, name):
     poll_form = NewPollForm()
     range_form = rangeForm()
     poll_form.updateTypes()
@@ -484,121 +483,118 @@ def a_dashboard(name):
     (rate, _) = MessageAttribute.objects.get_or_create(name='rating')
     name = name.replace("_", " ")
     flag = get_object_or_404(Flag, name=name)
-    # access = get_access(request)
-    # if access is not None and flag not in access.flags.all():
-    #     return render(request, '403.html', status=403)
+    access = get_access(request)
+    if access is not None and flag not in access.flags.all():
+        return render(request, '403.html', status=403)
     messages = flag.get_messages().order_by('-date')
     responses = Message.objects.filter(
         pk__in=flag.flagtracker_set.exclude(response=None).values_list("response", flat=True))
     messages = messages | responses
 
-    # if request.GET.get('download', None):
-    flagged_messages = Message.objects.filter(flags__flag=flag)\
-        .select_related('connection__contact__reporting_location')
+    if request.GET.get('download', None):
+        flagged_messages = Message.objects.filter(flags__flag=flag)\
+            .select_related('connection__contact__reporting_location')
 
-    message_details = MessageDetail.objects.filter(message__id__in=flagged_messages.values_list('id', flat=True))\
-        .order_by('message__id')\
-        .select_related('message', 'attribute', 'message__connection__contact__reporting_location')
+        message_details = MessageDetail.objects.filter(message__id__in=flagged_messages.values_list('id', flat=True))\
+            .order_by('message__id')\
+            .select_related('message', 'attribute', 'message__connection__contact__reporting_location')
 
-    export_data, messages_with_details = _build_report(message_details)
-    messages_without_details = flagged_messages.exclude(id__in=messages_with_details)
-    export_data += _build_plain_message_export_data(messages_without_details)
+        export_data, messages_with_details = _build_report(message_details)
+        messages_without_details = flagged_messages.exclude(id__in=messages_with_details)
+        export_data += _build_plain_message_export_data(messages_without_details)
 
-    headers = ['message_id', 'Connection ID', 'Message', 'Date', 'District', 'Rating', 'Replied', "Forwarded"]
-    return ExcelResponse(data=export_data, headers=headers)
+        headers = ['message_id', 'Connection ID', 'Message', 'Date', 'District', 'Rating', 'Replied', "Forwarded"]
+        return ExcelResponse(data=export_data, headers=headers)
 
-    # if request.GET.get('capture', None):
-    #     (s, _) = Settings.objects.get_or_create(attribute='aids')
-    #     if s.value == 'true':
-    #         s.value = 'false'
-    #         s.save()
-    #         reply = gettext('Start Capture')
-    #     else:
-    #         s.value = 'true'
-    #         s.save()
-    #         reply = gettext('Stop Capture')
-    #     return HttpResponse(reply)
-    # if request.GET.get('ajax', None):
-    #     date = datetime.datetime.now() - datetime.timedelta(seconds=30)
-    #     prev = request.session.get('prev', [])
-    #     msgs = flag.get_messages().filter(date__gte=date).exclude(pk__in=prev)
-    #     request.session['prev'] = list(msgs.values_list('pk',
-    #                                                     flat=True))
-    #     msgs_list = []
-    #     if msgs:
-    #         for msg in msgs:
-    #             from django.template.loader import render_to_string
-    #
-    #             row_rendered = \
-    #                 render_to_string('ureport/partials/row.html',
-    #                                  {'msg': msg})
-    #
-    #             m = {}
-    #             m['text'] = msg.text
-    #             m['date'] = str(msg.date.date())
-    #             if msg.connection.contact:
-    #                 m['name'] = msg.connection.contact.name
-    #             else:
-    #                 m['name'] = 'Anonymous User'
-    #             m['number'] = msg.connection.identity
-    #             if msg.connection.contact \
-    #                     and msg.connection.contact.reporting_location:
-    #                 m['district'] = \
-    #                     msg.connection.contact.reporting_location.name
-    #             else:
-    #                 m['district'] = 'N/A'
-    #             rating = msg.details.filter(attribute__name='aids')
-    #             if rating:
-    #                 r = rating[0].value
-    #             else:
-    #                 r = 0
-    #             m['row'] = row_rendered
-    #             m['connection'] = msg.connection.pk
-    #             m['pk'] = msg.pk
-    #             msgs_list.append(m)
-    #         return HttpResponse(mark_safe(simplejson.dumps(msgs_list)))
-    #     else:
-    #         return HttpResponse('success')
-    # if request.GET.get('rating', None):
-    #     rating = request.GET.get('rating')
-    #     descs = {
-    #         '1': 'Requires Attention',
-    #         '2': 'Moderate',
-    #         '3': 'Important',
-    #         '4': 'Urgent',
-    #         '5': 'Very Urgent',
-    #     }
-    #     msg = Message.objects.get(pk=int(request.GET.get('msg')))
-    #     (rate, _) = MessageAttribute.objects.get_or_create(name='rating'
-    #     )
-    #     det = MessageDetail.objects.create(message=msg, attribute=rate,
-    #                                        value=rating, description=descs.get(rating, ''))
-    #     response = \
-    #         """<li><a href='javascript:void(0)'  class="rate%s"
-    #
-    #     title="%s">%s</a></li>""" \
-    #         % (rating, descs.get(rating, ''), descs.get(rating, ''))
-    #
-    #     return HttpResponse(mark_safe(response))
-    #
-    # paginator = UreportPaginator(messages.order_by('-date'), 10, body=12, padding=2)
-    # page = request.GET.get('page', 1)
-    # try:
-    #     messages = paginator.page(page)
-    # except (PageNotAnInteger, EmptyPage):
-    #
-    #     # If page is not an integer, deliver first page.
-    #
-    #     messages = paginator.page(1)
-    #
-    # return render_to_response(template, {
-    #     'name': name,
-    #     'messages': messages,
-    #     'paginator': paginator,
-    #     'capture_status': capture_status,
-    #     'rate': rate,
-    #     'range_form': range_form,
-    # }, context_instance=RequestContext(request))
+    if request.GET.get('capture', None):
+        (s, _) = Settings.objects.get_or_create(attribute='aids')
+        if s.value == 'true':
+            s.value = 'false'
+            s.save()
+            reply = gettext('Start Capture')
+        else:
+            s.value = 'true'
+            s.save()
+            reply = gettext('Stop Capture')
+        return HttpResponse(reply)
+    if request.GET.get('ajax', None):
+        date = datetime.datetime.now() - datetime.timedelta(seconds=30)
+        prev = request.session.get('prev', [])
+        msgs = flag.get_messages().filter(date__gte=date).exclude(pk__in=prev)
+        request.session['prev'] = list(msgs.values_list('pk',
+                                                        flat=True))
+        msgs_list = []
+        if msgs:
+            for msg in msgs:
+                from django.template.loader import render_to_string
+
+                row_rendered = \
+                    render_to_string('ureport/partials/row.html',
+                                     {'msg': msg})
+
+                m = {}
+                m['text'] = msg.text
+                m['date'] = str(msg.date.date())
+                if msg.connection.contact:
+                    m['name'] = msg.connection.contact.name
+                else:
+                    m['name'] = 'Anonymous User'
+                m['number'] = msg.connection.identity
+                if msg.connection.contact \
+                        and msg.connection.contact.reporting_location:
+                    m['district'] = \
+                        msg.connection.contact.reporting_location.name
+                else:
+                    m['district'] = 'N/A'
+                rating = msg.details.filter(attribute__name='aids')
+                if rating:
+                    r = rating[0].value
+                else:
+                    r = 0
+                m['row'] = row_rendered
+                m['connection'] = msg.connection.pk
+                m['pk'] = msg.pk
+                msgs_list.append(m)
+            return HttpResponse(mark_safe(simplejson.dumps(msgs_list)))
+        else:
+            return HttpResponse('success')
+    if request.GET.get('rating', None):
+        rating = request.GET.get('rating')
+        descs = {
+            '1': 'Requires Attention',
+            '2': 'Moderate',
+            '3': 'Important',
+            '4': 'Urgent',
+            '5': 'Very Urgent',
+        }
+        msg = Message.objects.get(pk=int(request.GET.get('msg')))
+        (rate, _) = MessageAttribute.objects.get_or_create(name='rating'
+        )
+        det = MessageDetail.objects.create(message=msg, attribute=rate,
+                                           value=rating, description=descs.get(rating, ''))
+        response = \
+            """<li><a href='javascript:void(0)'  class="rate%s"
+
+        title="%s">%s</a></li>""" \
+            % (rating, descs.get(rating, ''), descs.get(rating, ''))
+
+        return HttpResponse(mark_safe(response))
+
+    paginator = UreportPaginator(messages.order_by('-date'), 10, body=12, padding=2)
+    page = request.GET.get('page', 1)
+    try:
+        messages = paginator.page(page)
+    except (PageNotAnInteger, EmptyPage):
+        messages = paginator.page(1)
+
+    return render_to_response(template, {
+        'name': name,
+        'messages': messages,
+        'paginator': paginator,
+        'capture_status': capture_status,
+        'rate': rate,
+        'range_form': range_form,
+    }, context_instance=RequestContext(request))
 
 
 def schedule_alerts(request):
