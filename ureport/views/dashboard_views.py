@@ -414,8 +414,8 @@ def _build_plain_message_export_data(messages):
 
 def _extract_message_field_values(message):
     return {
-        'id': message.id, 'connection': message.connection_id,
-        'text': message.text, 'date': message.date, 'district': ''
+        'id': message.id, 'connection': message.connection_id, 'text': message.text,
+        'date': message.date, 'district': message.connection.contact.reporting_location.name
     }
 
 
@@ -493,10 +493,12 @@ def a_dashboard(name):
     messages = messages | responses
 
     # if request.GET.get('download', None):
-    flagged_messages = Message.objects.filter(flags__flag=flag)
-    message_details = MessageDetail.objects.filter(
-        message__id__in=flagged_messages.values_list('id', flat=True)
-    ).order_by('message__id').select_related('message', 'attribute')
+    flagged_messages = Message.objects.filter(flags__flag=flag)\
+        .select_related('connection__contact__reporting_location')
+
+    message_details = MessageDetail.objects.filter(message__id__in=flagged_messages.values_list('id', flat=True))\
+        .order_by('message__id')\
+        .select_related('message', 'attribute', 'message__connection__contact__reporting_location')
 
     export_data, messages_with_details = _build_report(message_details)
     messages_without_details = flagged_messages.exclude(id__in=messages_with_details)
