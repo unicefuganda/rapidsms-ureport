@@ -408,25 +408,66 @@ def push_to_mtrac(request, pk):
     return HttpResponse("Sent")
 
 
-def append_message_attributes(export_data, attribute_names):
-    for index, message_tuple in enumerate(export_data):
-        message_detail_objects = MessageDetail.objects.filter(
-            message__id=message_tuple[0],
-            attribute__name__in=attribute_names
-        )
-        default_values = {'forwarded': "No", 'replied': "No", 'rating': ''}
-        values = reduce(detail_reducer, message_detail_objects, default_values)
-        export_data[index] = message_tuple + (values['rating'], values['replied'], values['forwarded'])
+def _build_plain_message_export_data(messages):
+    return [_make_tuple_of(_extract_message_field_values(message)) for message in messages]
 
 
-def detail_reducer(detail_values, message_detail_object):
-    if message_detail_object.attribute.name == 'forwarded':
+def _extract_message_field_values(message):
+    return {
+        'id': message.id, 'connection': message.connection_id,
+        'text': message.text, 'date': message.date, 'district': ''
+    }
+
+
+def _extract_message_details(detail_values, message_detail):
+    message_field_values = _extract_message_field_values(message_detail.message)
+    detail_values = dict(detail_values, **message_field_values)
+
+    attribute_name = message_detail.attribute.name
+    if attribute_name == 'forwarded':
         detail_values['forwarded'] = 'Yes'
-    elif message_detail_object.attribute.name == 'replied':
+    elif attribute_name == 'replied':
         detail_values['replied'] = 'Yes'
-    elif message_detail_object.attribute.name == 'rating':
-        detail_values['rating'] = message_detail_object.value
+    elif attribute_name == 'rating':
+        detail_values['rating'] = message_detail.value
     return detail_values
+
+
+def _make_tuple_of(detail_values):
+    return (detail_values['id'], detail_values['connection'], detail_values['text'], detail_values['date'],
+            detail_values['district'], detail_values.get('rating', ''), detail_values.get('replied', 'No'),
+            detail_values.get('forwarded', 'No'))
+
+
+def _make_fresh_detail_values():
+    return {
+        'id': None, 'connection': None, 'text': None, 'date': None,
+        'district': '', 'rating': '', 'replied': 'No', 'forwarded': 'No'
+    }
+
+
+def _build_report(message_details):
+    export_data = []
+    messages_with_details = []
+    current_message = None
+    detail_values = _make_fresh_detail_values()
+
+    for message_detail in message_details:
+        message = message_detail.message
+        messages_with_details.append(message.id)
+        if not current_message:
+            current_message = message
+            detail_values = _extract_message_details(detail_values, message_detail)
+        elif current_message.id == message.id:
+            detail_values = _extract_message_details(detail_values, message_detail)
+        else:
+            export_data.append(_make_tuple_of(detail_values))
+            detail_values = _make_fresh_detail_values()
+            detail_values = _extract_message_details(detail_values, message_detail)
+            current_message = message
+
+    export_data.append(_make_tuple_of(detail_values))
+    return export_data, messages_with_details
 
 
 # @login_required
@@ -452,9 +493,14 @@ def a_dashboard(name):
     messages = messages | responses
 
     # if request.GET.get('download', None):
-    export_data = list(messages.values_list('id', 'connection__pk', 'text', 'date',
-                                            'connection__contact__reporting_location__name'))
-    append_message_attributes(export_data, ['rating', 'replied', 'forwarded'])
+    flagged_messages = Message.objects.filter(flags__flag=flag)
+    message_details = MessageDetail.objects.filter(
+        message__id__in=flagged_messages.values_list('id', flat=True)
+    ).order_by('message__id').select_related('message', 'attribute')
+
+    export_data, messages_with_details = _build_report(message_details)
+    messages_without_details = flagged_messages.exclude(id__in=messages_with_details)
+    export_data += _build_plain_message_export_data(messages_without_details)
 
     headers = ['message_id', 'Connection ID', 'Message', 'Date', 'District', 'Rating', 'Replied', "Forwarded"]
     return ExcelResponse(data=export_data, headers=headers)
