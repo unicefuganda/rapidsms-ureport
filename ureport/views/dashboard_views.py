@@ -486,15 +486,15 @@ def a_dashboard(request, name):
     access = get_access(request)
     if access is not None and flag not in access.flags.all():
         return render(request, '403.html', status=403)
-    messages = flag.get_messages().order_by('-date')
+    flagged_messages = Message.objects.filter(flags__flag=flag)\
+        .select_related('connection__contact__reporting_location').order_by('-date')
     responses = Message.objects.filter(
-        pk__in=flag.flagtracker_set.exclude(response=None).values_list("response", flat=True))
-    messages = messages | responses
+        pk__in=flag.flagtracker_set.exclude(response=None).values_list("response", flat=True)
+    ).select_related('connection__contact__reporting_location')
+
+    messages = flagged_messages | responses
 
     if request.GET.get('download', None):
-        flagged_messages = Message.objects.filter(flags__flag=flag)\
-            .select_related('connection__contact__reporting_location')
-
         message_details = MessageDetail.objects.filter(message__id__in=flagged_messages.values_list('id', flat=True))\
             .order_by('message__id')\
             .select_related('message', 'attribute', 'message__connection__contact__reporting_location')
