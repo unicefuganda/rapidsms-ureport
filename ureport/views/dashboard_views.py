@@ -466,7 +466,9 @@ def _build_report(message_details):
             detail_values = _extract_message_details(detail_values, message_detail)
             current_message = message
 
-    export_data.append(_make_tuple_of(detail_values))
+    if detail_values != _make_fresh_detail_values():
+        export_data.append(_make_tuple_of(detail_values))
+
     return export_data, messages_with_details
 
 
