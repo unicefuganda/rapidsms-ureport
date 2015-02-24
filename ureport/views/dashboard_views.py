@@ -416,10 +416,12 @@ def _build_plain_message_export_data(messages):
 
 
 def _extract_message_field_values(message):
-    return {
-        'id': message.id, 'connection': message.connection_id, 'text': message.text,
-        'date': message.date, 'district': message.connection.contact.reporting_location.name
-    }
+    values = {'id': message.id, 'connection': message.connection_id, 'text': message.text, 'date': message.date}
+
+    if message.connection.contact and message.connection.contact.reporting_location:
+        values['district'] = message.connection.contact.reporting_location.name
+
+    return values
 
 
 def _extract_message_details(detail_values, message_detail):

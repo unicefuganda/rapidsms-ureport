@@ -34,7 +34,7 @@ class DashboardViewsTest(TestCase):
         row_two = self.extract_row_values_from(sheet, 2)
         del row_two[3]
         self.assertListEqual(row_two, [float(messages[1].id), float(messages[1].connection.id),
-                                       u'message two', u'Yumbe', u'', u'No', u'Yes'])
+                                       u'message two', u'', u'', u'No', u'Yes'])
 
         row_three = self.extract_row_values_from(sheet, 3)
         del row_three[3]
@@ -51,7 +51,7 @@ class DashboardViewsTest(TestCase):
         messages = [message_one, message_two, message_three]
 
         message_one.connection.contact.reporting_location = LocationFactory(name='Kampala')
-        message_two.connection.contact.reporting_location = LocationFactory(name='Yumbe')
+        message_two.connection.contact.reporting_location = None
         message_three.connection.contact.reporting_location = LocationFactory(name='Mukono')
 
         for message in messages:
