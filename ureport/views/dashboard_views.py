@@ -44,8 +44,6 @@ from ureport.views.utils.tags import get_category_tags
 import datetime
 import logging
 
-log = logging.getLogger(__name__)
-
 
 @login_required
 @cache_page(60 * 60, cache='default', key_prefix="ureport")
@@ -480,7 +478,6 @@ def _build_report(message_details):
 @login_required
 @never_cache
 def a_dashboard(request, name):
-    log.debug("[dashboards] Loading dashboard '%s' ..." % name)
     poll_form = NewPollForm()
     range_form = rangeForm()
     poll_form.updateTypes()
@@ -503,9 +500,6 @@ def a_dashboard(request, name):
     messages = flagged_messages | responses
 
     if request.GET.get('download', None):
-
-        log.debug("[dashboards] Received request to download dashboard '%s' ..." % name)
-
         message_details = MessageDetail.objects.filter(message__id__in=flagged_messages.values_list('id', flat=True))\
             .order_by('message__id')\
             .select_related('message', 'attribute', 'message__connection__contact__reporting_location')
@@ -515,8 +509,6 @@ def a_dashboard(request, name):
         export_data += _build_plain_message_export_data(messages_without_details)
 
         headers = ['message_id', 'Connection ID', 'Message', 'Date', 'District', 'Rating', 'Replied', "Forwarded"]
-
-        log.debug("[dashboards] Rendering messages export for dashboard '%s' ..." % name)
 
         return ExcelResponse(data=export_data, headers=headers)
 
@@ -563,8 +555,6 @@ def a_dashboard(request, name):
         messages = paginator.page(page)
     except (PageNotAnInteger, EmptyPage):
         messages = paginator.page(1)
-
-    log.debug("[dashboards] Rendering dashboard '%s' ..." % name)
 
     return render_to_response(template, {
         'name': name,
