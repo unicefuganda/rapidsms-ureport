@@ -42,6 +42,9 @@ from generic.sorters import SimpleSorter
 from message_classifier.models import IbmCategory, IbmMsgCategory
 from ureport.views.utils.tags import get_category_tags
 import datetime
+import logging
+
+log = logging.getLogger(__name__)
 
 
 @login_required
@@ -477,6 +480,7 @@ def _build_report(message_details):
 @login_required
 @never_cache
 def a_dashboard(request, name):
+    log.debug("[dashboards] Loading dashboard '%s' ..." % name)
     poll_form = NewPollForm()
     range_form = rangeForm()
     poll_form.updateTypes()
@@ -499,6 +503,9 @@ def a_dashboard(request, name):
     messages = flagged_messages | responses
 
     if request.GET.get('download', None):
+
+        log.debug("[dashboards] Received request to download dashboard '%s' ..." % name)
+
         message_details = MessageDetail.objects.filter(message__id__in=flagged_messages.values_list('id', flat=True))\
             .order_by('message__id')\
             .select_related('message', 'attribute', 'message__connection__contact__reporting_location')
@@ -508,6 +515,9 @@ def a_dashboard(request, name):
         export_data += _build_plain_message_export_data(messages_without_details)
 
         headers = ['message_id', 'Connection ID', 'Message', 'Date', 'District', 'Rating', 'Replied', "Forwarded"]
+
+        log.debug("[dashboards] Rendering messages export for dashboard '%s' ..." % name)
+
         return ExcelResponse(data=export_data, headers=headers)
 
     if request.GET.get('capture', None):
@@ -521,47 +531,10 @@ def a_dashboard(request, name):
             s.save()
             reply = gettext('Stop Capture')
         return HttpResponse(reply)
+
     if request.GET.get('ajax', None):
-        date = datetime.datetime.now() - datetime.timedelta(seconds=30)
-        prev = request.session.get('prev', [])
-        msgs = flag.get_messages().filter(date__gte=date).exclude(pk__in=prev)
-        request.session['prev'] = list(msgs.values_list('pk',
-                                                        flat=True))
-        msgs_list = []
-        if msgs:
-            for msg in msgs:
-                from django.template.loader import render_to_string
+        return HttpResponse('success')
 
-                row_rendered = \
-                    render_to_string('ureport/partials/row.html',
-                                     {'msg': msg})
-
-                m = {}
-                m['text'] = msg.text
-                m['date'] = str(msg.date.date())
-                if msg.connection.contact:
-                    m['name'] = msg.connection.contact.name
-                else:
-                    m['name'] = 'Anonymous User'
-                m['number'] = msg.connection.identity
-                if msg.connection.contact \
-                        and msg.connection.contact.reporting_location:
-                    m['district'] = \
-                        msg.connection.contact.reporting_location.name
-                else:
-                    m['district'] = 'N/A'
-                rating = msg.details.filter(attribute__name='aids')
-                if rating:
-                    r = rating[0].value
-                else:
-                    r = 0
-                m['row'] = row_rendered
-                m['connection'] = msg.connection.pk
-                m['pk'] = msg.pk
-                msgs_list.append(m)
-            return HttpResponse(mark_safe(simplejson.dumps(msgs_list)))
-        else:
-            return HttpResponse('success')
     if request.GET.get('rating', None):
         rating = request.GET.get('rating')
         descs = {
@@ -590,6 +563,8 @@ def a_dashboard(request, name):
         messages = paginator.page(page)
     except (PageNotAnInteger, EmptyPage):
         messages = paginator.page(1)
+
+    log.debug("[dashboards] Rendering dashboard '%s' ..." % name)
 
     return render_to_response(template, {
         'name': name,
