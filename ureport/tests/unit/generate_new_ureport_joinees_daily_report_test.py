@@ -2,9 +2,7 @@ import os
 import datetime
 
 from django.test import TestCase
-
 from rapidsms_ureport.ureport.tasks import generate_new_ureporters_spreadsheet
-
 from rapidsms_ureport.ureport.tests.factories.connection_factory import ConnectionFactory
 from rapidsms_ureport.ureport.tests.factories.contact_factory import ContactFactory
 from rapidsms_ureport.ureport.tests.factories.location_factory import LocationFactory
@@ -18,7 +16,6 @@ import settings
 
 class NewUreporterGeneratorTest(TestCase):
     def setUp(self):
-
         self.contact_one = ContactFactory(reporting_location=(LocationFactory(name="Kampala")))
         self.ureporter_one = ConnectionFactory(id=1, contact=self.contact_one)
 
@@ -38,9 +35,12 @@ class NewUreporterGeneratorTest(TestCase):
         ResponseFactory(poll=poll, message=channel_response_two, contact=self.contact_two)
         ResponseFactory(poll=poll, message=channel_response_three, contact=self.contact_three)
 
+        self.today = datetime.datetime.today()
+        self.yesterday = self.today - datetime.timedelta(days=1)
+
     @patch('uganda_common.utils.create_workbook')
-    def test_generate_new_ureporters_data(self, mock_create_workbook):
-        report_file_name = 'rapidsms_ureport/ureport/static/spreadsheets/new-ureporters.xlsx'
+    def test_should_generate_new_ureporters_data(self, mock_create_workbook):
+        report_file_name = 'rapidsms_ureport/ureport/static/spreadsheets/new-ureporters-%s.xlsx' % self.today.date()
         expected_headers = ['date', 'Id', 'District', 'How did you hear about U-report?']
 
         expected_data = [[str(self.contact_one.created_on.date()), self.ureporter_one.id, "Kampala", "Through radio"],
@@ -51,23 +51,29 @@ class NewUreporterGeneratorTest(TestCase):
 
         mock_create_workbook.assert_called_once_with(expected_data, report_file_name, expected_headers)
 
-    def test_generate_excel_report_containing_new_ureporters(self):
-        report_file_name = filedir + '/rapidsms_ureport/ureport/static/spreadsheets/new-ureporters.xlsx'
+    def test_should_generate_excel_report_containing_new_ureporters(self):
+        report_file_name = filedir + '/rapidsms_ureport/ureport/static/spreadsheets/new-ureporters-%s.xlsx' \
+                                     % self.today.date()
         generate_new_ureporters_spreadsheet()
         self.assertTrue(os.path.exists(report_file_name))
         os.remove(report_file_name)
 
+    def test_should_remove_yesterdays_file_after_creating_todays_file(self):
+        yesterday_file_name = filedir + '/rapidsms_ureport/ureport/static/spreadsheets/new-ureporters-%s.xlsx' \
+                                        % self.yesterday.date()
+        open(yesterday_file_name, 'a').close()
+        generate_new_ureporters_spreadsheet()
+        self.assertFalse(os.path.exists(yesterday_file_name))
+
     @patch('django.core.mail.send_mail')
-    def test_generate_new_ureporters_sends_email_notification(self, mock_send_mail):
+    def test_should_send_new_ureporters_email_notification(self, mock_send_mail):
         date_format = '%b %d, %Y at %H:%m'
-        today = datetime.datetime.today()
-        yesterday = today - datetime.timedelta(days=1)
-        yesterday_str = yesterday.strftime(date_format)
-        today_str = today.strftime(date_format)
+        yesterday_str = self.yesterday.strftime(date_format)
+        today_str = self.today.strftime(date_format)
         message = '\n    Hello,\n\n    Please find the list of new U-reporters who joined since yesterday %s to ' \
-                  'today %s here:\n\n    http://ureport.ug/static/ureport/spreadsheets/new-ureporters.xlsx\n\n    ' \
+                  'today %s here:\n\n    http://ureport.ug/static/ureport/spreadsheets/new-ureporters-%s.xlsx\n\n    ' \
                   'Have a nice day,\n    U-report team\n\n    '
-        message = message % (yesterday_str, today_str)
+        message = message % (yesterday_str, today_str, self.today.date())
         subject = 'Daily Ureporters Joining Details'
 
         generate_new_ureporters_spreadsheet()
@@ -75,5 +81,6 @@ class NewUreporterGeneratorTest(TestCase):
         mock_send_mail.assert_called_once_with(subject, message, settings.DEFAULT_FROM_EMAIL,
                                                settings.PROJECT_MANAGERS, fail_silently=True)
 
-        report_file_name = filedir + '/rapidsms_ureport/ureport/static/spreadsheets/new-ureporters.xlsx'
+        report_file_name = filedir + '/rapidsms_ureport/ureport/static/spreadsheets/new-ureporters-%s.xlsx' % \
+                                     self.today.date()
         os.remove(report_file_name)

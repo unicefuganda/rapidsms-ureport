@@ -38,9 +38,17 @@ def _generate_new_ureporters_spreadsheet():
 
 
 def generate_new_ureporters_spreadsheet():
-    file_name = 'new-ureporters.xlsx'
     today = datetime.today()
+    file_name_base = 'new-ureporters-'
+    file_name = '%s%s.xlsx' % (file_name_base, today.date())
     yesterday = today - timedelta(days=1)
+
+    try:
+        yesterdays_file_name = "%s%s%s.xlsx" % (UREPORTERS_STATIC_FOLDER, file_name_base, yesterday.date())
+        os.remove(yesterdays_file_name)
+    except OSError:
+        pass
+
     youth_group_poll = Poll.objects.get(name="youthgroup")
     connections = Connection.objects.filter(created_on__gte=yesterday).exclude(contact=None).order_by('contact__created_on')
 
