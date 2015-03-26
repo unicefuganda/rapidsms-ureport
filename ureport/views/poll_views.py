@@ -307,10 +307,11 @@ def poll_summary(request, poll=None):
                                                           flat=True)
     excluded_polls = [297, 296, 349, 350, 420]
     polls = \
-        Poll.objects.exclude(pk__in=script_polls).exclude(pk__in=excluded_polls).exclude(start_date=None).order_by(
+        UPoll.objects.exclude(pk__in=script_polls).exclude(pk__in=excluded_polls).exclude(start_date=None).order_by(
             '-start_date')
     if not polls.exists():
         polls = None
+    polls = filter(lambda p: p.viewable, polls)
     if poll:
         poll = get_object_or_404(Poll, pk=poll)
         polls = [poll]
