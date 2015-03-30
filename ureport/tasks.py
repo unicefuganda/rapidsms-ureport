@@ -27,7 +27,7 @@ from ureport.settings import UREPORT_ROOT
 import utils
 from uganda_common import utils as common_utils
 
-UREPORTERS_STATIC_FOLDER = 'rapidsms_ureport/ureport/static/spreadsheets/'
+UREPORTERS_STATIC_FOLDER = 'rapidsms_ureport/ureport/static/spreadsheets/daily-new-ureporters/'
 UREPORT_STATIC_URL = 'static/ureport/'
 
 log = logging.getLogger(__name__)
@@ -38,25 +38,21 @@ def _generate_new_ureporters_spreadsheet():
 
 
 def generate_new_ureporters_spreadsheet():
+    if not os.path.exists(UREPORTERS_STATIC_FOLDER):
+        os.makedirs(UREPORTERS_STATIC_FOLDER)
     today = datetime.today()
     file_name_base = 'new-ureporters-'
     file_name = '%s%s.xlsx' % (file_name_base, today.date())
     yesterday = today - timedelta(days=1)
 
-    try:
-        yesterdays_file_name = "%s%s%s.xlsx" % (UREPORTERS_STATIC_FOLDER, file_name_base, yesterday.date())
-        os.remove(yesterdays_file_name)
-    except OSError:
-        pass
-
     youth_group_poll = Poll.objects.get(name="youthgroup")
     connections = Connection.objects.filter(created_on__gte=yesterday).exclude(contact=None).order_by('contact__created_on')
 
     export_data = _all_contacts_data(connections, youth_group_poll)
-    headers = ['date', 'Id', 'District', 'How did you hear about U-report?']
+    headers = ['date', 'Id', 'District', 'gender', 'date of birth', 'How did you hear about U-report?']
 
     common_utils.create_workbook(export_data, UREPORTERS_STATIC_FOLDER + file_name, headers)
-    notify_admins(file_name, today, yesterday)
+    notify_admins('daily-new-ureporters/%s' % file_name, today, yesterday)
 
 
 def notify_admins(file_name, today, yesterday):
@@ -91,11 +87,15 @@ def _all_contacts_data(connections, youth_group_poll):
 
 def _contact_data(connection, youth_group):
     contact = connection.contact
-    result = [str(contact.created_on.date()), connection.id, '', '']
+    result = [str(contact.created_on.date()), connection.id, '', '', '', '']
     if contact.reporting_location:
         result[2] = contact.reporting_location.name or ''
+    if contact.gender:
+        result[3] = contact.gender or ''
+    if contact.birthdate:
+        result[4] = str(contact.birthdate.date()) or ''
     if youth_group.exists():
-        result[3] = youth_group[0].text or ''
+        result[5] = youth_group[0].text or ''
     return result
 
 @task
