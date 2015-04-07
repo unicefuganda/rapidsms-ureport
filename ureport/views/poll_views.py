@@ -311,7 +311,7 @@ def poll_summary(request, poll=None):
             '-start_date')
     if not polls.exists():
         polls = None
-    polls = filter(lambda p: p.viewable, polls)
+    polls = filter(select_viewable_polls, polls)
     if poll:
         poll = get_object_or_404(Poll, pk=poll)
         polls = [poll]
@@ -326,6 +326,11 @@ def poll_summary(request, poll=None):
         return render_to_response('ureport/poll_empty.html',
                                   context_instance=RequestContext(request))
 
+
+def select_viewable_polls(poll):
+    if poll.start_date.date() > datetime.date(2015, 3, 31):
+        return poll.viewable
+    return True
 
 @login_required
 @transaction.commit_on_success
