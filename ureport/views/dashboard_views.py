@@ -414,7 +414,8 @@ def _build_plain_message_export_data(messages):
 
 
 def _extract_message_field_values(message):
-    values = {'id': message.id, 'connection': message.connection_id, 'text': message.text, 'date': message.date}
+    values = {'id': message.id, 'connection': message.connection_id,
+              'text': message.text, 'date': message.date, 'district': ''}
 
     if message.connection.contact and message.connection.contact.reporting_location:
         values['district'] = message.connection.contact.reporting_location.name
