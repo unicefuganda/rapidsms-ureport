@@ -19,7 +19,7 @@
     <div id="viz">
     </div>
     <div class="scrolltop">
-	<span>PREVIOUS POLLS.    {% if timelastmsg %}The last message is received at : {{timelastmsg}}{% else %} Not received any Message yet {% endif %}</span>
+	<span>{% trans "PREVIOUS POLLS The last message was received at" %}: {{timelastmsg}}</span>
     </div>
     <a name="poll_results"></a>
         {% block poll_list %}
