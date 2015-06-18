@@ -32,6 +32,7 @@ from ureport.models import Ureporter
 from ureport.utils import get_contacts
 from rapidsms.backends.vumi.views import VumiBackendView
 from ureport.views.api.registration_steps import RegistrationStepsView
+from ureport.views import ureporter_count
 
 message_resource = MessageResource()
 
@@ -46,6 +47,7 @@ urlpatterns = patterns('',
                        url(r'^jsi18n/(?P<packages>\S+?)/$', 'django.views.i18n.javascript_catalog'),
                        # dashboard view for viewing all poll reports in one place
                        url(r'^dashboard/$', poll_dashboard, name="poll_dashboard"),
+                       url(r'^count.txt$', ureporter_count, name="ureporter_count"),
 
                        # ureporters (contact management views)
                        url(r'^reporter/$', ureporters, name="ureport-contact"),
