@@ -702,3 +702,8 @@ def access_dashboards(request):
                 if "?" not in url.url:
                     urls.append(url.url.replace('^', '/').replace('$', ""))
     return render_to_response('ureport/access_dashboards.html', locals(), context_instance=RequestContext(request))
+
+
+def ureporter_count(request):
+    c = Contact.objects.count()
+    return HttpResponse("%d" %c)
