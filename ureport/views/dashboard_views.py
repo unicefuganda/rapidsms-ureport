@@ -200,13 +200,14 @@ def alerts(request, pk):
         message_list = \
             Message.objects.filter(details__attribute__name='alert', direction='I',
 
-            ).filter(connection__contact__reporting_location__in=request.session.get('districts'))
+                                   ).filter(
+                connection__contact__reporting_location__in=request.session.get('districts'))
     else:
         message_list = Message.objects.filter(details__attribute__name='alert', direction='I')
 
     if request.session.get('groups', None):
         message_list = message_list.filter(connection__contact__groups__in=request.session.get('groups'
-        ))
+                                                                                               ))
 
     if access:
         if access.assigned_messages.exists():
@@ -272,7 +273,7 @@ def alerts(request, pk):
         prev = request.session.get('prev', [])
         msgs = Message.objects.filter(details__attribute__name='alert',
                                       direction='I'
-        ).filter(date__gte=date).exclude(pk__in=prev)
+                                      ).filter(date__gte=date).exclude(pk__in=prev)
         if access:
             msgs = msgs.filter(connection__contact__groups__in=access.groups.all())
         request.session['prev'] = list(msgs.values_list('pk',
@@ -327,7 +328,7 @@ def alerts(request, pk):
         msg = Message.objects.get(pk=int(request.GET.get('msg')))
         (rate, _) = MessageAttribute.objects.get_or_create(name='rating')
         MessageDetail.objects.create(message=msg, attribute=rate,
-                                           value=rating, description=descs.get(rating, ''))
+                                     value=rating, description=descs.get(rating, ''))
         response = \
             """<li><a href='javascript:void(0)'  class="rate%s"
 
@@ -389,7 +390,7 @@ def remove_captured(request):
         end = range_form.cleaned_data['enddate']
         message_list = \
             Message.objects.filter(details__attribute__name='alert'
-            ).filter(date__range=(start, end))
+                                   ).filter(date__range=(start, end))
         alert = MessageAttribute.objects.get(name='alert')
         mesg_details = \
             MessageDetail.objects.filter(message__in=message_list,
@@ -492,7 +493,7 @@ def a_dashboard(request, name):
     access = get_access(request)
     if access is not None and flag not in access.flags.all():
         return render(request, '403.html', status=403)
-    flagged_messages = Message.objects.filter(flags__flag=flag)\
+    flagged_messages = Message.objects.filter(flags__flag=flag) \
         .select_related('connection__contact__reporting_location').order_by('-date')
     responses = Message.objects.filter(
         pk__in=flag.flagtracker_set.exclude(response=None).values_list("response", flat=True)
@@ -501,8 +502,8 @@ def a_dashboard(request, name):
     messages = flagged_messages | responses
 
     if request.GET.get('download', None):
-        message_details = MessageDetail.objects.filter(message__id__in=flagged_messages.values_list('id', flat=True))\
-            .order_by('message__id')\
+        message_details = MessageDetail.objects.filter(message__id__in=flagged_messages.values_list('id', flat=True)) \
+            .order_by('message__id') \
             .select_related('message', 'attribute', 'message__connection__contact__reporting_location')
 
         export_data, messages_with_details = _build_report(message_details)
@@ -539,7 +540,7 @@ def a_dashboard(request, name):
         }
         msg = Message.objects.get(pk=int(request.GET.get('msg')))
         (rate, _) = MessageAttribute.objects.get_or_create(name='rating'
-        )
+                                                           )
         det = MessageDetail.objects.create(message=msg, attribute=rate,
                                            value=rating, description=descs.get(rating, ''))
         response = \
@@ -705,5 +706,6 @@ def access_dashboards(request):
 
 
 def ureporter_count(request):
-    c = Contact.objects.count()
-    return HttpResponse("%d" %c)
+    c = Contact.objects.filter(
+        connection__identity__in=Blacklist.objects.values_list('connection__identity', flat=True)).count()
+    return HttpResponse("%d" % c)
