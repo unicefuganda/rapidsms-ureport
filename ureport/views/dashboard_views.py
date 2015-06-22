@@ -706,6 +706,6 @@ def access_dashboards(request):
 
 
 def ureporter_count(request):
-    c = Contact.objects.filter(
+    c = Contact.objects.exclude(
         connection__identity__in=Blacklist.objects.values_list('connection__identity', flat=True)).count()
     return HttpResponse("%d" % c)
